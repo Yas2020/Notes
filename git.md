@@ -32,10 +32,13 @@ worked in this case.
 - `git mv stuff newstuff`: Git removes the pathname stuff from the index, adds a new pathname newstuff, keeps the original content for stuff in the object store, and reassociates that
 content with the pathname newstuff
 - `git clone <repository_name> <new_repository_name>`: makes a copy of a repository.
-The new Git repositories now contain exactly the same objects, files, and
-directories. You are able to modify the cloned version, make new
-commits, inspect its logs and history, and so on. It is a complete repository with full
-history
+The new Git repositories now contain exactly the same objects, files, and directories. You are able to modify the cloned version, make new commits, inspect its logs and history, and so on. It is a complete repository with full history
+
+- `git stash`: temporarily shelves (or stashes) changes you've made to your working copy so you can work on something else, and then come back and re-apply them later on. Stashing is handy if you need to quickly switch context and work on something else
+
+-  `git submodule add <url_of_repository>`: repository inside a repository; It often happens that while working on one project, you need to use another project from within it. For example, `git submodule add https://github.com/chaconinc/DbConnector`. Submodules will add the subproject into a directory named the same as the repository. Although DbConnector is a subdirectory in your working directory, Git sees it as a submodule and doesn’t track its contents when you’re not in that directory. Instead, Git sees it as a particular commit from that repository. Now stage and commit the submodule to your repository. When cloning, you need to run: `git submodule init` and `git submodule update` to download the submodules as well.
+
+  Also when we want to make a separate repository out of a change we make a submodule.  
 
 ## Configuration Files 
 - `.git/config`: Repository-specific configuration settings manipulated with the --file option or
@@ -68,8 +71,7 @@ contain any metadata about the file or even its name
   - trees: Represents one level of directory information. It records blob identifiers, path names, and a bit of metadata for all the files in one directory
   - commits: A commit object holds metadata for each change introduced into the repository, including the author, committer, commit date, and log message
   -  tags: Assigns an arbitrary yet presumably human readable name to a specific object, usually a commit
-  - Each object in the object store has a unique name produced by
-  applying SHA1 to the contents of the object, yielding an SHA1 hash value which is unique to that content
+  - Each object in the object store has a unique name produced by applying SHA1 to the contents of the object, yielding an SHA1 hash value which is unique to that content
   - Any tiny change to a file causes the SHA1 hash to change, causing the new version of the file to be indexed separately
 
 - The **index** is a temporary and dynamic binary file that describes the directory structure of the entire repository
@@ -200,6 +202,8 @@ _______________________________
 
 - When a commit occurs, Git records a snapshot of the index and places that snapshot in the object store. This snapshot does not contain a copy of every file and directory in the index, because such a strategy would require enormous and prohibitive amounts of storage. Instead, Git compares the current state of the index to the previous snapshot and so derives a list of affected files and directories. Git creates new blobs for any file that has changed and new trees for any directory that has changed, and it reuses any blob or tree object that has not changed
 
+- Another way of thinking of a commit is that it is just a diff; an individual change compared to the previous commit. Every commit contains its history which is about the commits that came before it.
+
 - There is a one-to-one correspondence between a set of changes in the repository and a commit: A commit is the only method of introducing changes to a repository, and any change in the repository must be introduced by a commit
 
 - The unique, 40-hexadecimal-digit SHA1 commit ID is an explicit reference, whereas HEAD, which always points to the most recent commit, is an implied reference
@@ -213,7 +217,9 @@ _______________________________
 - Git makes use of a special graph called a directed acyclic graph (DAG).Git implements the history of commits within a repository as a DAG. In the commit graph, each node is a single commit, and all edges are directed from one descendant node to another parent node, forming an ancestor relationship
 
 ### Commit History
-- `git log`: acts like `git log HEAD`, printing the log message associated with every commit in your history that is reachable from HEAD
+- `git log`: acts like `git log HEAD`, printing the log message associated with every commit in your history that is reachable from HEAD in chronological order
+
+- `log AB^C`: displays commits reachable from A and B but not from C. This is to filter out unrelevant commits 
 
 - `git log --oneline`: show one line for each commit
 
@@ -279,9 +285,9 @@ versions of the project
 - `git branch -m <old_name> <new_name>`: change branch name
 
 - Your working directory can reflect only one branch
-at a time. Start working on a different branch, issue the git checkout command: `git checkout bug/pr-1` switches to branch name bug/pr-1
+at a time. Start working on a different branch, issue the git checkout command: `git checkout <another_branch_name>` switches to another branch, that is, it moves the HEAD pointer to another branch in the tree. 
 
-- your local modifications to NewStuff in your working directory would be overwritten by the version from dev
+- Your local modifications to NewStuff in your working directory would be overwritten by the version from dev
 
 ### Checking out When You Have Uncommitted Changes
 
@@ -415,12 +421,8 @@ _______________________________
 
 **NEVER CHANCE COMMITS THAT OTHERS MIGHT HAVE PULLED (PUBLIC COMMITS)**
 
-You should feel free to alter and improve your repository commit history 
-as long as no other developer has obtained a copy of your repository. 
-You shouldn’t rewrite, alter, or change any part of a branch that’s been 
-made available and might be present in a different repository. 
-More clealy, leave the published commits alone but you can change 
-unpublished ones as you want.
+You should feel free to alter and improve your repository commit history as long as no other developer has obtained a copy of your repository. 
+You shouldn’t rewrite, alter, or change any part of a branch that’s been made available and might be present in a different repository.  More clealy, leave the published commits alone but you can change unpublished ones as you want.
 
 ## Using `git reset` to Change history
 The whole point of this command is to establish and recover known states for the HEAD, index, and working directory. So it can overwrite and destroy changes in your working directory. It has has three main options: --soft, --mixed, and --hard
@@ -437,7 +439,7 @@ The whole point of this command is to establish and recover known states for the
 
 - `git reset --mixed <commit>`: changes HEAD to point to the given commit. 
   Your _index contents are also modified_ to align with the tree structure  named by commit, but your working directory contents are left unchanged. 
-  It unstages the changes represented by commit, and it tells you what remains modified in your working directory. For example, you can  use this for deleting multpile commits and replace with only one.
+  It _unstages_ the changes represented by commit, and it tells you what remains modified in your working directory. For example, you can  use this for deleting multpile commits and replace with only one.
   **Note that --mixed is the default mode for git reset**
 
   - After `git reset` you can use `git restore <commit> <filename>` to recover working direcotry to that commit as well. If you want to do both at the same time, use `git reset --hard`
@@ -522,8 +524,7 @@ git revert master~3      # commit D
 
 This is a new commit and might have to be adjusted for conflicts.
 
-If another developer has cloned your repository or fetched some of your commits, there are implications for changing the commit history. In this case, you probably should not use commands that alter history within your repository. Instead, use git revert; do
-not use `git reset` nor the `git commit --amend`.
+If another developer has cloned your repository or fetched some of your commits, there are implications for changing the commit history. In this case, you probably should not use commands that alter history within your repository. Instead, use git revert; do not use `git reset` nor the `git commit --amend`. Use `git invert` to undo the mistake
 
 ## Changing the Top Commit
 
