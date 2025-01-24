@@ -717,7 +717,7 @@ When the thread is not running, TCB is in some shceduler queue:
 The dispatching loop of the OS looks like so:
 
 
-```
+```C
 Loop {
     RunThread(); // loads it's state (registers, PC, SP) into CPU, load environment (virtual memory space), jump to PC
     ChooseNextThread();
@@ -726,6 +726,7 @@ Loop {
     LoadStateOfCPU(newTCB);
 }
 ```
+
 This is an infinite loop done by OS. Maybe this all the OS does. _If there are no threads to run, the OS runs the idle thread - which puts the cpu in a low power mode_
 
 
@@ -745,7 +746,7 @@ This is an infinite loop done by OS. Maybe this all the OS does. _If there are n
 
 
 Example:
-```
+```C
 computePI() {
     while(True) {
         ComputeNextDigit();
@@ -798,7 +799,7 @@ and so on...
 
 ### What happens when switching: pseudo code for switch
 
-```
+```C
 switch(tCur, tNew) {
 // unload old thread - saving it's state to it's tcb
     TCP[tCur].regs.r7 = CPU.r7;
@@ -1018,7 +1019,7 @@ so, we switch to a different thread and let it deallocate us. we basically put a
 
 Zombie processes are the processes that are ready to be deallocated. they can show up if something that is responsible to clear them isn't working, doing it's jobs.
 
-```
+```C
 ThreadRoot() {
     DoStartupHouseKeeping(); // statistics like start time of thread etc
     UserModeSwitch(); //enter user mode
@@ -1030,7 +1031,8 @@ ThreadRoot() {
 (ThreadFinish calls run_new_thread)
 
 Recall run_new_thread's code:
-```
+
+```C
 run_new_thread()
 {
     newThread = PickNewThread();
@@ -1074,7 +1076,7 @@ Thus, this queue is in the user mode sorta. and every process can have a wait qu
 
 Traditional procedure call logically equivalent to a fork followed by a join.
 
-```
+```C
 A() { B(); }
 B() { // complex things }
 
@@ -1111,7 +1113,7 @@ this is exactly what we came across in twisted tutorials. we were asked to not d
 One research idea to solve this problem: scheduler activations have kernel inform the user level when the "thread" blocks. after receiving this tip, we can make the "thread" yield and make something else run
 
 <p align="center">
-<img src="./assets/operating-system/ucbOS_28.png" alt="drawing" width="500" height="400" style="center" />
+<img src="./assets/operating-system/ucbOS_28.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
 The kernel thread (or many kernel threads) may be a part of the kernel process
@@ -1189,7 +1191,7 @@ no 2 threads are completely independent - they share the same file system, same 
 ### Example of cooperating threads
 You have a blog and a million folks visit it, so you fork off a thread for each request to serve it. Here we are processing connections which requirs waiting for I/O.
 
-```
+```C
 serverLoop()
 {
     connection = AcceptCon();
@@ -1215,7 +1217,7 @@ If all the threads in the thread pool are occupied, the new requests have to wai
 
 Every request from the user gets put in a queue, a thread from the pool takes it in, executes it and returns. The address the master thread only allocates a bunch of threads, accepts a new connection, puts it on the queue, "wakes up" the queue and repeat
 
-```
+```C
 master() // run by master the thread
 {
     allocThreads(slave, queue); // create the thread pool
@@ -1231,7 +1233,7 @@ The master thread is not doing any computation. ITs just grabbing a connection, 
 
 Each one of threads goes in an infinite loop of dequeueing something. If the queue is null, it goes to sleep otherwsie, it will service the webpage.
 
-```
+```C
 slave(queue) //this is executed by the "thread pool" (each thread in the thread pool?)
 {
     while(True)
@@ -1257,7 +1259,7 @@ _Solution 1_ - perform synchronously
 take a request, process it, take another one
 but will annoy atm customers because each one has to wait for somebody else.
 
-```
+```C
 BankServer() {
   while(True) {
     ReceiveRequest(&op, &acctId, &amount);
@@ -1266,14 +1268,14 @@ BankServer() {
 }
 ```
 
-```
+```C
 ProcessRequest(op, acctId, amount) {
   if (op==deposit) Deposit(acctId, amount);
   else if ...
   }
 ```
 
-```
+```C
 Deposit(acctId, amount) {
     acct = GetAccount(accId); // disk i/o, if not cached
     acct->balance+=amount;
@@ -1294,7 +1296,7 @@ This is what we learned with Twisted. there is a main loop (reactor loop) that l
 We get a request, we do process it by a thread till it gets to a disk seek - this is a blocking call. So, we don't wait, we take up another request (another thread takes control of cpu) and then get it to the disk seek part as well. By this time, the old disk seek (old thread) is ready, we get the callback and finish the old transaction. We dont explicitly overlap I/O ourselves in our code because it happens as a side effect of using multiple threads. 
 
 
-```
+```C
 BankServer()
 {
   while(True)
@@ -1386,96 +1388,12 @@ correctness properties for our problem:
 2. someone buys if needed
 
 
-***** solution 1 - use a note
-- leave a note before buying (kind of "lock")
-- remove note after buying (kind of "unlock")
-- don't buy if note (wait)
 
-#+begin_src c
-if (noMilk) {
- if (noNote) {
-  leave Note;
-  buy milk;
-  remove note;
- }
-}
-#+end_src
 
-downside - the operations are non atmoic, so, sometimes, both you and your roommate (2 threads) look at the no milk and don't see any note and head out to buy milk after putting the note. synchronization condition built in the code here.
 
-this is horrible - because it introduces non-deterministic bugs(sometimes too much milk), a race condition
-
-# one easy way to get atomicity would be to disable interrupts, start execution, re-enable interrupts
-
-***** solution 1.5 - put the note first
-earlier, we checked for milk and then put the note. if we put it first, before checking would be better.
-no body buys any milk if - A leaves a note, swapped out, B leaves a note, swapped out. A notices there is a note, so doesn't buy milk
-B does the same thing. (both then remove the note without getting the milk)
-
-#+begin_src c
-leave Note;
-if (noMilk) {
- if (noNote) {
-  leave Note;
-  buy milk;
- }
-}
- remove Note;
-#+end_src
-
-***** solution 2 - labeled notes
-we have different notes for both fellas
-#+ATTR_ORG: :width 400
-#+ATTR_ORG: :height 400
-[[./assets/operating-system/ucbOS_32.png]]
-
-this won't work - A leaves a noteA, B leaves a noteB, nobody buys any milk.
-this reduces the probability of synchronization problem but it can still happen
-
-original unix had these a lot
-
-***** solution 3 - 2 note solution
-
-#+ATTR_ORG: :width 400
-#+ATTR_ORG: :height 400
-[[./assets/operating-system/ucbOS_33.png]]
-
-note the asymmetric code here. this works.
-at X:
- - if no note B, safe for A to buy
- - else wait to let B complete it's thing
-at Y:
- - if no note A, B can buy
- - else, A is doing something(buying or waiting for B to quit), you can leave.
-
-here, the critical part is
-```
-   if (noMilk): buy milk;
-```
-only one of the threads do it at any time.
-
-this is complex, what if there are 10 threads?
-also, while A is waiting for what happens with B's note, it is wasting CPU cycles doing nothing. this is called "busy waiting"
-
-better way is make the hardware provide good (better) primitives.
-like, *a atomic lock operation. (if 2 threads are waiting for the lock and both see it as free, only one succeeds in getting it)*
-- Lock.acquire() --> wait until lock is free, then grab it(till then, sleep -- no busy waiting)
-- Lock.release() --> unlock, wake up anyone waiting for the lock to release
-
-with this in place, solution is easy:
-#+begin_src c
-milklock.Acquire():
- if (nomilk) // the lock is around the critical section
-  buy milk;
-milklock.Release();
-#+end_src
-
-so, this is solution 1, except with an atomic lock. (earlier the problem was that the lock was unatomic. so, both the threads see no lock--or no note, and both go ahead and put it and get some milk from the market)
-
-we see in this solution that the critical section is guarded by an atomic lock.
-   
 -----------------------------------------
 -----------------------------------------
+
 # Lecture 21 - Networking
 
 [YouTube](https://www.youtube.com/watch?v=k9xiA9hCnPA&list=PLggtecHMfYHA7j2rF7nZFgnepu_uPuYws&index=21)
@@ -1522,9 +1440,6 @@ UNIX has a combination of both. Users have capabilities (like root user has all 
  - Better durability: store data in multiple locations
  - More security: easier to make each piece secure
 
-<p align="center">
-<img src="./assets/operating-system/screenshot_2017-06-06_20-33-11.png" alt="drawing" width="500" height="200" style="center" />
-</p>
 
 The peer to peer model is more powerful, there are upto O(n^2) connections here. But there are problems as well. Like knowing what is the most up to date version of a file etc. This is clear in the centralized version. 
 
@@ -1554,10 +1469,6 @@ Transparency and collaboration require some way for different processors to comm
 
 ### Networking definitions
 
-<p align="center">
-<img src="./assets/operating-system/screenshot_2017-06-06_22-24-27.png" alt="drawing" width="500" height="200" style="center" />
-</p>
-
 
  - Network - physical connection that allows two computers to communicate
  - Packet - unit of transfer, sequence of bits carried ove the network
@@ -1569,9 +1480,6 @@ Transparency and collaboration require some way for different processors to comm
 
 - ### Broadcast Network: Shared Communication Medium  
 
-<p align="center">
-<img src="./assets/operating-system/screenshot_2017-06-06_22-27-54.png" alt="drawing" width="400" height="100" style="center" />
-</p>
 
     - inside the computer, this is called a bus
     - all devices simultaneously connected to devices
@@ -1587,9 +1495,6 @@ Eg: cellular phones, GSM, EDGE, CDMA, 802.11 (wireless standard) - these are all
 ### How do the packets reach the intended destination? 
 (If you want to communicate with a particular machine on the network)
 
-<p align="center">
-<img src="./assets/operating-system/screenshot_2017-06-06_22-32-47.png" alt="drawing" width="400" height="200" style="center" />
-</p>
 
 - We attach a header with the ID of the machine (the MAC address, which is a 48bit ID) it is intended for. Everyone gets the packet, discard it if not the target. 
 - In Ethernet, this is generally done at the hardware level(unless you have used the promiscuous mode in which the OS receives every packet coming on the wire). You can do this with broadcast media using some software but it add overhead and slows the system. You are not supposed to take in a message is not for you unless you are snooping
