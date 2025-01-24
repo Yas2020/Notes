@@ -9,7 +9,7 @@ The Software Development Lifecycle (or SDLC) is a framework that specifies the s
 - Deploy, which you execute when the product is ready to go live after it has been tested by the project team and has passed each testing phase
 
     <p align="center">
-    <img src="./assets/application_security/SDLC-sec.png" alt="drawing" width="600" height="300" style="center" />
+    <img src="./assets/application-security/SDLC-sec.png" alt="drawing" width="600" height="300" style="center" />
     </p>
 
 How can you map DevOps into the phases of a secure SDLC? 
@@ -47,7 +47,7 @@ DevSecOps is all about DevOps with an emphasis on security. DevSecOps is a set o
 
 
 <p align="center">
-<img src="./assets/application_security/benefits-devsecops.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/benefits-devsecops.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 Here are five of its most significant benefits: 
@@ -94,7 +94,7 @@ The Internet is a complicated network of networks that stretches around the glob
 - The middle layer of the web application provides a connection between the front end and the back end by using an application programming interface or API developed in languages such as Python, Java, or Ruby. As an application developer, you must test all the layers of a web application. 
 
 <p align="center">
-<img src="./assets/application_security/layers-security-applicatins.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/layers-security-applicatins.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 Secure the first layer by running vulnerability scanners, tests, and allow other team developers to audit the web applications before deploying to production.
@@ -124,7 +124,7 @@ Security patterns also offer actionable solutions and recommendations for implem
 For example, security patterns can be classified under authentication, access control, or filtering network traffic within a network. Authorization, role-based access control, firewalls, and web services security such as SAML, XACML, and XML firewalls are some other examples of security patterns.
 
 <p align="center">
-<img src="./assets/application_security/security-patterns.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/security-patterns.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 Security patterns provide a comprehensive framework for addressing unique security challenges, safeguarding customer information, and ensuring the organization's ecosystem integrity.
@@ -136,7 +136,7 @@ Both are protocols for establishing secure connections between network computers
 In fact, TLS is a successor to SSL, the first version of TLS, TLS 1.0 was introduced in 1999. Today, when people refer to SSL or TLS/SSL, they are usually referring to modern TLS. So how does modern TLS work? At a high level, it uses four steps; you can follow these steps to ensure TLS stays secure in the software development lifecycle, or SDLC.
 
 <p align="center">
-<img src="./assets/application_security/how-tls-works.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/how-tls-works.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 So how do you ensure TLS remains secure in your application's SDLC? Basically, with two components: 
@@ -177,7 +177,7 @@ Vulnerability scanning is the search for security vulnerabilities from within th
 - Threat models use diagrams to represent data flows within software applications. Where does threat modeling belong in the software development lifecycle (or SDLC)? The best time is during the design phase. 
 
     <p align="center">
-    <img src="./assets/application_security/thread-modeling.png" alt="drawing" width="600" height="300" style="center" />
+    <img src="./assets/application-security/thread-modeling.png" alt="drawing" width="600" height="300" style="center" />
     </p>
 
 - Three popular threat models that you can use are: 
@@ -186,7 +186,7 @@ Vulnerability scanning is the search for security vulnerabilities from within th
     - STRIDE
 
     <p align="center">
-    <img src="./assets/application_security/thread-models.png" alt="drawing" width="600" height="300" style="center" />
+    <img src="./assets/application-security/thread-models.png" alt="drawing" width="600" height="300" style="center" />
     </p>
 
 
@@ -344,7 +344,7 @@ See [this](https://github.com/MichaelCade/90DaysOfDevOps/blob/main/2023/day20.md
 
 Below is a summary of the some warnings that might come back after applying ZAP to an application URL. Each describes the vulnerability, then cites the number of times it was found (for example, x 3), and then lists the URLs that had the vulnerability.
 
-```
+```sh
 WARN-NEW: Re-examine Cache-control Directives [10015] x 3
 WARN-NEW: Cross-Domain JavaScript Source File Inclusion [10017] x 4
 WARN-NEW: Missing Anti-clickjacking Header [10020] x 2
@@ -355,8 +355,8 @@ WARN-NEW: Timestamp Disclosure - Unix [10096] x 4
 WARN-NEW: Cross-Domain Misconfiguration [10098] x 9
 WARN-NEW: Loosely Scoped Cookie [90033] x 3
 FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 10    WARN-INPROG: 0  INFO: 0 IGNORE: 0       PASS: 24
-
 ```
+
 The above result shows that this application has vulnerabilities in Cross-Domain JavaScript Source File Inclusion, Missing Anti-clickjacking Header, X-Content-Type-Options Header Missing, Content Security Policy (CSP) Header Not Set, Cross-Domain Misconfiguration, and Loosely Scoped Cookies, just to name a few.
 You can use the numbers next to the vulnerability names to read about the alert on the ZAP Proxy Web site. Using the following URL:
 
@@ -365,27 +365,25 @@ You can use the numbers next to the vulnerability names to read about the alert 
 Be sure to replace {NUMBER} with the number of the alert.
 As a developer, your task would be to look up the vulnerability, look at each URL listed as being vulnerable, and then fix the vulnerabilities in the code one by one.
 
-
 ## Vulnerability Analysis
 
-Vulnerability analysis is a method of identifying possible application flaws that could jeopardize your application. Vulnerabilities in your code occur every day. Say you scanned your code one day and found no vulnerabilities. But it had a vulnerability that you didn't know about. Or a library that you use has a new vulnerability that was just discovered. And that’s how code that was secure yesterday becomes susceptible today. Anyone could break into your system if they found a loophole by trying a few things here and there. When you perform your security checks and scans and add nothing to the code, it can still become susceptible simply because someone discovered some minor flaw, fault, or situation that can be exploited. Some programs and platforms can help you scan for vulnerabilities in your code. And vulnerability reports are published daily. 
+Vulnerability analysis is a method of identifying possible application flaws that could jeopardize your application. Vulnerabilities in your code occur every day. Say you scanned your code one day and found no vulnerabilities. But it had a vulnerability that you didn't know about. Or a library that you use has a new vulnerability that was just discovered. And that’s how code that was secure yesterday becomes susceptible today. Anyone could break into your system if they found a loophole by trying a few things here and there. When you perform your security checks and scans and add nothing to the code, it can still become susceptible simply because someone discovered some minor flaw, fault, or situation that can be exploited. Some programs and platforms can help you scan for vulnerabilities in your code. And vulnerability reports are published daily.
 
 If a new report says that the library or plugin you are using is a vulnerable version, you might want to update to a new version to prevent your application from being attacked. One example of such a platform is Snyk, which is a developer security platform for securing code, dependencies, containers, and infrastructure as code. And you may use one of these three vulnerability tools: Burp Suite, Nessus, and Zed Attack Proxy. 
 
  <p align="center">
-<img src="./assets/application_security/vulnaribility-analysis.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/vulnaribility-analysis.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
- - _Burp Suite_ is a vulnerability scanner that is popular for scanning web applications. You can set up automated scans of a website or perform manual scanning by crawling the overall structure of a website or web application.By running multiple audit phases, Burp Suite can find and exploit functions involving user input. Burp Suite audits vulnerabilities in three phases: passive, active, and JavaScript analysis. 
+- _Burp Suite_ is a vulnerability scanner that is popular for scanning web applications. You can set up automated scans of a website or perform manual scanning by crawling the overall structure of a website or web application.By running multiple audit phases, Burp Suite can find and exploit functions involving user input. Burp Suite audits vulnerabilities in three phases: passive, active, and JavaScript analysis. 
  
- - The next notable vulnerability tool is _Nessus_. Nessus is a well-known vulnerability scanner that works on Mac, Linux, and Windows. You can install and run it as a local web application. Nessus provides a scripting language to write specific tests and plugins to detect a particular vulnerability or a common virus. 
+- The next notable vulnerability tool is _Nessus_. Nessus is a well-known vulnerability scanner that works on Mac, Linux, and Windows. You can install and run it as a local web application. Nessus provides a scripting language to write specific tests and plugins to detect a particular vulnerability or a common virus. 
  
  - Another vulnerability scanner is an OWASP tool called Zed Attack Proxy (or Zap). Zap is an open source software that uses spiders to crawl web applications. Zap actively or passively scans HTML files in web applications via links and AJAX applications via generated links. 
  
  - Three best practices that you can follow to prevent vulnerabilities in your code are: 
     - Training your development team on security. This is the single most important thing to do and taking courses that are designed specifically for developers goes a long way toward making your software more secure. 
     - Performing policy analysis and updating, so that your policies are always appropriate and up to date. And automating your process for vulnerability analysis so that even if your developers forget to scan, your automation will scan for them and alert you quickly of any new vulnerabilities. 
-
 
 ## Runtime Protection
 
@@ -399,13 +397,11 @@ When you have deployed your application and it is running in production, RASP ca
 
 When RASP senses a threat, it can terminate the user's session and notify the security team. RASP can work directly within an application. It is simple to deploy, and it is inherently capable of monitoring and self-protecting application behavior. RASP detects and prevents attacks with great precision, separating malicious requests from legal requests, and minimizing false positives. You can incorporate RASP into different DevOps systems. Securing the cloud is not an easy task and requires much effort because applications are running on someone else's infrastructure outside your secure network. Luckily, RASP is extremely compatible with cloud computing.
 
-
-
 ## Software Composition Analysis (SCA): Knowing what’s inside your apps
 
-- Securing your business from potential issues and vulnerabilities in open source development is becoming increasingly important. Software component analysis (or SCA) is the process of determining which open source components and dependencies are used in your application. You can use SCA tools throughout your software development workflow to ensure that any imported libraries or dependencies do not cause security risks or legal compliance issues in your code. 
-
--SCA tools scan the codebase of a software project and provide a report that lists all the open source libraries, frameworks, and components that are being used. This report includes information about the licenses and vulnerabilities of these open source libraries and components, as well as any security risks that may be associated with them.
+- Securing your business from potential issues and vulnerabilities in open source development is becoming increasingly important. Software component analysis (or SCA) is the process of determining which open source components and dependencies are used in your application. You can use SCA tools throughout your software development workflow to ensure that any imported libraries or dependencies do not cause security risks or legal compliance issues in your code.
+  
+- SCA tools scan the codebase of a software project and provide a report that lists all the open source libraries, frameworks, and components that are being used. This report includes information about the licenses and vulnerabilities of these open source libraries and components, as well as any security risks that may be associated with them.
 
 - SCA looks for all the dependencies linked to your code, including some that you might not be aware of. For example, if you are importing Flask, Flask may require and install dependencies that you may not need. Even if you are using a version that is not vulnerable, one of the dependencies that Flask is using might be vulnerable. 
 
@@ -414,7 +410,7 @@ When RASP senses a threat, it can terminate the user's session and notify the se
 Here are four goals of SCA:
 
 <p align="center">
-<img src="./assets/application_security/sca-goals.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/sca-goals.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 - All open source components should be discovered and tracked
@@ -437,7 +433,7 @@ Consider using these four popular SCA tools:
 
 
 <p align="center">
-<img src="./assets/application_security/sca-tools.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/sca-tools.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 SCA tools can identify several risk factors, including:
@@ -453,7 +449,6 @@ Software Composition Analysis offers two chief benefits:
 
 - Identification of third-party software components that may be subject to specific licensing terms, like those defined in a particular open source license. This is important because failure to adhere to those licensing terms could lead to legal and compliance risks for the organization.
 
-
 ### OWASP Dependency Check
 
 Dependency-Check is a Software Composition Analysis (SCA) tool that attempts to detect publicly disclosed vulnerabilities contained within a project's dependencies. Dependencies are the software components that your code relies on for additional functionality. The SCA tool will generate a report listing the dependency, any identified Common Platform Enumeration (CPE) identifiers, and the associated Common Vulnerability and Exposure (CVE) entries.
@@ -465,14 +460,11 @@ See [here](https://github.com/MichaelCade/90DaysOfDevOps/blob/main/2023/day11.md
 References:
 [Dependency Check Documents](https://jeremylong.github.io/DependencyCheck/), [Source Code](https://github.com/jeremylong/DependencyCheck)
 
-
-
-
 ## Code Practices
 
 Code practices are part of the software development process for the development of secure software. Security is a major concern in the DevOps community because attackers target insecure code in the application layer. Implementing code practices is an important part of developing secure software and when implemented early in development, is cost-effective because correcting unsecure code later in the software development process is expensive.
 
-Here are some general code practices you should follow when developing software: 
+Here are some general code practices you should follow when developing software:
 - Implement a secure software development lifecycle. Including security in the development lifecycle is cost-effective and ensures your application is as secure as it can be, right from the start 
 - Establish secure coding standards. Following a set of secure coding standards establishes good habits
 - Build and use reusable object libraries for efficiency and to reduce risk
@@ -592,12 +584,14 @@ You should watch for suspicious activity and use network utilities to check whet
 
     Install it on your local machine:
 
-    ```
+    ```sh
     git clone https://github.com/awslabs/git-secrets.git
     make install
     ```
+
     Then, cd to your repository and scan it:
-    ```
+
+    ```sh
     cd my-git-repository
     # configure it to scan your Git repository on each commit
     git secrets --register-aws
@@ -623,19 +617,22 @@ If we are working with containers, an important part of our CI/CD pipeline shoul
 The image scanning process consists of looking inside the container, getting the list of installed packages (that could be Linux packages, but also Java, Go, JavaScript packages, etc.), cross-referencing the package list against a database of known vulnerabilities for each package, and in the end producing a list of vulnerabilities for the given container image.
 
 There are many open-source and proprietary image scanners, that you can install and start scanning your container images right away, either locally of your machine or in your CI/CD pipeline. Two of the most popular ones are Trivy and Grype. Scanning a container image is as simple as installing one of these and running them against an image:
-```
+
+```sh
 grype ubuntu:latest
 ```
+
 If an image scanner tells you that you have 0 vulnerabilities in your image, that does not mean that you are 100% secure. Scanning a container image with Grype is as simple as running `grype <image>`
 
 Enforce a set of rules for our container images. For example, a good rule would be "an image should not have critical vulnerabilities" or "an image should not have vulnerabilities with available fixes." Fortunately for us, this is also something that Grype supports out of the box. We can use the `--fail-on <SEVERITY>` flag to tell Grype to exit with a non-zero exit code if, during the scan, it found vulnerabilities with a severity higher or equal to the one we specified. This will fail our pipeline, and the engineer would have to look at the results and fix something in order to make it pass. Example:
 
-```
+```sh
 grype springio/petclinic:latest --fail-on critical
 ```
 
 Sometimes a vulnerability we encounter will not have a fix available. These are so-called zero-day vulnerabilities that are disclosed before a fix is available. Also, it is not dangerous! In this case, we can tell Grype to ignore this vulnerability and not fail the scan because of it. We can do this via the `grype.yaml` configuration file, where we can list vulnerabilities we want to ignore:
-```
+
+```sh
 ignore:
   # This is the full set of supported rule fields:
   - vulnerability: CVE-2016-1000027
@@ -652,6 +649,7 @@ ignore:
 ```
 
 ### SBOM
+
 SBOM stands for Software Bill Of Materials.
 
 It is a list of all the components that make up a software application or system. It includes information about the various third-party libraries, frameworks, and other open-source or proprietary components that are used to build the software. An SBOM can also include details about the versions of these components, their licensing information, and any known vulnerabilities or security issues.
@@ -674,15 +672,32 @@ For example, we can use syft to generate the SBOM for the ubuntu:latest containe
 We see that the SBOM not only contains the packages and libraries installed inside the container image, but also list their types and versions. We can use now cross-reference this list with a vulnerability database to see whether we have any vulnerabilities inside the container.
 
 # Rough Design of a CI/CD Pipeline
-- Every pipeline starts with a source stage. This is ususally a code repository: 
+
+- Every pipeline starts with a source stage. This is ususally a code repository:
     - As a branch protection rule,  make it is necssary to do a PR review before developers can merge their code to the branch
     - Apply linting to check your code for syntax errors. Any language has a linting program. Implement linting into your CI/CD pipeline. GitHub Actions is a good choice. Fail a PR if linting conditions not resolved. It is better for linting to happend on IDE even before developer commit their code. To do this, create a precommit hook in IDE that runs these linting checks before any commit (local precommit checks)
-- Build: 
+    - Static Code Analysis(such as Software Composition Analysis, Static Application Security Testing): could be done in IDE and/or CI. Merging a PR can be conditioned on passing this analysis. Simialrly, secret scanner can be used here. These can be done by configuring a precommit hook.
+- Build:
     - Compiling your code and building images to be ready for testing
     - Run unit tests with code coverage 80-90%
+    - Generate Software Bill of Material (SBOM) and store them somewhere (s3) for auditing
 - Test: heavy testing happens here
     - Integration Test: tests functionality of your application (BDD)
-- Release: ship your image to the registry
+    - Run a Dynamic Application Security Testing tool such as OWASP ZAP(it checks SQL injection, cross-site scripting, authentication, session hijacking )
+- Release:
+    - Scan your image using a tool such as Trivy and ship it to the registry
+    -  Use Docker security command to see vulneribilites: 
+        ```sh
+        docker scout cves <image>:<tag> --output ./vulns.report
+        ``` 
+        or
+        ```sh
+        docker scout cves <image>:<tag> --only-severity critical --exit-code
+        ```
+        The latter command fails if there is vulnerabilities of level CRITICAL! if you use `set -e` at the begining of your shell script, the entire script run exits if any command exits
+        ```sh
+        docker scout sbom --output myapp.sbom <image>:<tag>` 
+        ```
 - Create staging (QA or pre-production) and perform other testing in a production-like environment
 - Final review and approval
 - Deploy
@@ -690,7 +705,7 @@ We see that the SBOM not only contains the packages and libraries installed insi
 # Example of Implementations of a CI/CD Pipeline
 
 <p align="center">
-<img src="./assets/application_security/CICD-pipeline.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/CICD-pipeline.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
 - Install Jenkins on virtual machine to be the Jenkins server: 
@@ -743,7 +758,7 @@ We see that the SBOM not only contains the packages and libraries installed insi
     - Edit prometheous.yaml to get prometheous scrape blackbox exporter, restart prometheous
     - Connect Grafana to Prometheous to set up dashboards using blackbox. Run node_exporter on other nodes (Jenkins Server etc.) to have them send their info to Prometheous
 
-Note: It is recommende to use IAM Role to grant permissions instad of tokens. But if case of personal project, you can use manual tokens to give Jenkins the permission to deploy an app to K8s:
+Note: It is recommended to use IAM Role to grant permissions instad of tokens. But if case of personal project, you can use manual tokens to give Jenkins the permission to deploy an app to K8s:
 
 - Create Service Account, a Role and a RoleBinding to authorize the Jenkins user to deploy in a specific namespace
 
