@@ -1,7 +1,7 @@
 
 # GIT: Concepts and Commands
 
-[Version Control with Git, 2nd Edition](https://www.oreilly.com/library/view/version-control-with/9781449345037/)
+Git is a distributed source code management tool used by developers worldwide. It was invented by Linus Torvalds in 2005 for Linux kernel development and is now the most widely used version control system. Code can be completely local, or it can be kept in a remote repository so that developers can collaborate. Every developer also has a full copy of the code. Git is the current standard for version control software. It completely changed how developers do their job, allowing them greater control over their code, and the ability to roll back changes precisely if needed.
 
 
 Start a local git repository by running:
@@ -132,7 +132,7 @@ operations on this blob (content of the file), calculates its SHA1 hash, and ent
 
 - Now you can use the hash to pull it back out of the object store any time you want to see its content:
 
-  ```
+  ```Sh
   git cat-file -p 3b18e512dba79e4c8300dd08aeb37f8e728b8dad
   hello world
   ```
@@ -263,6 +263,7 @@ versions of the project
 - Each of your branch names, as well as the committed content on each branch, is local to your repository. However, when making your repository available to others, you can publish or elect to make one or any number of branches and the associated commits available, too
 
 - The dev branch name points to the head commit, Z. If you wanted to rebuild the repository state at Z, then all the commits reachable from Z back to the original commit, A, are needed. The reachable portion of the graph is highlighted with thick lines and covers every commit except (S, G, H, J, K, L)
+  <br></br>
 
   <p align="center">
   <img src="./assets/git/git-branches.png" alt="drawing" width="400" height="200" style="center" />
@@ -272,8 +273,9 @@ versions of the project
 
 - Git supports an arbitrarily complex branching structure, including branching branches and forking multiple branches from the same commit
 
-- The command which creates a named branch at the given commit: 
-  ```
+- The command which creates a named branch at the given commit:
+   
+  ```sh
   git branch <branch_name> <commit>
   ```
   When no starting-commit is specified, the default is the revision committed most recently on the current branch
@@ -295,7 +297,7 @@ at a time. Start working on a different branch, issue the git checkout command: 
 not being tracked are always left alone; Git won’t remove or modify them. However, if you have local modifications to a file that are different from changes that are present
 on the new branch you are switching to, Git issues an error message such as the following and refuses to check out the target branch
 
-  ```
+  ```sh
   git checkout dev
   error: Your local changes to the following files would be overwritten by checkout:
   NewStuff
@@ -307,7 +309,7 @@ on the new branch you are switching to, Git issues an error message such as the 
 - If specifically requested with the -m option, Git attempts to carry your local change into the new working directory by performing a merge operation between
 your local modifications and the target branch: 
 
-  ```
+  ```sh
   git checkout -m dev
   M     NewStuff
   Switched to branch "dev"
@@ -323,12 +325,13 @@ Check out a previous version of a file. This turns the <file> that resides in th
 ### Create/delete new branches
 When you want to both create a new branch
 and simultaneously switch to it, Git provides a shortcut for this with the `-b new branch` option:
-```
+
+```sh
 git checkout -b bug/pr-3
 ```
 To delete a branch:
 
-```
+```sh
 git branch -d bug/pr-3
 ```
 
@@ -361,7 +364,7 @@ alter the same line of the same file, Git does not resolve the dispute. Instead,
 such contentious changes as “unmerged” in the index and leaves reconciliation up to you, the developer. 
 
 - To merge other_branch into branch: 
-  ```
+  ```sh
   git checkout branch
   git merge other_branch
   ```
@@ -385,7 +388,15 @@ ORIG_HEAD ref for just this sort of purpose.
   - _Fast-forward_: When your branch HEAD is already fully present and represented in the other branch. This is the inverse of the Already up-to-date case. Because your HEAD is already present in the other branch, Git then just moves your branch HEAD to point to the final, new commit. The fast-forward case is particularly common on tracking branches because they simply fetch and record the remote commits from other repositories.
 
 - The follwoing merge strategies all produce a final commit, added to your current branch, that represents the combined state of the merge:
-  - _Resolve_. The resolve strategy locates the obvious common ancestor as the merge basis and performing a direct three-way merge by applying the changes from the merge base to the tip of the other branch HEAD onto the tip of the current branch (3 commits involved to create the merge commit). Because resolve is no longer Git’s default, if Alice wanted to use it then she would make an explicit request: `git merge -s resolve devel`
+
+  - _Resolve_. The resolve strategy locates the obvious common ancestor as the merge basis and performing a direct three-way merge by applying the changes from the merge base to the tip of the other branch HEAD onto the tip of the current branch (3 commits involved to create the merge commit). 
+    <p align="center">
+    <img src="./assets/git/git-3way-merge.png" alt="drawing" width="300" height="200" style="center" />
+    </p>  
+  
+  
+    Because resolve is no longer Git’s default, if Alice wanted to use it then she would make an explicit request: `git merge -s resolve devel`
+  
   <p align="center">
   <img src="./assets/git/git-merge-3way.png" alt="drawing" width="300" height="200" style="center" />
   </p>  
@@ -414,28 +425,37 @@ ORIG_HEAD ref for just this sort of purpose.
   - _Octopus_: Unlike previous strategies, it supports merging multiple branches together all at once
   - _Ours_ and _Subtree_ are other types of merges
 
+  If you want to use a graphical tool to resolve these issues, you can run `git mergetool`, which fires up an appropriate visual merge tool and walks you through the conflicts.
+
 ______________________________________________
 _______________________________
 
-# Altering Commits: change history
+# Altering Commits: Change History
 
 **NEVER CHANCE COMMITS THAT OTHERS MIGHT HAVE PULLED (PUBLIC COMMITS)**
 
 You should feel free to alter and improve your repository commit history as long as no other developer has obtained a copy of your repository. 
+
 You shouldn’t rewrite, alter, or change any part of a branch that’s been made available and might be present in a different repository.  More clealy, leave the published commits alone but you can change unpublished ones as you want.
 
 ## Using `git reset` to Change history
-The whole point of this command is to establish and recover known states for the HEAD, index, and working directory. So it can overwrite and destroy changes in your working directory. It has has three main options: --soft, --mixed, and --hard
 
-- `git reset --soft <commit>`: changes the HEAD ref to  point to the given commit. The contents of your index and working directory are left unchanged. For example:
+The whole point of this command is to establish and recover known states for the HEAD, index, and working directory. So it can overwrite and destroy changes in your working directory. 
 
-  ```
+`git rebase` allows you to literally rewrite history — automatically applying commits in your current working branch to the passed branch head. Since your new commits will be replacing the old, it's important to not use git rebase on commits that have been pushed public, or it will appear that your project history disappeared.
+
+It has has three main options: --soft, --mixed, and --hard
+
+- `git reset --soft <commit>`: changes the HEAD ref to  point to the given commit. The contents of your index and working directory are left unchanged. It undoes that commit but keep the changes in the staging areaFor example:
+
+  ```sh
   git reset --soft HEAD^
   git commit
   ```
   This command moves you back to the prior place in the commit graph but keeps the index exactly the same. 
-  Everything is staged just as it was prior to the git reset command. You just get another shot at the commit message. **Don't use this command! 
-  Instead, use `git commit --amend`**
+  Everything is staged just as it was prior to the git reset command. You just get another shot at the commit message.  If you want to totally change the last commit, use `git commit --amend`** which is a convenient way to modify the most recent commit by replacing it with a new commit. Again, dont apply this on a public commit shared by others.
+
+- `git reset –soft HEAD~N && git commit`: squash (or combine) last N commits into a single commit. You might want to combine all N last commits into a single commit to keep commit history less messy
 
 - `git reset --mixed <commit>`: changes HEAD to point to the given commit. 
   Your _index contents are also modified_ to align with the tree structure  named by commit, but your working directory contents are left unchanged. 
@@ -461,7 +481,7 @@ The command git cherry-pick is typically used to introduce particular commits fr
 
   During the course of normal development, a bug is fixed on the development line with commit F. If that bug turns out to be present in the 2.3 release also, the bug fix, F, can be made to the rel_2.3 branch using `git cherry-pick`:
 
-  ```
+  ```sh
   git checkout rel_2.3
   git cherry-pick dev~2      # commit F, above
   ```
@@ -483,7 +503,7 @@ Suppose you had a series of commits on your development branch, my_dev, as shown
 
   To apply them on the master branch in the order Y, W, X, Z, you could use the following commands:
 
-  ```
+  ```sh
   git checkout master
   git cherry-pick my_dev^      #Y
   git cherry-pick my_dev~3   #W
@@ -532,16 +552,18 @@ If another developer has cloned your repository or fetched some of your commits,
 
 - The command can edit the meta-information on a commit. For example, by specifying --author you can alter the author of the commit
 
-  ```
+  ```sh
   git commit --amend --author "Bob Miller <kbob@example.com>" 
   ```
 - `git commit --amend --no-edit`: amends a commit without changing its commit message. Replaces the tip of the current branch by creating a new commit
 
-- If you amend a commit that other developers have based their work on, it will look like the basis of their work vanished from the project history. This is a confusing situation for developers to be in and it’s complicated to recover from.
+- If you amend a commit that other developers have based their work on, it will look like the basis of their work vanished from the project history. This is a confusing situation for developers to be in and it’s complicated to recover from. Again, it is recommended not to use this if your code is published in a public repo.
 
 ## Rebasing Commits
-- This command is used to move the starting point a sequence of commits in one branch to a specific commit in another branch. This command requires at least the name of the other branch onto which your commits will
-be relocated. By default, the commits from the current branch that are not already on the other branch are rebased
+
+- This command is used to move the starting point of a sequence of commits in one branch to a specific commit in another branch as if you'd created your branch from a different commit. Git accomplishes this by creating new commits and applying them to the specified base. It's very important to understand that even though the branch looks the same, it's composed of entirely new commits. The primary reason for rebasing is to maintain a linear project history. This gives the later benefit of a clean merge of your feature branch back into the main branch, so you get a much cleaner project history. Also it eliminates the unnecessary merge commits required by `git merge`. You can follow the tip of feature all the way to the beginning of the project without any forks. This makes it easier to navigate your project with commands like git log, git bisect, and gitk.
+
+This command requires at least the name of the other branch onto which your commits will be relocated. By default, the commits from the current branch that are not already on the other branch are rebased
 
 - A common use for `git rebase` is to keep a series of commits that you are developing up-to-date with respect to another branch, usually a _main_ branch or a tracking branch from another repository. In the follwoing, the _topic_ branch started on the _main_ branch when it was at commit B. In the meantime, it has progressed to commit E.
 
@@ -551,7 +573,7 @@ be relocated. By default, the commits from the current branch that are not alrea
 
   You can keep your commit series up-to-date with respect to the main branch by writing the commits so that they are based on commit E rather than B.  
 
-  ```
+  ```sh
   git checkout topic
   git rebase master
   ```
@@ -563,15 +585,54 @@ be relocated. By default, the commits from the current branch that are not alrea
 
 - If the rebase operation turns out to be the totally wrong thing to do, `git rebase --abort` abandons the operation and restores the repository to the state prior to issuing the original git rebase.
 
-### Using git rebase -i 
-When you have developed the feature and are ready to push 
-the patch to the main code repo.
-This command Allows you to interactively reorder the commits, edit, rewrite commit messages, 
-remove, squash multiple commits into one, and split a commit into several using the -i 
-or --interactive option. 
+- If your feature branch was actually as small as a few commits, you would probably be better off rebasing it onto main and doing a fast-forward merge. This prevents superfluous merge commits from cluttering up the project history. While you can use either of these merge strategies, many developers like to use fast-forward merges (facilitated through rebasing) for small features or bug fixes, while reserving 3-way merges for the integration of longer-running features.
 
-This command allows you to modify the commits that make up a branch and 
-place them back onto the same branch or onto a different branch.
+### Using git rebase -i 
+
+Interactive rebasing gives you the opportunity to alter commits as they are moved to the new branch. This is even more powerful than an automated rebase, since it offers complete control over the branch’s commit history. 
+
+This command allows you to interactively reorder the commits, edit, rewrite commit messages, remove, squash multiple commits into one, and split a commit into several using the -i 
+or --interactive option.  This command allows you to modify the commits that make up a branch and  place them back onto the same branch or onto a different branch.
+
+Typically, this is used to clean up a messy history before merging a feature branch into main .
+```sh
+git checkout feature
+git rebase -i main
+```
+This will open a text editor listing all of the commits that are about to be moved:
+```sh
+pick 33d5b7a Message for commit #1
+pick 9480b3d Message for commit #2
+pick 5c67e61 Message for commit #3
+```
+This listing defines exactly what the branch will look like after the rebase is performed. By changing the pick command and/or re-ordering the entries, you can make the branch’s history look like whatever you want. For example, if the 2nd commit fixes a small problem in the 1st commit, you can condense them into a single commit with the fixup command:
+```sh
+pick 33d5b7a Message for commit #1
+fixup 9480b3d Message for commit #2
+pick 5c67e61 Message for commit #3
+```
+When you save and close the file, Git will perform the rebase according to your instructions, resulting in project history that looks like the following:
+
+<p align="center">
+    <img src="./assets/git/git-rebase-interactive.png" alt="drawing" width="500" height="200" style="center" />
+  </p>
+
+Once you understand what rebasing is, the most important thing to learn is when not to do it. The golden rule of git rebase is to never use it on public branches (the branches being changed by others, such as main branch as other developers are working on it). For example, think about what would happen if you rebased main onto your feature branch (as opposed to rebasing feature brach onto main which we did before):
+
+<p align="center">
+    <img src="./assets/git/git-bad-rebase.png" alt="drawing" width="500" height="200" style="center" />
+  </p>
+
+The rebase moves all of the commits in main onto the tip of feature. The problem is that this only happened in your repository. All of the other developers are still working with the original main. Since rebasing results in brand new commits, Git will think that your main branch’s history has diverged from everybody else’s. The only way to synchronize the two main branches is to merge them back together, resulting in an extra merge commit and two sets of commits that contain the same changes (the original ones, and the ones from your rebased branch). Needless to say, this is a very confusing situation.
+
+Another example is when you push a feature branch to a remote repo and then rebase it on your local machine. Now the old commits after rebase get new hash id, so they are not recognized as the same commits as the old same ones on the remote branch. When you try to push, then git will be confused and can not identify that the commits are actually the same. This is even worse when other ppl have already pulled those commits from the remote. This might overwrite some commits or lead to lose of work for the team. Of course, this doesn’t happen when you use `git merge` since it doesn’t touch history of commits.
+
+[See](https://www.youtube.com/watch?v=DkWDHzmMvyg&t=7s)
+
+So, before you run git rebase, always ask yourself, “Is anyone else looking at this branch?” Or “if this branch is already push in remote so possibly somebody might have changed something already?”If the answer is yes, take your hands off the keyboard and start thinking about a non-destructive way to make your changes (e.g., the git revert command). Otherwise, you’re safe to re-write history as much as you like.
+Note that when rebasing your feature branch, you might still get some conflicts if some changes on the main branch conflict with your changes in the feature branch. In this case, you need to resolve the conflict just like you do with merging.
+
+[Ref](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)
 
 
 
@@ -592,6 +653,8 @@ either a _push_ or a _pull_ model
 
 - Use the `git remote` command to create, remove, manipulate, and view a remote. All the remotes you introduce are recorded in the `.git/config` file and can be manipulated using `git config`
 
+- `git remote -v` shows the remote repositorie configured
+
 - `git fetch`: Retrieves objects and their related metadata from a remote repository
 
 - `git pull`: Like git fetch, but also merges changes into a corresponding local branch. `git pull` implies `git fetch` followed by either `git merge` or
@@ -602,15 +665,14 @@ behavior.
 
 - `git ls-remote`: Shows a list of references held by a given remote (on an upstream server). This command indirectly answers the question “Is an update available?”
 
-- During a clone operation, Git creates a _remote-tracking branch_ in the clone for each
-branch in the upstream repository. The set of remote-tracking branches is introduced in a new, separate namespace (clear separation between branches made in a repository by you (topic branches)) within the local repository that is specific to the remote being cloned. They are not branches in a remote repository. The local repository
+- During a clone operation, Git creates a _remote-tracking branch_ in the clone for each branch in the upstream repository. The set of remote-tracking branches is introduced in a new, separate namespace (clear separation between branches made in a repository by you (topic branches)) within the local repository that is specific to the remote being cloned. They are not branches in a remote repository. The local repository
 uses its remote-tracking branches to follow or track changes made in the remote repository.
 
 ### Referring to Remote Repositories
 Git supports several forms of Uniform Resource Locators (URLs) that can be used to name remote repositories. 
 
 - The simplest form of Git URL refers to a repository on a local file system, be it a true physical filesystem or a virtual filesystem mounted locally via the Network File System (NFS). There are two permutations:
-  ```
+  ```sh
   /path/to/repo.git
   file:///path/to/repo.git
   ```
@@ -619,7 +681,7 @@ shared repositories, the file:// form is recommended. As a convenience, the .git
 and `/tmp/Depot/public_html.git` will work.
 
 - When you have a truly remote repository whose data must be retrieved across a network, use a native protocol URL such as:
-  ```
+  ```sh
   git://example.com/path/to/repo.git
   git://example.com/~user/path/to/repo.git
   ```
@@ -630,7 +692,7 @@ requested.
 - For secure, authenticated connections, the Git native protocol can be tunneled over
 Secure Shell(SSH) connection using the following URL templates:
 
-  ```
+  ```sh
   ssh://[user@]example.com[:port]/path/to/repo.git
   ssh://[user@]example.com/path/to/repo.git
   ssh://[user@]example.com/~user2/path/to/repo
@@ -638,7 +700,7 @@ Secure Shell(SSH) connection using the following URL templates:
 - The http:// and https:// URL forms are more important and popular. Notably, most corporate firewalls allow the HTTP port 80 and HTTPS port 443 to remain open while
 the default Git port 9418 is typically blocked and would require an act of Congress to open it. Furthermore, these URL forms are being favored by popular Git hosting sites like GitHub.
 
-  ```
+  ```sh
   http://example.com/path/to/repo.git
   https://example.com/path/to/repo.git
   ```
@@ -652,7 +714,7 @@ development in your initial repository and then push that development to the new
 
 - The command for manipulating remotes is `git remote`. This operation introduces a few new settings in the `.git/config` file:
 
-  ```
+  ```sh
   git remote add origin /tmp/Depot/public_html
 
   # Or
@@ -678,12 +740,12 @@ any ref like jon/bugfixes will be renamed as jdl bugfixes
 
 - The `git config` command can be used to manipulate the entries in your configuration file directly including several config variables for remotes:
 
-  ```
+  ```sh
   git config remote.publish.url 'ssh://git.example.org/pub/repo.git'
   ```
 - You may clone multiple remotes into your repository:
 
-  ```
+  ```sh
   # Grab GitHub's repository
   git clone git://github.com/gitster/git.git
 
@@ -696,7 +758,7 @@ any ref like jon/bugfixes will be renamed as jdl bugfixes
 
 - If you already have a topic branch that you decide should be associated with an upstream repository’s remote-tracking branch, you can establish the relationship using the --upstream option. Typically, this is done after adding a new remote, like this:
 
-  ```
+  ```sh
   # Create remote-tracking branch in your reposity
 
   git remote add upstreamrepo git://git.example.org/upstreamrepo.git
@@ -709,13 +771,13 @@ any ref like jon/bugfixes will be renamed as jdl bugfixes
   ```
 
 ### Pushing Your Changes
-- Any change that you commit is completely local to your repository; it is not yet present in the remote repository. A convenient way to get your commits from your main branch into the origin remote repository is to use the `git push` command: `git push origin master`
+- Any change that you commit is completely local to your repository; it is not yet present in the remote repository. A convenient way to get your commits from your main branch into the origin remote repository is to use the `git push` command: `git push origin main`. Note that you need to set the upstream repository for push command: `git push --set-upstream origin <branch_name>`. 
 
   Git has taken your master branch changes, bundled them
   up, and sent them to the remote repository named _origin_. Git has also performed one more step here: it has taken those same changes and added them to the _origin/main_ branch in your repository as well.
 
   If your remote repository is on a local filesystem, as it is here, then you can easily check by going to the depot directory:
-  ```
+  ```sh
   $ cd /tmp/Depot/public_html.git
   $ git show-branch
   [master] Add a hairy poem.
@@ -725,7 +787,7 @@ any ref like jon/bugfixes will be renamed as jdl bugfixes
 
 - To perform branch add and delete operations on a remote repository, you need to specify it in a git push command:
 
-  ```
+  ```sh
   # First create the new branch locally and then push it 
   git checkout -b foo 
   git push origin foo   
@@ -741,13 +803,13 @@ any ref like jon/bugfixes will be renamed as jdl bugfixes
 
 Once you have established an authoritative repository, it’s easy to add a new developer to a project simply by letting him clone the repository and begin working. They can run the following command:
 
-  ```
+  ```sh
   cd /tmp/bob
   git clone /tmp/Depot/public_html.git
   ```
   Now they have it locally:
 
-  ```
+  ```sh
   cat .git/config
   git branch -a
   ```
@@ -762,7 +824,7 @@ Once you have established an authoritative repository, it’s easy to add a new 
 
   If you want more control, use `fetch` and `rebase -i`:
 
-  ```
+  ```sh
   git checkout main
   git fetch origin main 
   git rebase -i origin main
@@ -773,7 +835,7 @@ Once you have established an authoritative repository, it’s easy to add a new 
 
 - When your local commits are not sync with the ones in remote (_ahead_ or _behind_ or both), `git status` usually reports this status. To see which commits you have in main that are not in origin/main, use a command like this:
 
-  ```
+  ```sh
   git log origin/main..main 
   ```
 
@@ -800,10 +862,22 @@ use the command `git reset --hard ORIG_HEAD`. Doing so in this example would mov
 
 # GitHub
 
+<p align="center">
+    <img src="./assets/git/git-clone-workflow.png" alt="drawing" width="500" height="300" style="center" />
+  </p>
+
+In order to work on a project already exists, you can just fork it first, then clone it to your local machine and start working on it. To fork a public project, you can go to its GitHub project page and select Fork at the top of the page. This fork option is available only while using the web interface. There is no native git command to create a fork. The repo from which you create the fork is referred to as the original upstream repository. Once you fork the original upstream, the forked copy of the repo becomes the origin, and developers with access to the origin can create clones of it on their local machines. After cloning, you can create branches and easily make changes to the code base, like adding features, enhancements, or fixing bugs. But what if you want to contribute your changes back to the original upstream that you do not have right access to from where it was forked? You can submit a pull request for your proposed changes by selecting
+
+
+
 ## Creating Pull Request
 
-- Forking is the enabling step of creating a personal copy of a project, but the real value for the core project lies in the second action, formally called a _pull request_. Pull requests
-allow any user with a commit that she feels makes a useful contribution to the project to announce that contribution to the core project owners. 
+- Forking is the enabling step of creating a personal copy of a project, but the real value for the core project lies in the second action, formally called a _pull request_. Pull requests allow any user with a commit that she feels makes a useful contribution to the project to announce that contribution to the core project owners. 
+
+  <p align="center">
+    <img src="./assets/git/git-fork-workflow.png" alt="drawing" width="500" height="300" style="center" />
+  </p>
+
 - Once a contributor has finished coding a feature, committed that new code to a well-named branch, and pushed that new branch to a fork, it can be turned into a pull request. 
 
 - When the newly pushed branch has been selected from the branch selector drop-down control, the context-sensitive Pull Request button is pressed to initiate the assembly of the pull request announcement. The default behavior of a pull request is to include all of the commits on the current topic branch. However, in cases that call for it, a specific range of commits, as well as the source and target branch, can be manually altered
@@ -815,6 +889,7 @@ allow any user with a commit that she feels makes a useful contribution to the p
 - When the solution in the pull request is sufficiently polished and ready to be merged in, typically to the master branch, then the changes are merged ( or use the automatic merge button on the
 GitHub which a real Git commit).
 
+
 ## Notifications
 A social system like GitHub needs a strong notification mechanism to announce potentially important changes on the projects, organizations, and users that a contributor has elected to watch. Notifications are driven by watches of the previously mentioned three types of items on GitHub. The summary of all notifications that pertain to you are centrally located on a notifications page that is reachable by an icon in the top level navigation.
 
@@ -822,3 +897,14 @@ A social system like GitHub needs a strong notification mechanism to announce po
 
 If the wiki page idea sounded attractive, what about having Git-tracked Markdown files as the foundation of a tool for publishing entire websites. GitHub pages based on
 Jekyll provide exactly that, and can even be mapped to a Domain Name System (DNS) CNAME record as content for a subdomain or primary domain name. 
+
+## Notes
+If you are writing to your repository from a remote machine, you can have GitHub to 
+generate a GitHub Personal Access Token (with appripriate permissions for a limited time, usually repo 
+and write permissions for some days) so you can push code back to your repository from the server. 
+When git promps you for a password, use your PAT instead.
+
+
+Ref:
+
+I. [Version Control with Git, 2nd Edition](https://www.oreilly.com/library/view/version-control-with/9781449345037/)
