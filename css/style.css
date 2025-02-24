@@ -1,0 +1,103 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,400;0,700;1,400;1,700&display=swap'); */
+@import url('https://fonts.googleapis.com/css?family=Lora');
+@import url('https://fonts.googleapis.com/css?family=Tangerine');
+
+
+body {
+  padding: 2cm; /* use custom margin */
+  font-family: 'Lora';
+  font-weight: normal;
+  font-size: 18px;
+  /* line-height: 0.9; */
+  /* column-gap: 0.1in; */
+}
+h1{
+  font-size: 100px;
+  font-family: 'Tangerine';
+  text-shadow: 4px 4px 4px #aaa;
+  text-align: center;
+}
+h2{
+  font-family: 'Lora';
+  font-weight: 700;
+  color: rgb(18, 73, 18);
+}
+h3{
+  font-weight: 700;
+  color: rgb(26, 93, 26);
+}
+
+ul li{
+    /* list-style-type: ; */
+    margin-bottom: 10px;
+    margin-left: 50px;
+}
+/* h1, h2, h3, h4, h5, h6 {
+  font-family: 'Lora', sans-serif;
+  font-weight: bold;
+} 
+h1, h2, h3, h4, h5, h6, p, ul, ol {
+  margin-block-start: 0.4em;
+  margin-block-end: 0.4em;
+} */
+
+/* h1 {
+  font-size: 50pt;
+	padding-bottom: 0.2em;
+} h2 {
+  font-size: 10pt;
+} h3 {
+  font-size: 9pt;
+} h4 {
+  font-size: 8pt;
+} h5 {
+  font-size: 7pt;
+} h6 {
+  font-size: 7pt;
+  color: #777;
+} */
+
+small {
+  font-size: 5pt;
+}
+
+ul {
+  padding-inline-start: 14px;
+} ol {
+  padding-inline-start: 10px;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 2px;
+} 
+
+table, th, td {
+  border: 1px solid;
+}
+tr:nth-child(even) {background-color: #f2f2f2;}
+th {
+  background-color: #0430aa;
+  color: white;
+}
+th, td {
+  border-bottom: 1px solid #ddd;
+}
+th, td {
+  padding: 10px;
+  text-align: center;
+}
+
+code {
+	font-family: 'JetBrains Mono', monospace;
+  font-weight: normal;
+  /* font-size: 6pt; */
+  line-height: 0.9;
+} pre:not(.hljs), pre.hljs code > div {
+	padding: 2pt;
+} pre:not(.hljs) {
+	padding: 4pt;
+	line-height: 0.9;
+}
