@@ -1,5 +1,4 @@
-
-# Topics in Kubernetes
+<h1 class='title'>Kubernetes</h1>
 
 ## From Monolith to Microservices
 
@@ -24,7 +23,7 @@ In contrast,
 
 Refactoring features out of monolith is an incremental approach that offers a gradual transition from a legacy monolith to modern microservices architecture and allows for phased migration of application features into the cloud. The refactoring phase slowly transforms the monolith into a cloud-native application which takes full advantage of cloud features, by coding in new programming languages and applying modern architectural patterns. Through refactoring, a legacy monolith application receives a second chance at life - to live on as a modular system adapted to fully integrate with today's fast-paced cloud automation tools and services.
 
-### Container Orchestration
+## Container Orchestration
 Container images allow us to confine the application code, its runtime, and all of its dependencies in a pre-defined format. The container runtimes like `runC`, `containerd`, or `cri-o` can use pre-packaged images as a source to create and run one or more containers. These runtimes are capable of running containers on a single host, however, in practice, we would like to have a fault-tolerant and scalable solution, achieved by building a single controller/management unit, a collection of multiple hosts connected together. This controller/management unit is generally referred to as a container orchestrator.
 
 Microservices are lightweight applications written in various modern programming languages, with specific dependencies, libraries and environmental requirements. To ensure that an application has everything it needs to run successfully it is packaged together with its dependencies.
@@ -54,8 +53,7 @@ Most container orchestrators can:
 Most container orchestrators can be deployed on the infrastructure of our choice - on bare metal, Virtual Machines, on-premises, on public and hybrid clouds. Kubernetes, for example, can be deployed on a workstation, with or without an isolation layer such as a local hypervisor or container runtime, inside a company's data center, in the cloud on AWS Elastic Compute Cloud (EC2) instances, Google Compute Engine (GCE) VMs, DigitalOcean Droplets, OpenStack, etc. There are turnkey solutions which allow Kubernetes clusters to be installed, with only a few commands, on top of cloud Infrastructures-as-a-Service, such as GCE, AWS EC2, IBM Cloud, Rancher, VMware Tanzu, and multi-cloud solutions through IBM Cloud Private or StackPointCloud.
 Last but not least, there is the managed container orchestration as-a-Service, more specifically the managed Kubernetes as-a-Service solution, offered and hosted by the major cloud providers, such as Amazon Elastic Kubernetes Service (Amazon EKS), Azure Kubernetes Service (AKS), DigitalOcean Kubernetes, Google Kubernetes Engine (GKE), IBM Cloud Kubernetes Service, Oracle Container Engine for Kubernetes, or VMware Tanzu Kubernetes Grid.
 
---------------------
-## Kubernetes
+# Kubernetes
 
 "Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications". According to the abstract of Google's Borg paper, published in 2015, "Google's Borg system is a cluster manager that runs hundreds of thousands of jobs, from many thousands of different applications, across a number of clusters each with up to tens of thousands of machines".
 
@@ -84,17 +82,17 @@ Additional fully supported Kubernetes features are:
 There are many additional features currently in alpha or beta phase. They will add great value to any Kubernetes deployment once they become stable features. For example, support for role-based access control (RBAC) is stable only as of the Kubernetes 1.8 release.
 Another one of Kubernetes' strengths is portability. It can be deployed in many environments such as local or remote Virtual Machines, bare metal, or in public/private/hybrid/multi-cloud setups. Kubernetes extensibility allows it to support and to be supported by many 3rd party open source tools which enhance Kubernetes' capabilities and provide a feature-rich experience to its users. It's architecture is modular and pluggable. Not only does it orchestrate modular, decoupled microservices type applications, but also its architecture follows decoupled microservices patterns. _Kubernetes' functionality can be extended by writing custom resources, operators, custom APIs, scheduling rules or plugins_.
 
-### Kubernetes Architecture
+## Kubernetes Architecture
 
 At a very high level, Kubernetes is a cluster of compute systems categorized by their distinct roles:
 - One or more control plane nodes
 - One or more worker nodes (optional, but recommended).
 
 <p align="center">
-<img src="./assets/k8s/k8s-architecture.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/k8s/k8s-architecture.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
-#### Control Plane
+### Control Plane
 
 - The control plane node provides a running environment for the control plane agents responsible for managing the state of a Kubernetes cluster, and it is the brain behind all operations inside the cluster. 
 
@@ -115,11 +113,11 @@ At a very high level, Kubernetes is a cluster of compute systems categorized by 
   
     In addition, the control plane node runs: Container Runtime, Node Agent, Proxy, Optional add-ons for cluster-level monitoring and logging.
 
-##### API Server
+#### API Server
 
 All the administrative tasks are coordinated by the _kube-apiserver_, a central control plane component running on the control plane node. The API Server intercepts RESTful calls from users, administrators, developers, operators and external agents, then validates and processes them. During processing the API Server reads the Kubernetes cluster's current state from the key-value store, and after a call's execution, the resulting state of the Kubernetes cluster is saved in the key-value store for persistence. The API Server is the only control plane component to talk to the key-value store, both to read from and to save Kubernetes cluster state information - acting as a middle interface for any other control plane agent inquiring about the cluster's state.
 
-##### Scheduler
+#### Scheduler
 A scheduler watches for newly created Pods that have no Node assigned. For every Pod that the scheduler discovers, and becomes responsible for finding the best Node for that Pod to run on. The scheduler reaches this placement decision taking into account the scheduling principles described below.
 
 _kube-scheduler_ is the default scheduler for Kubernetes and is designed so that, if you want and need to, you can write your own scheduling component and use that instead. Kube-scheduler selects an optimal node to run newly created or not yet scheduled (unscheduled) pods. Since containers in pods - and pods themselves - can have different requirements, the scheduler filters out any nodes that don't meet a Pod's specific scheduling needs. 
@@ -131,7 +129,7 @@ The scheduler runs a set of functions to score the feasible Nodes and picks a No
 Factors that need to be taken into account for scheduling decisions include individual and collective resource requirements, hardware, software, policy constraints, affinity and anti-affinity specifications, data locality, inter-workload interference, and so on.
 
 
-##### Controller Managers
+#### Controller Managers
 
 The controller managers are components of the control plane node running controllers or operator processes to regulate the state of the Kubernetes cluster. Controllers are watch-loop processes continuously running and comparing the cluster's desired state (provided by objects' configuration data) with its current state (obtained from the key-value store via the API Server). In case of a mismatch, corrective action is taken in the cluster until its current state matches the desired state.
 
@@ -139,7 +137,7 @@ The _kube-controller-manager_ runs controllers or operators responsible to act w
 
 The _cloud-controller-manager_ runs controllers or operators responsible to interact with the underlying infrastructure of a cloud provider when nodes become unavailable, to manage storage volumes when provided by a cloud service, and to manage load balancing and routing.
 
-##### Key-Value Data Store
+#### Key-Value Data Store
 
 **`etcd`** is an open source project under the Cloud Native Computing Foundation (CNCF). `etcd` is a 
 - Strongly consistent, 
@@ -148,7 +146,7 @@ The _cloud-controller-manager_ runs controllers or operators responsible to inte
 - Out of all the control plane components, only the API Server is able to communicate with the etcd data store. 
 - In Kubernetes, besides storing the cluster state, etcd is also used to store configuration details such as subnets, ConfigMaps, Secrets, etc.
 
-#### Data Plane 
+### Data Plane 
 A **worker node** provides a running environment for client applications. These applications are microservices running as application containers. In Kubernetes the application containers are encapsulated in Pods, controlled by the cluster control plane agents running on the control plane node. Pods are scheduled on worker nodes, where they find required compute, memory and storage resources to run, and networking to talk to each other and the outside world. 
 
 A **Pod** is the smallest scheduling work unit in Kubernetes. It is a logical collection of one or more containers scheduled together, and the collection can be started, stopped, or rescheduled as a single unit of work. Also, in a multi-worker Kubernetes cluster, the network traffic between client users and the containerized applications deployed in Pods is handled directly by the worker nodes, and is not routed through the control plane node.
@@ -160,7 +158,7 @@ A worker node has the following components:
 - Add-ons for DNS, Dashboard user interface, cluster-level monitoring and logging
   
 
-##### Container Runtime
+#### Container Runtime
 Although Kubernetes is described as a "container orchestration engine", it lacks the capability to directly handle and run containers. In order to manage a container's lifecycle, Kubernetes requires a container runtime on the node where a Pod and its containers are to be scheduled. Runtimes are required on all nodes of a Kubernetes cluster, both control plane and worker. 
 
 Kubernetes supports several container runtimes:
@@ -170,7 +168,7 @@ Kubernetes supports several container runtimes:
 - Mirantis Container Runtime 
 - Formerly known as the Docker Enterprise Edition.
 
-##### Node Agent - kubelet
+#### Node Agent - kubelet
 The kubelet is an agent running on each node, control plane and workers, and communicates with the control plane. It receives Pod definitions, primarily from the API Server, and interacts with the container runtime on the node to run containers associated with the Pod. It also monitors the health and resources of Pods running containers.
 
 The kubelet connects to container runtimes through a plugin based interface, the Container Runtime Interface (CRI). The CRI consists of protocol buffers, gRPC API, libraries, and additional specifications and tools. 
@@ -181,10 +179,10 @@ The kubelet connects to container runtimes through a plugin based interface, the
 
 In order to connect to interchangeable container runtimes, kubelet uses a CRI shim, an application which provides a clear abstraction layer between kubelet and the container runtime. 
 
-##### Proxy-Kube-proxy
+#### Proxy-Kube-proxy
 The kube-proxy is the network agent which runs on each node, control plane and workers, responsible for dynamic updates and maintenance of all networking rules on the node. It abstracts the details of Pods networking and forwards connection requests to the containers in the Pods. The kube-proxy is responsible for TCP, UDP, and SCTP stream forwarding or random forwarding across a set of Pod backends of an application, and it implements forwarding rules defined by users through Service API objects.
 
-##### Add-ons
+#### Add-ons
 Add-ons are cluster features and functionality not yet available in Kubernetes, therefore implemented through 3rd-party pods and services.
 
 - DNS: Cluster DNS is a DNS server required to assign DNS records to Kubernetes objects and resources
@@ -192,7 +190,7 @@ Add-ons are cluster features and functionality not yet available in Kubernetes, 
 - Monitoring: Collects cluster-level container metrics and saves them to a central data store
 - Logging: Collects cluster-level container logs and saves them to a central log store for analysis
 
-#### Networking Challenges
+### Networking Challenges
 Decoupled microservices based applications rely heavily on networking in order to mimic the tight-coupling once available in the monolithic era. Networking, in general, is not the easiest to understand and implement. Kubernetes is no exception - as a containerized microservices orchestrator it needs to address a few distinct networking challenges:
 - **Container-to-Container** communication inside Pods
 - **Pod-to-Pod** communication on the same node and across cluster nodes
@@ -211,7 +209,7 @@ Let's not forget about containers though. They share the Pod's network namespace
 
 A successfully deployed containerized application running in Pods inside a Kubernetes cluster may require accessibility from the outside world. Kubernetes enables external accessibility through **Services**, complex encapsulations of network routing rule definitions stored in **iptables** on cluster nodes and implemented by **kube-proxy** agents. By exposing services to the external world with the aid of kube-proxy, applications become accessible from outside the cluster over a virtual IP address and a dedicated port number.
 
-#### kubeadm
+### kubeadm
 **kubeadm** is a first-class citizen of the Kubernetes ecosystem. It is a secure and recommended method to bootstrap a multi-node production ready Highly Available Kubernetes cluster, on-premises or in the cloud. kubeadm can also bootstrap a single-node cluster for learning. It has a set of building blocks to set up the cluster, but it is easily extendable to add more features. Please note that kubeadm does not support the provisioning of hosts - they should be provisioned separately with a tool of our choice.
 
 #### kubectl 
@@ -228,7 +226,7 @@ If multiple users and teams use the same Kubernetes cluster we can partition the
   
 Good practice, however, is to create additional Namespaces, as desired, to virtualize the cluster and isolate users, developer teams, applications, or tiers.
 
-#### Pods
+### Pods
 
 A **Pod** is the smallest Kubernetes workload object. It is the unit of deployment in Kubernetes, which represents a single instance of the application. A Pod is a logical collection of one or more containers, enclosing and isolating them to ensure that they:
 - Are scheduled together on the same host with the Pod
@@ -252,7 +250,7 @@ spec:
 
 The `apiVersion` field must specify `v1` for the Pod object definition. The second required field is kind specifying the Pod object type. The third required field metadata, holds the object's name and optional `labels` and `annotations`. The fourth required field `spec` marks the beginning of the block defining the desired state of the Pod object - also named the PodSpec. Our Pod creates a single container running the `nginx:1.22.1` image pulled from a container image registry, in this case from Docker Hub. The `containerPort` field specifies the container port to be exposed by Kubernetes resources for inter-application access or external client access - to be explored in the Services chapter. The contents of spec are evaluated for scheduling purposes, then the kubelet of the selected node becomes responsible for running the container image with the help of the container runtime of the node. The Pod's name and labels are used for workload accounting purposes.
 
-#### Labels
+### Labels
 **Labels** are key-value pairs attached to Kubernetes objects (e.g. Pods, ReplicaSets, Nodes, Namespaces, Persistent Volumes). Labels are used to organize and select a subset of objects, based on the requirements in place. Many objects can have the same Label(s). Labels do not provide uniqueness to objects. Controllers use Labels to logically group together decoupled objects, rather than using objects' names or IDs.
 Controllers, or operators, and Services, use label selectors to select a subset of objects. Kubernetes supports two types of Selectors:
 
@@ -265,7 +263,7 @@ Controllers, or operators, and Services, use label selectors to select a subset
     <img src="./assets/k8s/labels.png" alt="drawing" width="500" height="400" style="center" />
 </p>
 
-#### Deployment
+### Deployment
 
 Generally, we do not deploy a Pod independently, as it would not be able to re-start itself if terminated in error because a Pod misses the much desired self-healing feature that Kubernetes otherwise promises. The recommended method is to use some type of an operator to run and manage Pods. The default recommended controller is the **Deployment** which configures a **ReplicaSet** controller to manage application Pods' lifecycle. A ReplicaSet is, in part, the next-generation ReplicationController, as it implements the replication and self-healing aspects of the ReplicationController. ReplicaSets support both equality- and set-based Selectors, whereas ReplicationControllers only support equality-based Selectors. 
 
@@ -308,26 +306,25 @@ The `apiVersion` field is the first required field, and it specifies the API end
 A **`rolling update`** is triggered when we update specific properties of the Pod Template for a deployment. While planned changes such as updating the container image, container port, volumes, and mounts would trigger a new Revision, other operations that are dynamic in nature, like scaling or labeling the deployment, do not trigger a rolling update, thus do not change the Revision number.
 Once the rolling update has completed, the Deployment will show both ReplicaSets A and B, where A is scaled to 0 (zero) Pods, and B is scaled to 3 Pods. This is how the Deployment records its prior state configuration settings, as Revisions. Once ReplicaSet B and its 3 Pods versioned 1.21.5 are ready, the Deployment starts actively managing them. However, the Deployment keeps its prior configuration states saved as Revisions which play a key factor in the **rollback** capability of the Deployment - returning to a prior known configuration state (`kubectl rollout undo deployment/nginx-deployment`).
 
-#### Service
+### Service
 
 A containerized application deployed to a Kubernetes cluster may need to reach other such applications, or it may need to be accessible to other applications and possibly clients. This is problematic because the container does not expose its ports to the cluster's network, and it is not discoverable either. The solution would be a simple **port mapping**, as offered by a typical container host. However, due to the complexity of the Kubernetes framework, such a simple port mapping is not that "simple". The solution is much more sophisticated, with the involvement of the kube-proxy node agent, IP tables, routing rules, cluster DNS server, all collectively implementing a micro-load balancing mechanism that exposes a container's port to the cluster's network, even to the outside world if desired. This mechanism is called a **Service**, and it is the recommended method to expose any containerized application to the Kubernetes network. The benefits of the Kubernetes Service becomes more obvious when exposing a multi-replica application, when multiple containers running the same image need to expose the same port. This is where the simple port mapping of a container host would no longer work, but the Service would have no issue implementing such a complex requirement. 
 
---------
 
-## Authorization
+# Authorization
 
 After a successful authentication, users can send the API requests to perform different operations. Here, these API requests get authorized by Kubernetes using various authorization modules that allow or deny the requests.
 
 Some of the API request attributes that are reviewed by Kubernetes include **user**, **group**, **Resource**, **Namespace**, or **API group**, to name a few. Next, these attributes are evaluated against policies. If the evaluation is successful, then the request is allowed, otherwise it is denied. 
 
-#### Node
+### Node
 Node authorization is a special-purpose authorization mode which specifically authorizes API requests made by kubelets. It authorizes the kubelet's read operations for services, endpoints, or nodes, and writes operations for nodes, pods, and events.
 
-#### Webhook
+### Webhook
 
 In Webhook mode, Kubernetes can request authorization decisions to be made by third-party services, which would return true for successful authorization, and false for failure. In order to enable the Webhook authorizer, we need to start the API server with the `--authorization-webhook-config-file=SOME_FILENAME` option, where `SOME_FILENAME` is the configuration of the remote authorization service.
 
-#### Role-Based Access Control (RBAC)
+### Role-Based Access Control (RBAC)
 
 In general, with RBAC we regulate the access to resources based on the Roles of individual users.  While creating the Roles, we restrict resource access by specific operations, such as create, get, update, patch, etc. These operations are referred to as verbs that can appear in `kubectl` command for example (`kubectl get pods`, `kubectl patch deployment ...`).
 
@@ -394,7 +391,7 @@ The manifest defines a bind between the pod-reader Role and user bob, to restric
 
 To enable the RBAC mode, we start the API server with the `--authorization-mode=RBAC` option, allowing us to dynamically configure policies. For more details, please review the [RBAC mode](https://kubernetes.io/docs/reference/access-authn-authz/rbac/).
 
-##### Example of User Autherization using RBAC
+### Example of User Autherization using RBAC
 
 You can find users or context by running command 
 ```sh
@@ -635,7 +632,7 @@ role.rbac.authorization.k8s.io/pod-read-access created
 Now bob can list the pods by runing the command `kubectl --context=bob-context get pods` to see the pod `nginx` without getting error.
 
 
-#### ServiceAccount permissions
+### ServiceAccount Permissions
 
 A [service account](https://kubernetes.io/docs/concepts/security/service-accounts/) is a type of non-human account that, in Kubernetes, provides a distinct identity in a Kubernetes cluster. Application Pods, system components, and entities inside and outside the cluster can use a specific ServiceAccount's credentials to identify as that ServiceAccount. This identity is useful in various situations, including authenticating to the API server or implementing identity-based security policies.
 
@@ -649,7 +646,7 @@ Service accounts exist as ServiceAccount objects in the API server. Service acco
 
 Service accounts are different from user accounts, which are authenticated human users in the cluster. By default, user accounts don't exist in the Kubernetes API server; instead, the API server treats user identities as opaque data. You can authenticate as a user account using multiple methods. Some Kubernetes distributions might add custom extension APIs to represent user accounts in the API server.
 
-##### Use cases for Kubernetes service accounts
+### Use cases for Kubernetes Service Accounts
 
 As a general guideline, you can use service accounts to provide identities in the following scenarios:
 
@@ -661,7 +658,7 @@ As a general guideline, you can use service accounts to provide identities in th
 - An external service needs to communicate with the Kubernetes API server. For example, authenticating to the cluster as part of a CI/CD pipeline.
 - You use third-party security software in your cluster that relies on the ServiceAccount identity of different Pods to group those Pods into different contexts.
 
-##### Grant permissions to a ServiceAccount
+#### Grant Permissions to Service Accounts
 
 You can use RBAC mechanism to grant the minimum permissions required by each service account. You create a role, which grants access, and then bind the role to your ServiceAccount. RBAC lets you define a minimum set of permissions so that the service account permissions follow the principle of least privilege. Pods that use that service account don't get more permissions than are required to function correctly.
 
@@ -671,7 +668,7 @@ To assign a ServiceAccount to a Pod, you set the `spec.serviceAccountName` field
 
 By default, Kubernetes provides the Pod with the credentials for an assigned ServiceAccount, whether that is the default ServiceAccount or a custom ServiceAccount that you specify.
 
-#### Admission Control
+### Admission Control
 **Admission controllers** are used to specify granular access control policies, which include allowing privileged containers, checking on resource quota, etc. We force these policies using different admission controllers, like ResourceQuota, DefaultStorageClass, AlwaysPullImages, etc. They come into effect only after API requests are authenticated and authorized.
 
 To use admission controls, we must start the Kubernetes API server with the `--enable-admission-plugins`, which takes a comma-delimited, ordered list of controller names:
@@ -683,10 +680,9 @@ Kubernetes has some admission controllers enabled by default. For more details, 
 Kubernetes admission control can also be implemented though custom plugins, for a [dynamic admission control method](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/). These plugins are developed as extensions and run as admission webhooks.
 
 
----------------
-## Services
+# Services
 
-#### Connecting Users or Applications to Pods
+### Connecting Users or Applications to Pods
 
 To access the application, a user or another application need to connect to the Pods. As Pods 
 - are ephemeral in nature, resources like IP addresses allocated to them cannot be static
@@ -695,7 +691,7 @@ To access the application, a user or another application need to connect to the 
 To overcome this situation, Kubernetes provides a higher-level abstraction called Service, which logically groups Pods and defines a policy to access them. This grouping is achieved via Labels and Selectors. Labels and Selectors use a key-value pair format. In the following graphical representation, app is the Label key, frontend and db are Label values for different Pods.
 
 <p align="center">
-    <img src="./assets/k8s/services.png" alt="drawing" width="500" height="400" style="center" />
+    <img src="./assets/k8s/services.png" alt="drawing" width="600" height="400" style="center" />
 </p>
 
 Services can expose single Pods, ReplicaSets, Deployments, DaemonSets, and StatefulSets. When exposing the Pods managed by an operator, the Service's Selector may use the same label(s) as the operator.
@@ -722,16 +718,16 @@ While the Service forwards traffic to Pods, we can select the targetPort on the 
  
 A logical set of a Pod's IP address, along with the targetPort is referred to as a **Service endpoint**. In our example, the frontend-svc Service has 3 endpoints: `10.0.1.3:5000`, `10.0.1.4:5000`, and `10.0.1.5:5000`. Endpoints are created and managed automatically by the Service, not by the Kubernetes cluster administrator. 
 
-#### kube-proxy
+### kube-proxy
 Each cluster node runs a daemon called kube-proxy, a node agent that watches the API server on the master node for the addition, updates, and removal of Services and endpoints. kube-proxy is responsible for implementing the Service configuration on behalf of an administrator or developer, in order to enable traffic routing to an exposed application running in Pods. 
 
 In the example below, for each new Service, on each node, kube-proxy configures iptables rules to capture the traffic for its ClusterIP and forwards it to one of the Service's endpoints. Therefore any node can receive the external traffic and then route it internally in the cluster based on the iptables rules. When the Service is removed, kube-proxy removes the corresponding iptables rules on all nodes as well.
 
 <p align="center">
-    <img src="./assets/k8s/service-ip.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/k8s/service-ip.png" alt="drawing" width="600" height="400" style="center" />
 </p>
 
-#### Traffic Policies
+## Traffic Policies
 
 The kube-proxy node agent together with the iptables implement the load-balancing mechanism of the Service when traffic is being routed to the application Endpoints. Due to restricting characteristics of the iptables this load-balancing is random by default. This means that the Endpoint Pod to receive the request forwarded by the Service will be randomly selected out of many replicas. This mechanism does not guarantee that the selected receiving Pod is the closest or even on the same node as the requester, therefore not the most efficient mechanism. Since this is the iptables supported load-balancing mechanism, if we desire better outcomes, we would need to take advantage of traffic policies. 
 
@@ -747,7 +743,7 @@ As Services are the primary mode of communication between containerized applica
 - Environment Variables:
   As soon as the Pod starts on any worker node, the kubelet daemon running on that node adds a set of environment variables in the Pod for all active Services. For example, if we have an active Service called redis-master, which exposes port 6379, and its ClusterIP is 172.17.0.6, then, on a newly created Pod, we can see the following environment variables:
 
-    ```  
+    ```sh  
     REDIS_MASTER_SERVICE_HOST=172.17.0.6
     REDIS_MASTER_SERVICE_PORT=6379
     REDIS_MASTER_PORT=tcp://172.17.0.6:6379
@@ -763,7 +759,7 @@ As Services are the primary mode of communication between containerized applica
   
     This is the most common and highly recommended solution. For example, in the previous section's image, we have seen that an internal DNS is configured, which maps our Services `frontend-svc` and `db-svc` to 172.17.0.4 and 172.17.0.5 IP addresses respectively. 
 
-#### ServiceType: ClusterIP and NodePort
+### ServiceType: ClusterIP and NodePort
 While defining a Service, we can also choose its access scope. We can decide whether the Service:
 - Is only accessible within the cluster
 - Is accessible from within the cluster and the external world
@@ -776,14 +772,15 @@ ClusterIP is the default ServiceType. A Service receives a Virtual IP address, k
 With the NodePort ServiceType, in addition to a ClusterIP, a high-port, dynamically picked from the default range 30000-32767, is mapped to the respective Service, from all the worker nodes. For example, if the mapped NodePort is 32233 for the service `frontend-svc`, then, if we connect to any worker node on port 32233, the node would redirect all the traffic to the assigned ClusterIP - 172.17.0.4. If we prefer a specific high-port number instead, then we can assign that high-port number to the NodePort from the default range when creating the Service. 
 
 <p align="center">
-    <img src="./assets/k8s/nodeport.png" alt="drawing" width="600" height="300" style="center" />
+    <img src="./assets/k8s/nodeport.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 The NodePort ServiceType is useful when we want to make our Services accessible from the external world. The end-user connects to any worker node on the specified high-port, which proxies the request internally to the ClusterIP of the Service, then the request is forwarded to the applications running inside the cluster. Let's not forget that the Service is load balancing such requests, and only forwards the request to one of the Pods running the desired application. 
 
 ```yaml
 apiVersion: v1
-kind: Service metadata:
+kind: Service
+metadata:
   name: web-service
   labels:
     app: nginx
@@ -799,11 +796,11 @@ spec:
 To manage access to multiple application Services from the external world, administrators can configure a reverse proxy - an ingress, and define rules that target specific Services within the cluster.
 
 
-#### ServiceType: LoadBalancer
+### ServiceType: LoadBalancer
 With the [LoadBalancer ServiceType](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer) NodePort and ClusterIP are automatically created, and the external load balancer will route to them. The Service is exposed at a static port on each worker node. The Service is exposed externally using the underlying cloud provider's load balancer feature.
 
 <p align="center">
-    <img src="./assets/k8s/loadbalancer.png" alt="drawing" width="600" height="300" style="center" />
+    <img src="./assets/k8s/loadbalancer.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 NOTE: The LoadBalancer ServiceType will only work if the underlying infrastructure supports the automatic creation of Load Balancers and have the respective support in Kubernetes, as is the case with the Google Cloud Platform and AWS. If no such feature is configured, the LoadBalancer IP address field is not populated, it remains in Pending state, but the Service will still work as a typical NodePort type Service.
@@ -812,7 +809,7 @@ NOTE: The LoadBalancer ServiceType will only work if the underlying infrastructu
 ## Liveness and Readiness Probes
 While containerized applications are scheduled to run in pods on nodes across our cluster, at times the applications may become unresponsive or may be delayed during startup. Implementing [Liveness and Readiness Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) allows the kubelet to control the health of the application running inside a Pod's container and force a container restart of an unresponsive application. When defining both Readiness and Liveness Probes, it is recommended to allow enough time for the Readiness Probe to possibly fail a few times before a pass, and only then check the Liveness Probe. If Readiness and Liveness Probes overlap there may be a risk that the container never reaches ready state, being stuck in an infinite re-create - fail loop.
 
-#### Liveness
+### Liveness
 If a container in the Pod has been running successfully for a while, but the application running inside this container suddenly stopped responding to our requests, then that container is no longer useful to us. This kind of situation can occur, for example, due to application deadlock or memory pressure. In such a case, it is recommended to restart the container to make the application available.
 
 Rather than restarting it manually, we can use a **Liveness Probe**. Liveness Probe checks on an application's health, and if the health check fails, kubelet restarts the affected container automatically.
@@ -852,7 +849,7 @@ spec:
 
 The existence of the `/tmp/healthy` file is configured to be checked every 5 seconds using the `periodSeconds` parameter. The `initialDelaySeconds` parameter requests the kubelet to wait for 15 seconds before the first probe. When running the command line argument to the container, we will first create the `/tmp/healthy` file, and then we will remove it after 30 seconds. The removal of the file would trigger a probe failure, while the failureThreshold parameter set to 1 instructs kubelet to declare the container unhealthy after a single probe failure and trigger a container restart as a result.
 
-#### Liveness HTTP Request
+### Liveness HTTP Request
 In the following example, the kubelet sends the HTTP GET request to the /healthz endpoint of the application, on port 8080. If that returns a failure, then the kubelet will restart the affected container; otherwise, it would consider the application to be alive:
 
 ```yaml
@@ -868,7 +865,7 @@ In the following example, the kubelet sends the HTTP GET request to the /healt
        periodSeconds: 5
 ```
 
-#### TCP Liveness Probe
+### TCP Liveness Probe
 
 With TCP Liveness Probe, the kubelet attempts to open the TCP Socket to the container which is running the application. If it succeeds, the application is considered healthy, otherwise the kubelet would mark it as unhealthy and restart the affected container.
 
@@ -900,12 +897,12 @@ A Pod with containers that do not report ready status will not receive traffic f
 Readiness Probes are configured similarly to Liveness Probes. Their configuration also remains the same.
 
 
-## Kubernetes Volume Management
+# Kubernetes Volume Management
 As we know, containers running in Pods are ephemeral in nature. All data stored inside a container is deleted if the container crashes. However, the kubelet will restart it with a clean state, which means that it will not have any of the old data.
 
 To overcome this problem, Kubernetes uses **Volumes**, storage abstractions that allow various storage technologies to be used by Kubernetes and offered to containers in Pods as storage media. A Volume is essentially a mount point on the container's file system backed by a storage medium. The storage medium, content and access mode are determined by the Volume Type. In Kubernetes, a Volume is linked to a Pod and can be shared among the containers of that Pod. Although the Volume has the same life span as the Pod, meaning that it is deleted together with the Pod, the Volume outlives the containers of the Pod - this allows data to be preserved across container restarts.
  
-#### PersistentVolumes
+## PersistentVolumes
 
 In a typical IT environment, storage is managed by the storage/system administrators. The end user will just receive instructions to use the storage but is not involved with the underlying storage management.
 
@@ -914,25 +911,25 @@ In the containerized world, we would like to follow similar rules, but it become
 A Persistent Volume is a storage abstraction backed by several storage technologies, which could be local to the host where the Pod is deployed with its application container(s), network attached storage, cloud storage, or a distributed storage solution. A Persistent Volume is statically provisioned by the cluster administrator. 
 
 <p align="center">
-    <img src="./assets/k8s/persistant-vol.png" alt="drawing" width="400" height="200" style="center" />
+    <img src="./assets/k8s/persistant-vol.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 PersistentVolumes can be [dynamically](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/) provisioned based on the StorageClass resource. A StorageClass contains predefined provisioners and parameters to create a PersistentVolume. Using PersistentVolumeClaims, a user sends the request for dynamic PV creation, which gets wired to the StorageClass resource.
 
-#### PersistentVolumeClaims
+### Persistent Volume Claims
 
-A PersistentVolumeClaim (PVC) is a request for storage by a user. Users request for PersistentVolume resources based on storage class, access mode, size, and optionally volume mode. There are four access modes: ReadWriteOnce (read-write by a single node), ReadOnlyMany (read-only by many nodes), ReadWriteMany (read-write by many nodes), and ReadWriteOncePod (read-write by a single pod). The optional volume modes, filesystem or block device, allow volumes to be mounted into a pod's directory or as a raw block device respectively. Once a suitable PersistentVolume is found, it is bound to a PersistentVolumeClaim. 
+A PersistentVolumeClaim (PVC) is a request for storage by a user. Users request for PersistentVolume resources based on storage class, access mode, size, and optionally volume mode. There are four access modes: `ReadWriteOnce` (read-write by a single node), `ReadOnlyMany` (read-only by many nodes), `ReadWriteMany` (read-write by many nodes), and `ReadWriteOncePod` (read-write by a single pod). The optional volume modes, filesystem or block device, allow volumes to be mounted into a pod's directory or as a raw block device respectively. Once a suitable PersistentVolume is found, it is bound to a PersistentVolumeClaim. 
 
 After a successful bound, the PersistentVolumeClaim resource can be used by the containers of the Pod.
 
 Once a user finishes its work, the attached PersistentVolumes can be released. The underlying PersistentVolumes can then be reclaimed (for an admin to verify and/or aggregate data), deleted (both data and volume are deleted), or recycled for future usage (only data is deleted), based on the configured persistentVolumeReclaimPolicy property. 
 
-#### Container Storage Interface (CSI)
+### Container Storage Interface (CSI)
 Container orchestrators like Kubernetes, Mesos, Docker or Cloud Foundry used to have their own methods of managing external storage using Volumes. For storage vendors, it was challenging to manage different Volume plugins for different orchestrators. A maintainability challenge for Kubernetes as well, it involved in-tree storage plugins integrated into the orchestrator's source code. Storage vendors and community members from different orchestrators started working together to standardize the Volume interface - a volume plugin built using a standardized Container Storage Interface (CSI) designed to work on different container orchestrators with a variety of storage providers. Explore the CSI specifications for more details.
 
 Between Kubernetes releases v1.9 and v1.13 CSI matured from alpha to stable support, which makes installing new CSI-compliant Volume drivers very easy. With CSI, third-party storage providers can develop solutions without the need to add them into the core Kubernetes codebase. These solutions are CSI drivers installed only when required by cluster administrators.
 
-##### Using a Shared hostPath Volume Type Demo Guide
+#### Using a Shared hostPath Volume Type Demo Guide
 
 This exercise guide includes a Deployment definition manifest that can be used as a template to define other similar objects as needed. In addition to the volumes and volume mounts specified for each container, a command stanza allows us to run a desired command in one of the containers. The debian container's shell command line interpreter (sh) is invoked to run the echo and sleep commands (-c).
 
@@ -980,9 +977,9 @@ spec:
 status: {}
 ```
 
-------
 
-## ConfigMaps and Secrets
+
+# ConfigMaps and Secrets
 
 ConfigMaps allow us to decouple the configuration details from the container image. Using ConfigMaps, we pass configuration data as key-value pairs, which are consumed by Pods or any other system components and controllers, in the form of environment variables, sets of commands and arguments, or volumes. We can create ConfigMaps from literal values, from configuration files, from one or more files or directories.
 
@@ -1016,7 +1013,7 @@ metadata:
 
 With the `-o` yaml option, we are requesting the kubectl command to produce the output in the YAML format. As we can see, the object has the ConfigMap kind, and it has the key-value pairs inside the data field. The name of ConfigMap and other details are part of the metadata field. 
 
-#### Use ConfigMaps Inside Pods: As Environment Variables
+### Use ConfigMaps Inside Pods: As Environment Variables
 
 Inside a Container, we can retrieve the key-value data of an entire ConfigMap or the values of specific ConfigMap keys as environment variables.
 
@@ -1123,7 +1120,7 @@ spec:
 status: {}
 ```
 
-#### Secrets
+## Secrets
 
 Let's assume that we have a Wordpress blog application, in which our wordpress frontend connects to the MySQL database backend using a password. While creating the Deployment for wordpress, we can include the MySQL password in the Deployment's YAML file, but the password would not be protected. The password would be available to anyone who has access to the configuration file.
 
@@ -1264,7 +1261,7 @@ spec:
 ….
 ```
 
-#### Use Secrets Inside Pods: As Volumes
+### Use Secrets Inside Pods: As Volumes
 We can also mount a Secret as a Volume inside a Pod. The following example creates a file for each my-password Secret key (where the files are named after the names of the keys), the files containing the values of the respective Secret keys:
 
 ```sh
@@ -1284,7 +1281,7 @@ spec:
 ....
 ```
 
-## Ingress
+# Ingress
 
 In an earlier chapter, we saw how we can access our deployed containerized application from the external world via Services. Among the ServiceTypes the NodePort and LoadBalancer are the most often used. For the LoadBalancer ServiceType, we need to have support from the underlying infrastructure. Even after having the support, we may not want to use it for every Service, as LoadBalancer resources are limited and they can increase costs significantly. Managing the NodePort ServiceType can also be tricky at times, as we need to keep updating our proxy settings and keep track of the assigned ports.
 
@@ -1405,8 +1402,8 @@ $ sudo vim /etc/hosts
 
 Now we can open `blue.example.com` and `green.example.com` on the browser and access each application.
 
-------
-## Advanced Topics
+
+# Advanced Topics
 
 ### Annotations
 With Annotations, we can attach arbitrary non-identifying metadata to any objects, in a key-value format:
@@ -1570,8 +1567,6 @@ The **Canary** strategy runs two application releases simultaneously managed by 
 The **Blue/Green** strategy runs the same application release or two releases of the application on two isolated environments, but only one of the two environments is actively receiving traffic, while the second environment is idle, or may undergo rigorous testing prior to shifting traffic to it. This strategy would also require two independent Deployment controllers, each exposed by their dedicated Services, however, a traffic shifting mechanism is also required. Typically, the traffic shifting can be implemented with the use of an Ingress. 
 
 
--------------------------
----------------
 
 # Introduction to Istio
 
@@ -1635,7 +1630,7 @@ Here are some of the challenges that the new architecture posed:
 - **Traffic management**: 
   The ability to route requests flexibly to different services under different conditions started becoming a necessity
 
-#### Early Solutions
+### Early Solutions
 Netflix was one such company that, out of necessity, had made the move to cloud-native. Netflix was growing at such a rapid pace that they had but a few months to migrate their systems to AWS before they ran out of capacity in their data center.
 In the process of that transition, they ran into many of the above-described problems. Netflix teams began addressing their issues by developing several projects, which they chose to open-source. Netflix teams built the _Eureka_ service registry to solve the problems of service discovery. They wrote _Ribbon_ to support client-side load balancing. They developed the _Hystrix_ library (and dashboards) to deal with cascading failures, and the _Zuul_ proxy was designed to give them the routing flexibility they needed for a variety of needs from blue-green deployments to failover, troubleshooting, and chaos engineering.
 
@@ -1700,19 +1695,19 @@ Istio provides numerous features that make software development and delivery fas
  
 Following is a brief description of key capabilities that you can expect Istio + Envoy software to provide:
 
-#### Security
+### Security
 Istio helps application teams to achieve zero trust security with the ability to define and implement **authentication**, **authorization**, and **access control policies**. All your data communicated among the services, in and outside of the cluster or data center, will be encrypted based on **mTLS protocols** provided by Istio resources. You can also ensure **authentication of apps from internal and external users using JSON Web Tokens (JWT)** provided by Istio.
 
-#### Service Discovery
+### Service Discovery
 One of the primary needs of an application running in a production environment is to be highly available. This requires one to scale up the number of service instances with increasing load and scale down when needed to save costs. Istio’s service discovery capability keeps track of all the available nodes ready to pick up new tasks. In case of node unavailability, service discovery removes a node from the list of available nodes and stops sending new requests to the node.
 
-#### Traffic Management
+### Traffic Management
 Using Envoy proxies, Istio provides flexibility to finely control the traffic among the available services. Istio provides features like **load balancing**, **health checks**, and **deployment strategies**. Istio allows load balancing based on algorithms that include round robin, random selection, weighted algorithms, etc. Istio performs constant health checks of service instances to ensure they are available before routing the traffic request. And based on the deployment type used in the configuration, Istio drives traffic to new nodes in a weighted pattern.
 
-#### Resilience
+### Resilience
 Istio removes the need for coding **circuit breakers** within an application. Istio helps platform architects to define mechanisms such as **timeouts** to a service, number of **retries** to be made and planned **automatic failover** of high availability (HA) systems, without the application knowing about them.
 
-#### Observability
+### Observability
 Istio keeps _track of network requests and traces_ each call across multiple services. Istio provides the **telemetry** (such as latency, saturation, traffic health, and errors) that helps SREs to understand service behavior and troubleshoot, maintain, and optimize their applications.
 
 #### Advanced Deployment
@@ -1741,7 +1736,7 @@ The Istio control plane provides rules and logic to carry out the communication 
 
 
     <p align="center">
-        <img src="./assets/k8s/istio-arch2.png" alt="drawing" width="600" height="400" style="center" />
+        <img src="./assets/k8s/istio-arch2.png" alt="drawing" width="700" height="400" style="center" />
     </p>
 
     Most of the features stated in the data plane such as routing, health checking, service discovery, load balancing, security, etc, are available in projects such as HAProxy, Nginx, and Envoy. However, the configuration has to be written, deployed, and maintained manually using multiple other tools. Istio combines all these and provides an integrated platform, removing boilerplate configurations and offering durability in the solution.
@@ -1754,7 +1749,7 @@ Under the hood , Istio uses five major tools:
 - **Galley**: Istio control plane uses Galley for interpreting user-defined Kubernetes YAML files into a format that Istio understands. Galley stores the user configuration, validates it, and then sends it to Pilot for further action.
 
 
-#### Sidecar Injection
+### Sidecar Injection
 
 Modifying Kubernetes deployment manifests to bundle proxies as sidecars with each pod is both a burden to development teams, error-prone, and not maintainable. Part of Istio's codebase is dedicated to providing the capability to automatically modify Kubernetes deployment manifests to include sidecars with each pod. This capability is exposed in two ways, the first and simpler mechanism is known as manual sidecar injection, and the second is called automatic sidecar injection.
 
@@ -2001,7 +1996,7 @@ In the UI, select the Graph option from the sidebar, and select the default 
 One can also navigate directly from the Graph view to a particular service. The screenshot below is a view of the ratings service, where one can clearly see that both reviews-v2 and reviews-v3 call this service and that those calls are indeed using mutual TLS encryption. The green color of the arrows linking the services indicate that requests are succeeding with HTTP 200 response codes.
 
 <p align="center">
-    <img src="./assets/k8s/kiali.png" alt="drawing" width="500" height="700" style="center" />
+    <img src="./assets/k8s/kiali.png" alt="drawing" width="700" height="700" style="center" />
 </p>
 
 
