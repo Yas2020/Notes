@@ -98,7 +98,7 @@ This diagram shows the state of a repository after a single, initial commit adde
 Let’s leave the original two files as is, adding a new subdirectory with one file in it. The resulting object store looks like
 
 <p align="center">
-<img src="./assets/git/git-objects-after-commit.png" alt="drawing" width="400" height="300" style="center" />
+<img src="./assets/git/git-objects-after-commit.png" alt="drawing" width="500" height="400" style="center" />
 </p>
 
 - The new commit has added one associated tree object to represent the total state of directory and file structure. In this case, it is the tree object with ID cafed00d. Because the top-level directory is changed by the addition of the new subdirectory, the content of the top-level tree object has changed as well, so Git introduces a new tree, cafed00d
@@ -145,7 +145,7 @@ have Git ignore a file within a directory, simply add that file’s name to the 
 Let’s follow a series of four pictures to visualize the progress of a single file named `file1` as it is edited, staged in the index, and finally committed. The working directory contains two files named `file1` and `file2`, with contents “foo” and “bar,” respectively. In addition to `file1` and `file2` in the working directory, the master branch has a commit that records a tree with exactly the same “foo” and “bar,” contents for files `file1` and `file2`. Furthermore, the index records SHA1 values a23bf and 9d3a2 (respectively) for exactly those same file contents. The working directory, the index, and the object store are all synchronized and in agreement.
 
 <p align="center">
-<img src="./assets/git/git-store1.png" alt="drawing" width="400" height="300" style="center" />
+<img src="./assets/git/git-store1.png" alt="drawing" width="500" height="400" style="center" />
 </p>
 
 Some interesting changes take place when you use the command `git add file1` to stage the edit of file1:
@@ -154,7 +154,7 @@ Some interesting changes take place when you use the command `git add file1` to 
 - Next, Git records in the index that the pathname file1 has been updated to the new bd71363 SHA1. Because the contents of file2 haven’t changed and no git add staged file2, the index continues to reference the original blob object for it.
 
   <p align="center">
-  <img src="./assets/git/git-store2.png" alt="drawing" width="400" height="300" style="center" />
+  <img src="./assets/git/git-store2.png" alt="drawing" width="500" height="400" style="center" />
   </p>
 
   At this point, you have staged file1 in the index, and the working directory and index agree. However, the index is considered dirty with respect to HEAD because it differs from the tree recorded in the object store for the HEAD commit of the master branch.
@@ -162,7 +162,7 @@ Some interesting changes take place when you use the command `git add file1` to 
 - Finally, after all changes have been staged in the index, a commit applies them to the repository. The effects of git commit are depicted:
 
 <p align="center">
-<img src="./assets/git/git-store3.png" alt="drawing" width="400" height="300" style="center" />
+<img src="./assets/git/git-store3.png" alt="drawing" width="500" height="400" style="center" />
 </p>
 
 The commit initiates three steps:
@@ -239,7 +239,7 @@ A branch is a split from a kind of unified, primal state, allowing development t
 - The dev branch name points to the head commit, Z. If you wanted to rebuild the repository state at Z, then all the commits reachable from Z back to the original commit, A, are needed. The reachable portion of the graph is highlighted with thick lines and covers every commit except (S, G, H, J, K, L)<br></br>
 
   <p align="center">
-  <img src="./assets/git/git-branches.png" alt="drawing" width="400" height="200" style="center" />
+  <img src="./assets/git/git-branches.png" alt="drawing" width="500" height="300" style="center" />
   </p>
 
 ### Creating Branches
@@ -352,29 +352,29 @@ ______________________________________________
 
   - _Resolve_. The resolve strategy locates the obvious common ancestor as the merge basis and performing a direct three-way merge by applying the changes from the merge base to the tip of the other branch HEAD onto the tip of the current branch (3 commits involved to create the merge commit). <br></br>
   <p align="center">
-    <img src="./assets/git/git-3way-merge.png" alt="drawing" width="300" height="200" style="center" />
+    <img src="./assets/git/git-3way-merge.png" alt="drawing" width="500" height="300" style="center" />
     </p>  
   
     Because resolve is no longer Git’s default, if Alice wanted to use it then she would make an explicit request: `git merge -s resolve devel` <br></br>
     <p align="center">
-    <img src="./assets/git/git-merge-3way.png" alt="drawing" width="300" height="200" style="center" />
+    <img src="./assets/git/git-merge-3way.png" alt="drawing" width="500" height="300" style="center" />
     </p>  
   
   - _Recursive_: The recursive strategy is designed to handle the scenario where there is more than one merge base between the two branches. In these cases, Git forms a temporary merge of all of the common merge bases and then uses that as the base from which to derive the resulting merge of the two given branches via a normal three-way merge algorithm. The temporary merge basis is thrown away, and the final merge state is committed on your target branch. Recursive is now the default strategy for git merge.
     - The follwoing image shows a simple criss-cross merge. The nodes a and b are both merge bases for a merge between A and B. Either one could be used as the merge base and yield reasonable results. In this case, the recursive strategy would merge a and b into a temporary merge base, using that as the merge base for A and B. Because a and b could have the same problem, merging them could require another merge of still older commits. That is why this algorithm is called recursive
 
       <p align="center">
-      <img src="./assets/git/git-recursive-merge.png" alt="drawing" width="400" height="150" style="center" />
+      <img src="./assets/git/git-recursive-merge.png" alt="drawing" width="400" height="200" style="center" />
       </p>
     Here is another illustration: HEAD of 2 branches have more than one ancestar.
       <p align="center">
-      <img src="./assets/git/git-recursive-merge1.png" alt="drawing" width="300" height="150" style="center" />
+      <img src="./assets/git/git-recursive-merge1.png" alt="drawing" width="400" height="200" style="center" />
       </p>
 
     First merge ancestors using temp commit, then finish the final 3-way merge.
 
       <p align="center">
-      <img src="./assets/git/git-recursive-merge2.png" alt="drawing" width="300" height="150" style="center" />
+      <img src="./assets/git/git-recursive-merge2.png" alt="drawing" width="400" height="200" style="center" />
       </p>
 
     [Resourse](https://stackoverflow.com/questions/55998614/merge-made-by-recursive-strategy)
@@ -428,7 +428,7 @@ The command git cherry-pick is typically used to introduce particular commits fr
 - In the follwoing picture the dev branch has normal development, whereas the rel_2.3 contains commits for the maintenance of release 2.3. <br></br>
 
   <p align="center">
-  <img src="./assets/git/git-cherry-pick1.png" alt="drawing" width="500" height="150" style="center" />
+  <img src="./assets/git/git-cherry-pick1.png" alt="drawing" width="500" height="200" style="center" />
   </p>
 
   During the course of normal development, a bug is fixed on the development line with commit F. If that bug turns out to be present in the 2.3 release also, the bug fix, F, can be made to the rel_2.3 branch using `git cherry-pick`:
@@ -441,7 +441,7 @@ The command git cherry-pick is typically used to introduce particular commits fr
   After cherry-pick, the graph resembles as follows:
 
   <p align="center">
-  <img src="./assets/git/git-cherry-pick2.png" alt="drawing" width="500" height="150" style="center" />
+  <img src="./assets/git/git-cherry-pick2.png" alt="drawing" width="500" height="200" style="center" />
   </p>
 
   Commit F' is substantially similar to commit F, but it is a new commit and will have to be adjusted—perhaps with conflict resolutions—to account for its application to commit Z rather than commit E. None of the commits following F are applied after F'; only the named commit is picked and applied.
@@ -449,7 +449,7 @@ The command git cherry-pick is typically used to introduce particular commits fr
 - Another common use for cherry-pick is to rebuild a series of commits by selectively picking a batch from one branch and introducing them onto a new branch. Suppose you had a series of commits on your development branch, my_dev, as shown below, and you wanted to introduce them onto the master branch but in a substantially different order.<br></br>
 
   <p align="center">
-    <img src="./assets/git/git-cherry-pick3.png" alt="drawing" width="500" height="150" style="center" />
+    <img src="./assets/git/git-cherry-pick3.png" alt="drawing" width="500" height="200" style="center" />
   </p>
 
   To apply them on the master branch in the order Y, W, X, Z, you could use the following commands:
@@ -465,7 +465,7 @@ The command git cherry-pick is typically used to introduce particular commits fr
   Afterward, your commit history would look like below: <br></br>
 
   <p align="center">
-    <img src="./assets/git/git-cherry-pick4.png" alt="drawing" width="500" height="150" style="center" />
+    <img src="./assets/git/git-cherry-pick4.png" alt="drawing" width="500" height="200" style="center" />
   </p>
 
 - `git cherry-pick` allowes a range of commits to be selected and reapplied in a single command. For example, the following command:
@@ -526,7 +526,7 @@ This command requires at least the name of the other branch onto which your comm
 - A common use for `git rebase` is to keep a series of commits that you are developing up-to-date with respect to another branch, usually a _main_ branch or a tracking branch from another repository. In the follwoing, the _topic_ branch started on the _main_ branch when it was at commit B. In the meantime, it has progressed to commit E.
 
   <p align="center">
-    <img src="./assets/git/git-rebase1.png" alt="drawing" width="500" height="100" style="center" />
+    <img src="./assets/git/git-rebase1.png" alt="drawing" width="500" height="200" style="center" />
   </p>
 
   You can keep your commit series up-to-date with respect to the main branch by writing the commits so that they are based on commit E rather than B.  
@@ -537,7 +537,7 @@ This command requires at least the name of the other branch onto which your comm
   ```
 
   <p align="center">
-    <img src="./assets/git/git-rebase2.png" alt="drawing" width="500" height="100" style="center" />
+    <img src="./assets/git/git-rebase2.png" alt="drawing" width="500" height="200" style="center" />
   </p>
 
 - The rebase operation relocates commits one at a time from each respective original commit location to a new commit base. As a result, each commit that is moved might have conflicts to resolve. If a conflict is found, the rebase operation suspends its processing temporarily so you can resolve the conflict. The final result is a linear sequence of commits.
@@ -576,13 +576,13 @@ pick 5c67e61 Message for commit #3
 When you save and close the file, Git will perform the rebase according to your instructions, resulting in project history that looks like the following:
 
 <p align="center">
-    <img src="./assets/git/git-rebase-interactive.png" alt="drawing" width="500" height="200" style="center" />
+    <img src="./assets/git/git-rebase-interactive.png" alt="drawing" width="500" height="300" style="center" />
   </p>
 
 Once you understand what rebasing is, the most important thing to learn is when not to do it. The golden rule of git rebase is to never use it on public branches (the branches being changed by others, such as main branch as other developers are working on it). For example, think about what would happen if you rebased main onto your feature branch (as opposed to rebasing feature brach onto main which we did before):
 
 <p align="center">
-    <img src="./assets/git/git-bad-rebase.png" alt="drawing" width="500" height="200" style="center" />
+    <img src="./assets/git/git-bad-rebase.png" alt="drawing" width="500" height="300" style="center" />
   </p>
 
 The rebase moves all of the commits in main onto the tip of feature. The problem is that this only happened in your repository. All of the other developers are still working with the original main. Since rebasing results in brand new commits, Git will think that your main branch’s history has diverged from everybody else’s. The only way to synchronize the two main branches is to merge them back together, resulting in an extra merge commit and two sets of commits that contain the same changes (the original ones, and the ones from your rebased branch). Needless to say, this is a very confusing situation.
@@ -801,7 +801,7 @@ The short answer is “Do either as you wish.”. Up to you!
 # GitHub
 
 <p align="center">
-    <img src="./assets/git/git-clone-workflow.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/git/git-clone-workflow.png" alt="drawing" width="500" height="400" style="center" />
   </p>
 
 In order to work on a project already exists, you can just fork it first, then clone it to your local machine and start working on it. To fork a public project, you can go to its GitHub project page and select Fork at the top of the page. This fork option is available only while using the web interface. There is no native git command to create a fork. The repo from which you create the fork is referred to as the original upstream repository. Once you fork the original upstream, the forked copy of the repo becomes the origin, and developers with access to the origin can create clones of it on their local machines. After cloning, you can create branches and easily make changes to the code base, like adding features, enhancements, or fixing bugs. But what if you want to contribute your changes back to the original upstream that you do not have right access to from where it was forked? You can submit a pull request for your proposed changes by selecting
@@ -811,7 +811,7 @@ In order to work on a project already exists, you can just fork it first, then c
 - Forking is the enabling step of creating a personal copy of a project, but the real value for the core project lies in the second action, formally called a _pull request_. Pull requests allow any user with a commit that she feels makes a useful contribution to the project to announce that contribution to the core project owners.
 
   <p align="center">
-    <img src="./assets/git/git-fork-workflow.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/git/git-fork-workflow.png" alt="drawing" width="500" height="400" style="center" />
   </p>
 
 - Once a contributor has finished coding a feature, committed that new code to a well-named branch, and pushed that new branch to a fork, it can be turned into a pull request.
