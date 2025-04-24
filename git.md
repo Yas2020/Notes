@@ -1,7 +1,7 @@
+<h1 class='title'>Git</h1>
 
-# GIT: Concepts and Commands
 
-Git is a distributed source code management tool used by developers worldwide. It was invented by Linus Torvalds in 2005 for Linux kernel development and is now the most widely used version control system. Code can be completely local, or it can be kept in a remote repository so that developers can collaborate. Every developer also has a full copy of the code. Git is the current standard for version control software. It completely changed how developers do their job, allowing them greater control over their code, and the ability to roll back changes precisely if needed.
+**Git** is a distributed source code management tool used by developers worldwide. It was invented by Linus Torvalds in 2005 for Linux kernel development and is now the most widely used version control system. Code can be completely local, or it can be kept in a remote repository so that developers can collaborate. Every developer also has a full copy of the code. Git is the current standard for version control software. It completely changed how developers do their job, allowing them greater control over their code, and the ability to roll back changes precisely if needed.
 
 Start a local git repository by running:
 
@@ -29,8 +29,7 @@ The new Git repositories now contain exactly the same objects, files, and direct
 
 - `git stash`: temporarily shelves (or stashes) changes you've made to your working copy so you can work on something else, and then come back and re-apply them later on. Stashing is handy if you need to quickly switch context and work on something else
 
-- `git submodule add <url_of_repository>`: repository inside a repository; It often happens that while working on one project, you need to use another project from within it. For example, `git submodule add https://github.com/chaconinc/DbConnector`. Submodules will add the subproject into a directory named the same as the repository.  
-<span style="background-color:rgb(204, 255, 0)">Although DbConnector is a subdirectory in your working directory, Git sees it as a submodule and doesn’t track its contents when you’re not in that directory</span>. Instead, Git sees it as a particular commit from that repository. Now stage and commit the submodule to your repository. When cloning, you need to run: `git submodule init` and `git submodule update` to download the submodules as well. Also when we want to make a separate repository out of a change we make a submodule.  
+- `git submodule add <url_of_repository>`: repository inside a repository; It often happens that while working on one project, you need to use another project from within it. For example, `git submodule add https://github.com/chaconinc/DbConnector`. Submodules will add the subproject into a directory named the same as the repository. Although DbConnector is a subdirectory in your working directory, Git sees it as a submodule and doesn’t track its contents when you’re not in that directory. Instead, Git sees it as a particular commit from that repository. Now stage and commit the submodule to your repository. When cloning, you need to run: `git submodule init` and `git submodule update` to download the submodules as well. Also when we want to make a separate repository out of a change we make a submodule.  
 
 ## Configuration Files
 
@@ -114,7 +113,7 @@ Let’s leave the original two files as is, adding a new subdirectory with one f
 
 - Now you can use the hash to pull it back out of the object store any time you want to see its content:
 
-  ```Sh
+  ```sh
   git cat-file -p 3b18e512dba79e4c8300dd08aeb37f8e728b8dad
   hello world
   ```
@@ -395,7 +394,7 @@ You should feel free to alter and improve your repository commit history as long
 
 You shouldn’t rewrite, alter, or change any part of a branch that’s been made available and might be present in a different repository.  More clealy, leave the published commits alone but you can change unpublished ones as you want.
 
-## Using `git reset` to change history
+## Using 'git reset' to change history
 
 The whole point of this command is to establish and recover known states for the HEAD, index, and working directory. So it can overwrite and destroy changes in your working directory.
 
@@ -422,7 +421,7 @@ It has has three main options: --soft, --mixed, and --hard
 
 - You might want to use `git clean -f` to remove all untracked files from your working directory
 
-## Using `git cherry-pick`
+## Using 'git cherry-pick'
 
 The command git cherry-pick is typically used to introduce particular commits from one branch within a repository onto a different branch.
 
@@ -478,7 +477,7 @@ The command git cherry-pick is typically used to introduce particular commits fr
 
   would apply new commits X', Y', and Z' on the master branch. This is particularly handy in porting or moving a large sequence of commits from one line of development to another without necessarily using the entire source branch at one time.
 
-## Using `git revert`
+## Using 'git revert'
 
 This command is used to introduce a new commit that reverses the effects of a given commit. A common application for git revert is to “undo” the effects of a commit that is buried, perhaps deeply, in the history of a branch.
 
@@ -547,7 +546,7 @@ This command requires at least the name of the other branch onto which your comm
 
 - If your feature branch was actually as small as a few commits, you would probably be better off rebasing it onto main and doing a fast-forward merge. This prevents superfluous merge commits from cluttering up the project history. While you can use either of these merge strategies, many developers like to use fast-forward merges (facilitated through rebasing) for small features or bug fixes, while reserving 3-way merges for the integration of longer-running features.
 
-### Using `git rebase -i`
+### Using 'git rebase -i'
 
 Interactive rebasing gives you the opportunity to alter commits as they are moved to the new branch. This is even more powerful than an automated rebase, since it offers complete control over the branch’s commit history.
 
@@ -590,12 +589,12 @@ The rebase moves all of the commits in main onto the tip of feature. The problem
 
 Another example is when you push a feature branch to a remote repo and then rebase it on your local machine. Now the old commits after rebase get new hash id, so they are not recognized as the same commits as the old same ones on the remote branch. When you try to push, then git will be confused and can not identify that the commits are actually the same. This is even worse when other ppl have already pulled those commits from the remote. This might overwrite some commits or lead to lose of work for the team. Of course, this doesn’t happen when you use `git merge` since it doesn’t touch history of commits.
 
-[See](https://www.youtube.com/watch?v=DkWDHzmMvyg&t=7s)
+[Watch](https://www.youtube.com/watch?v=DkWDHzmMvyg&t=7s)
 
 So, before you run git rebase, always ask yourself, “Is anyone else looking at this branch?” Or “if this branch is already push in remote so possibly somebody might have changed something already?”If the answer is yes, take your hands off the keyboard and start thinking about a non-destructive way to make your changes (e.g., the git revert command). Otherwise, you’re safe to re-write history as much as you like.
 Note that when rebasing your feature branch, you might still get some conflicts if some changes on the main branch conflict with your changes in the feature branch. In this case, you need to resolve the conflict just like you do with merging.
 
-[Ref](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)
+[Reference](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)
 
 -----------------------------------
 
@@ -839,6 +838,6 @@ Jekyll provide exactly that, and can even be mapped to a Domain Name System (DNS
 
 If you are writing to your repository from a remote machine, you can have GitHub to generate a GitHub Personal Access Token (with appripriate permissions for a limited time, usually repo and write permissions for some days) so you can push code back to your repository from the server. When git promps you for a password, use your PAT instead.
 
-Ref:
+Reference:
 
 I. [Version Control with Git, 2nd Edition](https://www.oreilly.com/library/view/version-control-with/9781449345037/)

@@ -1,0 +1,1137 @@
+<!DOCTYPE html><html><head>
+      <title>git</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:////Users/yas/.vscode/extensions/shd101wyy.markdown-preview-enhanced-0.8.18/crossnote/dependencies/katex/katex.min.css">
+      
+      
+      
+      
+      
+      <style>
+        body::after {
+          content: "Created by Yas";
+          position: fixed;
+          bottom: 10px;
+          right: 10px;
+          font-size: 12px;
+          color: gray;
+          opacity: 0.7;
+          pointer-events: none; /* Prevents it from blocking clicks */
+          /* font-family: sans-serif; */
+        }
+      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+@font-face {
+  font-family: 'Tangerine';
+  src: local('Tangerine Regular'), url("file:///Users/yas/Downloads/Tangerine/Tangerine-Bold.ttf");
+}
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Regular'), url("file:///Users/yas/Downloads/Fira_Sans/FiraSans-Regular.ttf");
+}
+@font-face {
+  font-family: 'NotoSans';
+  src: local('Noto Sans'), url("file:///Users/yas/Downloads/Noto_Sans/static/NotoSans_Condensed-Regular.ttf");
+}
+@font-face {
+  font-family: 'Roboto';
+  src: local('Roboto ExtraLight'), url("file:///Users/yas/Downloads/Roboto/Roboto-VariableFont_wdth,wght.ttf");
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: local('Open Sans Regular'), url("file:///Users/yas/Downloads/Open_Sans/OpenSans-VariableFont_wdth,wght.ttf");
+}
+@font-face {
+  font-family: 'UbuntuMono';
+  src: local('Ubuntu Light'), url("/Users/yas/Downloads/ubuntu-font-family-0.83/Ubuntu-L.ttf");
+}
+@font-face {
+  font-family: 'KodeMono';
+  src: local('Kode Mono Regular'), url("/Users/yas/Downloads/Kode_Mono/static/KodeMono-Regular.ttf");
+}
+@font-face {
+  font-family: 'CutiveMono';
+  src: local('Cutive Mono Regular'), url("/Users/yas/Downloads/Cutive_Mono/CutiveMono-Regular.ttf");
+}
+@font-face {
+  font-family: 'Sixtyfour';
+  src: local('Sixtyfour Regular'), url("/Users/yas/Downloads/Sixtyfour/Sixtyfour-Regular-VariableFont_BLED,SCAN.ttf");
+}
+.markdown-preview.markdown-preview {
+  font-family: UbuntuMono, Open Sans, Fira Sans, serif;
+  font-size: 16px;
+  /* stylelint-disable */
+  /* stylelint-disable */
+}
+.markdown-preview.markdown-preview.prince {
+  font-family: UbuntuMono, Open Sans, Fira Sans, serif;
+  color: #000;
+}
+@page {
+  size: A4 portrait;
+  margin-top: 0.5in;
+  padding-top: 20px;
+  color: black;
+  margin-bottom: 1.5in;
+  @bottom-center {
+    content: "Page " counter(page) " of " counter(pages);
+    font-size: 8pt;
+    vertical-align: top;
+    padding-top: 0.5in;
+    font-family: UbuntuMono, Open Sans, Fira Sans, serif;
+  }
+  @top-center {
+    content: "Yas Eftekhari - April 2025";
+    text-align: left;
+    border-bottom: 1px solid black;
+    font-size: 8pt;
+    font-weight: bold;
+    margin: 0px, 50px;
+    margin-left: inherit;
+    margin-right: inherit;
+    padding: 25px 0 5px 0;
+    font-family: UbuntuMono, Open Sans, Fira Sans, serif;
+  }
+}
+@page :first {
+  @bottom-center {
+    content: none;
+  }
+}
+.markdown-preview.markdown-preview html::after {
+  content: "Created by Yas";
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  font-size: 12px;
+  color: gray;
+  opacity: 0.7;
+  font-family: sans-serif;
+  pointer-events: none;
+}
+.markdown-preview.markdown-preview p:not(:has(img)) {
+  text-align: justify;
+  page-break-inside: auto;
+}
+.markdown-preview.markdown-preview p img {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+.markdown-preview.markdown-preview .title {
+  font-size: 140pt;
+  font-family: 'Tangerine';
+  color: #305d8a;
+  text-shadow: 3px 3px 0 #b08888;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: bold;
+  page-break-after: always;
+  /* Ensure title is on its own page */
+}
+.markdown-preview.markdown-preview h1 {
+  font-size: 30pt;
+  color: #1a4fcc;
+  border-bottom-width: 1px;
+}
+.markdown-preview.markdown-preview h2 {
+  font-weight: 700;
+  color: #3f77e0;
+}
+.markdown-preview.markdown-preview h3 {
+  font-weight: 700;
+  color: #6da2f2;
+}
+.markdown-preview.markdown-preview h4 {
+  font-weight: 700;
+  color: #a9c8f8;
+}
+.markdown-preview.markdown-preview ul li {
+  /* list-style-type: ; */
+  margin-top: 7px;
+  margin-bottom: 10px;
+  margin-left: 5%;
+  text-align: justify;
+}
+.markdown-preview.markdown-preview ol {
+  list-style-type: upper-roman;
+  /* or decimal, lower-alpha, upper-alpha, etc. */
+  list-style-position: outside;
+  /* or inside */
+}
+.markdown-preview.markdown-preview table {
+  justify-items: center;
+}
+.markdown-preview.markdown-preview table > thead > tr > th {
+  text-align: center;
+  border-bottom: 1px solid;
+}
+.markdown-preview.markdown-preview table > thead > tr > th,
+.markdown-preview.markdown-preview table > thead > tr > td,
+.markdown-preview.markdown-preview table > tbody > tr > th,
+.markdown-preview.markdown-preview table > tbody > tr > td {
+  padding: 5px 10px;
+}
+.markdown-preview.markdown-preview table > tbody > tr + tr > td {
+  border-top: 1px solid;
+}
+.markdown-preview.markdown-preview th {
+  background-color: #0430aa;
+  color: white;
+}
+.markdown-preview.markdown-preview th,
+.markdown-preview.markdown-preview td {
+  border-bottom: 1px solid #ddd;
+}
+.markdown-preview.markdown-preview th,
+.markdown-preview.markdown-preview td {
+  padding: 10px;
+  text-align: center;
+}
+.markdown-preview.markdown-preview blockquote {
+  background: rgba(127, 127, 127, 0.1);
+  border-color: rgba(0, 122, 204, 0.5);
+  margin: 0 7px 0 5px;
+  padding: 0 16px 0 10px;
+  border-left-width: 5px;
+  border-left-style: solid;
+}
+.markdown-preview.markdown-preview code {
+  background-color: #f7f7f5;
+  font-family: Monospace, Menlo, Monaco, Consolas;
+  font-size: 10pt;
+  color: #14c111;
+}
+.markdown-preview.markdown-preview pre.language-text {
+  background-color: #f7f7f5;
+}
+.markdown-preview.markdown-preview pre.language-text code {
+  font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
+  font-size: 10pt;
+  line-height: 1.357em;
+  color: #14c111;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  border-radius: 10px;
+}
+.markdown-preview.markdown-preview pre.language-o.o {
+  background-color: #f7f7f5;
+  margin-top: -25px;
+}
+.markdown-preview.markdown-preview pre.language-o.o code {
+  font-family: CutiveMono, KodeMono, Monaco, "Droid Sans Fallback";
+  font-size: 11pt;
+  font-weight: 800;
+  line-height: 1.357em;
+  color: #93a293;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+      </style>
+      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // your code here
+  });
+</script></head><body for="html-export">
+    
+    
+      <div class="crossnote markdown-preview  ">
+      
+<h1 class="title">Git</h1>
+<p><strong>Git</strong> is a distributed source code management tool used by developers worldwide. It was invented by Linus Torvalds in 2005 for Linux kernel development and is now the most widely used version control system. Code can be completely local, or it can be kept in a remote repository so that developers can collaborate. Every developer also has a full copy of the code. Git is the current standard for version control software. It completely changed how developers do their job, allowing them greater control over their code, and the ability to roll back changes precisely if needed.</p>
+<p>Start a local git repository by running:</p>
+<ul>
+<li>
+<p><code>git init &lt;dirname&gt;</code>:</p>
+<ul>
+<li>Turns a directory into a Git repository</li>
+<li>Creates a hidden direcotry called <em>.git</em> where Git store all<br>
+its revision information or metadata with each commit including<br>
+log message and author of the change</li>
+</ul>
+</li>
+<li>
+<p><code>git add &lt;filename&gt;</code>: add a file to the reposiroty</p>
+</li>
+<li>
+<p><code>git add  .</code> : Git adds all the files in a direcotry and all subdirecotries</p>
+</li>
+<li>
+<p><code>git add -p</code>: begin an interactive staging session that lets you choose portions of a file to add to the next commit. This will present you with a chunk of changes and prompt you for a command. Use y to stage the chunk, n to ignore the chunk, s to split it into smaller chunks, e to manually edit the chunk, and q to exit</p>
+</li>
+<li>
+<p>At a bare minimum, Git must know your name and email address. You may specify your identity on every commit using the following commands:</p>
+<ul>
+<li><code>git config user.name "Jon Loeliger"</code></li>
+<li><code>git config user.email "jdl@example.com"</code></li>
+</ul>
+</li>
+<li>
+<p><code>git commit &lt;filename&gt; &lt;options&gt;</code>:  useful when you want to commits new changes when the file is already added to the repository using <code>git add</code>. Using a generic git commit without naming the file would not have worked in this case</p>
+</li>
+<li>
+<p><code>git status</code>: shows the status of changes in the repository</p>
+</li>
+<li>
+<p><code>git rm -f &lt;filename&gt;</code>: forcefully removes the staged file from both the index and the working directory. Flag -f can be dropped if file is not staged yet</p>
+</li>
+<li>
+<p><code>git rm --cached &lt;filename&gt;</code>: removes the file from the index but leaves it in the working directory and untracked</p>
+</li>
+<li>
+<p><code>git mv stuff newstuff</code>: Git removes the pathname <code>stuff</code> from the index, adds the new pathname <code>newstuff</code>, keeps the original content for stuff in the object store, and reassociates that content with the pathname <code>newstuff</code></p>
+</li>
+<li>
+<p><code>git clone &lt;repository_name&gt; &lt;new_repository_name&gt;</code>: makes a copy of a repository.<br>
+The new Git repositories now contain exactly the same objects, files, and directories. You are able to modify the cloned version, make new commits, inspect its logs and history, and so on. It is a complete repository with full history</p>
+</li>
+<li>
+<p><code>git stash</code>: temporarily shelves (or stashes) changes you've made to your working copy so you can work on something else, and then come back and re-apply them later on. Stashing is handy if you need to quickly switch context and work on something else</p>
+</li>
+<li>
+<p><code>git submodule add &lt;url_of_repository&gt;</code>: repository inside a repository; It often happens that while working on one project, you need to use another project from within it. For example, <code>git submodule add https://github.com/chaconinc/DbConnector</code>. Submodules will add the subproject into a directory named the same as the repository. Although DbConnector is a subdirectory in your working directory, Git sees it as a submodule and doesn’t track its contents when you’re not in that directory. Instead, Git sees it as a particular commit from that repository. Now stage and commit the submodule to your repository. When cloning, you need to run: <code>git submodule init</code> and <code>git submodule update</code> to download the submodules as well. Also when we want to make a separate repository out of a change we make a submodule.</p>
+</li>
+</ul>
+<h2 id="configuration-files">Configuration Files </h2>
+<ul>
+<li>
+<p><code>.git/config</code>: repository-specific configuration settings manipulated with the <code>--file</code> option or by default. These settings have the highest precedence</p>
+</li>
+<li>
+<p><code>~/.gitconfig</code>: user-specific configuration settings manipulated with the <code>--global</code> option</p>
+</li>
+<li>
+<p><code>/etc/gitconfig</code>: system-wide configuration settings manipulated with the <code>--system</code> option if you have proper Unix file write permissions on it</p>
+</li>
+<li>
+<p>Author name and email address that will be used on all the commits you make for all of your repositories, configure values for <code>user.name</code> and <code>user.email</code> in your <code>$HOME/.gitconfig</code> file using git config <code>--global</code>:</p>
+<ul>
+<li><code>git config --global user.name "Jon Loeliger"</code></li>
+<li><code>git config --global user.email "jdl@example.com"</code></li>
+<li>To set a repository-specific name and email address that would override a<br>
+<code>--global</code> setting, simply omit the <code>--global</code> flag</li>
+</ul>
+</li>
+<li>
+<p>If there is a common but complex Git command that you type frequently, consider setting up a simple Git alias for it:</p>
+<ul>
+<li><code>git config --global alias.show-graph 'log --graph --abbrev-commit --pretty=oneline'</code></li>
+<li>I’ve made up the show-graph alias and made it available for use in any repository I make</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="basic-git-concepts">Basic Git Concepts </h2>
+<ul>
+<li>
+<p>Within a repository, Git maintains two primary data structures, the <strong>object store</strong> and the <strong>index</strong>. All of this repository data is stored at the root of your working directory in a hidden subdirectory named <code>.git</code></p>
+</li>
+<li>
+<p>Git places only four types of objects in the <strong>object store</strong>:</p>
+<ul>
+<li><em>blobs</em>: A blob holds a file’s data but does not contain any metadata about the file or even its name</li>
+<li><em>trees</em>: Represents one level of directory information. It records blob identifiers, path names, and a bit of metadata for all the files in one directory</li>
+<li><em>commits</em>: A commit object holds metadata for each change introduced into the repository, including the author, committer, commit date, and log message</li>
+<li><em>tags</em>: Assigns an arbitrary yet presumably human readable name to a specific object, usually a commit</li>
+</ul>
+</li>
+<li>
+<p>Each object in the object store has a unique name produced by applying SHA1 to the contents of the object, yielding an SHA1 hash value which is unique to that content</p>
+</li>
+<li>
+<p>Any tiny change to a file causes the SHA1 hash to change, causing the new version of the file to be indexed separately</p>
+</li>
+<li>
+<p>The <strong>index</strong> is a temporary and dynamic binary file that describes the directory structure of the entire repository</p>
+<ul>
+<li>You execute Git commands to stage changes in the index. Changes usually add, delete, or edit some file or set of files. The index records and retains those changes, keeping them safe until you are ready to commit them. You can also remove or replace changes in the index</li>
+</ul>
+</li>
+</ul>
+<h3 id="pathname-versus-content">Pathname Versus Content </h3>
+<ul>
+<li>Git’s object store is based on the hashed computation of the contents of its objects, not on the file or directory names from the user’s original file layout. Thus, when Git places a file into the object store, it does so based on the hash of the data and not on the name of the file</li>
+<li>If two separate files have exactly the same content, whether in the same or different directories, Git stores a single copy of that content as a blob within the object store. Git computes the hash code of each file according solely to its content.</li>
+<li>Git does not really care about the file names. Git merely records each pathname and makes sure it can accurately reproduce the files and directories from its content, which is indexed by a hash value</li>
+<li>Git’s internal database efficiently stores every version of every file—not their differences—as files go from one revision to the next. Because Git uses the hash of a file’s complete content as the name for that file, it must operate on each complete copy of the file</li>
+<li>Git computes the history as a set of changes between different blobs with varying hashes, rather than storing a file name and set of differences directly<p align="center">
+<img src="./assets/git/git-how-store-data.png" alt="drawing" width="500" height="150" style="center">
+</p>
+</li>
+</ul>
+<h3 id="pack-files-gits-more-efficient-storage-mechanism">Pack Files: Git's more efficient storage mechanism </h3>
+<ul>
+<li>
+<p>To create a packed file, Git first locates files whose content is very similar and stores the complete content for one of them. It then computes the differences, or deltas, between similar files and stores just the differences</p>
+</li>
+<li>
+<p>Git is able to construct a series of deltas from one version of a file to a second, to a third, etc</p>
+</li>
+<li>
+<p>Git also maintains the knowledge of the original blob SHA1 for each complete file (either the complete content or as a reconstruction after deltas are applied) within the packed representation</p>
+</li>
+</ul>
+<h3 id="object-store-pictures">Object Store Pictures </h3>
+<ul>
+<li>The blob object is at the “bottom” of the data structure; it references nothing and is<br>
+referenced only by tree objects</li>
+<li>A commit points to one particular tree that is introduced into the repository by the commit</li>
+<li>Each tag can point to, at most, one commit</li>
+<li>The branch plays a crucial role in naming commits. Each branch is pictured as a rounded rectangle</li>
+</ul>
+<p>This diagram shows the state of a repository after a single, initial commit added two files. Both files are in the top-level directory. Both the master branch and a tag named V1.0 point to the commit with ID 1492.</p>
+<p align="center">
+<img src="./assets/git/git-object-store.png" alt="drawing" width="400" height="300" style="center">
+</p>
+<p>Let’s leave the original two files as is, adding a new subdirectory with one file in it. The resulting object store looks like</p>
+<p align="center">
+<img src="./assets/git/git-objects-after-commit.png" alt="drawing" width="400" height="300" style="center">
+</p>
+<ul>
+<li>
+<p>The new commit has added one associated tree object to represent the total state of directory and file structure. In this case, it is the tree object with ID cafed00d. Because the top-level directory is changed by the addition of the new subdirectory, the content of the top-level tree object has changed as well, so Git introduces a new tree, cafed00d</p>
+</li>
+<li>
+<p>Pay attention to the direction of the arrows between commits. The parent commit or commits come earlier in time. Therefore, in Git’s implementation, each commit points back to its parent or parents.</p>
+</li>
+</ul>
+<h3 id="objects-hashes-and-blobs">Objects, Hashes, and Blobs </h3>
+<ul>
+<li>
+<p>Suppose you create a file hello.txt in the repository containing string "Hello World". Git performs a few operations on this blob (content of the file), calculates its SHA1 hash, and enters it into the object store as a file named after the hexadecimal representation of the hash.</p>
+</li>
+<li>
+<p>The hash in this case is 3b18e512dba79e4c8300dd08aeb37f8e728b8dad. The 160 bits of an SHA1 hash correspond to 20 bytes, which takes 40 bytes of hexadecimal to display, so the content is stored as .git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad. Git inserts a / after the first two digits to improve filesystem efficiency</p>
+</li>
+<li>
+<p>Now you can use the hash to pull it back out of the object store any time you want to see its content:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> cat-file <span class="token parameter variable">-p</span> 3b18e512dba79e4c8300dd08aeb37f8e728b8dad
+hello world
+</code></pre></li>
+<li>
+<p>What happens to the filename? Git tracks the pathnames of files through another kind of object called a tree</p>
+</li>
+<li>
+<p>When you use <code>git add</code>, Git updates the index. The index is found in <code>.git/index</code> and keeps track of file pathnames and corresponding blobs. Each time you run commands such as git add, git rm, or git mv, Git updates the index with the new pathname and blob information</p>
+</li>
+<li>
+<p><code>git ls-files -s</code>: lists all the files in the index</p>
+</li>
+<li>
+<p><code>git cat-file -p &lt;commit&gt;</code>: shows tree, parent and more info about the object name "3ede462"</p>
+</li>
+</ul>
+<h3 id="file-management-and-the-index">File Management and the Index </h3>
+<ul>
+<li>
+<p>Git’s index doesn’t contain any file content; it simply tracks what you want to commit. When you run <code>git commit</code>, Git checks the index rather than your working directory to discover what to commit</p>
+</li>
+<li>
+<p>File Classifications in Git: Tracked, Ignored, Untracked</p>
+</li>
+<li>
+<p>Editors and build environments often leave temporary or transient files among your source code. Such files usually shouldn’t be tracked as source files in a repository. To<br>
+have Git ignore a file within a directory, simply add that file’s name to the special file <code>.gitignore</code>. It is managed just like any other normal file within your repository. Until <code>.gitignore</code> is added so index is updated (<code>git add .gitignore</code>), Git considers it untracked</p>
+</li>
+<li>
+<p><code>.gitignore</code> is treated as a regular file within your repository, it is copied during clone operations and applies to all copies of your repository.</p>
+</li>
+</ul>
+<h3 id="some-notes-on-using-git-commit">Some Notes on Using <code>git commit</code> </h3>
+<ul>
+<li>
+<p>The -a or --all option to git commit causes it to automatically stage all unstaged, tracked file changes—including removals of tracked files from the working copy— before it performs the commit.</p>
+</li>
+<li>
+<p>If you run <code>git commit --all</code>, Git recursively traverses the entire repository; stages all known, modified files and commits those. In this case, when your editor presents the commit message template, it should indicate that the modified and known file not yet will, in fact, be committed as well</p>
+</li>
+</ul>
+<h3 id="a-detailed-view-of-gits-object-model-and-files">A Detailed View of Git’s Object Model and Files </h3>
+<p>Let’s follow a series of four pictures to visualize the progress of a single file named <code>file1</code> as it is edited, staged in the index, and finally committed. The working directory contains two files named <code>file1</code> and <code>file2</code>, with contents “foo” and “bar,” respectively. In addition to <code>file1</code> and <code>file2</code> in the working directory, the master branch has a commit that records a tree with exactly the same “foo” and “bar,” contents for files <code>file1</code> and <code>file2</code>. Furthermore, the index records SHA1 values a23bf and 9d3a2 (respectively) for exactly those same file contents. The working directory, the index, and the object store are all synchronized and in agreement.</p>
+<p align="center">
+<img src="./assets/git/git-store1.png" alt="drawing" width="400" height="300" style="center">
+</p>
+<p>Some interesting changes take place when you use the command <code>git add file1</code> to stage the edit of file1:</p>
+<ul>
+<li>
+<p>Git first takes the version of file1 from the working directory, computes a SHA1 hash ID (bd71363) for its contents, and places that ID in the object store</p>
+</li>
+<li>
+<p>Next, Git records in the index that the pathname file1 has been updated to the new bd71363 SHA1. Because the contents of file2 haven’t changed and no git add staged file2, the index continues to reference the original blob object for it.</p>
+<p align="center">
+<img src="./assets/git/git-store2.png" alt="drawing" width="400" height="300" style="center">
+</p>
+<p>At this point, you have staged file1 in the index, and the working directory and index agree. However, the index is considered dirty with respect to HEAD because it differs from the tree recorded in the object store for the HEAD commit of the master branch.</p>
+</li>
+<li>
+<p>Finally, after all changes have been staged in the index, a commit applies them to the repository. The effects of git commit are depicted:</p>
+</li>
+</ul>
+<p align="center">
+<img src="./assets/git/git-store3.png" alt="drawing" width="400" height="300" style="center">
+</p>
+<p>The commit initiates three steps:</p>
+<ul>
+<li>First, the virtual tree object that is the index gets converted into a real tree object and placed into the object store under its SHA1 name</li>
+<li>Second, a new commit object is created with your log message. The new commit points to the newly created tree object and also to the previous or parent commit</li>
+<li>Third, the master branch ref is moved from the most recent commit to the newly created commit object, becoming the new master HEAD</li>
+</ul>
+<hr>
+<h2 id="commits">Commits </h2>
+<ul>
+<li>
+<p>When a commit occurs, Git records a snapshot of the index and places that snapshot in the object store. This snapshot does not contain a copy of every file and directory in the index, because such a strategy would require enormous and prohibitive amounts of storage. Instead, Git compares the current state of the index to the previous snapshot and so derives a list of affected files and directories. Git creates new blobs for any file that has changed and new trees for any directory that has changed, and it reuses any blob or tree object that has not changed</p>
+</li>
+<li>
+<p>Another way of thinking of a commit is that it is just a diff; an individual change compared to the previous commit. Every commit contains its history which is about the commits that came before it.</p>
+</li>
+<li>
+<p>There is a one-to-one correspondence between a set of changes in the repository and a commit: A commit is the only method of introducing changes to a repository, and any change in the repository must be introduced by a commit</p>
+</li>
+<li>
+<p>The unique, 40-hexadecimal-digit SHA1 commit ID is an explicit reference, whereas HEAD, which always points to the most recent commit, is an implied reference</p>
+</li>
+<li>
+<p>Each commit ID is globally unique, not just for one repository but for any and all repositories. For example, if a developer writes you with reference to a particular commit ID in his repository and if you find the same commit in your repository, then you can be certain that you both have the same commit with the same content</p>
+</li>
+<li>
+<p>HEAD always refers to the most recent commit on the current branch. When you change branches, HEAD is updated to refer to the new branch’s latest commit</p>
+</li>
+<li>
+<p>The ~ character is useful for making relative references to the parent of a commit. For example, 3157e~1 refers to the commit before 3157e, and HEAD~3 is the great-grandparent of the current commit</p>
+</li>
+<li>
+<p>Git makes use of a special graph called a directed acyclic graph (DAG). Git implements the history of commits within a repository as a DAG. In the commit graph, each node is a single commit, and all edges are directed from one descendant node to another parent node, forming an ancestor relationship</p>
+</li>
+</ul>
+<h3 id="commit-history">Commit History </h3>
+<ul>
+<li>
+<p><code>git log</code>: acts like <code>git log HEAD</code>, printing the log message associated with every commit in your history that is reachable from HEAD in chronological order</p>
+</li>
+<li>
+<p><code>log AB^C</code>: displays commits reachable from A and B but not from C. This is to filter out unrelevant commits</p>
+</li>
+<li>
+<p><code>git log --oneline</code>: show one line for each commit</p>
+</li>
+<li>
+<p><code>git log --stat</code>: show more stats</p>
+</li>
+<li>
+<p><code>git log -p</code>: show maximum details</p>
+</li>
+<li>
+<p><code>git log --author="&lt;pattern&gt;"</code></p>
+</li>
+<li>
+<p><code>git log --grep="&lt;pattern&gt;"</code>: Search for commits with a commit message that matches <pattern>, which can be a plain string or a regular expression.</pattern></p>
+</li>
+<li>
+<p><code>git log &lt;file_name&gt;</code></p>
+</li>
+<li>
+<p><code>git log --author="John Smith" -p hello.py</code>: This will display a full diff of all the changes John Smith has made to the file <a href="http://hello.py">hello.py</a></p>
+</li>
+<li>
+<p><code>git log --graph --decorate --oneline</code>: A few useful options to consider: The <code>—graph</code> flag that will draw a text based graph of the commits on the left hand side of the commit messages. <code>—decorate</code> adds the names of branches or tags of the commits that are shown. —oneline shows the commit information on a single line making it easier to browse through commits at-a-glance</p>
+</li>
+</ul>
+<hr>
+<h1 id="branches">Branches </h1>
+<p>A branch is the fundamental means of launching a separate line of development within a software project.</p>
+<p>A branch is a split from a kind of unified, primal state, allowing development to continue in multiple directions simultaneously and, potentially, to produce different versions of the project.</p>
+<h3 id="reasons-for-using-branches">Reasons for Using Branches </h3>
+<ul>
+<li>
+<p>A branch often represents an individual customer release. If you want to start version 1.1 of your project but you know that some of your customers want to stick with version 1.0, then keep the old version alive as a separate branch</p>
+</li>
+<li>
+<p>A branch can encapsulate a development phase, such as the prototype, beta, stable, or bleeding-edge release. You can think of the version 1.1 release as a separate phase, too; the maintenance release</p>
+</li>
+<li>
+<p>A branch can isolate the development of a single feature or research into a particularly complex bug. You can introduce a branch for a well-defined and conceptually isolated task or to facilitate a merge of several branches prior to a release</p>
+</li>
+<li>
+<p>The default branch in a repository is named <em>main</em>. If you prefer, you can rename or  even delete the main branch</p>
+</li>
+<li>
+<p>The most recent commit on a branch is called the tip or head of the branch</p>
+</li>
+<li>
+<p>A merge is the complement of a branch. When you merge, the content of one or more branches is joined with an implicit target branch. However, a merge does not eliminate any of the source branches or those branches’ names</p>
+</li>
+<li>
+<p>Each of your branch names, as well as the committed content on each branch, is local to your repository. However, when making your repository available to others, you can publish or elect to make one or any number of branches and the associated commits available, too</p>
+</li>
+<li>
+<p>The dev branch name points to the head commit, Z. If you wanted to rebuild the repository state at Z, then all the commits reachable from Z back to the original commit, A, are needed. The reachable portion of the graph is highlighted with thick lines and covers every commit except (S, G, H, J, K, L)<br><br></p>
+<p align="center">
+<img src="./assets/git/git-branches.png" alt="drawing" width="400" height="200" style="center">
+</p>
+</li>
+</ul>
+<h3 id="creating-branches">Creating Branches </h3>
+<ul>
+<li>
+<p>Git supports an arbitrarily complex branching structure, including branching branches and forking multiple branches from the same commit</p>
+</li>
+<li>
+<p>The command which creates a named branch at the given commit:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> branch <span class="token operator">&lt;</span>branch_name<span class="token operator">&gt;</span> <span class="token operator">&lt;</span>commit<span class="token operator">&gt;</span>
+</code></pre><p>When no starting-commit is specified, the default is the revision committed most recently on the current branch</p>
+</li>
+<li>
+<p><code>git branch</code> command lists branch names found in the repository</p>
+</li>
+<li>
+<p><code>git show-branch</code> traverses through all the commits on all branches being shown, stopping the listing on the most recent common commit present on all of them</p>
+</li>
+<li>
+<p><code>git branch -m &lt;old_name&gt; &lt;new_name&gt;</code>: change branch name</p>
+</li>
+<li>
+<p>Your working directory can reflect only one branch at a time. Start working on a different branch, issue the git checkout command: <code>git checkout &lt;another_branch_name&gt;</code> switches to another branch, that is, it moves the HEAD pointer to another branch in the tree.</p>
+</li>
+<li>
+<p>Your local modifications to NewStuff in your working directory would be overwritten by the version from dev</p>
+</li>
+</ul>
+<h3 id="checking-out-when-you-have-uncommitted-changes">Checking out when you have uncommitted changes </h3>
+<ul>
+<li>
+<p>Files and directories in your working directory that are not being tracked are always left alone; Git won’t remove or modify them. However, if you have local modifications to a file that are different from changes that are present on the new branch you are switching to, Git issues an error message such as the following and refuses to check out the target branch</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> checkout dev
+error: Your <span class="token builtin class-name">local</span> changes to the following files would be overwritten by checkout:
+NewStuff
+Please, commit your changes or stash them before you can switch branches.
+Aborting
+</code></pre><p>If Git brashly honored the request to check out the dev branch, your local modifications to NewStuff in your working directory (in master branch) would be overwritten by the version from dev. Git detects this potential loss and prevents it from happening. You can stage and commit changes before checking out.</p>
+</li>
+<li>
+<p>If specifically requested with the -m option, Git attempts to carry your local change into the new working directory by performing a merge operation between your local modifications and the target branch:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> checkout <span class="token parameter variable">-m</span> dev
+M     NewStuff
+Switched to branch <span class="token string">"dev"</span>
+</code></pre><p>It does not introduce a merge commit on any branch. Although it may look like the merge was performed cleanly and all is well, Git has simply modified the file and left the merge conflict indicators within it. You must still resolve any conflicts that are present</p>
+</li>
+<li>
+<p><code>git checkout &lt;commit&gt; &lt;file&gt;</code>:<br>
+Check out a previous version of a file (not a branch!). This turns the <code>file</code> that resides in the working directory into an exact copy of the one from <commit> and adds it to the staging area. You can now commit this old version of that file. You can get back by doing <code>git checkout HEAD &lt;file&gt;</code>. If you omit the file in git checkout commit, the entire dir is updated (downdated?) to match that commit here, your state is preserved and not affected. You can change files when the head is detached (and you are in an old commit), and if you wish to save that work, you can create a new branch for it</commit></p>
+</li>
+</ul>
+<h3 id="createdelete-new-branches">Create/delete new branches </h3>
+<p>When you want to both create a new branch and simultaneously switch to it, Git provides a shortcut for this with the <code>-b &lt;new-branch&gt;</code> option:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> checkout <span class="token parameter variable">-b</span> bug/pr-3
+</code></pre><p>To delete a branch:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> branch <span class="token parameter variable">-d</span> bug/pr-3
+</code></pre><hr>
+<h1 id="diff">diff </h1>
+<ul>
+<li>
+<p>A diff is a compact summary of the differences (hence the name “diff”) between two items. Unix and Linux diff command compares the files line by line and summarizes the deviations in a diff</p>
+</li>
+<li>
+<p><code>diff -u &lt;original_file&gt; &lt;new_file&gt;</code>: -u option produces a unified diff, a standardized format used widely to share modifications</p>
+</li>
+<li>
+<p><code>git diff &lt;commit&gt;</code>: This form summarizes the differences between your working directory and the given commit. Simialirly <code>git diff HEAD</code> or <code>git diff commit1 commit2</code> or <code>git diff --stat main~5 main</code>, or <code>git diff HEAD~1 HEAD</code> or <code>git diff &lt;branch1&gt; &lt;branch2&gt;</code></p>
+</li>
+<li>
+<p><code>git diff --cached &lt;commit&gt;</code>: This command shows the differences between the staged changes in the index and the given commit</p>
+</li>
+<li>
+<p><code>git diff</code> doesn’t care about the history of the files it compares or anything about branches; <code>git log</code> is extremely conscious of how one file changed to become another—for example, when two branches diverged and what happened on each branch</p>
+</li>
+</ul>
+<hr>
+<h1 id="merges">Merges </h1>
+<ul>
+<li>
+<p>A merge unifies two or more commit history branches. Most often, a merge unites just two branches, although Git supports a merge of three, four, or more branches at the same time</p>
+</li>
+<li>
+<p>When modifications in one branch do not conflict with modifications found in another branch, Git computes a merge result and creates a new commit that represents the new, unified state. But when branches conflict, which occurs whenever changes compete to alter the same line of the same file, Git does not resolve the dispute. Instead, Git marks such contentious changes as “unmerged” in the index and leaves reconciliation up to you, the developer.</p>
+</li>
+<li>
+<p>To merge other_branch into branch:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> checkout branch
+<span class="token function">git</span> merge other_branch
+</code></pre></li>
+<li>
+<p>If decided for some reason that you don’t want to complete a merge, prior to executing the final git commit on the merge commit, use <code>git reset --hard HEAD</code>. This command restores both your working directory and the index to the state immediately prior to the git merge command.</p>
+</li>
+<li>
+<p>If you want to abort or discard the merge after it has finished (that is, after it’s introduced a new merge commit), use <code>git reset --hard ORIG_HEAD</code> to prior to beginning the merge operation, Git saves your original branch HEAD in the ORIG_HEAD ref for just this sort of purpose.</p>
+</li>
+</ul>
+<hr>
+<h2 id="merge-strategies">Merge Strategies </h2>
+<ul>
+<li>
+<p><code>git merge</code> will automatically select a merge strategy unless explicitly specified. The <code>git merge</code> and <code>git pull</code> commands can be passed an <code>-s</code> (strategy) option. The <code>-s</code> option can be appended with the name of the desired merge strategy. If not explicitly specified, Git will select the most appropriate merge strategy based on the provided branches. The following is a list of the available merge strategies</p>
+</li>
+<li>
+<p>There are two common degenerate scenarios that lead to merges when neither of them actually introduces a new merge commit after performing the <code>git merge</code>:</p>
+<ul>
+<li><em>Already up-to-date</em>: when all the commits from the other branch (its HEAD) are already present in your target branch, even if it has advanced on its own, the target branch is said to be already up-to-date. As a result, no new commits are added to your branch. Very trivial!</li>
+<li><em>Fast-forward</em>: when your branch HEAD is already fully present and represented in the other branch. This is the inverse of the Already up-to-date case. Because your HEAD is already present in the other branch, Git then just moves your branch HEAD to point to the final, new commit. The fast-forward case is particularly common on tracking branches because they simply fetch and record the remote commits from other repositories.</li>
+</ul>
+</li>
+<li>
+<p>The follwoing merge strategies all produce a final commit, added to your current branch, that represents the combined state of the merge:</p>
+<ul>
+<li><em>Resolve</em>. The resolve strategy locates the obvious common ancestor as the merge basis and performing a direct three-way merge by applying the changes from the merge base to the tip of the other branch HEAD onto the tip of the current branch (3 commits involved to create the merge commit). <br><br></li>
+</ul>
+<p align="center">
+  <img src="./assets/git/git-3way-merge.png" alt="drawing" width="300" height="200" style="center">
+  </p>  
+<p>Because resolve is no longer Git’s default, if Alice wanted to use it then she would make an explicit request: <code>git merge -s resolve devel</code> <br><br></p>
+  <p align="center">
+  <img src="./assets/git/git-merge-3way.png" alt="drawing" width="300" height="200" style="center">
+  </p>  
+<ul>
+<li>
+<p><em>Recursive</em>: The recursive strategy is designed to handle the scenario where there is more than one merge base between the two branches. In these cases, Git forms a temporary merge of all of the common merge bases and then uses that as the base from which to derive the resulting merge of the two given branches via a normal three-way merge algorithm. The temporary merge basis is thrown away, and the final merge state is committed on your target branch. Recursive is now the default strategy for git merge.</p>
+<ul>
+<li>
+<p>The follwoing image shows a simple criss-cross merge. The nodes a and b are both merge bases for a merge between A and B. Either one could be used as the merge base and yield reasonable results. In this case, the recursive strategy would merge a and b into a temporary merge base, using that as the merge base for A and B. Because a and b could have the same problem, merging them could require another merge of still older commits. That is why this algorithm is called recursive</p>
+<p align="center">
+<img src="./assets/git/git-recursive-merge.png" alt="drawing" width="400" height="150" style="center">
+</p>
+</li>
+</ul>
+<p>Here is another illustration: HEAD of 2 branches have more than one ancestar.</p>
+  <p align="center">
+  <img src="./assets/git/git-recursive-merge1.png" alt="drawing" width="300" height="150" style="center">
+  </p>
+<p>First merge ancestors using temp commit, then finish the final 3-way merge.</p>
+  <p align="center">
+  <img src="./assets/git/git-recursive-merge2.png" alt="drawing" width="300" height="150" style="center">
+  </p>
+<p><a href="https://stackoverflow.com/questions/55998614/merge-made-by-recursive-strategy">Resourse</a></p>
+</li>
+<li>
+<p><em>Octopus</em>: Unlike previous strategies, it supports merging multiple branches together all at once</p>
+</li>
+<li>
+<p><em>Ours</em> and <em>Subtree</em> are other types of merges</p>
+</li>
+</ul>
+<p>If you want to use a graphical tool to resolve these issues, you can run <code>git mergetool</code>, which fires up an appropriate visual merge tool and walks you through the conflicts.</p>
+</li>
+</ul>
+<hr>
+<h1 id="altering-commits-change-history">Altering Commits: Change History </h1>
+<p><em><strong>NEVER CHANCE COMMITS THAT OTHERS MIGHT HAVE PULLED (PUBLIC COMMITS)</strong></em></p>
+<p>You should feel free to alter and improve your repository commit history as long as no other developer has obtained a copy of your repository.</p>
+<p>You shouldn’t rewrite, alter, or change any part of a branch that’s been made available and might be present in a different repository.  More clealy, leave the published commits alone but you can change unpublished ones as you want.</p>
+<h2 id="using-git-reset-to-change-history">Using 'git reset' to change history </h2>
+<p>The whole point of this command is to establish and recover known states for the HEAD, index, and working directory. So it can overwrite and destroy changes in your working directory.</p>
+<p>It has has three main options: --soft, --mixed, and --hard</p>
+<ul>
+<li>
+<p><code>git reset --soft &lt;commit&gt;</code>: changes the HEAD ref to  point to the given commit. The contents of your index and working directory are left unchanged. It undoes that commit but keep the changes in the staging area. For example:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> reset <span class="token parameter variable">--soft</span> HEAD^
+<span class="token function">git</span> commit
+</code></pre><p>This command moves you back to the prior place in the commit graph but keeps the index exactly the same. Everything is staged just as it was prior to the git reset command. You just get another shot at the commit message.  If you want to totally change the last commit, use <code>git commit --amend</code> which is a convenient way to modify the most recent commit by replacing it with a new commit. Again, dont apply these commands on a public commit</p>
+<ul>
+<li><code>git reset –soft HEAD~N &amp;&amp; git commit</code>: squash (or combine) last N commits into a single commit. You might want to combine all N last commits into a single commit to keep commit history less messy</li>
+</ul>
+</li>
+<li>
+<p><code>git reset --mixed &lt;commit&gt;</code>: changes HEAD to point to the given commit.<br>
+Your <em>index contents are also modified</em> to align with the tree structure  named by commit, but your working directory contents are left unchanged. It <em>unstages</em> the changes represented by commit, and it tells you what remains modified in your working directory. For example, you can  use this for deleting multpile commits and replace with only one.<br>
+<strong>--mixed is the default mode for <code>git reset</code></strong></p>
+<ul>
+<li>After <code>git reset</code> you can use <code>git restore &lt;commit&gt; &lt;filename&gt;</code> to recover working direcotry to that commit as well. If you want to do both at the same time, use <code>git reset --hard</code></li>
+</ul>
+</li>
+<li>
+<p><code>git reset --hard &lt;commit&gt;</code>: This variant changes the HEAD ref to point to  the given commit. The contents of your index are also modified to  agree with the tree structure named by the named commit. Furthermore, your working directory contents are changed to reflect the state of the tree represented by the given commit. When changing your working directory, the complete directory structure is altered to correspond to the given commit. Modifications are lost and new files are removed. Files that are in the given commit but no longer exist in your working directory are reinstated.</p>
+</li>
+<li>
+<p>You might want to use <code>git clean -f</code> to remove all untracked files from your working directory</p>
+</li>
+</ul>
+<h2 id="using-git-cherry-pick">Using 'git cherry-pick' </h2>
+<p>The command git cherry-pick is typically used to introduce particular commits from one branch within a repository onto a different branch.</p>
+<ul>
+<li>
+<p>In the follwoing picture the dev branch has normal development, whereas the rel_2.3 contains commits for the maintenance of release 2.3. <br><br></p>
+<p align="center">
+<img src="./assets/git/git-cherry-pick1.png" alt="drawing" width="500" height="150" style="center">
+</p>
+<p>During the course of normal development, a bug is fixed on the development line with commit F. If that bug turns out to be present in the 2.3 release also, the bug fix, F, can be made to the rel_2.3 branch using <code>git cherry-pick</code>:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> checkout rel_2.3
+<span class="token function">git</span> cherry-pick dev~2      <span class="token comment"># commit F, above</span>
+</code></pre><p>After cherry-pick, the graph resembles as follows:</p>
+<p align="center">
+<img src="./assets/git/git-cherry-pick2.png" alt="drawing" width="500" height="150" style="center">
+</p>
+<p>Commit F' is substantially similar to commit F, but it is a new commit and will have to be adjusted—perhaps with conflict resolutions—to account for its application to commit Z rather than commit E. None of the commits following F are applied after F'; only the named commit is picked and applied.</p>
+</li>
+<li>
+<p>Another common use for cherry-pick is to rebuild a series of commits by selectively picking a batch from one branch and introducing them onto a new branch. Suppose you had a series of commits on your development branch, my_dev, as shown below, and you wanted to introduce them onto the master branch but in a substantially different order.<br><br></p>
+<p align="center">
+  <img src="./assets/git/git-cherry-pick3.png" alt="drawing" width="500" height="150" style="center">
+</p>
+<p>To apply them on the master branch in the order Y, W, X, Z, you could use the following commands:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> checkout master
+<span class="token function">git</span> cherry-pick my_dev^      <span class="token comment">#Y</span>
+<span class="token function">git</span> cherry-pick my_dev~3   <span class="token comment">#W</span>
+<span class="token function">git</span> cherry-pick my_dev~2   <span class="token comment">#X</span>
+<span class="token function">git</span> cherry-pick my_dev       <span class="token comment">#Z</span>
+</code></pre><p>Afterward, your commit history would look like below: <br><br></p>
+<p align="center">
+  <img src="./assets/git/git-cherry-pick4.png" alt="drawing" width="500" height="150" style="center">
+</p>
+</li>
+<li>
+<p><code>git cherry-pick</code> allowes a range of commits to be selected and reapplied in a single command. For example, the following command:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token comment"># on branch master</span>
+$ <span class="token function">git</span> cherry-pick X<span class="token punctuation">..</span>Z
+</code></pre><p>would apply new commits X', Y', and Z' on the master branch. This is particularly handy in porting or moving a large sequence of commits from one line of development to another without necessarily using the entire source branch at one time.</p>
+</li>
+</ul>
+<h2 id="using-git-revert">Using 'git revert' </h2>
+<p>This command is used to introduce a new commit that reverses the effects of a given commit. A common application for git revert is to “undo” the effects of a commit that is buried, perhaps deeply, in the history of a branch.</p>
+<p>For some reason, perhaps through testing, commit<br>
+D has been deemed faulty.</p>
+<p align="center">
+    <img src="./assets/git/git-revert1.png" alt="drawing" width="500" height="50" style="center">
+  </p>
+<p>Simply run git revert:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> revert master~3      <span class="token comment"># commit D</span>
+</code></pre> <p align="center">
+    <img src="./assets/git/git-revert2.png" alt="drawing" width="500" height="50" style="center">
+  </p>
+<p>This is a new commit and might have to be adjusted for conflicts.</p>
+<p>If another developer has cloned your repository or fetched some of your commits, there are implications for changing the commit history. In this case, you probably should not use commands that alter history within your repository. Instead, use git revert; do not use <code>git reset</code> nor the <code>git commit --amend</code>. Use <code>git invert</code> to undo the mistake</p>
+<h3 id="changing-the-top-commit">Changing the Top Commit </h3>
+<ul>
+<li>
+<p>One of the easiest ways to alter the most recent commit on your current branch is with <code>git commit --amend</code>. A frequent use of <code>git commit --amend</code> is to fix typos immediately after a commit.</p>
+</li>
+<li>
+<p>The command can edit the meta-information on a commit. For example, by specifying --author you can alter the author of the commit</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> commit <span class="token parameter variable">--amend</span> <span class="token parameter variable">--author</span> <span class="token string">"Bob Miller &lt;kbob@example.com&gt;"</span> 
+</code></pre></li>
+<li>
+<p><code>git commit --amend --no-edit</code>: amends a commit without changing its commit message. Replaces the tip of the current branch by creating a new commit</p>
+</li>
+<li>
+<p>If you amend a commit that other developers have based their work on, it will look like the basis of their work vanished from the project history. This is a confusing situation for developers to be in and it’s complicated to recover from. Again, it is recommended not to use this if your code is published in a public repo.</p>
+</li>
+</ul>
+<h2 id="rebasing-commits">Rebasing Commits </h2>
+<ul>
+<li>
+<p>This command is used to move the starting point of a sequence of commits in one branch to a specific commit in another branch as if you'd created your branch from a different commit. Git accomplishes this by creating new commits and applying them to the specified base. It's very important to understand that even though the branch looks the same, it's composed of entirely new commits. The primary reason for rebasing is to maintain a linear project history. This gives the later benefit of a clean merge of your feature branch back into the main&nbsp;branch, so you get a much cleaner project history. Also it eliminates the unnecessary merge commits required by <code>git merge</code>. You can follow the tip of feature all the way to the beginning of the project without any forks. This makes it easier to navigate your project with commands like git log, git bisect, and gitk.</p>
+</li>
+<li>
+<p><code>git rebase</code> allows you to literally rewrite history — automatically applying commits in your current working branch to the passed branch head. Since your new commits will be replacing the old, it's important to not use git rebase on commits that have been pushed public, or it will appear that your project history disappeared.</p>
+</li>
+</ul>
+<p>This command requires at least the name of the other branch onto which your commits will be relocated. By default, the commits from the current branch that are not already on the other branch are rebased</p>
+<ul>
+<li>
+<p>A common use for <code>git rebase</code> is to keep a series of commits that you are developing up-to-date with respect to another branch, usually a <em>main</em> branch or a tracking branch from another repository. In the follwoing, the <em>topic</em> branch started on the <em>main</em> branch when it was at commit B. In the meantime, it has progressed to commit E.</p>
+<p align="center">
+  <img src="./assets/git/git-rebase1.png" alt="drawing" width="500" height="100" style="center">
+</p>
+<p>You can keep your commit series up-to-date with respect to the main branch by writing the commits so that they are based on commit E rather than B.</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> checkout topic
+<span class="token function">git</span> rebase master
+</code></pre><p align="center">
+  <img src="./assets/git/git-rebase2.png" alt="drawing" width="500" height="100" style="center">
+</p>
+</li>
+<li>
+<p>The rebase operation relocates commits one at a time from each respective original commit location to a new commit base. As a result, each commit that is moved might have conflicts to resolve. If a conflict is found, the rebase operation suspends its processing temporarily so you can resolve the conflict. The final result is a linear sequence of commits.</p>
+</li>
+<li>
+<p>If the rebase operation turns out to be the totally wrong thing to do, <code>git rebase --abort</code> abandons the operation and restores the repository to the state prior to issuing the original git rebase.</p>
+</li>
+<li>
+<p>If your feature branch was actually as small as a few commits, you would probably be better off rebasing it onto main&nbsp;and doing a&nbsp;fast-forward merge. This prevents superfluous merge commits from cluttering up&nbsp;the project history. While you can use either of these merge strategies, many developers like to use&nbsp;fast-forward merges (facilitated through rebasing) for small features or bug&nbsp;fixes, while reserving 3-way merges for the integration of longer-running&nbsp;features.</p>
+</li>
+</ul>
+<h3 id="using-git-rebase--i">Using 'git rebase -i' </h3>
+<p>Interactive rebasing gives you the opportunity to alter commits as they are moved to the new branch. This is even more powerful than an automated rebase, since it offers complete control over the branch’s commit history.</p>
+<p>This command allows you to interactively reorder the commits, edit, rewrite commit messages, remove, squash multiple commits into one, and split a commit into several using the <code>-i</code> or <code>--interactive</code> option.  This command allows you to modify the commits that make up a branch and  place them back onto the same branch or onto a different branch. Typically, this is used to clean up a messy history before merging a feature branch into main .</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> checkout feature
+<span class="token function">git</span> rebase <span class="token parameter variable">-i</span> main
+</code></pre><p>This will open a text editor listing all of the commits that are about to be moved:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>pick 33d5b7a Message <span class="token keyword keyword-for">for</span> commit <span class="token comment">#1</span>
+pick 9480b3d Message <span class="token keyword keyword-for">for</span> commit <span class="token comment">#2</span>
+pick 5c67e61 Message <span class="token keyword keyword-for">for</span> commit <span class="token comment">#3</span>
+</code></pre><p>This listing defines exactly what the branch will look like after the rebase is performed. By changing the pick command and/or re-ordering the entries, you can make the branch’s history look like whatever you want. For example, if the 2nd commit fixes a small problem in the 1st commit, you can condense them into a single commit with the fixup command:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>pick 33d5b7a Message <span class="token keyword keyword-for">for</span> commit <span class="token comment">#1</span>
+fixup 9480b3d Message <span class="token keyword keyword-for">for</span> commit <span class="token comment">#2</span>
+pick 5c67e61 Message <span class="token keyword keyword-for">for</span> commit <span class="token comment">#3</span>
+</code></pre><p>When you save and close the file, Git will perform the rebase according to your instructions, resulting in project history that looks like the following:</p>
+<p align="center">
+    <img src="./assets/git/git-rebase-interactive.png" alt="drawing" width="500" height="200" style="center">
+  </p>
+<p>Once you understand what rebasing is, the most important thing to learn is when not to do it. The golden rule of git rebase is to never use it on public branches (the branches being changed by others, such as main branch as other developers are working on it). For example, think about what would happen if you rebased main onto your feature branch (as opposed to rebasing feature brach onto main which we did before):</p>
+<p align="center">
+    <img src="./assets/git/git-bad-rebase.png" alt="drawing" width="500" height="200" style="center">
+  </p>
+<p>The rebase moves all of the commits in main onto the tip of feature. The problem is that this only happened in your repository. All of the other developers are still working with the original main. Since rebasing results in brand new commits, Git will think that your main branch’s history has diverged from everybody else’s. The only way to synchronize the two main branches is to merge them back together, resulting in an extra merge commit and two sets of commits that contain the same changes (the original ones, and the ones from your rebased branch). Needless to say, this is a very confusing situation.</p>
+<p>Another example is when you push a feature branch to a remote repo and then rebase it on your local machine. Now the old commits after rebase get new hash id, so they are not recognized as the same commits as the old same ones on the remote branch. When you try to push, then git will be confused and can not identify that the commits are actually the same. This is even worse when other ppl have already pulled those commits from the remote. This might overwrite some commits or lead to lose of work for the team. Of course, this doesn’t happen when you use <code>git merge</code> since it doesn’t touch history of commits.</p>
+<p><a href="https://www.youtube.com/watch?v=DkWDHzmMvyg&amp;t=7s">Watch</a></p>
+<p>So, before you run git rebase, always ask yourself, “Is anyone else looking at this branch?” Or “if this branch is already push in remote so possibly somebody might have changed something already?”If the answer is yes, take your hands off the keyboard and start thinking about a non-destructive way to make your changes (e.g., the git revert command). Otherwise, you’re safe to re-write history as much as you like.<br>
+Note that when rebasing your feature branch, you might still get some conflicts if some changes on the main branch conflict with your changes in the feature branch. In this case, you need to resolve the conflict just like you do with merging.</p>
+<p><a href="https://git-scm.com/book/en/v2/Git-Branching-Rebasing">Reference</a></p>
+<hr>
+<h1 id="remote-repositories">Remote Repositories </h1>
+<p>It’s time to explore the much lauded distributed features of Git and learn how to collaborate with other developers via shared repositories.</p>
+<ul>
+<li>
+<p>A <em>clone</em> is a copy of a repository. A clone allows each developer to work locally and independently without centralization, polls, or locks. Ultimately, it’s cloning that allows Git to easily scale and permit many geographically separated contributors</p>
+</li>
+<li>
+<p>A <em>remote</em> is a reference, or handle for connection to another repository through a filesystem (on the same machine) or network path through a Git URL. Once a remote is established, Git can transfer data from one repository to another using either a <em>push</em> or a <em>pull</em> model</p>
+</li>
+<li>
+<p>Use the <code>git remote</code> command to create, remove, manipulate, and view a remote. All the remotes you introduce are recorded in the <code>.git/config</code> file and can be manipulated using <code>git config</code></p>
+</li>
+<li>
+<p><code>git remote -v</code> lists all remote repos your local repo is connected to, along with the URLs associated</p>
+</li>
+<li>
+<p><code>git remote add origin &lt;URL&gt;</code> connects a remote repo named <code>origin</code> to your your local</p>
+</li>
+<li>
+<p><code>git remote rm &lt;name&gt;</code> removes a remote repo from the list of connected ones</p>
+</li>
+<li>
+<p><code>git remote rename &lt;name&gt;</code> renames the remote repo</p>
+</li>
+<li>
+<p><code>git fetch</code>: Retrieves objects and their related metadata from a remote repository</p>
+</li>
+<li>
+<p><code>git pull</code>: Like git fetch, but also merges changes into a corresponding local branch. <code>git pull</code> implies <code>git fetch</code> followed by either <code>git merge</code> or<br>
+<code>git rebase</code>. By default, the second step is merge because this is almost always the desired behavior.</p>
+</li>
+<li>
+<p><code>git push</code>: Transfers objects and their related metadata to a remote repository</p>
+</li>
+<li>
+<p><code>git ls-remote</code>: Shows a list of references held by a given remote (on an upstream server). This command indirectly answers the question “Is an update available?”</p>
+</li>
+<li>
+<p>During a clone operation, Git creates a <em>remote-tracking branch</em> in the clone for each branch in the upstream repository. The set of remote-tracking branches is introduced in a new, separate namespace (clear separation between branches made in a repository by you (topic branches)) within the local repository that is specific to the remote being cloned. They are not branches in a remote repository. The local repository<br>
+uses its remote-tracking branches to follow or track changes made in the remote repository.</p>
+</li>
+</ul>
+<h3 id="referring-to-remote-repositories">Referring to Remote Repositories </h3>
+<p>Git supports several forms of Uniform Resource Locators (URLs) that can be used to name remote repositories.</p>
+<ul>
+<li>
+<p>The simplest form of Git URL refers to a repository on a local file system, be it a true physical filesystem or a virtual filesystem mounted locally via the Network File System (NFS). There are two permutations:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>/path/to/repo.git
+file:///path/to/repo.git
+</code></pre><p>To avoid issues associated with shared repositories, the file:// form is recommended. As a convenience, the .git suffix is not required; both <code>/tmp/Depot/public_html</code> and <code>/tmp/Depot/public_html.git</code> will work.</p>
+</li>
+<li>
+<p>When you have a truly remote repository whose data must be retrieved across a network, use a native protocol URL such as:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>git://example.com/path/to/repo.git
+git://example.com/~user/path/to/repo.git
+</code></pre><p>These forms are used by git-daemon to publish repositories for anonymous read. You can both clone and fetch using these URL forms. The clients that use these formats are not authenticated, and no password will be requested.</p>
+</li>
+<li>
+<p>For secure, authenticated connections, the Git native protocol can be tunneled over Secure Shell(SSH) connection using the following URL templates:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>ssh://<span class="token punctuation">[</span>user@<span class="token punctuation">]</span>example.com<span class="token punctuation">[</span>:port<span class="token punctuation">]</span>/path/to/repo.git
+ssh://<span class="token punctuation">[</span>user@<span class="token punctuation">]</span>example.com/path/to/repo.git
+ssh://<span class="token punctuation">[</span>user@<span class="token punctuation">]</span>example.com/~user2/path/to/repo
+</code></pre></li>
+<li>
+<p>The http:// and https:// URL forms are more important and popular. Notably, most corporate firewalls allow the HTTP port 80 and HTTPS port 443 to remain open while the default Git port 9418 is typically blocked and would require an act of Congress to open it. Furthermore, these URL forms are being favored by popular Git hosting sites like GitHub.</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>http://example.com/path/to/repo.git
+https://example.com/path/to/repo.git
+</code></pre></li>
+</ul>
+<h3 id="make-your-own-origin-remote">Make Your Own Origin Remote </h3>
+<p>So far the repository in your home directory was created<br>
+using git init and not via a clone,  lacks an origin. In fact, it has no remote configured at all. A remote is needed if the goal is to perform more development in your initial repository and then push that development to the newly established, authoritative repository. In a sense, you must manually convert your initial repository into a derived clone.</p>
+<ul>
+<li>
+<p>The command for manipulating remotes is <code>git remote</code>. This operation introduces a few new settings in the <code>.git/config</code> file:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> remote <span class="token function">add</span> origin /tmp/Depot/public_html
+<span class="token comment"># Or</span>
+<span class="token function">git</span> remote <span class="token function">add</span> origin githubrepoaddress
+</code></pre><p>This registers a remote destination to which Git can push contents.</p>
+<p>Now, within this repository, the name origin can be used as a shorthand reference for the remote repository. You can update the remote origin using <code>git remote update remote_name</code>. Now your repository has two branches, one (main) with the new commit on it, and the other (origin/main) that is tracking the remote repository</p>
+</li>
+<li>
+<p>Run <code>git remote show origin</code> command to extract all the information about the remote origin</p>
+</li>
+<li>
+<p>The command <code>git remote rm &lt;name&gt;</code> removes the given remote and all of its associated remote-tracking branches from your local repository</p>
+</li>
+<li>
+<p>To remove just one remote-tracking branch from your local repository, use the command <code>git branch -r -d origin/dev</code>. You shouldn’t really do this unless the corresponding remote branch really has been removed from the upstream repository. To keep even more in sync with an upstream remote, use the command <code>git remote update --prune remote</code> to first get updates from the remote and then prune stale tracking branches all in one step</p>
+</li>
+<li>
+<p>To rename a remote and all of its refs, use <code>git remote rename &lt;old_name&gt; &lt;new_name&gt;</code>. For example, after this command <code>git remote rename jon jdl</code><br>
+any ref like jon/bugfixes will be renamed as jdl bugfixes</p>
+</li>
+<li>
+<p>The <code>git config</code> command can be used to manipulate the entries in your configuration file directly including several config variables for remotes:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> config remote.publish.url <span class="token string">'ssh://git.example.org/pub/repo.git'</span>
+</code></pre></li>
+<li>
+<p>You may clone multiple remotes into your repository:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token comment"># Grab GitHub's repository</span>
+<span class="token function">git</span> clone git://github.com/gitster/git.git
+
+<span class="token comment"># Grab git.kernel.org's repository</span>
+<span class="token function">git</span> remote <span class="token function">add</span> korg git://git.kernel.org/pub/scm/git/git.git
+
+<span class="token comment"># fetch both</span>
+<span class="token function">git</span> remote update
+</code></pre></li>
+<li>
+<p>If you already have a topic branch that you decide should be associated with an upstream repository’s remote-tracking branch, you can establish the relationship using the --upstream option. Typically, this is done after adding a new remote, like this:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token comment"># Create remote-tracking branch in your reposity</span>
+<span class="token function">git</span> remote <span class="token function">add</span> upstreamrepo git://git.example.org/upstreamrepo.git
+<span class="token comment"># Branch mydev already existed.</span>
+<span class="token comment"># Leave it alone, but associated it with upstreamrepo/dev.</span>
+<span class="token function">git</span> branch --set-upstream mydev upstreamrepo/dev
+</code></pre></li>
+</ul>
+<h3 id="pushing-your-changes">Pushing Your Changes </h3>
+<ul>
+<li>
+<p>Any change that you commit is completely local to your repository; it is not yet present in the remote repository. A convenient way to get your commits from your main branch into the origin remote repository is to use the <code>git push</code> command: <code>git push origin main</code>. Note that you need to set the upstream repository for push command: <code>git push --set-upstream origin &lt;branch_name&gt;</code>.</p>
+</li>
+<li>
+<p>Git has taken your master branch changes, bundled them up, and sent them to the remote repository named <em>origin</em>. Git has also performed one more step here: it has taken those same changes and added them to the <em>origin/main</em> branch in your repository as well. If your remote repository is on a local filesystem, as it is here, then you can easily check by going to the depot directory:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>$ <span class="token builtin class-name">cd</span> /tmp/Depot/public_html.git
+$ <span class="token function">git</span> show-branch
+<span class="token punctuation">[</span>master<span class="token punctuation">]</span> Add a hairy poem.
+</code></pre></li>
+<li>
+<p>If the remote history has diverged from your history, you need to pull the remote branch first and then merge it into your local repository. After that, try pushing up again</p>
+</li>
+<li>
+<p>To perform branch add and delete operations on a remote repository, you need to specify it in a git push command:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token comment"># First create the new branch locally and then push it </span>
+<span class="token function">git</span> checkout <span class="token parameter variable">-b</span> foo 
+<span class="token function">git</span> push origin foo   
+</code></pre><p>This will create a new branch foo in remote. <code>git push origin mystuff:dev</code> will push the local branch mystuff (source) to the upstream repository and either create or extend a branch named dev (destination).</p>
+</li>
+<li>
+<p>To delete a remote branch <em>foo</em> from remote repo, run <code>git push origin --delete foo</code> or equivalently <code>git push origin :foo</code> (no source maps to destination foo means deletion)</p>
+</li>
+</ul>
+<h3 id="adding-a-new-developer">Adding a new developer </h3>
+<p>Once you have established an authoritative repository, it’s easy to add a new developer to a project simply by letting him clone the repository and begin working. They can run the following command:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token builtin class-name">cd</span> /tmp/bob
+<span class="token function">git</span> clone /tmp/Depot/public_html.git
+</code></pre><p>Now they have it locally:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">cat</span> .git/config
+<span class="token function">git</span> branch <span class="token parameter variable">-a</span>
+</code></pre><h3 id="getting-repository-updates">Getting Repository Updates </h3>
+<ul>
+<li>
+<p>You get the updates from remote repo and refresh your clone of the repository, run <code>git pull</code>. If the repository is not specified on the command line, either as a Git URL or indirectly through a remote name, then the default remote origin is used.</p>
+</li>
+<li>
+<p>You may want to fetch updates into your repository to inspect them but not necessarily merge immediately. In this case, you can simply perform the fetch, and then perform other operations on the remote-tracking branch such as <code>git log</code>, <code>git diff</code> etc.. Later, when you are ready (if ever!), you may perform the merge at your convenience using <code>git merge origin/main</code></p>
+</li>
+<li>
+<p><code>git pull --rebase</code> will cause Git to rebase (rather than merge) your local-tracking branch onto the remote-tracking branch instead of merging. To make rebase the normal operation for a branch, set the <code>branch.branch_name.rebase</code> configuration variable to <code>true</code>. If you want more control, use <code>fetch</code> and <code>rebase -i</code>:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> checkout main
+<span class="token function">git</span> fetch origin main 
+<span class="token function">git</span> rebase <span class="token parameter variable">-i</span> origin main
+</code></pre><p>Now you can squash commits, fix messages etc. and then push up to the remote</p>
+</li>
+<li>
+<p>When your local commits are not sync with the ones in remote (<em>ahead</em> or <em>behind</em> or both), <code>git status</code> usually reports this status. To see which commits you have in main that are not in origin/main, use a command like this:</p>
+<pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code><span class="token function">git</span> log origin/main<span class="token punctuation">..</span>main 
+</code></pre></li>
+</ul>
+<h3 id="should-you-merge-or-rebase-when-pulling">Should you merge or rebase when pulling? </h3>
+<p>The short answer is “Do either as you wish.”. Up to you!</p>
+<ul>
+<li>
+<p>By using merge, you will potentially incur an additional merge commit at each pull to record the updated changes simultaneously present in each branch. In a sense, this is a true reflection of the two paths of independent development merged together. Conflicts will have to be resolved during the merge. Each sequence of commits on each branch will be based on exactly the commit on which it was originally written. When pushed upstream, any merge commits will continue to be present. Some consider these superfluous merges and would rather not see them cluttering up the history. Others consider these merges a more accurate portrayal of the development history and want to see them retained.</p>
+</li>
+<li>
+<p>As a rebase fundamentally changes the notion of when and where a sequence of commits was started to develop, some aspects of the development history will be lost. Specifically, the original commit on which your development was originally based will be changed to be the newly pulled HEAD of the remote-tracking branch. That will make the development appear to happen later (in commit sequence) than it actually did. It’ll just be different and simpler than if the history was merged. Naturally, you will have to resolve conflicts during the rebase operation as needed still. As the changes that are being rebased are still strictly local within your repository and haven’t been published yet, there’s really no reason to fear the “don’t change history” mantra with this rebase.</p>
+</li>
+<li>
+<p>I tend to like to see simpler, linear histories. During most of my personal development, I’m usually not too concerned by a slight reordering of my changes with respect to those of my coworker’s that came in on a remote-tracking branch fetch, so I am fond of using the rebase option. If you really want to set up one consistent approach, consider setting config options <code>branch.autosetupmerge</code> or <code>branch.autosetuprebase</code> to <code>true</code>, <code>false</code>, or always as desired.</p>
+</li>
+<li>
+<p>In the case you choose to abort the merge and reset your main branch to its prior ORIG_HEAD state, use the command <code>git reset --hard ORIG_HEAD</code>. Doing so in this example would move master to the prior HEAD value, Y, and change your working directory to match</p>
+</li>
+<li>
+<p>If your objective is only to incorporate the latest updates from origin into your repository, then you are finished when your merge is resolved. On the other hand, a simple <code>git push</code> can return the unified and merged history from your main branch back to the origin repository</p>
+</li>
+</ul>
+<hr>
+<h1 id="github">GitHub </h1>
+<p align="center">
+    <img src="./assets/git/git-clone-workflow.png" alt="drawing" width="500" height="300" style="center">
+  </p>
+<p>In order to work on a project already exists, you can just fork it first, then clone it to your local machine and start working on it. To fork a public project, you can go to its GitHub project page and select Fork at the top of the page. This fork option is available only while using the web interface. There is no native git command to create a fork. The repo from which you create the fork is referred to as the original upstream repository. Once you fork the original upstream, the forked copy of the repo becomes the origin, and developers with access to the origin can create clones of it on their local machines. After cloning, you can create branches and easily make changes to the code base, like adding features, enhancements, or fixing bugs. But what if you want to contribute your changes back to the original upstream that you do not have right access to from where it was forked? You can submit a pull request for your proposed changes by selecting</p>
+<h2 id="creating-pull-request">Creating Pull Request </h2>
+<ul>
+<li>
+<p>Forking is the enabling step of creating a personal copy of a project, but the real value for the core project lies in the second action, formally called a <em>pull request</em>. Pull requests allow any user with a commit that she feels makes a useful contribution to the project to announce that contribution to the core project owners.</p>
+<p align="center">
+  <img src="./assets/git/git-fork-workflow.png" alt="drawing" width="500" height="300" style="center">
+</p>
+</li>
+<li>
+<p>Once a contributor has finished coding a feature, committed that new code to a well-named branch, and pushed that new branch to a fork, it can be turned into a pull request.</p>
+</li>
+<li>
+<p>When the newly pushed branch has been selected from the branch selector drop-down control, the context-sensitive Pull Request button is pressed to initiate the assembly of the pull request announcement. The default behavior of a pull request is to include all of the commits on the current topic branch. However, in cases that call for it, a specific range of commits, as well as the source and target branch, can be manually altered</p>
+</li>
+<li>
+<p>With the pull request now created, it is up to the core project owners (or anyone that is a collaborator on this core instance of the project) to review, evaluate, comment on, and potentially merge in these changes in each PR in the queue.</p>
+</li>
+<li>
+<p>Part of the concept behind pull requests is turning a typically binary accept/deny operation into a conversation. That conversation happens with comments on pull requests or comments on specific commits. Comments can be made at one of three levels of precision: pull request, commit, or line of code.</p>
+</li>
+<li>
+<p>When the solution in the pull request is sufficiently polished and ready to be merged in, typically to the master branch, then the changes are merged ( or use the automatic merge button on the<br>
+GitHub which a real Git commit).</p>
+</li>
+</ul>
+<h2 id="notifications">Notifications </h2>
+<p>A social system like GitHub needs a strong notification mechanism to announce potentially important changes on the projects, organizations, and users that a contributor has elected to watch. Notifications are driven by watches of the previously mentioned three types of items on GitHub. The summary of all notifications that pertain to you are centrally located on a notifications page that is reachable by an icon in the top level navigation.</p>
+<h2 id="github-pages-git-for-websites">GitHub Pages (Git for Websites) </h2>
+<p>If the wiki page idea sounded attractive, what about having Git-tracked Markdown files as the foundation of a tool for publishing entire websites. GitHub pages based on<br>
+Jekyll provide exactly that, and can even be mapped to a Domain Name System (DNS) CNAME record as content for a subdomain or primary domain name.</p>
+<h2 id="notes">Notes </h2>
+<p>If you are writing to your repository from a remote machine, you can have GitHub to generate a GitHub Personal Access Token (with appripriate permissions for a limited time, usually repo and write permissions for some days) so you can push code back to your repository from the server. When git promps you for a password, use your PAT instead.</p>
+<p>Reference:</p>
+<p>I. <a href="https://www.oreilly.com/library/view/version-control-with/9781449345037/">Version Control with Git, 2nd Edition</a></p>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+  
+    </body></html>
