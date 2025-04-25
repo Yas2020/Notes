@@ -1,0 +1,274 @@
+
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+/* Other interesting fonts are: Noto Sans, Roboto, Fira Sans, Sixtyfour*/
+@import url('https://fonts.googleapis.com/css?family=Tangerine');
+@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Kode+Mono');
+@import url('https://fonts.googleapis.com/css?family=Cutive+Mono');
+// @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,600");
+
+
+.markdown-preview.markdown-preview {
+
+  // custom prince pdf export style
+  &.prince {
+    font-family: UbuntuMono, Open Sans, Fira Sans, serif;
+    // font-size: 14pt;
+    // line-height: 1.5;
+    // background: linear-gradient(#fdf6e3, #f0e4d7);
+    // background: url('/Users/yas/Documents/Notes/.crossnote/kiwihug2.jpg');
+    color: #000;
+  }
+  
+  font-family:  UbuntuMono, Open Sans, Fira Sans, serif;
+  font-size: 18px;
+  
+  
+  @page {
+    size: A4 portrait;
+    margin-top: .5in;
+    // margin: 35pt;
+    padding-top: 20px;
+    color: black;
+    margin-bottom: 1.5in;
+    // background: url('/Users/yas/Documents/Notes/.crossnote/nordwood.jpg');
+    @bottom-center {
+      content: "Page " counter(page) " of " counter(pages);
+      font-size: 8pt;
+      vertical-align: top;
+      padding-top: .5in;
+      font-family: UbuntuMono, Open Sans, Fira Sans, serif;
+    };
+    @top-center { 
+      content: "Yas Eftekhari - April 2025";
+      text-align: left;
+      border-bottom: 1px solid black;
+      font-size: 8pt;
+      font-weight: bold;
+      margin: 0px, 50px;
+      margin-left: inherit;
+      margin-right: inherit;
+      padding: 25px 0 5px 0;
+      font-family: UbuntuMono, Open Sans, Fira Sans, serif;
+    };
+  };
+
+  @page:first {
+    counter-reset: page; /* Reset page numbering on first page */
+  }
+    
+  p:not(:has(img)) {
+    // block-size: inherit;
+    // width: fit-content;
+    text-align: justify;
+    page-break-inside: auto
+  }
+
+  p img{
+    margin-bottom: 5px;
+    margin-top: 5px;
+  }
+
+  .title{
+    font-size: 140pt;
+    font-family: 'Tangerine';
+    color: rgb(48, 93, 138);
+    text-shadow: 3px 3px 0 #b08888;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // height: 100vh; /* Full page height */
+    text-align: center;
+    font-weight: bold;
+    page-break-after: always; /* Ensure title is on its own page */
+    // line-height: 1.3;
+    // border-bottom-width: 1px;
+    // border-bottom-style: solid;
+
+  }
+
+  h1{
+    font-size: 30pt;
+    color: rgb(26, 79, 204);
+    // font-family: 'Tangerine';
+    // text-shadow: 3px 3px 4px #aaa;
+    // text-align: center;
+    // padding-bottom: 0.5em;
+    // line-height: 1.3;
+    border-bottom-width: 1px;
+    // border-bottom-style: solid;
+  }
+  // h1, h2, h3 {
+  //   font-weight: normal;
+  // }
+  
+  h2{
+    // font-family: 'Lora';
+    font-weight: 700;
+    color: rgb(63, 119, 224);
+  }
+  h3{
+    font-weight: 700;
+    color: rgb(109, 162, 242);
+  }
+
+  h4{
+    font-weight: 700;
+    color: rgb(169, 200, 248);
+  }
+  
+  ul li {
+      /* list-style-type: ; */
+      margin-top: 7px;
+      margin-bottom: 10px;
+      margin-left: 5%;
+      text-align: justify;
+      // line-height: 30px;
+  }
+
+  ol {
+    list-style-type: upper-roman; /* or decimal, lower-alpha, upper-alpha, etc. */
+    list-style-position: outside; /* or inside */
+    // color: #333;
+    // font-family: 'Georgia', serif;
+    // font-size: 18px;
+  }
+
+  table {
+    justify-items: center; 
+    // border-collapse: collapse;
+    // margin: 0px auto;
+    // margin-left: auto;
+    // margin-right: auto;
+  }
+  
+  table > thead > tr > th {
+    text-align: center;
+    border-bottom: 1px solid;
+  }
+  
+  table > thead > tr > th,
+  table > thead > tr > td,
+  table > tbody > tr > th,
+  table > tbody > tr > td {
+    padding: 5px 10px;
+  }
+  
+  table > tbody > tr + tr > td {
+    border-top: 1px solid;
+  }
+  
+  th {
+    background-color: #0430aa;
+    color: white;
+  }
+  
+  th, td {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  
+  blockquote {
+    background: rgba(127, 127, 127, 0.1);
+    border-color: rgba(0, 122, 204, 0.5);
+    margin: 0 7px 0 5px;
+    padding: 0 16px 0 10px;
+    border-left-width: 5px;
+    border-left-style: solid;
+  }
+  
+  code {
+    background-color: rgb(247, 247, 245);
+    font-family: Monospace, Menlo, Monaco, Consolas;
+    font-size: 10pt;
+    // line-height: 1.357em;
+    color:#14c111;
+    // white-space: pre-wrap;
+    // word-wrap: break-word;
+    // overflow-wrap: break-word;
+  };
+
+  pre.language-text {
+    background-color: rgb(247, 247, 245);
+    // padding: 0px;
+    // margin: 0px;
+  }
+
+  pre.language-text code{
+      font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
+      font-size: 10pt;
+      line-height: 1.357em;
+      color:#14c111;  
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      border-radius: 10px;
+  }
+  
+  pre.language-o.o {
+    background-color: rgb(247, 247, 245);
+    margin-top: -25px;
+  }
+  
+  pre.language-o.o code {
+    font-family:  CutiveMono, KodeMono, Monaco, "Droid Sans Fallback";
+      font-size: 11pt;
+      font-weight: 800;
+      line-height: 1.357em;
+      color:#93a293;  
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+  }
+
+
+
+
+  //   // @page body:left {
+  //   //   @top-left {
+  //   //       content: counter(page);
+  //   //       vertical-align: bottom;
+  //   //   }
+  //   //   @top-right {
+  //   //       content: "Chapter " counter(chapter) ": " string(chapter);
+  //   //       vertical-align: bottom;
+  //   //   }
+  //   // }
+  //   // @page body:right {
+  //   //     @top-right {
+  //   //         content: counter(page);
+  //   //         vertical-align: bottom;
+  //   //     }
+  //   //     @top-left {
+  //   //         content: counter(chapter) "." counter(section) " "
+  //   //             string(section);
+  //   //         vertical-align: bottom;
+  //   //     }
+  //   // }
+    
+  // }
+
+  // // custom presentation style
+  // .reveal .slides {
+  //   // modify all slides
+  // }
+
+  // .slides > section:nth-child(1) {
+  //   // this will modify `the first slide`
+  // }
+
+
+};
+
+
+
+
+
+
