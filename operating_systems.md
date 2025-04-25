@@ -2,7 +2,7 @@
 ### Professor John Kubi. UCB-CS162, Fall 2010
 
 
-### Time frame for sections
+<!-- ### Time frame for sections
 
 | time      | topic                                    |
 |-----------|------------------------------------------|
@@ -14,17 +14,17 @@
 | 1 week    | File systems                             |
 | 2.5 weeks | Networking and Distributed systems       |
 | 1 week    | Protection and Securing                  |
-| ??        | Advanced topics                          |
+| ??        | Advanced topics                          | -->
 
-### Projects
+<!-- ### Projects
 1. Build a thread system
 2. Implement Multi-threading
 3. Caching and Virtual Memory
-4. Networking and Distributed systems
+4. Networking and Distributed systems -->
 
-# Lecture 1
+<!-- ## Lecture 1 -->
 
-### What is an Operating System
+## Lecture 1: What is an Operating System
 
 **Moore's Law**  
 The number of transistors is doubling every 18 months.
@@ -115,23 +115,17 @@ Address translation is when the addresses the program is reading/writing is tran
 <img src="./assets/operating-system/ucbOS_three.png" alt="drawing" width="600" height="400" style="center" />
 </p>
 
-Note the addresses don't collide
-also, when the entire physical address space is filled up, we swap the data to disk and so,effectively we have as
-large an address space as the disk size
+Note the addresses don't collide also, when the entire physical address space is filled up, we swap the data to disk and so effectively we have as large an address space as the disk size
 
-the process should not be able to change the translation map (not be able to write to it)
+The process should not be able to change the translation map (not be able to write to it)
 
-### Dual Mode Operation  
-Talked about it in next lec
 
-# Lecture 2
+## Lecture 2
 
-review of lecture 1: we will treat the OS as a VM abstraction that makes the hardware easy to program and make it more
+Review of lecture 1: we will treat the OS as a VM abstraction that makes the hardware easy to program and make it more
 reliable, fault tolerant etc
 
-So, the OS takes in the hardware interface (provided by the hardware) and gives us the virtual machine interface
-that is easier to program on. It hides away the different hardware details and gives us a uniform virtual machine interface to work with.
-POSIX is basically an effort to make sure all the OSes give the same virtual machine interface. So that it is easy to write portable programs
+So, the OS takes in the hardware interface (provided by the hardware) and gives us the virtual machine interface that is easier to program on. It hides away the different hardware details and gives us a uniform virtual machine interface to work with. POSIX is basically an effort to make sure all the OSes give the same virtual machine interface. So that it is easy to write portable programs.
 
 We also talked about Protecting processes from crashing each other in 2 ways, _address translation_ and _dual mode_
 
@@ -342,7 +336,7 @@ Need 3 important things:
 
 ((so, the thread is the actual program, the process is an abstraction of a group of threads to protect it from others))
 
-### what does the program's address space look like
+### What does the program's address space look like
 note, the y axis is the address space available to the program, the thread and it is virtual (also, it is *all the addresses*, eg, in a 32 bit processor, all 2^32 addresses, it will be mapped to real ram address by the MMU)
 - text - where the instructions are
 - data - the static data allocated at the beginning of the program
@@ -548,7 +542,7 @@ single threads (CP/M) --> multiple threads (embedded applications) --> multiple 
 
 ----------------------------------------------------
 ----------------------------------------------------  
-# Lecture 4
+## Lecture 4
  
 [YouTube](https://www.youtube.com/watch?v=Sj4OHlvOls4&list=PLggtecHMfYHA7j2rF7nZFgnepu_uPuYws&index=4)
 
