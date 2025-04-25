@@ -2,7 +2,9 @@
 <h1 class='title'>DevOps</h1> 
 
 
-## What is DevOps
+# What is DevOps
+
+Main Source: [IBM Applied Devops Engineering](https://www.coursera.org/professional-certificates/ibm-applied-devops-engineering)
 
 DevOps is the combination of cultural philosophies (combining software development and IT operations), practices, and tools that increases an organization’s ability to deliver applications and services at high velocity using automation. DevOps requires a
 
@@ -19,10 +21,11 @@ There are 3 pillar to agility:
 - Microservices (loose coupling/binding, RESTful API, design to resist failure, test by breaking/failing fast)
 - Containers (portability, fast startup, developer centric)
 
+
 ### Application Evolution
 
 <p align="center">
-    <img src="./assets/devops/application_evolution.png" alt="drawing" width="500" height="200" style="center" />
+    <img src="./assets/devops/application_evolution.png" alt="drawing" width="700" height="300" style="center" />
 </p>
 
 ### Problems with Traditional Development Practices
@@ -43,7 +46,7 @@ This was overcome in Agile by including the communication between the customer a
 
 This is where DevOps is introduced. It bridges the gap between the development team and the operation team by including the automation feature. Due to this, the speed of production is increased. By including automation, testing is integrated into the development stage which resulted in finding the bugs at the very initial stage which increased the speed and efficiency.
 
-#### Monolith
+### Monolith
 
 **Monolithic** applications are hard to update and deploy, complexity increases as app grows, less flexible to adapt to new technology. The reason for these are because they:
 
@@ -57,14 +60,14 @@ This is where DevOps is introduced. It bridges the gap between the development t
 - have tightly coupled functionality of layers, so if the application is large enough, maintenance becomes an issue because developers have a hard time understanding the entire application
 - are implemented using a single development stack, so changing technology is difficult and costly because of interdependecnies
 
-#### Microservices
+### Microservices
 
 **Microservices** architecture is an approach to create a single application composed of 
 - Many loosely coupled, independently deployable and smaller services. Services might each have their own technology stack inclusive database and data management model and different programming languages for different components 
 - Components communicate with one another over a combination of REST APIs or streaming and messages brokers
 - allows functional segregation (based on business functionality)
 
-##### Benefits of Microservices:
+#### Benefits of Microservices:
 - No interdependencies = easy updates
 - Different stack for different components = varied expertise
 - Smaller components = scale independently (cost saving as opposed to scaling the whole app)
@@ -77,7 +80,7 @@ Microservices can also communicate with each other via a combination of remote p
 Finally, instead of implementing end-user authentication, throttle, orchestrate, transform, route, and analytics in each service, you should use an **API Gateway**, a key component of micoservice design. An API gateway is an API management tool that sits between a client and your collection of backend services. This will become central to the above-mentioned non-functional concerns and will avoid re-engineering them with each service. API Gateway relies on an identity provider service to handle the authentication and authorization of each request coming through. To locate a service to route the request to, API Gateway consult a service registry and discover service. Microservices register with this service registry and discover the location of other micoservices through the discovery service.
 
 
-##### Drawbacks:
+#### Drawbacks:
 - Security requirements: each service needs its own security paradigm, for example: TLS to secure network communication
 - Debugging is a challenge: multiple services running independently makes it challenging to find the root cause
 - Transferring to microservices architecture from monolithic often requires breaking up a monolithic database into its logical components. This could mean a separate schema in a bigger data cluster. Breaking up a database means it can no longer maintain foreign key relationship and enforce referential integrity between tables. The burden of maintaining dat integrity is moved into the application layer.
@@ -98,15 +101,14 @@ On the other hand, to fully leverage DevOps, you need to think differently about
 - No service is accessing another services database. In fact databases are not even included in the picture
 
 <p align="center">
-    <img src="./assets/devops/microservices.png" alt="drawing" width="400" height="400" style="center" />
+    <img src="./assets/devops/microservices.png" alt="drawing" width="500" height="400" style="center" />
 </p>
 
 This is cloud native design using microservices which take advantage of horizontal scalability the cloud has to offer.
 
 In cloud native design, the applications are a collection of **stateless micorservices**. Stateless doesn’t mean the application doesn’t have state but it means each service maintains its own database. If the state are shared, you don’t have microservices but you just have distributed monolith. _The stateless in microservices allows scaling horizontally possible_. I can scale one service without touching others. You can and should use CD pipeline to help manage continuous delivery of these services.
 
-Microservice architecture style is an approach to developing a single application as a suite of small services, each running in its own process and communicating with lightweight mechanisms, often an HTTP resource API.
-These services are built around business capabilities and independently deployable by full automated deployment machinery.
+Microservice architecture style is an approach to developing a single application as a suite of small services, each running in its own process and communicating with lightweight mechanisms, often an HTTP resource API. These services are built around business capabilities and independently deployable by full automated deployment machinery.
 <br/><br/>
 <p align="center">
     <img src="./assets/devops/monolith-microservices.png" alt="drawing" width="700" height="300" style="center" />
@@ -125,23 +127,23 @@ Once you develop your application as a stateless collection of microservices, th
   - **Retry pattern**: this enables the application to handle transient failures when it tries to connect to a service or a network resort by transparently retrying and failing the operation. You can not say ppl should deploy the database before they start my service because it expects the database to be there when it starts. That is a fragile design! And is not appropriate for cloud native applications. If the database is not there, you application should wait patiently and then retry again. You must be able to connect, reconnect, fail the connect and then connect again. That s how you design robust microservices. The key here is retrying. Back off exponentially and retry again until you get connected (increase the wait time by some factor)<br></br>
   
   <p align="center">
-      <img src="./assets/devops/retry-pattern.png" alt="drawing" width="300" height="100" style="center" />
+      <img src="./assets/devops/retry-pattern.png" alt="drawing" width="500" height="200" style="center" />
   </p>
 
   - **Circuit Breaker** pattern: it is similar to the circuit breaker in your home. You may have done something that exceeds the power of the circuit. In our case, it is used to identify the problem and do something about it to _avoid cascading failures_. Cascading failure is when one service is not available and is causing many other services to fail. Circuit breaker can return something useful to calm the situation until that service is available. But everything works normally as long as circuit is closed. Circuit breaker monitor for failure until some threshold, then circuit breaker activates.  Using bulkhead pattern isolate the consumers from the services as cascading services by allowing to preserve some functionality in the event of service failure. <br></br>
 
     <p align="center">
-    <img src="./assets/devops/circuit-breaker.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/devops/circuit-breaker.png" alt="drawing" width="600" height="300" style="center" />
     </p>
 
   - **Chaos engineering**: not a software design pattern but a good practise to check your all design pattern work at the time of unexpected failure. You deliberately kill services to see how the services are affected.<br></br>
     <p align="center">
-    <img src="./assets/devops/bulkhead-pattern.png" alt="drawing" width="400" height="300" style="center" />
+    <img src="./assets/devops/bulkhead-pattern.png" alt="drawing" width="600" height="300" style="center" />
     </p>
 
------------------
 
-## Why DevOps?
+
+# Why DevOps?
 
 An extension of agile with the following benefits:
 
@@ -171,7 +173,7 @@ An extension of agile with the following benefits:
 - Continuously experiment and learn
 - Continuously improve
 
-### DevOps Best Practices
+## DevOps Best Practices
 
 - **Communication and collaboration**: Increased communication and collaboration in an organization is a key cultural aspect of DevOps. The use of DevOps tooling and automation of the software delivery process establishes collaboration by physically bringing together the workflows and responsibilities of development (code reviews, design, peer feedback) and operations.
 
@@ -190,7 +192,7 @@ An extension of agile with the following benefits:
 ### What are the different phases in DevOps?
 
 <p align="center">
-    <img src="./assets/devops/phases-devops.png" alt="drawing" width="600" height="400" style="center" />
+    <img src="./assets/devops/phases-devops.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 - Plan: in this stage, all the requirements of the project and everything regarding the project like time for each stage, cost, etc are discussed. This will help everyone in the team to get a brief idea about the project
@@ -232,7 +234,7 @@ DevOps can bring several benefits to a business, such as:
 - _Better security_: DevOps practices such as continuous testing and monitoring can help to improve the security of software systems
 - _Increase customer satisfaction and competitiveness_:  DevOps helps organizations to quickly address customer issues and provide new features, leading to improved customer satisfaction. DevOps enables organizations to move faster and more efficiently than their competitors, giving them a competitive advantage
 
-### What is configuration management?
+### Configuration Management?
 
 Configuration management is the process of keeping track of and directing how software, hardware, and IT system parts are set up. It includes
 
@@ -252,8 +254,6 @@ For a more concrete example consider a microservice architecture. Each service 
 It’s easy for these configuration values to become an afterthought, leading to the configuration to become disorganized and scattered. Imagine numerous post-it notes with passwords and URLs blowing around an office. Configuration management solves this challenge by creating a “source of truth” with a central location for configuration.
 
 Git is a fantastic platform for managing configuration data. Moving configuration data into a Git repository enables version control and the repository to act as a source of truth. Managing unexpected changes through the use of code review and version control helps to minimize downtime as it enables rollback or “undo” functionality to configuration, which helps avoid unexpected breakage.
-
-### Explain configuration management in DevOps
 
 Configuration Management (CM) is a practice in DevOps that involves organizing and maintaining the configuration of software systems and infrastructure. It includes
 
@@ -279,7 +279,7 @@ Enterprises today utilize it to empower software engineers to request and provis
 
 CI/CD configuration management utilizes pull request-based code review workflows to automate deployment of code changes to a live software system. This same flow can be applied to configuration changes. CI/CD can be set up so that approved configuration change requests can immediately be deployed to a running system. A perfect example of this process is a **GitOps workflow**.
 
-### Four actionable metrics for DevOps
+### Four Actionable Metrics for DevOps
 
 - **Mean Lead Time**: how long it takes for an idea to get to production. It measures the mean time taken from committing a change to code repository to the time it becomes available in production
 
@@ -289,7 +289,7 @@ CI/CD configuration management utilizes pull request-based code review workflows
 
 - **Mean Time to Recover (MTTR)**: it measures the average time taken to recover from a service disruption or failure
 
-### What is Version control?
+### What is Version Control?
 
 It is a system that **records changes to a file or set of files** over time so that you can recall specific versions later. This allows
 
@@ -313,7 +313,7 @@ Hooks are local to every Git repository and are not versioned. Scripts can eithe
 
 Both are merging mechanisms but the difference between the Git Merge and Git Rebase is, in Git Merge logs will be showing the complete history of commits. However, when one does Git Rebase, the logs are rearranged. The rearrangement is done to make the logs look linear and simple to understand. This is also a drawback since other team members will not understand how the different commits were merged into one another.
 
-### How AWS CodeCommit differs from other Git-based source control systems?
+### AWS CodeCommit VS Git?
 
 There is no need to host, maintain, and backup your own source control servers.
 
@@ -321,7 +321,7 @@ There is no need to host, maintain, and backup your own source control servers.
 - It is built on highly available, redundant, and durable AWS services
 - It increases the speed and frequency of your development lifecycle by keeping repositories close to your builds
 
-------------------
+
 
 ## Infrastructure as Code
 
@@ -336,9 +336,7 @@ Infrastructure as code tools can be either declarative or imperative:
 
 These tools are also called configuration management system (Ansible, Puppet, Chief) which enable you to describe your infrastructure as code and then create that infrastructure and keep it in that state. You never want to perform system changes and software configurations manually which is not reproducible and extremely error-prone. You want to use templates and scripts that describe how to install and automatically configure elements such as systems and devices and software and users. You can take that textual code and store it in your version control system so that you have history of all the changes. This way, everyone knows which version is the latest version and how the infrastructure should look.
 
-Docker, Terraform, Kubernetes also allow you to describe your infrastructure as code which can be checked into a version control.
-
-So, what are the benefits of IaC?
+Docker, Terraform, Kubernetes also allow you to describe your infrastructure as code which can be checked into a version control. So, what are the benefits of IaC?
 
 - IaC automation dramatically speeds up the process of provisioning infrastructure for development, test, and production (and for scaling or taking down production infrastructure as needed). It can even automate the provisioning of legacy infrastructure, which might otherwise be governed by time-consuming processes like requiring you to open a ticket and wait for someone to do it manually. Developers can quickly provision sandboxes and CI/CD environments, and QA can quickly provide full-fidelity test environments. IaC ensures that provisioning intelligence always remains with the organization.
 
@@ -354,23 +352,23 @@ Now, let’s briefly discuss some of the main IaC tools available:
 
 - **Chef** describes the necessary steps to reach a final state rather than describing the state itself. Using “Cookbooks,” you can describe various processes by which you can configure a system to achieve the desired state. One of the strengths of Chef is that it’s a popular tool and has lots of support but one of the drawbacks is that its cookbooks are written in Ruby so you need to have Ruby skills on your team. With **Puppet**, you can use any existing platform. The main difference between Puppet and Chef is that Puppet is declarative, which some consider to be a preferred method.
 
-### Ephemeral immutable infrastructure
+### Ephemeral Immutable Infrastructure
 
 - **Service drift** is a major source of failure: services updated by new ppl may be different or not matching
 - **Services are cattle not pets**: don’t spend time fixing servers - replace them by identical servers that are working properly
 - **Infrastructure is transient**. It only exist for the time you need it then removed when not used
 - **Build through parallel infrastructure** - like in blue green deployment
 
-### Immutable delivery with containers
+### Immutable Delivery with Containers
 
 - Applications are packaged in containers, which are isolated environments. Docker supports IaC by allowing you to specify how to build an image from code (Dockerfile). These files make the same image from the the same files all the times and Docker makes the same container from that image every time it is deployed. The same container in the production can be run in the developer laptop.
 - No variance limits side effects
 - Rolling updates with immediate roll-back
 - You never make changes to a running container
-- You make changes to the image. Then redeploy the new container
-Keep images up to date
+- You make changes to the image. Then redeploy the new container 
+- Keep images up to date
 
----------------
+
 
 ## Testing
 
@@ -398,7 +396,7 @@ Automating testing practices across the development lifecycle offers four key be
 - **Deliver updates more quickly**: Manual processes take time. Exactly how much time is determined by a tester’s availability and the amount of time the approval process requires. When you reduce the number of manual processes in your pipeline, you increase the speed of your development pipeline, enabling you to deliver updates more quickly.
 - **Automate the software release process**: Automating your code pipeline enables your team to automatically build, test, and prepare code changes for release to production. This leads to rapid and efficient software delivery. It also enables you to push innovations to your customers faster without causing bottlenecks in your software release process.
 
-------------------------------------------
+
 
 ## Continuous Integration vs. Continuous Delivery
 
@@ -706,7 +704,6 @@ You can initiate an action after each stage or a subset of stages. You can check
 
 While health checks can identify problems, the key to a successful continuous delivery strategy is to also implement remediations when these tests fail. You can build logic into your tests that indicate to CD pipeline that the deployment was unsuccessful and start the rollback process.
 
------
 
 ## Components of DevOps Pipeline
 
@@ -716,13 +713,13 @@ A DevOps pipeline is a workflow that automates software delivery. It is a series
 - The CD pipeline is mainly responsible for deploying the prepared artifacts into specific target environments, thereby ensuring a smooth transition from development to production
 
 <p align="center">
-        <img src="./assets/devops/cicd3.png" alt="drawing" width="500" height="300" style="center" />
+        <img src="./assets/devops/cicd3.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 A CI pipeline consists of various components that work together to streamline the development and delivery process. This is just one example of how a CI pipeline might look. You may use more or less tools than ours.
 
 <p align="center">
-        <img src="./assets/devops/ci.png" alt="drawing" width="500" height="300" style="center" />
+        <img src="./assets/devops/ci.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 Let's look at the role of the different components:
@@ -744,7 +741,7 @@ Overall, the CI pipeline leverages various components to automate code validatio
 After the continuous integration pipeline, the continuous delivery pipeline is triggered to facilitate the deployment process. A change request tool manages and tracks system changes. It integrates with the pipeline to ensure documented and validated changes before deployment. Key Protect securely stores cryptographic keys and sensitive information, providing secure access during deployment. The Security and Compliance Center enforces policies, conducts security scans, vulnerability assessments, and compliance checks. DevOps Insights collects data, and generates reports to identify bottlenecks and areas for improvement. The Secrets Manager securely stores sensitive information, providing secure access during deployment through integration with the pipeline.
 
 <p align="center">
-        <img src="./assets/devops/cd.png" alt="drawing" width="500" height="300" style="center" />
+        <img src="./assets/devops/cd.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 The pipeline validates the application code against predefined **security and compliance rules**.
@@ -767,7 +764,6 @@ The pipeline validates the application code against predefined **security and co
 
 The combination of these components in the continuous compliance pipeline enables organizations to automate security and compliance validation, effectively manage secrets and keys, and collect evidence for compliance purposes. This comprehensive approach ensures that applications and infrastructure align with security and compliance standards throughout the development and deployment process.
 
-*********
 
 # Observability and Monitoring
 
@@ -802,7 +798,7 @@ Monitoring allows application developers to proactively watch how an application
 Application monitoring is difficult due to its distribution at on-premises, hybrid-cloud, or cloud-native environments. Most modern approaches incorporate full stack monitoring from the front-end user experience to the back-end infrastructure. This effective method delivers complete visibility for developers into the application’s performance.
 
 <p align="center">
-        <img src="./assets/devops/monitoring1.png" alt="drawing" width="500" height="200" style="center" />
+        <img src="./assets/devops/monitoring1.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 - **Access**: Monitoring _ensures that an application is healthy and responds to all requests_ accurately and quickly. It _helps avoiding major outages or  partial outages or interruptions_
@@ -849,13 +845,13 @@ For example: If your application isn’t working properly, your dependency monit
 3 - **Integration monitoring**. Most likely, your apps won’t be stand-alone applications. Instead, they will allow for integration with third parties. Modern applications and services rely on third-party integrations, and developers should monitor these external systems for data processing, resource capacity, and other functional processes. Integration monitoring identifies the availability and uptime performance of the third-party integrations. And it’s important for you to monitor those integrated apps and services, so your application can perform at its best
 
 <p align="center">
-        <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="500" height="300" style="center" />
+        <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 4 - **Web performance monitoring** is designed to monitor the availability of a web server or service, but it also provides more in-depth details. These tools can capture information such as **page loading time**, the **location of errors** that are generated, and **individual load times** of various web elements. This information helps developers fine-tune a website or a web-based application’s performance
 
 <p align="center">
-        <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="500" height="200" style="center" />
+        <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 5 - **Business Activity Monitoring** (or B-A-M) tools take key business performance metrics and track them over time. For example, these metrics could include information about retail sales, application downloads or the volume of financial transactions. This type of monitoring is useful because it helps businesses understand how their application is used and how it impacts business
@@ -873,7 +869,7 @@ Sometimes applications behave differently than they do in application testing en
 Now imagine the application you’ve developed stops working correctly. How do you determine what the problem is? By monitoring your app, you’re able to identify where a problem is and isolate it.
 
 <p align="center">
-            <img src="./assets/devops/monitoring-golden-signal.png" alt="drawing" width="500" height="200" style="center" />
+            <img src="./assets/devops/monitoring-golden-signal.png" alt="drawing" width="600" height="300" style="center" />
     </p>
 
 Golden signals are the gold standard for monitoring a web application’s metrics. Regardless of whether you have an established Application Performance Monitoring (or APM) tool or you are just getting started with monitoring, focusing on the golden signals allows you to see an overview of the health of your application and proactively monitor it. While a team could always monitor more metrics or logs across the system, the four golden signals are the basic, essential building blocks for any effective monitoring strategy.
@@ -883,7 +879,7 @@ What are the Golden Signals? By tracking “latency,” “traffic” “errors,
 1. Latency, measures the time between when a request is sent and when a request is completed. The longer it takes for a user to load a page or make another request, the more likely it is for a user to abandon your application for a competitor’s. Measuring the average latency of requests can give you a bird’s eye view of a web application’s performance, but keep in mind that successful and failed requests both have latency. So you must track both. For example, a response to a database might be tracked as fast. However, when you look more closely, you see that the response is actually a connection loss error, which is a failed request.Additionally, you should also look at longer latency times because they may indicate slower connection errors. It’s important to include error latencies along with all other latencies for a complete overview of the health of your application.
 
     <p align="center">
-            <img src="./assets/devops/monitoring-latency.png" alt="drawing" width="500" height="200" style="center" />
+            <img src="./assets/devops/monitoring-latency.png" alt="drawing" width="600" height="300" style="center" />
     </p>
 
     When you measure latency, you should set a good latency rate target and monitor the successful requests against failed ones to track the system’s health. In the example shown, the latency target is set. System 1 is hitting the target latency sometimes, but not always.
@@ -893,7 +889,7 @@ What are the Golden Signals? By tracking “latency,” “traffic” “errors,
 2. Traffic is associated with the number of users who visit the site. But with application monitoring, the term “traffic” refers to how in-demand your service is. When you measure traffic, you have a better understanding of your users and you can fine-tune their experience.
 
     <p align="center">
-            <img src="./assets/devops/monitoring-traffic.png" alt="drawing" width="500" height="200" style="center" />
+            <img src="./assets/devops/monitoring-traffic.png" alt="drawing" width="600" height="300" style="center" />
     </p>
 
     You should be aware that traffic monitoring can measure different things. In a storage system, traffic might be transactions per second or retrievals per second. For web applications, you might measure the total number of website requests per second. You can also look at traffic by page or resource, which will show you which of your pages are the most successful or which pages need work.
@@ -901,7 +897,7 @@ What are the Golden Signals? By tracking “latency,” “traffic” “errors,
 3. The third Golden Signal is “errors.” One of the main reasons for monitoring applications is to find and fix errors before they affect users. An error could be that a request fails or it might mean a request is completed but with the wrong information. You should monitor all errors across the system and at individual service levels to define which errors are critical and which are less severe. When you track errors, you can understand the health of your system from the user’s perspective and take rapid action to fix frequent errors.
 
     <p align="center">
-            <img src="./assets/devops/monitoring-error.png" alt="drawing" width="500" height="200" style="center" />
+            <img src="./assets/devops/monitoring-error.png" alt="drawing" width="600" height="300" style="center" />
     </p>
 
     You should be tracking obvious errors. These include all server errors, like an HTTP 500 Internal Server Error, and Client errors, like an HTTP 404 Page Not Found error. But you should also watch for other errors that might be harder to catch. For example, a request might return an HTTP 200 OK status code. However, if the request doesn’t return the right content, it’s considered an error because the request was completed incorrectly. You need to track these errors and also identify errors to match your service-level objectives.
@@ -913,7 +909,7 @@ What are the Golden Signals? By tracking “latency,” “traffic” “errors,
 So now imagine that your monitoring tool notifies you of a latency issue with your application, App A. Instead of going through hundreds of possibilities, you start by using the four Golden Signals to identify the issue. You check service B, but the service is not experiencing any issues. Next, using the Golden Signals, you check service C. It’s working as expected. So you check service D, and—uh oh—it’s showing signs of high saturation levels. Using the Golden Signals, you quickly identify that service D is likely the cause of App A’s latency issues, and You take the necessary steps to fix the issue, possibly before your users even notice the problem.
 
 <p align="center">
-            <img src="./assets/devops/monitoring-golden-signal.png" alt="drawing" width="500" height="200" style="center" />
+            <img src="./assets/devops/monitoring-golden-signal.png" alt="drawing" width="600" height="300" style="center" />
     </p>
 
 ### Components of a Monitoring System
@@ -921,7 +917,7 @@ So now imagine that your monitoring tool notifies you of a latency issue with yo
 There are three essential components that form the basis of a monitoring system: _**metrics, observability, and alerting**_. These metrics can provide visibility into the health of your systems, understanding of trends in usage or behavior, and awareness about the impact of changes you make. If the metrics fall outside your expected ranges, these systems can send notifications to prompt an operator to take a look and assist in identifying the possible causes.
 
 <p align="center">
-            <img src="./assets/devops/monitoring-components.png" alt="drawing" width="500" height="300" style="center" />
+            <img src="./assets/devops/monitoring-components.png" alt="drawing" width="600" height="400" style="center" />
     </p>
 
 - **Metrics**:
@@ -1064,12 +1060,12 @@ When choosing a synthetic monitoring tool, several criteria should be considered
 - looking for robust reporting and analytics capabilities
 
 <p align="center">
-            <img src="./assets/devops/monitoring-synthetic.png" alt="drawing" width="500" height="300" style="center" />
+            <img src="./assets/devops/monitoring-synthetic.png" alt="drawing" width="600" height="400" style="center" />
     </p>
 
 Let's look at this process. The monitoring system chooses a checkpoint to do the check and sends the instructions to the checkpoint. The checkpoint initiates contact, checks, the response, and proceeds based on the type of check the monitor requires. The checkpoint reports its results and findings back to the monitoring system. The system records the information for reporting. If the check resulted in an error, the service immediately requests a new test from another checkpoint. If the checkpoint reports the same error, the system declares the error confirmed. The system sends out an alert for the confirmed error based on the escalation settings and duty schedules. Depending on the type of test, this process may occur as frequently as every minute or up to once an hour.
 <p align="center">
-  <img src="./assets/devops/monitoring-synthetic-process.png" alt="drawing" width="500" height="300" style="center" />
+  <img src="./assets/devops/monitoring-synthetic-process.png" alt="drawing" width="600" height="400" style="center" />
 </p>
 
 ### Introduction to Prometheus
@@ -1090,7 +1086,7 @@ Prometheus
 
 - Prometheus sends requests from HTTP/HTTPS endpoints to expose metrics in plain text format via the HTTP endpoints. It then scrapes (or pulls) real-time metrics, unique identifiers, and timestamps from your applications and hosts at defined intervals. Next, Prometheus organizes, compresses, and stores the collected data in its time-series database. You can then view the data in the dashboard using Prometheus Query Language (PromQL) and use it to send alerts to the alert manager via email or other notification methods<br></br>
   <p align="center">
-  <img src="./assets/devops/monitoring-prometheous1.png" alt="drawing" width="500" height="300" style="center" />
+  <img src="./assets/devops/monitoring-prometheous1.png" alt="drawing" width="700" height="400" style="center" />
 
 </p>
 
@@ -1132,7 +1128,7 @@ Now, let's look into the steps for implementing application monitoring.
 - Secondly, you need to choose a monitoring tool.
 
 <p align="center">
-            <img src="./assets/devops/monitoring-application.png" alt="drawing" width="500" height="`00" style="center" />
+            <img src="./assets/devops/monitoring-application.png" alt="drawing" width="500" height="100" style="center" />
     </p>
 
 - Third, you should define the key metrics you want to monitor in your application. For example, you could focus on response time, CPU or memory usage, database queries or error rates.
@@ -1171,7 +1167,7 @@ Grafana
 Here’s how Grafana works: After you have deployed Grafana, on-premises or in the cloud, and created a connection to your data source (like a database), you will set up and configure your alerts and notifications. Then, Grafana retrieves the desired metrics from the database. Using the metrics, you can visualize and analyze your data. Additionally, if you are using a paid, enterprise version of Grafana, you can set up the Reporting feature.
 
 <p align="center">
-  <img src="./assets/devops/monitoring-grafana1.png" alt="drawing" width="500" height="250" style="center" />
+  <img src="./assets/devops/monitoring-grafana1.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 Grafana is a browser-based application. You can easily install it on-premises or on any cloud platform you choose. However, Grafana only works on data stored in databases. It doesn’t perform data collection. It connects to a data source retrieves metrics.
@@ -1283,7 +1279,7 @@ Distributed logging
 #### Implement Distributed Logging?
 
 <p align="center">
-  <img src="./assets/devops/monitoring-dist-logs.png" alt="drawing" width="500" height="300" style="center" />
+  <img src="./assets/devops/monitoring-dist-logs.png" alt="drawing" width="600" height="400" style="center" />
 </p>
 
 - First, choose a logging framework to support distributed logging such as Apache log and Fluentd based on your needs
@@ -1342,7 +1338,7 @@ Generally, it's recommended to store log data for a minimum of one year to facil
 By leveraging **logs**, **metrics**, and **traces** you can comprehensively understand the performance issues and identify the bottlenecks and microservices that are causing delays in impacting the overall customer experience.
 
 <p align="center">
-  <img src="./assets/devops/monitoring-pillars-observability.png" alt="drawing" width="600" height="300" style="center" />
+  <img src="./assets/devops/monitoring-pillars-observability.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 Logs are:
@@ -1369,7 +1365,7 @@ Whether you are a tech firm, an e-commerce company, a social media platform or a
 
 
 <p align="center">
-  <img src="./assets/devops/monitoring-cloud-native.png" alt="drawing" width="600" height="300" style="center" />
+  <img src="./assets/devops/monitoring-cloud-native.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 If you think that a Cloud native observability tool is a must-have for organizations that rely on Cloud technologies, you're right. However, choosing the right observability tool or solution for distributed and Cloud native apps is no easy feat.
@@ -1458,10 +1454,10 @@ Tracing a container-based application can be achieved using various methods. The
  
 Distributed tracing tracks the flow of application requests from front-end component or devices to back-end services, databases, and other third-party services. To understand how it's working, you can think of a distributed tracing as a tree-like structure with a root or parents span, branching off into child spans. Tracing starts as soon as end-user engages with the application. An initial requests, such as an HTTP request, is given a special trace ID when it's sent, the entire path taken by that particular request will be detailed in that trace. Operations or spans are marked with that initial trace ID as they proceed through the system as the request is processed. It also receives a specific ID, the operation that first cause the current request, also referred to as the parents span. We'll also have an ID associated with it. Each of these spans represent a particular step in the request journey and is encoded with crucial data such as tags, queries, intricate stack traces, logs, and context giving events. This means that the platform will create child spans as a trace moves throughout a distributed system for each additional operation required along the way. You can better visualize data and monitor end-to-end request by using monitoring tools. There are multiple steps involved, including instrumentation, trace context, metrics and metadata, and analysis and visualization. You should also be aware of the best practices for implementing tracing in application development. You must use instrumentation services with a unique ID. Here, a unique external request ID is allocated to each external request. The allocated external request ID is passed to all involve services that are handling the request. Then the external request ideas included in all log messages. Finally, when handling and external requests in a centralized service, information such as start and end times about the request and operations performed is recorded. To ensure the optimum level of performance and reliability in your system, it is recommended to implement end-to-end instrumentation and record traces of all inbound and outbound service calls. This allows you to monitor Site Reliability Engineering or SRE golden signals, such as latency, traffic, errors, and saturation or utilization of the system, along with RED, that is response, error, and duration metrics. Setting up alerts based on these metrics while recording also some traces allows you to detect and resolve issues swiftly before your users are impacted. It's crucial to pay attention to duration metrics in order to measure system behavior effectively. This will give us important information about how different components function in various scenarios. When selecting your tools to ensure compatibility with international standards, it's advised to follow the open telemetry, open tracing, and open census standardization. Any customized business metrics and tracing spans that are used should be documented to aid and future optimization and troubleshooting efforts. Future development cycles or maintenance initiatives, can use this documentation as a reference point.
 
------------------------------------
+
 
 # Introduction to Testing
-[IBM Course](https://www.coursera.org/learn/test-and-behavior-driven-development-tdd-bdd?specialization=devops-and-software-engineering)
+Source: [IBM Course](https://www.coursera.org/learn/test-and-behavior-driven-development-tdd-bdd?specialization=devops-and-software-engineering) - Lextures on Coursera
 
 “If it’s worth building, it’s worth testing. If it’s not worth testing, why are you wasting your time working on it?” - Scott Ambler.
 
@@ -2343,7 +2339,7 @@ The Software Development Lifecycle (or SDLC) is a framework that specifies the s
 Secure SDLC describes how security fits into the different phases of the software development lifecycle. This process of involving security testing and its best practice in the existing development model includes: **Risk assessment**, **Threat modeling and design review**, **Static analysis**, **Security testing** and **code review**, And **security assessment** and **security configuration**.
 
 <p align="center">
-<img src="./assets/application-security/SDLC-sec.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/SDLC-sec.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 How can you map DevOps into the phases of a secure SDLC? 
@@ -2384,7 +2380,7 @@ DevSecOps is all about DevOps with an emphasis on security. DevSecOps is a set o
 
 
 <p align="center">
-<img src="./assets/application-security/benefits-devsecops.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/benefits-devsecops.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 Here are five of its most significant benefits: 
@@ -2433,7 +2429,7 @@ The segments then encapsulated with IP header at the network layer. The header c
 When the web server receives the raw bits from the network, it reverses the process. The headers are removed layer by layer until the data is reached. The server then processes the data and returns the response. 
 
 <p align="center">
-<img src="./assets/application-security/osi.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/osi.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 
@@ -2448,7 +2444,7 @@ When the web server receives the raw bits from the network, it reverses the proc
 As an application developer, you must test all the layers of a web application. 
 
 <p align="center">
-<img src="./assets/application-security/layers-security-applicatins.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/layers-security-applicatins.png" alt="drawing" width="700" height="300" style="center" />
 </p>
 
 Secure the first layer by running vulnerability scanners, tests, and allow other team developers to audit the web applications before deploying to production.
@@ -2490,7 +2486,7 @@ Both are protocols for establishing secure connections between network computers
 In fact, TLS is a successor to SSL, the first version of TLS, TLS 1.0 was introduced in 1999. Today, when people refer to SSL or TLS/SSL, they are usually referring to modern TLS. So how does modern TLS work? At a high level, it uses four steps; you can follow these steps to ensure TLS stays secure in the software development lifecycle, or SDLC.
 
 <p align="center">
-<img src="./assets/application-security/how-tls-works.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/how-tls-works.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 So how do you ensure TLS remains secure in your application's SDLC? Basically, with two components: 
@@ -2521,7 +2517,7 @@ Vulnerability scanning is the search for security vulnerabilities from within th
 - Some tools available for vulnerability scanning are Coverity, CodeSonar, Snyk Code, and Static Reviewer. They are examples of static application security testing (or SAST) tools.   
 
     <p align="center">
-    <img src="./assets/application-security/vulnerability-scanning.png" alt="drawing" width="600" height="300" style="center" />
+    <img src="./assets/application-security/vulnerability-scanning.png" alt="drawing" width="700" height="400" style="center" />
     </p>
 
 ## Threat Modeling
@@ -2531,7 +2527,7 @@ Vulnerability scanning is the search for security vulnerabilities from within th
 - Threat models use diagrams to represent data flows within software applications. Where does threat modeling belong in the software development lifecycle (or SDLC)? The best time is during the design phase. 
 
     <p align="center">
-    <img src="./assets/application-security/thread-modeling.png" alt="drawing" width="600" height="300" style="center" />
+    <img src="./assets/application-security/thread-modeling.png" alt="drawing" width="700" height="400" style="center" />
     </p>
 
 - Three popular threat models that you can use are: 
@@ -2540,7 +2536,7 @@ Vulnerability scanning is the search for security vulnerabilities from within th
     - STRIDE
 
     <p align="center">
-    <img src="./assets/application-security/thread-models.png" alt="drawing" width="600" height="300" style="center" />
+    <img src="./assets/application-security/thread-models.png" alt="drawing" width="700" height="400" style="center" />
     </p>
 
 
@@ -2744,7 +2740,7 @@ Vulnerability analysis is a method of identifying possible application flaws tha
 If a new report says that the library or plugin you are using is a vulnerable version, you might want to update to a new version to prevent your application from being attacked. One example of such a platform is Snyk, which is a developer security platform for securing code, dependencies, containers, and infrastructure as code. And you may use one of these three vulnerability tools: Burp Suite, Nessus, and Zed Attack Proxy. 
 
  <p align="center">
-<img src="./assets/application-security/vulnaribility-analysis.png" alt="drawing" width="500" height="300" style="center" />
+<img src="./assets/application-security/vulnaribility-analysis.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 - _Burp Suite_ is a vulnerability scanner that is popular for scanning web applications. You can set up automated scans of a website or perform manual scanning by crawling the overall structure of a website or web application. By running multiple audit phases, Burp Suite can find and exploit functions involving user input. Burp Suite audits vulnerabilities in three phases: passive, active, and JavaScript analysis. 
@@ -2811,7 +2807,7 @@ Runtime protection is a modern security mechanism that shields applications agai
 Here are four goals of SCA:
 
 <p align="center">
-<img src="./assets/application-security/sca-goals.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/sca-goals.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 - All open source components should be discovered and tracked
@@ -2835,7 +2831,7 @@ Four popular SCA tools:
 
 
 <p align="center">
-<img src="./assets/application-security/sca-tools.png" alt="drawing" width="600" height="300" style="center" />
+<img src="./assets/application-security/sca-tools.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 SCA tools can identify several risk factors, including:
@@ -2948,7 +2944,7 @@ So how can you avoid these security misconfigurations?
 
 The attacker employs automation to use those passwords in an attack.
 
-- Revealing session identifier (ID) information in URLs: Anyone with your session ID can impersonate you by tricking the website into believing that it’s really you, on your own computer. This gives attackers full-on access to the account you were previously logged into. A session is created when you log in with a username and password. <span style="background-color:rgb(6, 116, 63)">Session timeouts</span> automatically log you off after a period of inactivity but are often overlooked during application development. If your app doesn’t provide this feature, logged in users stepping away from their computers invite unauthorized access and the risk of a data breach. 
+- Revealing session identifier (ID) information in URLs: Anyone with your session ID can impersonate you by tricking the website into believing that it’s really you, on your own computer. This gives attackers full-on access to the account you were previously logged into. A session is created when you log in with a username and password. Session timeouts automatically log you off after a period of inactivity but are often overlooked during application development. If your app doesn’t provide this feature, logged in users stepping away from their computers invite unauthorized access and the risk of a data breach. 
   
 - To prevent identification and authentication failures:
   
@@ -3016,7 +3012,7 @@ As a first step, you need to create a Snyk account to scan a software project on
 In the following code snippet, in a SQL injection attack, say the attacker enters username of `" OR 1=1` and they enter in a password `" OR 1=1`. Now, the resulting query string is `SELECT * FROM Users WHERE Name ="" OR 1=1 AND Pass ="" OR 1=1`. The problem here is that it doesn't matter that the name is blank and the password is blank because of the OR and the fact that 1 will always equal 1. This SQL statement will always return all of the users in your table because 1=1 will always evaluate to True! So, you can see how dangerous it is to concatenate strings together to form a SQL statement.
 
 <p align="center">
-<img src="./assets/application-security/sql-injection.png" alt="drawing" width="500" height="300" style="center" />
+<img src="./assets/application-security/sql-injection.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 Other types of SQL injection such as Function Call Injection, Buffer Overflow. 
@@ -3063,7 +3059,7 @@ You can protect your application against cross-site scripting attacks with these
 Here’s an example of a cross-site scripting attack. This is where the attacker is able to inject a script from another site into your site. The code here is a variable called page with the plus- equal concatenator. And it has a string of HTML with an input field, with a name of credit card, a type of text, and a value, that again, is a function call to request get parameters, "CC." 
 
 <p align="center">
-<img src="./assets/application-security/cross-site-scripting.png" alt="drawing" width="500" height="300" style="center" />
+<img src="./assets/application-security/cross-site-scripting.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 The problem is, you are concatenating strings here. Instead of providing a credit card number, an attacker can enter JavaScript! The attacker can modify the "CC" parameter and substitute a script tag. And then document location becomes the payload for the attacker's site in the CGI bin call. This causes the victim's session ID to be sent to the attacker's website, which allows the attacker to hijack the user's current session. In this video, you learned that: Cross-site scripting is when an application sends untrusted data to a browser. Attackers use cross-site scripting to execute scripts in their victim’s browser. Three common cross-site scripting attacks are stored, blind, and reflected. And preventative measures include looking for suspicious HTTP requests, escaping lists, disabling HTTP TRACE, and avoiding unsafe sinks.
@@ -3440,9 +3436,9 @@ We see that the SBOM not only contains the packages and libraries installed insi
 
 # Example of Implementations of a CI/CD Pipeline
 
-<p align="center">
-<img src="./assets/application-security/CICD-pipeline.png" alt="drawing" width="500" height="300" style="center" />
-</p>
+<!-- <p align="center">
+<img src="./assets/application-security/CICD-pipeline.png" alt="drawing" width="700" height="400" style="center" />
+</p> -->
 
 - Install Jenkins on virtual machine to be the Jenkins server: 
     - Install Java (if not included on the machine), then Jenkins ([here](https://www.jenkins.io/doc/book/installing/linux/)) or as a docker container
@@ -3552,7 +3548,7 @@ A twelve-factor app is always tracked in a version control system, such as Git. 
 A codebase is any single repo, or any set of repos who share a root commit (branches in Git). One codebase maps to many deploys:
 
 <p align="center">
-    <img src="./assets/12factor-app/codebase_to_many_deploys.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/12factor-app/codebase_to_many_deploys.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 - There is always a one-to-one correlation between the codebase and the app:
@@ -3611,7 +3607,7 @@ In addition to the locally-managed services, the app may also have services prov
 A simple example is supposed your application is currently using a local PostgreSQL database for its operations and it is afterward replaced with the one hosted on the server of your company by just changing the URL and the database credentials. **The code for a twelve-factor app makes no distinction between local and third party services**. To the app, both are attached resources, accessed via a URL or other locator/credentials stored in the config. A deploy of the twelve-factor app should be able to swap out a local MySQL database with one managed by a third party (such as Amazon RDS) without any changes to the app’s code. Likewise, a local SMTP server could be swapped with a third-party SMTP service (such as Postmark) without code changes. In both cases, only the resource handle in the config needs to change. _Access all services by a URL and credentials so they can be swapped without changing the code_.
 
 <p align="center">
-    <img src="./assets/12factor-app/backing-services.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/12factor-app/backing-services.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 Each distinct backing service is a resource. For example, a MySQL database is a resource; two MySQL databases (used for sharding at the application layer) qualify as two distinct resources. The twelve-factor app treats these databases as attached resources, which indicates their loose coupling to the deploy they are attached to.
@@ -3629,7 +3625,7 @@ A codebase is transformed into a (non-development) deploy through three stages:
 - The release stage takes the build produced by the build stage and combines it with the deploy’s current config. The resulting release contains both the build and the config and is ready for immediate execution in the execution environment. In short, code becomes a build, which is combined with config to create a release.
 
 <p align="center">
-    <img src="./assets/12factor-app/build-config.png" alt="drawing" width="400" height="200" style="center" />
+    <img src="./assets/12factor-app/build-config.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
 - The run stage (also known as “runtime”) runs the app in the execution environment, by launching some set of the app’s processes against a selected release.
@@ -3684,9 +3680,8 @@ Any computer program, once run, is represented by one or more processes. Web app
 
 This does not exclude individual processes from handling their own internal multiplexing, via threads inside the runtime VM, or the async/evented model found in tools such as EventMachine, Twisted, or Node.js. But an individual VM can only grow so large (vertical scale), so the application must also be able to span multiple processes running on multiple physical machines.
 
-<span style="background-color:rgb(0, 119, 255)">
 The process model truly shines when it comes time to scale out. The share-nothing, horizontally partitionable nature of twelve-factor app processes means that adding more concurrency is a simple and reliable operation. Stateless processes can be spun up without creating dependencies on other processes.
-</span>
+
 
 _Twelve-factor app processes should never daemonize or write PID files. Instead, rely on the operating system’s process manager_ (such as systemd, a distributed process manager on a cloud platform, or a tool like Foreman in development) _to manage output streams, respond to crashed processes, and handle user-initiated restarts and shutdowns_.
 
