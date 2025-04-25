@@ -226,7 +226,7 @@ Flask is classified as a micro web framework to host Python web applications as 
 
 After installing Flask, you create the `hello.py` file with the content shown. You then run the Flask server to host this python file and the output will be displayed.
 
-```Python
+```
 # hello.py
 from flask import Flask
 app = Flask(__name__)
@@ -236,7 +236,7 @@ Def hello_world():
 	return “Hello World"
 ```
 
-```SH
+```
 $ flask —app hello run
 ```
 
@@ -244,7 +244,7 @@ When you open this ‘hello world’ web application in the browser by navigatin
 
 You can now create a new python file with the name `products.py` which will provide all endpoints for your products microservice. You are not using any database to persist these products, so every time you restart the API, you start with the same list of products. Next, you define the GET method to retrieve all the products. This method implicitly returns `200`, which in HTTP means OK.
 
-```Python
+```
 from flask import Flask
 import json
 
@@ -268,15 +268,13 @@ The most common use cases for `curl` are: downloading files from the internet, e
 
 If you run this example curl command, you will receive the output as shown. 
 
-```sh
+```
 $ curl -X ‘GET' \
 'http://127.0.0.1:5000/products' \
 -H 'accept: application/json'
 ```
 
-```
-Output:
-
+```o
 [
 	{‘id’:143, ‘name’: ‘Notebook’, ‘price’: 5.49},
 	{‘id’:144, ‘name’: ‘Black Marker’, ‘price’: 1.99}
@@ -459,23 +457,22 @@ Now, let’s consider the pros of containers and the cons of serverless:
 ### Create, save a docker image and then transport it
 If for some reasons, it is not ideal to pull an image from hub, then you can save a copy of the image and load it later. 
 
-```sh
+```
 $ docker buildx build --platform=linux/amd64 -t envoy:v1.31.0 —platform=linux/amd64
 ```
 `—platform=linux/amd64` is necessary if using Apple M arch. Save the image and send it to the remote sever (a node in k8s cluster, for example):
 
-```sh
+```
 $ docker save -o envoy.tar envoy 
 $ scp envoy.tar yas@10.0.0.191:.
-
 ```
 Load the tar image using `containerd` - specify namespace  `k8s.io` so it is available to Kubernetes - otherwise it will be loaded in the default namespace which is not accessible by k8s.
-```sh
+```
 $ sudo ctr -n=k8s.io images import envoy.tar
 ```
 
 Check the list of available images 
-```sh
+```
 $ sudo crictl images ls
 ```
 Now image address in the manifest is `envoy:v1.31.0`. The image is accessible by K8s and will be installed in the cluster along with other configurations ins th manifest. 
