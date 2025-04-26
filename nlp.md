@@ -33,7 +33,7 @@ Given the corpus:
 P(\text{I}) &= \frac{2}{7}\\
 P(\text{happy}) &= \frac{1}{7}\\
 P(\text{am}|\text{I}) &= \frac{C(\text{I am})}{C(\text{I})} = \frac{2}{2} = 1\\
-P(\text{happy}|\text{I}) &= \frac{0}{0} = 0 \\
+P(\text{happy}|\text{I}) &= \frac{0}{2} = 0 \\
 \end{align*}
 \]
 
