@@ -2281,6 +2281,179 @@ You might be wondering how to choose the rank of the LoRA matrices. This is a go
 The authors found a plateau in the loss value for ranks greater than 16. In other words, using larger LoRA matrices didn't improve performance. _The takeaway here is that ranks in the range of 4-32 can provide you with a good trade-off between reducing trainable parameters and preserving performance_. Optimizing the choice of rank is an ongoing area of research and best practices may evolve as more practitioners like you make use of LoRA. LoRA is a powerful fine-tuning method that achieves great performance. The principles behind the method are useful not just for training LLMs, but for models in other domains.
 
 
+# Aligning Models with Human Values
+
+Without very specific instructions, language models have little ability to understand user intent. Though prompt engineering can help provide the context necessary for an LLM to cater its response to a user’s needs, it's impractical to require prompt engineering for every single exchange with a chatbot.
+
+The goal of fine-tuning with instructions is to further train your models so that they better understand human like prompts and generate more human-like responses. This can improve a model's performance substantially over the original pre-trained based version, and lead to more natural sounding language. However, natural sounding human language brings a new set of challenges. Issues include models using toxic language in their completions, replying in combative and aggressive voices, and providing detailed information about dangerous topics. These problems exist because large models are trained on vast amounts of texts data from the Internet where such language appears frequently. Also concepts like truth, helpfulness, creativity or even what makes a code snippet executable are far more context-dependent than word meanings and linguistic structure.
+
+LLM might give misleading or simply incorrect answers with confidence, definitely not the truthful and honest answer a person is seeking. Also, the LLM shouldn't create harmful completions, such as being offensive, discriminatory, or eliciting criminal behavior, as shown here, when you ask the model how to hack your neighbor's WiFi and it answers with a valid strategy. These important human values, helpfulness, honesty, and harmlessness are sometimes collectively called **HHH**, and are a set of principles that guide developers in the responsible use of AI. Additional fine-tuning with human feedback helps to better align models with human preferences and to increase the helpfulness, honesty, and harmlessness of the completions and to decrease the toxicity.
+
+
+To make language models better at human interaction, data scientists turned to reinforcement learning with human feedback. The RLHF-enhanced InstructGPT models meaningfully outperformed their GPT-3 predecessors, particularly in terms of following instructions, maintaining factual accuracy and avoiding model hallucinations.5 Likewise, research released by OpenAI upon the launch of GPT-4 showed that RLHF doubled accuracy on adversarial questions.8. The benefits of RLHF can even supersede the value of larger training datasets, allowing for more data-efficient model development: OpenAI noted that its labelers preferred outputs from the 1.3B-parameter version of InstructGPT over even outputs from the 175B-parameter version of GPT-3.5
+
+
+## Reinforcement Learning from Human Feedback (RLHF)
+
+In 2020, researchers at OpenAI published a paper that explored the use of fine-tuning with human feedback to train a model to write short summaries of text articles. The model fine-tuned on human feedback produced better responses than a pretrained model, an instruct fine-tuned model, and even the reference human baseline. 
+
+A popular technique to finetune large language models with human feedback is called **reinforcement learning from human feedback (RLHF)**. You can use RLHF to make sure that your model produces outputs that maximize usefulness and relevance to the input prompt. Perhaps most importantly, RLHF can help minimize the potential for harm. You can train your model to give caveats that acknowledge their limitations and to avoid toxic language and topics. One potentially exciting application of RLHF is the **personalizations** of LLMs, where models learn the preferences of each individual user through a continuous feedback process. This could lead to exciting new technologies like **personalized AI assistants**. 
+
+Let's start by taking a closer look at how RLHF works. In the case of fine-tuning large language models with RLHF, the agent's policy is an LLM. In fact LLM itself is the policy network we are trying to finetune using policy optimization algorithms. The action here is the act of generating text by the LLM which could be a single word or a sentence. The action space is the token vocabulary, meaning all the possible tokens that the model can choose from to generate the completion. The environment is the context window of the model, the space in which text can be entered via a prompt. The current state is the current context that is, any text currently contained in the context window. A response or completion is a trajectory in the space-action space. The reward is assigned based on how closely the completions align with human preferences. The objective is to generate text that is perceived as being aligned with the human preferences generating maximum _expected return_ from the rewards.
+
+Ordinary reinforcement learning, in which agents learn from their actions based on a predefined "reward function", is difficult to apply to NLP tasks because the rewards tend to be difficult to define or measure, especially when dealing with complex tasks that involve human values or preferences. One way you can do this is to have a human evaluate all of the completions of the model against some alignment metric, such as determining whether the generated text is toxic or non-toxic. This feedback can be represented as a scalar value, either a zero or a one. One can also rank the ouput as 1, 2, 3, ... depending on how aligned they are with our preferences. The LLM weights are then updated iteratively to maximize the reward obtained from the human classifier, enabling the model to generate non-toxic completions.  However, obtaining human feedback can be time consuming and expensive. 
+
+As a practical and scalable alternative, you can use an additional model, known as the **reward model**, to classify the outputs of the LLM and evaluate the degree of alignment with human preferences. You'll start with a smaller number of human examples to train the secondary model by your traditional supervised learning methods. Once trained, you'll use the reward model to assess the output of the LLM and assign a reward value, which in turn gets used to update the weights off the LLM and train a new human aligned version. 
+
+### Training
+
+In RLHF, two different models are trained: a reward model (RM) and a reinforcement learning (RL) policy model. Both models are LLMs, commonly initialized using a pre-trained autoregressive language model. 
+
+In the original [paper by OpenAI](https://arxiv.org/pdf/2203.02155), the process go as follows: Start with a pretrained language model, a distribution of prompts on which we want our model to produce aligned outputs, and a team of trained human labelers. Then apply the following three steps:
+
+- Step 1: Collect demonstration data, and train a supervised policy. The labelers provide demonstrations of the desired behavior on the input prompt distribution. Then fine-tune a pretrained GPT-3 model on this data using supervised learning.
+- Step 2: Collect comparison data, and train a reward model. Collect a _dataset of comparisons between model outputs_, where labelers indicate which output they prefer for a given input. We then train a reward model to predict the human-preferred output.
+- Step 3: Optimize a policy against the reward model using PPO. We use the output of the RM as a scalar reward. We fine-tune the supervised policy to optimize this reward using the PPO algorithm.
+
+Steps 2 and 3 can be iterated continuously; more comparison data is collected on the current best policy, which is used to train a new RM and then a new policy. In practice, most of our comparison data comes from our supervised policies, with some coming from our PPO policies.
+
+Three different datasets were used in the fine-tuning procedure:
+- SFT dataset, with labeler demonstrations used to train SFT models
+- RM dataset, with labeler rankings of model outputs used to train RMs
+- PPO dataset, without any human labels, which are used as inputs for RLHF fine-tuning. 
+
+The SFT dataset contains about 13k training prompts (from the API and labeler-written), the RM dataset has 33k training prompts (from the API and labeler-written), and the PPO dataset has 31k training prompts (only from the API). The prompts datasets are very diverse and include generation, question answering, dialog, summarization, extractions, and other natural language tasks. For each natural language prompt, the task is most often specified directly through a natural language instruction (e.g. “Write a story about a wise frog”), but could also be indirectly through either few-shot examples (e.g. giving two examples of frog stories, and prompting the model to generate a new one) or implicit continuation (e.g. providing the start of a story about a frog). In each case, labelers do their best to infer the intent of the user who wrote the prompt, and they skip inputs where the task is very unclear. Moreover, labelers also take into account the implicit intentions such as truthfulness of the response, and potentially harmful outputs such as biased or toxic language.
+
+#### Pretraining language models
+
+As a starting point, RLHF uses a language model that has already been pretrained with the classical pretraining objectives (see this blog post for more details). OpenAI used a smaller version of GPT-3 for its first popular RLHF model, InstructGPT. In their shared papers, Anthropic used transformer models from 10 million to 52 billion parameters trained for this task. DeepMind has documented using up to their 280 billion parameter model Gopher. It is likely that all these companies use much larger models in their RLHF-powered products. This initial model can also be fine-tuned on additional text or conditions, but does not necessarily need to be. For example, OpenAI fine-tuned on human-generated text that was “preferable” and Anthropic generated their initial LM for RLHF by distilling an original LM on context clues for their “helpful, honest, and harmless” criteria. These are both sources of what we refer to as expensive, augmented data, but it is not a required technique to understand RLHF. Core to starting the RLHF process is having a model that responds well to diverse instructions. In general, there is not a clear answer on “which model” is the best for the starting point of RLHF. 
+
+Next, with a language model, one needs to generate data to train a reward model, which is how human preferences are integrated into the system.
+
+#### Reward model
+
+The **reward model** (or preference model) is usually initialized with a pre-trained model with an understanding of the language and focuses training explicitly on learning human preferences. In addition to being used to initialize the reward model and the RL policy, the model is then also used to sample data to be compared by annotators. The underlying goal is to get a model or system that takes in a sequence of text, and returns a **scalar** reward which should numerically represent the human preference. These LMs for reward modeling can be both another fine-tuned LM or a LM trained from scratch on the preference data. There is no one base model to be considered the clear best choice for reward models.
+
+The training dataset of prompt-generation pairs for the RM is generated by sampling a set of prompts from a predefined dataset (Anthropic’s data generated primarily with a chat tool on Amazon Mechanical Turk is available on the Hub, and OpenAI used prompts submitted by users to the GPT API). The prompts are passed through the initial language model to generate new text. Human annotators are used to rank the generated text outputs from the LM. One may initially think that humans should apply a scalar score directly to each piece of text in order to generate a reward model, but this is difficult to do in practice. The differing values of humans cause these scores to be uncalibrated and noisy. Instead, _rankings_ are used to compare the outputs of multiple models and create a much better regularized dataset.  
+
+In [Stiennon et al. (2020)](https://arxiv.org/pdf/2009.01325) published by OpenAI, the RM is trained on a dataset of comparisons between two model outputs on the same input. They use a cross-entropy loss, with the comparisons as labels—the difference in rewards represents the log odds that one response will be preferred to the other by a human labeler. In order to speed up comparison collection, we present labelers with anywhere between $K = 4$ and $K = 9$ responses to rank. This produces $K \choose 2$ comparisons for each prompt shown to a labeler. They trained on all comparisons from each prompt as a _single batch element_ since this is much more computationally efficient because it only requires a single forward pass of the RM for each completion (rather than $K \choose 2$ forward passes for Kcompletions) and, because it no longer overfits, it achieves much improved validation accuracy and log loss. In fact, if each of the possible $K \choose 2$ comparisons is treated as a separate data point, then each completion will potentially be used for $K−1$ separate gradient updates. The model tends to overfit after a single epoch, so repeating data within an epoch also causes it to overfit.
+
+The reward model is then trained by replacing the final layer of the previous model with a randomly initialized regression head. This change shifts the model from its original classification task over its vocabulary to simply outputting a number corresponding to the score of any given prompt and response. This model is trained on the human preference comparison data collected earlier from the supervised model. In particular, it is trained to minimize the following cross-entropy loss function:
+
+$$
+\begin{align*}
+\mathcal {L}(\theta ) &=-{\frac {1}{K \choose 2}}\mathbb E_{(x,y_{w},y_{l})\in D}[\log(\sigma (r_{\theta }(x,y_{w})-r_{\theta }(x,y_{l})))]\\
+&=-{\frac {1}{K \choose 2}}\mathbb E_{(x,y_{w},y_{l})\in D}\left[{\frac {e^{r_{\theta }(x,y_{w})}}{e^{r_{\theta }(x,y_{w})}+e^{r_{\theta }(x,y_{l})}}}\right]
+\end{align*}
+$$
+
+where $K$ is the number of responses the labelers ranked, $r_{\theta }(x,y)$ is the scalar output of the reward model for prompt  $x$ and completion $y$ with parameter $\theta$, $y_{w}$ is the preferred completion over $y_{l}$, $\sigma$ denotes the sigmoid function and $D$ is the dataset of human comparisons. This loss can be thought of as a form of logistic regression, where the model predicts the probability that a response $y_{w}$ is preferred over $y_{l}$. After training, the outputs of the model are normalized such that the reference completions have a mean score of 0. That is, ${\textstyle \sum _{y}r_{\theta }(x,y)=0}$, for each query and reference pair $(x,y)$ by calculating the mean reward across the training dataset and setting it as the bias in the reward head. This will not affect the los because the RM loss is invariant to shifts in reward.
+
+#### Policy
+
+The **policy** is a pretrained language model that takes in a prompt and returns a response of text (or just probability distributions over text).  The action space of this policy is all the tokens corresponding to the vocabulary of the language model (often on the order of 50k tokens) and the observation space is the distribution of possible input token sequences, which is also quite large given previous uses of RL (the dimension is approximately the size of vocabulary ^ length of the input token sequence).
+
+The first step in policy training is supervised fine-tuning (SFT). This step does not require the reward model. Instead, the pre-trained model is trained on a dataset $D_{SFT}$ that contains prompt-response pairs $(x,y)$. The dataset $D_{SFT}$ is usually written by human contractors, who write both the prompts and responses. Then, during SFT, the model is trained to auto-regressively generate the corresponding response $y$ when given a random prompt $x$.
+
+The second step uses a policy gradient method such as PPO fine-tune SFT model using the reward model via reinforcement learning. It uses a dataset $D_{RL}$, which contains prompts, but not responses. Like most policy gradient methods, this algorithm has an outer loop and two inner loops:
+
+- Initialize the policy $\pi _{\phi }^{RL}$ to $\pi ^{SFT}$, the policy output from SFT
+
+- Loop for many steps:
+    - Initialize a new empty dataset $D_{\pi _{\phi }^{RL}}$
+    - Loop for many steps
+        - Sample a random prompt $x$ from $D_{RL}$
+        - Generate a response $y$ from the policy $\pi _{\phi }^{RL}$
+        - Calculate the reward signal $r_{\theta }(x,y)$ from the reward model $r_{\theta }$
+        - Add the triple $(x,y,r_{\theta }(x,y))$ to $D_{\pi _{\phi }^{RL}}$
+    - Update $ϕ$ by a policy gradient method to increase an objective function such as the following or "PPO-ptx" explained later on:
+    $$
+    {\displaystyle \;\; \underset{(x,y)\sim D_{\pi_{\phi }^{\text{RL}}}}{\mathbb E}\left[r_{\theta }(x,y)-\beta \log \left({\frac {\pi _{\phi }^{\text{RL}}(y|x)}{\pi ^{\text{SFT}}(y|x)}}\right)\right]}
+    $$
+
+Note that $(x,y)\sim D_{\pi _{\phi }^{\text{RL}}}$ is equivalent to $x\sim D_{RL},y\sim \pi _{\phi }^{\text{RL}}(\cdot |x)$, which means "sample a prompt from $D_{RL}$, then sample a response from the policy". The response $y$ is also passed to the supervised fine-tunned model (SFT) to obtain $\pi^{\text{SFT}}(y|x)$. The objective function has two parts. The first part is simply the expected reward $\mathbb E[r]$, and is standard for any RL algorithm. The second part is a "penalty term" involving the KL divergence. The strength of the penalty term is determined by the hyperparameter $\beta$. This KL term works by penalizing the KL divergence (a measure of statistical distance between distributions) between the model being fine-tuned and the initial supervised model. By choosing an appropriate $\beta$, the training can balance learning from new data while retaining useful information from the initial model, increasing generalization by avoiding fitting too closely to the new data. Without this penalty the optimization can start to generate text that is gibberish but fools the reward model to give a high reward. In practice, the KL divergence is approximated via sampling from both distributions (explained by John Schulman [here](http://joschu.net/blog/kl-approx.html)). Aside from preventing the new model from producing outputs too dissimilar those of the initial model, a second motivation of including the KL term is to encourage the model to output high-entropy text, so as to prevent the model from collapsing to a small number of canned responses. In simpler terms, the objective function calculates how well the policy's responses are expected to align with human feedback. The policy generates responses to prompts, and each response is evaluated both on how well it matches human preferences (as measured by the reward model) and how similar it is to responses the model would naturally generate. The goal is to balance improving alignment with human preferences while ensuring the model's responses remain diverse and not too far removed from what it has learned during its initial training. This helps the model not only to provide answers that people find useful or agreeable but also to maintain a broad understanding and avoid overly narrow or repetitive responses.
+
+The update rule is the parameter update from PPO that maximizes the reward metrics in the current batch of data (PPO is on-policy, which means the parameters are only updated with the current batch of prompt-generation pairs). PPO is a trust region optimization algorithm that uses constraints on the gradient to ensure the update step does not destabilize the learning process. DeepMind used a similar reward setup for Gopher but used synchronous advantage actor-critic (A2C) to optimize the gradients, which is notably different but has not been reproduced externally.
+
+#### Proximal policy optimization
+
+We explained before that the policy function is commonly trained by proximal policy optimization (PPO) algorithm. That is, the parameter $\phi$ is trained by gradient ascent on the clipped surrogate function. Classically, the PPO algorithm employs generalized _advantage estimation_, which means that there is an extra value estimator $V_{\xi _{t}}(x)$, that updates concurrently with the policy $\pi _{\phi _{t}}^{RL}$ during PPO training: ${\displaystyle \pi _{\phi _{t}}^{RL},V_{\xi _{t}},\pi _{\phi _{t+1}}^{RL},V_{\xi _{t+1}},\dots }$ . The value estimator is used only during training, and not outside of training.
+
+The PPO uses gradient descent on the following clipped surrogate advantage:
+
+$$
+{\displaystyle \underset{{x\sim D_{\text{RL}},y\sim \pi _{\phi _{t}}(y|x)}}{\mathbb E}\left[\min \left({\frac {\pi _{\phi }^{RL}(y|x)}{\pi _{\phi _{t}}^{RL}(y|x)}}A(x,y),\mathrm {clip} \left({\frac {\pi _{\phi }^{RL}(y|x)}{\pi _{\phi _{t}}^{RL}(y|x)}},1-\epsilon ,1+\epsilon \right)A(x,y)\right)\right]}
+$$
+
+where the advantage term $A(x,y)$ is defined as  ${\displaystyle r_{\theta }(x,y)-V_{\xi _{t}}(x)}$. That is, the advantage is computed as the difference between the reward (the expected return) and the value estimation (the expected return from the policy). This is used to train the policy by gradient ascent on it, usually using a standard momentum-gradient optimizer, like the Adam optimizer.
+
+The [original paper](https://proceedings.neurips.cc/paper/2020/hash/1f89885d556929e98d3ef9b86448f951-Abstract.html) initialized the value estimator from the trained reward model. Since PPO is an actor-critic algorithm, the value estimator is updated concurrently with the policy, via minimizing the squared TD-error, which in this case equals the squared advantage term:
+$$
+{\displaystyle L_{\text{TD}}(\xi )=\mathbb {E} _{(x,y)\sim D{\pi _{\phi _{t}}^{\text{RL}}}}\left[\left(r_{\theta }(x,y)-\beta \log \left({\frac {\pi _{\phi _{t}}^{\text{RL}}(y|x)}{\pi ^{\text{SFT}}(y|x)}}\right)-V_{\xi }(x)\right)^{2}\right]}
+$$
+
+which is minimized by gradient descent on it. Other methods than squared TD-error might be used. See the actor-critic algorithm page for details.
+
+
+#### Mixing pretraining gradients (PPO-ptx)
+
+A third term is commonly added to the objective function to prevent the model from catastrophic forgetting. For example, if the model is only trained in customer service, then it might forget general knowledge in geography. To prevent this, the RLHF process incorporates the original language modeling objective. That is, some random texts $x$ are sampled from the original pretraining dataset $D_{\text{pretrain}}$, and the model is trained to maximize the log-likelihood of the text log $\log(\pi _{\phi }^{RL}(x))$. The final objective function is written as:
+
+$$
+\displaystyle \underset{{(x,y)\sim D_{\pi _{\phi }^{\text{RL}}}}}{\mathbb E}\left[r_{\theta }(x,y)-\beta \log \left({\frac {\pi _{\phi }^{\text{RL}}(y|x)}{\pi ^{\text{SFT}}(y|x)}}\right)\right]+\gamma \underset{x\sim D_{\text{pretrain}}}{\mathbb E}[\log(\pi _{\phi }^{\text{RL}}(x))]
+$$
+
+where $\gamma$ controls the strength of this pretraining term. This combined objective function is called PPO-ptx, where "ptx" means "Mixing Pretraining Gradients". It was first used in the InstructGPT [paper](https://arxiv.org/abs/2203.02155). In total, this objective function defines the method for adjusting the RL policy, blending the aim of aligning with human feedback and maintaining the model's original language understanding. So, writing out fully explicitly, the PPO-ptx objective function is:
+
+$$
+\begin{align*}
+\underset{{(x,y)\sim D_{\pi _{\phi _{t}}^{\text{RL}}}}}{\mathbb E}&\left[\min \left({\frac {\pi _{\phi }^{RL}(y|x)}{\pi _{\phi _{t}}^{RL}(y|x)}}A(x,y), \mathrm {clip} \left({\frac {\pi _{\phi }^{RL}(y|x)}{\pi _{\phi _{t}}^{RL}(y|x)}},1-\epsilon ,1+\epsilon \right)A(x,y)\right)-\beta \log \left({\frac {\pi _{\phi }^{\text{RL}}(y|x)}{\pi ^{\text{SFT}}(y|x)}}\right)\right]\\ 
+& + \gamma E_{x\sim D_{\text{pretrain}}}[\log(\pi _{\phi }^{\text{RL}}(x))]
+\end{align*}
+$$
+
+which is optimized by gradient ascent on it. The KL reward coefficient, $\beta$, and the pretraining loss coefficient, $\gamma$, control the strength of the KL penalty and pretraining gradients respectively. For "PPO" models, $\gamma$ is set to 0.
+
+Source: [Training language models to follow instructions with human feedback](https://arxiv.org/pdf/2203.02155)
+
+### Evaluation
+
+The definition of alignment has historically been a vague and confusing topic, with various competing proposals. We could have a guideline following the principles of helpfulness, honesty, and harmlessness:
+
+- Helpfulness involves following instructions and inferring user intent, with human labelers rating responses based on preference—though they may not perfectly reflect user intentions.
+- Honesty is approximated through truthfulness, measured by checking for factual accuracy using closed-domain hallucination tests and the TruthfulQA dataset.
+- Harmlessness is gauged through proxies like whether outputs are inappropriate, discriminatory, or contain sensitive content, using datasets like RealToxicityPrompts and CrowS-Pairs, since real-world harms are hard to predict.
+
+Evaluations are split into two parts:
+
+- API distribution evaluations: Models are assessed on prompts from actual users not seen during training, using preference ratings and Likert scales, with the 175B SFT model as a baseline.
+
+- Public NLP dataset evaluations: These include safety-related tasks (truthfulness, bias, toxicity) and traditional zero-shot NLP tasks, with additional human reviews for toxicity.
+
+[Training language models to follow instructions with human feedback](https://arxiv.org/pdf/2203.02155)
+
+### Open-source Tools
+
+TRLX is an expanded fork of TRL built by CarperAI to handle larger models for online and offline training. At the moment, TRLX has an API capable of production-ready RLHF with PPO and Implicit Language Q-Learning ILQL at the scales required for LLM deployment (e.g. 33 billion parameters). Future versions of TRLX will allow for language models up to 200B parameters. As such, interfacing with TRLX is optimized for machine learning engineers with experience at this scale.
+
+RL4LMs offers building blocks for fine-tuning and evaluating LLMs with a wide variety of RL algorithms (PPO, NLPO, A2C and TRPO), reward functions and metrics. Moreover, the library is easily customizable, which allows training of any encoder-decoder or encoder transformer-based LM on any arbitrary user-specified reward function.
+
+Source: [Hugging Face](https://huggingface.co/blog/rlhf)
+
+
+### Limitations of RLHF
+
+Compared to data collection for techniques like unsupervised or self-supervised learning, collecting data for RLHF is less scalable and more expensive. Its quality and consistency may vary depending on the task, interface, and the preferences and biases of individual humans
+
+Human preference data is expensive. The effectiveness of RLHF depends on the quality of human feedback. For instance, the model may become biased, favoring certain groups over others, if the feedback lacks impartiality, is inconsistent, or is incorrect. There is a risk of overfitting, where the model memorizes specific feedback examples instead of learning to generalize. For instance, feedback predominantly from a specific demographic might lead the model to learn peculiarities or noise, along with the intended alignment. Excessive alignment to the specific feedback it received (that is, to the bias therein) can lead to the model performing sub-optimally in new contexts or when used by different groups. A single reward function cannot always represent the opinions of diverse groups of people. Even with a representative sample, conflicting views and preferences may result in the reward model favoring the majority's opinion, potentially disadvantaging underrepresented groups.
+
+Sources: 
+- [Wikipedia](https://en.wikipedia.org/wiki/Reinforcement_learning_from_human_feedback)
+- [Spinning Up](https://spinningup.openai.com/en/latest/)
+- [Training language models to follow instructions with human feedback](https://arxiv.org/pdf/2203.02155)
+- [Hugging Face](https://huggingface.co/blog/rlhf)
+
+
 # Question Answering, Information Retrieval, and Retrieval-Augmented Generation
 
 Source: [Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3)
@@ -2414,9 +2587,7 @@ is to _reduce the size of the LLM_. This can allow for quicker loading of the mo
 - **Post Training Quantization** transforms a model's weights to a lower precision representation, such as a 16- bit floating point or eight bit integer. This reduces the memory footprint of your model. 
 - **Model Pruning** removes redundant model parameters that contribute little to the model's performance. 
 
-Let's talk through each of these options in more detail. 
-
-Model Distillation is a technique that focuses on having a larger teacher model train a smaller student model. The student model learns to statistically mimic the behavior of the teacher model, either just in the final prediction layer or in the model's hidden layers as well. You'll focus on the first option here. You start with your fine tune LLM as your teacher model and create a smaller LLM for your student model. You freeze the teacher model's weights and use it to generate completions for your training data. At the same time, you generate completions for the training data using your student model. The knowledge distillation between teacher and student model is achieved by minimizing a loss function called the **distillation loss**. To calculate this loss, distillation uses the probability distribution over tokens that is produced by the teacher model's softmax layer. Now, the teacher model is already fine tuned on the training data. So the probability distribution likely closely matches the ground truth data and won't have much variation in tokens. That's why Distillation applies a little trick adding a temperature parameter to the softmax function. As you learned in lesson one, a higher temperature increases the creativity of the language the model generates. With a temperature parameter greater than one, the probability distribution becomes broader and less strongly peaked. This softer distribution provides you with a set of tokens that are similar to the ground truth tokens.
+Let's talk through each of these options in more detail. Model Distillation is a technique that focuses on having a larger teacher model train a smaller student model. The student model learns to statistically mimic the behavior of the teacher model, either just in the final prediction layer or in the model's hidden layers as well. You'll focus on the first option here. You start with your fine tune LLM as your teacher model and create a smaller LLM for your student model. You freeze the teacher model's weights and use it to generate completions for your training data. At the same time, you generate completions for the training data using your student model. The knowledge distillation between teacher and student model is achieved by minimizing a loss function called the **distillation loss**. To calculate this loss, distillation uses the probability distribution over tokens that is produced by the teacher model's softmax layer. Now, the teacher model is already fine tuned on the training data. So the probability distribution likely closely matches the ground truth data and won't have much variation in tokens. That's why Distillation applies a little trick adding a temperature parameter to the softmax function. As you learned in lesson one, a higher temperature increases the creativity of the language the model generates. With a temperature parameter greater than one, the probability distribution becomes broader and less strongly peaked. This softer distribution provides you with a set of tokens that are similar to the ground truth tokens.
 
 
 <p align="center">
@@ -2451,9 +2622,7 @@ Although all the training, tuning and aligning techniques you've explored can he
 
 - Lastly, one of the best known problems of LLMs is their tendency to generate text even when they don't know the answer to a problem. This is often called **hallucination**, and here you can see the model clearly making up a description of a nonexistent plant, the Martian Dunetree. Although there is still no definitive evidence of life on Mars, the model will happily tell you otherwise. 
 
-In this section, you'll learn about some techniques that you can use to help your LLM overcome these issues by _connecting to external data sources and applications_. You'll have a bit more work to do to be able to connect your LLM to these external components and fully integrate everything for deployment within your application. Your application must manage the passing of user input to the large language model and the return of completions. This is often done through some type of _orchestration library_. This layer can enable some powerful technologies that augment and enhance the performance of the LLM at runtime by providing access to external data sources or connecting to existing APIs of other applications. One implementation example is **LangChain**.
-
-Let's start by considering how to connect LLMs to external data sources.
+In this section, you'll learn about some techniques that you can use to help your LLM overcome these issues by _connecting to external data sources and applications_. You'll have a bit more work to do to be able to connect your LLM to these external components and fully integrate everything for deployment within your application. Your application must manage the passing of user input to the large language model and the return of completions. This is often done through some type of _orchestration library_. This layer can enable some powerful technologies that augment and enhance the performance of the LLM at runtime by providing access to external data sources or connecting to existing APIs of other applications. One implementation example is **LangChain**. Let's start by considering how to connect LLMs to external data sources.
 
 **Retrieval Augmented Generation (RAG)** is a framework for building LLM powered systems that make use of external data sources. And applications to overcome some of the limitations of these models. _RAG is a great way to overcome the knowledge cutoff issue and help the model update its understanding of the world_. While you could retrain the model on new data, this would quickly become very expensive. And require repeated retraining to regularly update the model with new knowledge. A more flexible and less expensive way to overcome knowledge cutoffs is to give your model access to additional external data at inference time.
 
@@ -2461,8 +2630,7 @@ RAG is useful in any case where you want the language model to have access to da
 
 Here you'll walk through the implementation discussed in one of the earliest papers on RAG by researchers at Facebook, originally published in 2020. At the heart of this implementation is a model component called the **Retriever**, which consists of a query encoder and an external data source. The encoder takes the user's input prompt and encodes it into a form that can be used to query the data source. In the Facebook paper, the external data is a vector store but it could instead be a SQL database, CSV files, or other data storage format. These two components are trained together to find documents within the external data that are most relevant to the input query. The Retriever returns the best single or group of documents from the data source and combines the new information with the original user query. The new expanded prompt is then passed to the language model, which generates a completion that makes use of the data.
 
-For example, imagine you are a lawyer using a large language model to help you in the discovery phase of a case. A Rag architecture can help you ask questions of a corpus of documents, for example, previous court filings. Here you ask the model about the plaintiff named in a specific case number.
-The prompt is passed to the query encoder, which encodes the data in the same format as the external documents. And then searches for a relevant entry in the corpus of documents.
+For example, imagine you are a lawyer using a large language model to help you in the discovery phase of a case. A Rag architecture can help you ask questions of a corpus of documents, for example, previous court filings. Here you ask the model about the plaintiff named in a specific case number. The prompt is passed to the query encoder, which encodes the data in the same format as the external documents. And then searches for a relevant entry in the corpus of documents.
 
 Having found a piece of text that contains the requested information, the Retriever then combines the new text with the original prompt. The expanded prompt that now contains information about the specific case of interest is then passed to the LLM. The model uses the information in the context of the prompt to generate a completion that contains the correct answer. The use case you have seen here is quite simple and only returns a single piece of information that could be found by other means. But imagine the power of Rag to be able to generate summaries of filings or identify specific people, places and organizations within the full corpus of the legal documents. Allowing the model to access information contained in this external data set greatly increases its utility for this specific use case.
 
@@ -2475,16 +2643,6 @@ Second, the data must be available in a format that allows for easy retrieval of
 **Vector databases** are a particular implementation of a vector store where each vector is also identified by a key. This can allow, for instance, the text generated by RAG to also include a citation for the document from which it was received. So you've seen how access to external data sources can help a model overcome limits to its internal knowledge. By providing up to date relevant information and avoiding hallucinations, you can greatly improve the experience of using your application for your users.
 
 
-
-
-
-
-
-
-
-
-
-
 ### Interacting with external applications
 
 In the previous section, you saw how LLMs can interact with external datasets. Now let's take a look at how they can interact with external applications. To motivate the types of problems and use cases that require this kind of augmentation of the LLM, you'll revisit the customer service bot example you saw earlier in the course. During this walkthrough of one customer's interaction with ShopBot, you'll take a look at the integrations that you'd need to allow the app to process a return requests from end to end. In this conversation, the customer has expressed that they want to return some genes that they purchased. ShopBot responds by asking for the order number, which the customer then provides. ShopBot then looks up the order number in the transaction database. One way it could do this is by using a rag implementation of the kind you saw earlier in the previous video.
@@ -2492,22 +2650,6 @@ In the previous section, you saw how LLMs can interact with external datasets. N
 In this case here, you would likely be retrieving data through a SQL query to a back-end order database rather than retrieving data from a corpus of documents. Once ShopBot has retrieved the customers order, the next step is to confirm the items that will be returned. The bot ask the customer if they'd like to return anything other than the genes. After the user states their answer, the bot initiates a request to the company's shipping partner for a return label. The body uses the shippers Python API to request the label ShopBot is going to email the shipping label to the customer. It also asks them to confirm their email address. The customer responds with their email address and the bot includes this information in the API call to the shipper. Once the API request is completed, the Bartlett's the customer know that the label has been sent by email, and the conversation comes to an end. This short example illustrates just one possible set of interactions that you might need an LLM to be capable of to power and application. In general, connecting LLMs to external applications allows the model to interact with the broader world, extending their utility beyond language tasks. As the shop bot example showed, LLMs can be used to trigger actions when given the ability to interact with APIs. LLMs can also connect to other programming resources. For example, a Python interpreter that can enable models to incorporate accurate calculations into their outputs. It's important to note that prompts and completions are at the very heart of these workflows. 
 
 The actions that the app will take in response to user requests will be determined by the LLM, which serves as the application's reasoning engine. In order to trigger actions, the completions generated by the LLM must contain certain important information. First, the model needs to be able to generate a set of instructions so that the application knows what actions to take. These instructions need to be understandable and correspond to allowed actions. In the ShopBot example for instance, the important steps were; checking the order ID, requesting a shipping label, verifying the user email, and emailing the user the label. Second, the completion needs to be formatted in a way that the broader application can understand. This could be as simple as a specific sentence structure or as complex as writing a script in Python or generating a SQL command. For example, here is a SQL query that would determine whether an order is present in the database of all orders. Lastly, the model may need to collect information that allows it to validate an action. For example, in the ShopBot conversation, the application needed to verify the email address the customer used to make the original order. Any information that is required for validation needs to be obtained from the user and contained in the completion so it can be passed through to the application. Structuring the prompts in the correct way is important for all of these tasks and can make a huge difference in the quality of a plan generated or the adherence to a desired output format specification.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2946,7 +3088,6 @@ tokenizer.save_model("EsperBERTo")
 ['EsperBERTo/vocab.json', 'EsperBERTo/merges.txt']
 ```
 The output consists of `vocab.json` of all 52000 tokens and their ids statring from special tokens:
-<br>
 
 ```sh
 {"<s>":0,"<pad>":1,"</s>":2,"<unk>":3,"<mask>":4,"!":5,"\"":6,"#":7,"$":8,"%":9,"&":10,"'":11,"(":12,")":13,"*":14,"+":15,",":16,"-":17,".":18,"/":19,"0":20,"1":21,"2":22,"3":23,"4":24,"5":25,"6":26,"7":27,"8":28,"9":29,":":30,";":31,"<":32,"=":33,">":34,"?":35,"@":36,"A":37,"B":38,"C":39,"D":40,"E":41,"F":42,"G":43,"H":44,"I":45,"J":46,"K":47,"L":48,"M":49,"N":50,"O":51,"P":52,"Q":53,"R":54,"S":55,"T":56,"U":57,"V":58,"W":59,"X":60,"Y":61,"Z":62,"[":63, ... ,"Ġpanojn":51989,"ĠKorto":51990,"ãĥ¢":51991,"ĠFont":51992,"ĠStewart":51993,"Ġteatrajn":51994,"UnuiÄĿinta":51995,"ĠformiÄĿi":51996,"Ġsabatan":51997,"Ġkontinentojn":51998,"ĠmalfacilaÄµon":51999}
