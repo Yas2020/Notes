@@ -2524,7 +2524,7 @@ which is minimized by gradient descent on it. Other methods than squared TD-erro
 A third term is commonly added to the objective function to prevent the model from catastrophic forgetting. For example, if the model is only trained in customer service, then it might forget general knowledge in geography. To prevent this, the RLHF process incorporates the original language modeling objective. That is, some random texts $x$ are sampled from the original pretraining dataset $D_{\text{pretrain}}$, and the model is trained to maximize the log-likelihood of the text log $\log(\pi _{\phi }^{RL}(x))$. The final objective function is written as:
 
 $$
-\displaystyle \underset{{(x,y)\sim D_{\pi_{\phi }^{\text{RL}}}}} {\mathbb E} \left[r_{\theta }(x,y) - \beta \log \left({\frac {\pi _{\phi }^{\text{RL}}(y|x)}{\pi ^{\text{SFT}}(y|x)}}\right)\right]+\gamma \underset{x\sim D_{\text{pretrain}}}{\mathbb E}[\log(\pi _{\phi }^{\text{RL}}(x))]
+\displaystyle \underset{(x,y)\sim D_{\pi_{\phi }^{\text{RL}}}}{\mathbb E} \left[r_{\theta }(x,y) - \beta \log \left({\frac {\pi _{\phi }^{\text{RL}}(y|x)}{\pi ^{\text{SFT}}(y|x)}}\right)\right]+\gamma \underset{x\sim D_{\text{pretrain}}}{\mathbb E}[\log(\pi _{\phi }^{\text{RL}}(x))]
 $$
 
 where $\gamma$ controls the strength of this pretraining term. This combined objective function is called PPO-ptx, where "ptx" means "Mixing Pretraining Gradients". It was first used in the InstructGPT [paper](https://arxiv.org/abs/2203.02155). In total, this objective function defines the method for adjusting the RL policy, blending the aim of aligning with human feedback and maintaining the model's original language understanding. So, writing out fully explicitly, the PPO-ptx objective function is:
