@@ -1,6 +1,135 @@
 
 <h1 class='title'>Natural Language Processing</h1>
 
+# Table of Content
+- [Table of Content](#table-of-content)
+- [N-Gram Language Model Overview](#n-gram-language-model-overview)
+- [Training Tokenizers](#training-tokenizers)
+    - [Byte Pair Encoding (BPE) Tokenizer](#byte-pair-encoding-bpe-tokenizer)
+    - [WordPiece Tokenizer](#wordpiece-tokenizer)
+    - [Unigram Tokenizer](#unigram-tokenizer)
+    - [SentencePiece](#sentencepiece)
+- [Vector Semantics and Word Embeddings](#vector-semantics-and-word-embeddings)
+    - [How to Create Word Embeddings?](#how-to-create-word-embeddings)
+      - [Continuous Bag of Words Model (CBOW)](#continuous-bag-of-words-model-cbow)
+      - [Continuous Skip-grams](#continuous-skip-grams)
+      - [High-Dimensional Outputs](#high-dimensional-outputs)
+        - [Negative Sampling](#negative-sampling)
+    - [Some application of word embedding?](#some-application-of-word-embedding)
+- [Evaluation of Language Model](#evaluation-of-language-model)
+    - [Train/Val/Test splits](#trainvaltest-splits)
+    - [Perplexity](#perplexity)
+- [Recurrent Neural Nets (RNNs)](#recurrent-neural-nets-rnns)
+  - [Training RNN](#training-rnn)
+    - [Computing the Gradient in RNN](#computing-the-gradient-in-rnn)
+  - [Different Types of RNNs](#different-types-of-rnns)
+  - [Language models and Text Generation](#language-models-and-text-generation)
+    - [Sampling from RNNs](#sampling-from-rnns)
+  - [Modeling Sequences Conditioned on Context with RNNs](#modeling-sequences-conditioned-on-context-with-rnns)
+  - [Bidirectional RNNs](#bidirectional-rnns)
+  - [The Challenge of Long-Term Dependencies](#the-challenge-of-long-term-dependencies)
+  - [The Long Short-Term Memory and Other Gated RNNs](#the-long-short-term-memory-and-other-gated-rnns)
+  - [LSTM](#lstm)
+  - [Gated Recurrent Units (GRU)](#gated-recurrent-units-gru)
+  - [Clipping Gradients](#clipping-gradients)
+  - [Encoder-Decoder Model with RNNs](#encoder-decoder-model-with-rnns)
+  - [Machine Translation Model: Sampling](#machine-translation-model-sampling)
+    - [Beam Search](#beam-search)
+      - [Error Abalysis in Beam Search](#error-abalysis-in-beam-search)
+  - [Seq-to-Seq Models with Attention Mechanisms](#seq-to-seq-models-with-attention-mechanisms)
+  - [Train a RNN Neural Machine Translation with Attention](#train-a-rnn-neural-machine-translation-with-attention)
+      - [A Possible Architecture for NMT](#a-possible-architecture-for-nmt)
+  - [Self-Attention: Queries, Keys, Values](#self-attention-queries-keys-values)
+- [Transformers](#transformers)
+  - [Transformer: Encoder-Decoder Architecture](#transformer-encoder-decoder-architecture)
+    - [Queries, Keys, Values](#queries-keys-values)
+    - [Multi-head Attention](#multi-head-attention)
+    - [Transformer Blocks](#transformer-blocks)
+      - [Matrix Form of Computation](#matrix-form-of-computation)
+    - [Input Embeddings](#input-embeddings)
+    - [Language Model Head](#language-model-head)
+- [Generative AI: Large Language Models](#generative-ai-large-language-models)
+  - [Large Language Models with Transformers](#large-language-models-with-transformers)
+    - [Sampling for LLM Generation](#sampling-for-llm-generation)
+      - [Greedy Search](#greedy-search)
+      - [Beam Search](#beam-search-1)
+      - [Sampling](#sampling)
+      - [Temperature:](#temperature)
+      - [Top-k Sampling](#top-k-sampling)
+      - [Top-p Sampling](#top-p-sampling)
+- [Training Large Language Models](#training-large-language-models)
+  - [Pertaining Large Language Models](#pertaining-large-language-models)
+    - [Autoencoding Models](#autoencoding-models)
+      - [Autoregressive Models](#autoregressive-models)
+      - [Seq-to-Seq Models](#seq-to-seq-models)
+    - [Computational challenges of training LLMs](#computational-challenges-of-training-llms)
+    - [Efficient multi-GPU compute strategies](#efficient-multi-gpu-compute-strategies)
+    - [Pre-training for domain adaptation](#pre-training-for-domain-adaptation)
+  - [Mask Language Models](#mask-language-models)
+    - [Bidirectional Encoder Representations from Transformers (BERT)](#bidirectional-encoder-representations-from-transformers-bert)
+    - [Fine-Tuning for Classification](#fine-tuning-for-classification)
+      - [Sequence Classification](#sequence-classification)
+    - [Fine-Tuning for Sequence Labelling: Named Entity Recognition](#fine-tuning-for-sequence-labelling-named-entity-recognition)
+      - [Evaluating Named Entity Recognition](#evaluating-named-entity-recognition)
+- [Prompting, In-Context Learning and Parameter Efficient Finetuning (PEFT)](#prompting-in-context-learning-and-parameter-efficient-finetuning-peft)
+  - [Prompting](#prompting)
+    - [Few-Shot Prompting](#few-shot-prompting)
+  - [Post-training and Model Alignment](#post-training-and-model-alignment)
+    - [Model Alignment: Instruction Tuning](#model-alignment-instruction-tuning)
+    - [Multitask fine-tuning](#multitask-fine-tuning)
+    - [Prompting and prompt engineering](#prompting-and-prompt-engineering)
+      - [Generative Configuration](#generative-configuration)
+  - [Helping LLMs reason and plan with chain-of-thought](#helping-llms-reason-and-plan-with-chain-of-thought)
+    - [Catastrophic Forgetting](#catastrophic-forgetting)
+    - [PEFT techniques 1: Soft FineTuning](#peft-techniques-1-soft-finetuning)
+  - [PEFT techniques 2: Finetuning](#peft-techniques-2-finetuning)
+  - [Generative AI Project Lifecycle](#generative-ai-project-lifecycle)
+- [Aligning Models with Human Values](#aligning-models-with-human-values)
+  - [Reinforcement Learning from Human Feedback (RLHF)](#reinforcement-learning-from-human-feedback-rlhf)
+    - [Training](#training)
+      - [Pretraining language models](#pretraining-language-models)
+      - [Reward model](#reward-model)
+      - [Policy](#policy)
+      - [Proximal policy optimization](#proximal-policy-optimization)
+      - [Mixing pretraining gradients (PPO-ptx)](#mixing-pretraining-gradients-ppo-ptx)
+    - [Evaluation](#evaluation)
+    - [Open-source Tools](#open-source-tools)
+    - [Limitations of RLHF](#limitations-of-rlhf)
+- [Question Answering, Information Retrieval, and Retrieval-Augmented Generation](#question-answering-information-retrieval-and-retrieval-augmented-generation)
+  - [Information Retrieval](#information-retrieval)
+    - [Information Retrieval with Dense Vectors](#information-retrieval-with-dense-vectors)
+    - [Answering Questions with RAG](#answering-questions-with-rag)
+    - [Retrieval-Augmented Generation](#retrieval-augmented-generation)
+    - [Evaluating Question Answering](#evaluating-question-answering)
+- [Model optimizations for deployment](#model-optimizations-for-deployment)
+    - [Using the LLM in applications](#using-the-llm-in-applications)
+    - [Interacting with external applications](#interacting-with-external-applications)
+- [Fine-tuning using Hugging Face](#fine-tuning-using-hugging-face)
+    - [Text Classification](#text-classification)
+      - [Fine-tune the model](#fine-tune-the-model)
+      - [Hyperparameter Search](#hyperparameter-search)
+    - [Text Summarization](#text-summarization)
+    - [Translation](#translation)
+    - [Train a Language Model from Scratch](#train-a-language-model-from-scratch)
+      - [Train a Tokenizer](#train-a-tokenizer)
+      - [Train a BERT-like Model from Scratch](#train-a-bert-like-model-from-scratch)
+  - [Transformer Applications](#transformer-applications)
+      - [Bleu Score](#bleu-score)
+      - [ROUGE-N Score](#rouge-n-score)
+  - [Transfer Learning in NLP](#transfer-learning-in-nlp)
+    - [ELMo, GPT, BERT, T5](#elmo-gpt-bert-t5)
+    - [Transformer T5](#transformer-t5)
+      - [Multi-Task Training Strategy](#multi-task-training-strategy)
+    - [GLUE Benchmark](#glue-benchmark)
+- [Hugging Face](#hugging-face)
+  - [Preprocessing and Tokenizers](#preprocessing-and-tokenizers)
+    - [Padding](#padding)
+    - [Truncation](#truncation)
+    - [Build tensors and apply preprocessing transformations](#build-tensors-and-apply-preprocessing-transformations)
+    - [Train your own tokenizer](#train-your-own-tokenizer)
+    - [Causal Language Model Training](#causal-language-model-training)
+    - [Masked language model Training](#masked-language-model-training)
+
 <!-- ---
 **Author:** Yaser Eftekhari  
 **Date:** April 11, 2025
@@ -8,11 +137,9 @@
 
 <!-- ## Neural Language Models -->
 
-**Neural Language Models** or NLMs are a class of language model designed to overcome the curse of dimensionality problem for modeling natural language sequences by using a distributed representation of words. Unlike class-based n-gram models, neural language models are able to recognize that two words are similar without losing the ability to encode each word as distinct from the other.
+<!-- # Sequence Modeling -->
 
-# Sequence Modeling
-
-## N-Grams Overview
+# N-Gram Language Model Overview
 
 N-grams are fundamental and give you a foundation that will allow you to understand more complicated models in the specialization. These models allow you to calculate probabilities of certain words happening in a specific sequence. Using that, you can build an auto-correct or even a search suggestion tool. Other applications of N-gram language modeling include: 
 
@@ -39,11 +166,17 @@ P(\text{happy}|\text{I}) &= \frac{0}{2} = 0 \\
 
 Probability of bigram $x, y$ is $P(y|x)$. In general, n-gram probability $w_1,...,w_n$ are estimated like this $P(w_n|w_1,...w_{n-1})$. Approximate the probability of a sentence using 
 
-$$P(A,B,C,D)=P(A)P(B∣A)P(C∣A,B)P(D∣A,B,C).$$ 
+$$
+P(A,B,C,D)=P(A)P(B∣A)P(C∣A,B)P(D∣A,B,C).
+$$ 
 
 Example:
 
-$$P(\text{the teacher drinks tea})= P(\text{the})P( \text{teacher} | \text{the})P(\text{drinks}| \text{the teacher})P(\text{tea}∣\text{the teacher drinks})$$
+$$
+\begin{align*}
+P(\text{the teacher drinks tea}) &= P(\text{the})\times P( \text{teacher} | \text{the}) \\ & \times P(\text{drinks}| \text{the teacher})\times P(\text{tea}∣\text{the teacher drinks})
+\end{align*}
+$$
 
 I practice, the corpus rarely contains the exact same phrases as the ones you computed your probabilities on. Hence, you can easily end up getting a probability of 0. To make an estimation of these probabilities, we might want to follow the Markov assumption that indicates only the last word matters. Hence: you can model the entire sentence as follows:
 
@@ -61,8 +194,6 @@ Now that we have joint distribution of words, we have a generative model using N
 - Choose sentence start
 - Choose next bigram starting with previous word
 - Continue until `</s>` is picked 
-
-##### Starting and Ending Sentences
 
 We usually start and end a sentence with the following tokens respectively: `<s> </s>`.  When computing probabilities using a unigram, you can append an `<s>` in the beginning of the sentence. To generalize to an N-gram language model, you can add N-1 start tokens `<s>`.  For the end of sentence token `</s>`, you only need one even if it is an N-gram. Example of bigram:
 
@@ -198,7 +329,7 @@ tokenizer.tokenize("Don't you love 🤗 Transformers? We sure do.")
 All transformers models in the library that use SentencePiece use it in combination with unigram. Examples of models using SentencePiece are ALBERT, XLNet, Marian, and T5.
 
 
-# Word Embedding
+# Vector Semantics and Word Embeddings
 
 Neural language models share statistical strength between one word (and its context) and other similar words and contexts. For example, if the word `dog` and the word `cat` map to representations that share many attributes, then sentences that contain the word cat can inform the predictions that will be made by the model for sentences that contain the word `dog`, and vice-versa. Because there are many such attributes, there are many ways in which generalization can happen, transferring information from each training sentence to an exponentially large number of semantically related sentences. The curse of dimensionality requires the model to generalize to a number of sentences that is exponential in the sentence length. We sometimes call these word representations **word embeddings**.
 
@@ -325,11 +456,11 @@ A simple idea is we could instead just approximate the loss function. For every 
 - Debiasing Word Embeddings: Modify word embedding so they are less bias
 
 
-### Evaluation of Language Model
+# Evaluation of Language Model
 
 We will now discuss the train/val/test splits and perplexity.
 
-##### Train/Val/Test splits
+### Train/Val/Test splits
 Smaller Corpora: 
 - 80% train
 - 10% val 
@@ -344,7 +475,7 @@ There are two main methods for splitting the data:
 - Continous Text
 - Random Short Sequences
 
-#### Perplexity
+### Perplexity
 Perplexity is used to tell us whether a set of sentences look like they were written by humans rather than by a simple program choosing words at random. A text that is written by humans is more likely to have lower perplexity, where a text generated by random word choice would have a higher perplexity.
 Perplexity is defined as the exponentiated average negative log-likelihood of a sequence. If we have a tokenized sequence $\bm X = (\bm x^{(1)}, ..., X^{(t)})$, then the perplexitiy of $\bm X$ is
 
@@ -367,7 +498,7 @@ $$
 Probabilities are given according to our model. Intuitively, perplexitiy can be thought of as an evaluation of the model’s ability to predict uniformly among the set of specified tokens in a corpus. Importantly, this means that the tokenization procedure has a direct impact on a model’s perplexity which should always be taken into consideration when comparing different models.  This is also equivalent to the exponentiation of the cross-entropy between the data and model predictions. 
 
 
-## Recurrent Neural Nets (RNNs)
+# Recurrent Neural Nets (RNNs)
 
 Previously, we tried using traditional language models, but it turns out they took a lot of space and RAM.  For example, in the sentence below: 
 
@@ -396,7 +527,7 @@ $$
 
 to a fixed length vector $\bm {h}^{(t)}$. Depending on the training criterion, this summary might selectively keep some aspects of the past sequence with more precision than other aspects. For example, if the RNN is used in statistical language modeling, typically to predict the next word given previous words, it may not be necessary to store all of the information in the input sequence up to time $t$, but rather only enough information to predict the rest of the sentence. 
 
-### Training RNN
+## Training RNN
 Learning a single, shared model allows generalization to sequence lengths that did not appear in the training set, and allows the model to be estimated with far fewer training examples than would be required without parameter sharing. The followoing is a computational graph to compute the training loss of a recurrent network that maps an input sequence ofx values to a corresponding sequence of output $\bm o$ values. A loss $L$ measures how far each $\bm o$ is from the corresponding training target $\bm y$. When using softmax outputs, we assume $\bm o$ is the _unnormalized log probabilities_ of each possible value of the target variable. The loss $L$ internally computes the normalized probabilities $\hat {\bm y}= softmax(\bm o)$ over the output and compares this to the target $\bm y$. The RNN has input to hidden connections parametrized by a weight matrix $\bm U$ , hidden-to-hidden recurrent connections parametrized by a weight matrix $\bm W$ , and hidden-to-output connections parametrized by a weight matrix $\bm V$. 
 
 <p align="center">
@@ -445,7 +576,7 @@ where $k$ is the index of token $y^{(t)}$ in the target $\bm y$. Note that lengt
 
 Computing the gradient of this loss function with respect to the parameters is an expensive operation. The runtime is $O(τ)$ and cannot be reduced by parallelization because the forward propagation graph is inherently sequential; each time step may only be computed after the previous one. States computed in the forward pass must be stored until they are reused during the backward pass, so the memory cost is also $O(τ)$. The back-propagation algorithm applied to the unrolled graph with $O(τ)$ cost is called back-propagation through time or BPTT.
 
-#### Computing the Gradient in RNN
+### Computing the Gradient in RNN
 
 Computing the gradient through a recurrent neural network is straightforward. One simply applies the generalized back-propagation algorithm. Gradients obtained by backpropagation may then be used with any general-purpose gradient-based techniques to train an RNN. To gain some intuition for how the BPTT algorithm behaves, we provide an example of how to compute gradients by BPTT for the RNN equations above. 
 
@@ -509,7 +640,7 @@ where $\text{diag}\Big( 1 - ({\bm h}^{(t+1)})^2\Big)$ indicates the diagonal mat
 Once the gradients on the internal nodes of the computational graph are obtained, it is easy obtain the gradients on the parameter nodes. Look at [Deep Learning by Ian Goodfellow, Yoshua Bengio, Aaron Courville](https://www.amazon.ca/Deep-Learning-Ian-Goodfellow/dp/0262035618/ref=asc_df_0262035618/?tag=googleshopc0c-20&linkCode=df0&hvadid=706745562943&hvpos=&hvnetw=g&hvrand=4165137193847264239&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9000826&hvtargid=pla-416263148149&psc=1&mcid=d1d85934bcd73af29621fd70386e098c&gad_source=1), Chapter 10, page 386, to see calucaltions for $∇_{\bm c} L$, $∇_{\bm b} L$, $∇_{\bm V} L$, $∇_{\bm W} L$ and $∇_{\bm U} L$.
 
 
-### Different Types of RNNs
+## Different Types of RNNs
 
 RNNs could be used in a variety of tasks ranging from machine translation to caption generation. There are many ways to implement an RNN model:
 
@@ -942,7 +1073,7 @@ The attention model proposed by Bahdanau et al. is also called a **global attent
 
 Alignment Matrix visualised for a French to English translation. White squares indicate high aligment weights between input and output (Source:Bahdanau, Cho, and Bengio 2014).
 
-### Train a RNN Neural Machine Translation with Attention
+## Train a RNN Neural Machine Translation with Attention
 
 
 - Use pre-trained vector embeddings. Otherwise, initially represent words with one-hot vectors
@@ -2350,27 +2481,27 @@ The first step in policy training is supervised fine-tuning (SFT). This step doe
 
 The second step uses a policy gradient method such as PPO fine-tune SFT model using the reward model via reinforcement learning. It uses a dataset $D_{RL}$, which contains prompts, but not responses. Like most policy gradient methods, this algorithm has an outer loop and two inner loops:
 
-- Initialize the policy $\pi _{\phi }^{RL}$ to $\pi ^{SFT}$, the policy output from SFT
+- Initialize the policy $\pi _{\phi }^{RL}$ to $\pi^{SFT}$, the policy output from SFT
 
 - Loop for many steps:
-    - Initialize a new empty dataset $D_{\pi _{\phi }^{RL}}$
+    - Initialize a new empty dataset $D_{\pi_{\phi}^{RL}}$
     - Loop for many steps
         - Sample a random prompt $x$ from $D_{RL}$
-        - Generate a response $y$ from the policy $\pi _{\phi }^{RL}$
+        - Generate a response $y$ from the policy $\pi_{\phi }^{RL}$
         - Calculate the reward signal $r_{\theta }(x,y)$ from the reward model $r_{\theta }$
-        - Add the triple $(x,y,r_{\theta }(x,y))$ to $D_{\pi _{\phi }^{RL}}$
+        - Add the triple $(x,y,r_{\theta }(x,y))$ to $D_{\pi_{\phi }^{RL}}$
     - Update $ϕ$ by a policy gradient method to increase an objective function such as the following or "PPO-ptx" explained later on:
     $$
-    {\displaystyle \;\; \underset{(x,y)\sim D_{\pi_{\phi }^{\text{RL}}}}{\mathbb E}\left[r_{\theta }(x,y)-\beta \log \left({\frac {\pi _{\phi }^{\text{RL}}(y|x)}{\pi ^{\text{SFT}}(y|x)}}\right)\right]}
+    {\displaystyle \;\; \underset{(x,y)\sim D_{\pi_{\phi }^{\text{RL}}}}{\mathbb E}\left[r_{\theta }(x,y) - \beta \log \left({\frac {\pi_{\phi }^{\text{RL}}(y|x)}{\pi ^{\text{SFT}}(y|x)}}\right)\right]}
     $$
 
-Note that $(x,y)\sim D_{\pi _{\phi }^{\text{RL}}}$ is equivalent to $x\sim D_{RL},y\sim \pi _{\phi }^{\text{RL}}(\cdot |x)$, which means "sample a prompt from $D_{RL}$, then sample a response from the policy". The response $y$ is also passed to the supervised fine-tunned model (SFT) to obtain $\pi^{\text{SFT}}(y|x)$. The objective function has two parts. The first part is simply the expected reward $\mathbb E[r]$, and is standard for any RL algorithm. The second part is a "penalty term" involving the KL divergence. The strength of the penalty term is determined by the hyperparameter $\beta$. This KL term works by penalizing the KL divergence (a measure of statistical distance between distributions) between the model being fine-tuned and the initial supervised model. By choosing an appropriate $\beta$, the training can balance learning from new data while retaining useful information from the initial model, increasing generalization by avoiding fitting too closely to the new data. Without this penalty the optimization can start to generate text that is gibberish but fools the reward model to give a high reward. In practice, the KL divergence is approximated via sampling from both distributions (explained by John Schulman [here](http://joschu.net/blog/kl-approx.html)). Aside from preventing the new model from producing outputs too dissimilar those of the initial model, a second motivation of including the KL term is to encourage the model to output high-entropy text, so as to prevent the model from collapsing to a small number of canned responses. In simpler terms, the objective function calculates how well the policy's responses are expected to align with human feedback. The policy generates responses to prompts, and each response is evaluated both on how well it matches human preferences (as measured by the reward model) and how similar it is to responses the model would naturally generate. The goal is to balance improving alignment with human preferences while ensuring the model's responses remain diverse and not too far removed from what it has learned during its initial training. This helps the model not only to provide answers that people find useful or agreeable but also to maintain a broad understanding and avoid overly narrow or repetitive responses.
+Note that $(x,y)\sim D_{\pi _{\phi }^{\text{RL}}}$ is equivalent to $x\sim D_{RL},y\sim \pi_{\phi }^{\text{RL}}(\cdot |x)$, which means "sample a prompt from $D_{RL}$, then sample a response from the policy". The response $y$ is also passed to the supervised fine-tunned model (SFT) to obtain $\pi^{\text{SFT}}(y|x)$. The objective function has two parts. The first part is simply the expected reward $\mathbb E[r]$, and is standard for any RL algorithm. The second part is a "penalty term" involving the KL divergence. The strength of the penalty term is determined by the hyperparameter $\beta$. This KL term works by penalizing the KL divergence (a measure of statistical distance between distributions) between the model being fine-tuned and the initial supervised model. By choosing an appropriate $\beta$, the training can balance learning from new data while retaining useful information from the initial model, increasing generalization by avoiding fitting too closely to the new data. Without this penalty the optimization can start to generate text that is gibberish but fools the reward model to give a high reward. In practice, the KL divergence is approximated via sampling from both distributions (explained by John Schulman [here](http://joschu.net/blog/kl-approx.html)). Aside from preventing the new model from producing outputs too dissimilar those of the initial model, a second motivation of including the KL term is to encourage the model to output high-entropy text, so as to prevent the model from collapsing to a small number of canned responses. In simpler terms, the objective function calculates how well the policy's responses are expected to align with human feedback. The policy generates responses to prompts, and each response is evaluated both on how well it matches human preferences (as measured by the reward model) and how similar it is to responses the model would naturally generate. The goal is to balance improving alignment with human preferences while ensuring the model's responses remain diverse and not too far removed from what it has learned during its initial training. This helps the model not only to provide answers that people find useful or agreeable but also to maintain a broad understanding and avoid overly narrow or repetitive responses.
 
 The update rule is the parameter update from PPO that maximizes the reward metrics in the current batch of data (PPO is on-policy, which means the parameters are only updated with the current batch of prompt-generation pairs). PPO is a trust region optimization algorithm that uses constraints on the gradient to ensure the update step does not destabilize the learning process. DeepMind used a similar reward setup for Gopher but used synchronous advantage actor-critic (A2C) to optimize the gradients, which is notably different but has not been reproduced externally.
 
 #### Proximal policy optimization
 
-We explained before that the policy function is commonly trained by proximal policy optimization (PPO) algorithm. That is, the parameter $\phi$ is trained by gradient ascent on the clipped surrogate function. Classically, the PPO algorithm employs generalized _advantage estimation_, which means that there is an extra value estimator $V_{\xi _{t}}(x)$, that updates concurrently with the policy $\pi _{\phi _{t}}^{RL}$ during PPO training: ${\displaystyle \pi _{\phi _{t}}^{RL},V_{\xi _{t}},\pi _{\phi _{t+1}}^{RL},V_{\xi _{t+1}},\dots }$ . The value estimator is used only during training, and not outside of training.
+We explained before that the policy function is commonly trained by proximal policy optimization (PPO) algorithm. That is, the parameter $\phi$ is trained by gradient ascent on the clipped surrogate function. Classically, the PPO algorithm employs generalized _advantage estimation_, which means that there is an extra value estimator $V_{\xi _{t}}(x)$, that updates concurrently with the policy $\pi_{\phi _{t}}^{RL}$ during PPO training: ${\displaystyle \pi_{\phi _{t}}^{RL},V_{\xi _{t}},\pi _{\phi _{t+1}}^{RL},V_{\xi _{t+1}},\dots }$ . The value estimator is used only during training, and not outside of training.
 
 The PPO uses gradient descent on the following clipped surrogate advantage:
 
@@ -2393,7 +2524,7 @@ which is minimized by gradient descent on it. Other methods than squared TD-erro
 A third term is commonly added to the objective function to prevent the model from catastrophic forgetting. For example, if the model is only trained in customer service, then it might forget general knowledge in geography. To prevent this, the RLHF process incorporates the original language modeling objective. That is, some random texts $x$ are sampled from the original pretraining dataset $D_{\text{pretrain}}$, and the model is trained to maximize the log-likelihood of the text log $\log(\pi _{\phi }^{RL}(x))$. The final objective function is written as:
 
 $$
-\displaystyle \underset{{(x,y)\sim D_{\pi _{\phi }^{\text{RL}}}}}{\mathbb E}\left[r_{\theta }(x,y)-\beta \log \left({\frac {\pi _{\phi }^{\text{RL}}(y|x)}{\pi ^{\text{SFT}}(y|x)}}\right)\right]+\gamma \underset{x\sim D_{\text{pretrain}}}{\mathbb E}[\log(\pi _{\phi }^{\text{RL}}(x))]
+\displaystyle \underset{{(x,y)\sim D_{\pi_{\phi }^{\text{RL}}}}} {\mathbb E} \left[r_{\theta }(x,y) - \beta \log \left({\frac {\pi _{\phi }^{\text{RL}}(y|x)}{\pi ^{\text{SFT}}(y|x)}}\right)\right]+\gamma \underset{x\sim D_{\text{pretrain}}}{\mathbb E}[\log(\pi _{\phi }^{\text{RL}}(x))]
 $$
 
 where $\gamma$ controls the strength of this pretraining term. This combined objective function is called PPO-ptx, where "ptx" means "Mixing Pretraining Gradients". It was first used in the InstructGPT [paper](https://arxiv.org/abs/2203.02155). In total, this objective function defines the method for adjusting the RL policy, blending the aim of aligning with human feedback and maintaining the model's original language understanding. So, writing out fully explicitly, the PPO-ptx objective function is:
