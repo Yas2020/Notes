@@ -1,4 +1,5 @@
 
+
 <h1 class='title'>Natural Language Processing</h1>
 
 # Table of Content
@@ -10,21 +11,20 @@
     - [Unigram Tokenizer](#unigram-tokenizer)
     - [SentencePiece](#sentencepiece)
 - [Vector Semantics and Word Embeddings](#vector-semantics-and-word-embeddings)
-    - [How to Create Word Embeddings?](#how-to-create-word-embeddings)
-      - [Continuous Bag of Words Model (CBOW)](#continuous-bag-of-words-model-cbow)
-      - [Continuous Skip-grams](#continuous-skip-grams)
-      - [High-Dimensional Outputs](#high-dimensional-outputs)
-        - [Negative Sampling](#negative-sampling)
+  - [How to Create Word Embeddings?](#how-to-create-word-embeddings)
+    - [Continuous Bag of Words Model (CBOW)](#continuous-bag-of-words-model-cbow)
+    - [Continuous Skip-grams](#continuous-skip-grams)
+  - [High-Dimensional Outputs](#high-dimensional-outputs)
+    - [Negative Sampling](#negative-sampling)
     - [Some application of word embedding?](#some-application-of-word-embedding)
-- [Evaluation of Language Model](#evaluation-of-language-model)
-    - [Train/Val/Test splits](#trainvaltest-splits)
-    - [Perplexity](#perplexity)
 - [Recurrent Neural Nets (RNNs)](#recurrent-neural-nets-rnns)
   - [Training RNN](#training-rnn)
     - [Computing the Gradient in RNN](#computing-the-gradient-in-rnn)
   - [Different Types of RNNs](#different-types-of-rnns)
   - [Language models and Text Generation](#language-models-and-text-generation)
-    - [Sampling from RNNs](#sampling-from-rnns)
+    - [More about Sampling](#more-about-sampling)
+      - [Beam Search](#beam-search)
+        - [Error Abalysis in Beam Search](#error-abalysis-in-beam-search)
   - [Modeling Sequences Conditioned on Context with RNNs](#modeling-sequences-conditioned-on-context-with-rnns)
   - [Bidirectional RNNs](#bidirectional-rnns)
   - [The Challenge of Long-Term Dependencies](#the-challenge-of-long-term-dependencies)
@@ -33,16 +33,10 @@
   - [Gated Recurrent Units (GRU)](#gated-recurrent-units-gru)
   - [Clipping Gradients](#clipping-gradients)
   - [Encoder-Decoder Model with RNNs](#encoder-decoder-model-with-rnns)
-  - [Machine Translation Model: Sampling](#machine-translation-model-sampling)
-    - [Beam Search](#beam-search)
-      - [Error Abalysis in Beam Search](#error-abalysis-in-beam-search)
   - [Seq-to-Seq Models with Attention Mechanisms](#seq-to-seq-models-with-attention-mechanisms)
-  - [Train a RNN Neural Machine Translation with Attention](#train-a-rnn-neural-machine-translation-with-attention)
-      - [A Possible Architecture for NMT](#a-possible-architecture-for-nmt)
-  - [Self-Attention: Queries, Keys, Values](#self-attention-queries-keys-values)
 - [Transformers](#transformers)
   - [Transformer: Encoder-Decoder Architecture](#transformer-encoder-decoder-architecture)
-    - [Queries, Keys, Values](#queries-keys-values)
+  - [Self-attention: Queries, Keys, Values](#self-attention-queries-keys-values)
     - [Multi-head Attention](#multi-head-attention)
     - [Transformer Blocks](#transformer-blocks)
       - [Matrix Form of Computation](#matrix-form-of-computation)
@@ -50,27 +44,35 @@
     - [Language Model Head](#language-model-head)
 - [Generative AI: Large Language Models](#generative-ai-large-language-models)
   - [Large Language Models with Transformers](#large-language-models-with-transformers)
-    - [Sampling for LLM Generation](#sampling-for-llm-generation)
+    - [Generation in LLMs](#generation-in-llms)
       - [Greedy Search](#greedy-search)
       - [Beam Search](#beam-search-1)
       - [Sampling](#sampling)
-      - [Temperature:](#temperature)
-      - [Top-k Sampling](#top-k-sampling)
-      - [Top-p Sampling](#top-p-sampling)
-- [Training Large Language Models](#training-large-language-models)
-  - [Pertaining Large Language Models](#pertaining-large-language-models)
+        - [Temperature:](#temperature)
+        - [Top-k Sampling](#top-k-sampling)
+        - [Top-p Sampling](#top-p-sampling)
+  - [Training Large Language Models](#training-large-language-models)
+    - [Pertaining Large Language Models](#pertaining-large-language-models)
     - [Autoencoding Models](#autoencoding-models)
-      - [Autoregressive Models](#autoregressive-models)
-      - [Seq-to-Seq Models](#seq-to-seq-models)
-    - [Computational challenges of training LLMs](#computational-challenges-of-training-llms)
+    - [Autoregressive Models](#autoregressive-models)
+    - [Seq-to-Seq Models](#seq-to-seq-models)
+  - [Computational challenges of training LLMs](#computational-challenges-of-training-llms)
     - [Efficient multi-GPU compute strategies](#efficient-multi-gpu-compute-strategies)
     - [Pre-training for domain adaptation](#pre-training-for-domain-adaptation)
   - [Mask Language Models](#mask-language-models)
     - [Bidirectional Encoder Representations from Transformers (BERT)](#bidirectional-encoder-representations-from-transformers-bert)
-    - [Fine-Tuning for Classification](#fine-tuning-for-classification)
+    - [Fine-Tuning BERT for NLP Tasks](#fine-tuning-bert-for-nlp-tasks)
       - [Sequence Classification](#sequence-classification)
-    - [Fine-Tuning for Sequence Labelling: Named Entity Recognition](#fine-tuning-for-sequence-labelling-named-entity-recognition)
+      - [Sequence Labelling: Named Entity Recognition](#sequence-labelling-named-entity-recognition)
       - [Evaluating Named Entity Recognition](#evaluating-named-entity-recognition)
+    - [Transformer T5](#transformer-t5)
+      - [Multi-Task Training Strategy](#multi-task-training-strategy)
+  - [Evaluation of LLMs](#evaluation-of-llms)
+    - [Train/Val/Test splits](#trainvaltest-splits)
+    - [Perplexity](#perplexity)
+    - [GLUE Benchmark](#glue-benchmark)
+    - [Bleu Score](#bleu-score)
+    - [ROUGE-N Score](#rouge-n-score)
 - [Prompting, In-Context Learning and Parameter Efficient Finetuning (PEFT)](#prompting-in-context-learning-and-parameter-efficient-finetuning-peft)
   - [Prompting](#prompting)
     - [Few-Shot Prompting](#few-shot-prompting)
@@ -78,11 +80,11 @@
     - [Model Alignment: Instruction Tuning](#model-alignment-instruction-tuning)
     - [Multitask fine-tuning](#multitask-fine-tuning)
     - [Prompting and prompt engineering](#prompting-and-prompt-engineering)
-      - [Generative Configuration](#generative-configuration)
   - [Helping LLMs reason and plan with chain-of-thought](#helping-llms-reason-and-plan-with-chain-of-thought)
-    - [Catastrophic Forgetting](#catastrophic-forgetting)
-    - [PEFT techniques 1: Soft FineTuning](#peft-techniques-1-soft-finetuning)
-  - [PEFT techniques 2: Finetuning](#peft-techniques-2-finetuning)
+  - [Fine-tuning](#fine-tuning)
+    - [PEFT 1: Soft FineTuning](#peft-1-soft-finetuning)
+    - [PEFT 2: Finetuning with LoRA](#peft-2-finetuning-with-lora)
+  - [Transfer Learning in NLP](#transfer-learning-in-nlp)
   - [Generative AI Project Lifecycle](#generative-ai-project-lifecycle)
 - [Aligning Models with Human Values](#aligning-models-with-human-values)
   - [Reinforcement Learning from Human Feedback (RLHF)](#reinforcement-learning-from-human-feedback-rlhf)
@@ -99,28 +101,10 @@
   - [Information Retrieval](#information-retrieval)
     - [Information Retrieval with Dense Vectors](#information-retrieval-with-dense-vectors)
     - [Answering Questions with RAG](#answering-questions-with-rag)
-    - [Retrieval-Augmented Generation](#retrieval-augmented-generation)
     - [Evaluating Question Answering](#evaluating-question-answering)
 - [Model optimizations for deployment](#model-optimizations-for-deployment)
     - [Using the LLM in applications](#using-the-llm-in-applications)
     - [Interacting with external applications](#interacting-with-external-applications)
-- [Fine-tuning using Hugging Face](#fine-tuning-using-hugging-face)
-    - [Text Classification](#text-classification)
-      - [Fine-tune the model](#fine-tune-the-model)
-      - [Hyperparameter Search](#hyperparameter-search)
-    - [Text Summarization](#text-summarization)
-    - [Translation](#translation)
-    - [Train a Language Model from Scratch](#train-a-language-model-from-scratch)
-      - [Train a Tokenizer](#train-a-tokenizer)
-      - [Train a BERT-like Model from Scratch](#train-a-bert-like-model-from-scratch)
-  - [Transformer Applications](#transformer-applications)
-      - [Bleu Score](#bleu-score)
-      - [ROUGE-N Score](#rouge-n-score)
-  - [Transfer Learning in NLP](#transfer-learning-in-nlp)
-    - [ELMo, GPT, BERT, T5](#elmo-gpt-bert-t5)
-    - [Transformer T5](#transformer-t5)
-      - [Multi-Task Training Strategy](#multi-task-training-strategy)
-    - [GLUE Benchmark](#glue-benchmark)
 - [Hugging Face](#hugging-face)
   - [Preprocessing and Tokenizers](#preprocessing-and-tokenizers)
     - [Padding](#padding)
@@ -129,6 +113,16 @@
     - [Train your own tokenizer](#train-your-own-tokenizer)
     - [Causal Language Model Training](#causal-language-model-training)
     - [Masked language model Training](#masked-language-model-training)
+  - [Fine-tuning using Hugging Face](#fine-tuning-using-hugging-face)
+    - [Text Classification](#text-classification)
+      - [Fine-tune the model](#fine-tune-the-model)
+      - [Hyperparameter Search](#hyperparameter-search)
+    - [Text Summarization](#text-summarization)
+    - [Translation](#translation)
+    - [Train a Language Model from Scratch](#train-a-language-model-from-scratch)
+      - [Train a Tokenizer](#train-a-tokenizer)
+      - [Train a BERT-like Model from Scratch](#train-a-bert-like-model-from-scratch)
+  
 
 <!-- ---
 **Author:** Yaser Eftekhari  
@@ -138,6 +132,8 @@
 <!-- ## Neural Language Models -->
 
 <!-- # Sequence Modeling -->
+
+<br><br><br><br>
 
 # N-Gram Language Model Overview
 
@@ -178,7 +174,7 @@ P(\text{the teacher drinks tea}) &= P(\text{the})\times P( \text{teacher} | 
 \end{align*}
 $$
 
-I practice, the corpus rarely contains the exact same phrases as the ones you computed your probabilities on. Hence, you can easily end up getting a probability of 0. To make an estimation of these probabilities, we might want to follow the Markov assumption that indicates only the last word matters. Hence: you can model the entire sentence as follows:
+In practice, the corpus rarely contains the exact same phrases as the ones you computed your probabilities on. Hence, you can easily end up getting a probability of 0. To make an estimation of these probabilities, we might want to follow the Markov assumption that indicates only the last word matters. Hence: you can model the entire sentence as follows:
 
 $$P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-N+1}^{n-1})$$
 
@@ -313,7 +309,7 @@ Source: [Hugging Face](https://huggingface.co/learn/llm-course/en/chapter6/7)
 
 
 ### SentencePiece
-All tokenization algorithms described so far have the same problem: It is assumed that the input text uses spaces to separate words. However, not all languages use spaces to separate words. One possible solution is to use language specific pre-tokenizers, e.g. XLM uses a specific Chinese, Japanese, and Thai pre-tokenizer). To solve this problem more generally, SentencePiece: [A simple and language independent subword tokenizer and detokenizer for Neural Text Processing (Kudo et al., 2018)](https://arxiv.org/pdf/1808.06226) treats the input as a raw input stream, thus including the space in the set of characters to use. It then uses the BPE or unigram algorithm to construct the appropriate vocabulary.
+All tokenization algorithms described so far have the same problem: It is assumed that the input text uses spaces to separate words. However, not all languages use spaces to separate words. One possible solution is to use language specific pre-tokenizers, e.g. XLM uses a specific Chinese, Japanese, and Thai pre-tokenizer. To solve this problem more generally, SentencePiece: [A simple and language independent subword tokenizer and detokenizer for Neural Text Processing (Kudo et al., 2018)](https://arxiv.org/pdf/1808.06226) treats the input as a raw input stream, thus including the space in the set of characters to use. It then uses the BPE or unigram algorithm to construct the appropriate vocabulary.
 
 The XLNetTokenizer uses SentencePiece for example, which is also why the "▁" character was included in the vocabulary. Decoding with SentencePiece is very easy since all tokens can just be concatenated and "▁" is replaced by a space.
 
@@ -347,7 +343,7 @@ In short, the pros for word embedding are:
 - Low dimensions (less than V)
 - Allow you to encode meaning
 
-### How to Create Word Embeddings?
+## How to Create Word Embeddings?
 
 To create word embeddings you always need a corpus of text, and an embedding method. The context of a word tells you what type of words tend to occur near that specific word. The context is important as this is what will give meaning to each word embedding.
 
@@ -361,12 +357,12 @@ In both architectures, word2vec considers both individual words and a sliding co
 
 The CBOW can be viewed as a ‘fill in the blank’ task, where the word embedding represents the way the word influences the relative probabilities of other words in the context window. Words which are semantically similar should influence these probabilities in similar ways, because semantically similar words should be used in similar contexts. The order of context words does not influence prediction (bag of words assumption).
 
-In the continuous skip-gram architecture, the model uses the current word to predict the surrounding window of context words.[1][2] The skip-gram architecture weighs nearby context words more heavily than more distant context words. According to the authors' note,[3] CBOW is faster while skip-gram does a better job for infrequent words.
+In the continuous skip-gram architecture, the model uses the current word to predict the surrounding window of context words.The skip-gram architecture weighs nearby context words more heavily than more distant context words. According to the authors' note, CBOW is faster while skip-gram does a better job for infrequent words.
 
 These tasks are **self-supervised**: it is both unsupervised in the sense that the input data — the corpus — is unlabelled, and supervised in the sense that the data itself provides the necessary context which would ordinarily make up the labels. 
 
 
-#### Continuous Bag of Words Model (CBOW)
+### Continuous Bag of Words Model (CBOW)
 
 In the case of the continuous bag-of-words model, the objective of the task is to predict a missing word based on the surrounding words. Here is a visualization that shows you how the models works.
 
@@ -411,7 +407,7 @@ The cost function for the CBOW model is a cross-entropy loss defined as:
 $$J = -\sum_{i=1}^V y_i \log \hat y_i,$$ which needs to be minimized. This is equivalent to maximizing log likelihood $$\prod P(w_i|w_j; j=i\pm n, n\in \mathbb N),$$ because $y_k=0$ except for one entry. Similarly, loss on the batch is $$J_{\text{batch}} = -\frac{1}{m}\sum_{i=1}^m\sum_{j=1}^V y_k \log \hat y_k.$$ After the model is trained, One can use the first or second weight matrix as embeddings. For example, $W_1$ is of dim $V\times N$, where $N$ is the embedding dimension. So column 1 is the embedding for word 1 and so on. The weight matrix $W_2^T$ of the second layer can similarly be taken as the embedding matrix. Even the average of the two can be considered as the embedding: $\frac{1}{2}(W_1 + W_2^T)$.
 
 
-#### Continuous Skip-grams
+### Continuous Skip-grams
 
 While a bag-of-words model predicts a word given the neighboring context, a skip-gram model predicts the context (or neighbors) of a word, given the word itself. The model is trained on skip-grams, which are n-grams that allow tokens to be skipped (see the diagram below for an example). The context of a word can be represented through a set of skip-gram pairs of (target_word, context_word) where context_word appears in the neighboring context of target_word. Given a word in a sentence as target and a window size, we randomly choose a word in the sentence within the window length around the target as its context. For example, if the sentence is "With seven courses this semester, I have to study hard at school", then we could have the following as some skip-grams with window size 6:
 
@@ -430,7 +426,7 @@ where $\theta_t$ output of softmax when model input is one-hot vector $t$ for ta
 Loss functions for CBOW and SkipGram are expensive to compute because of the softmax normalization, where we sum over all $|V|$ scores! Computing the denominator of this formulation involves performing a full softmax over the entire vocabulary words, which are often large terms. See [notes](https://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes01-wordvecs1.pdf) for more details.
 
 
-#### High-Dimensional Outputs
+## High-Dimensional Outputs
 
 In many applications, vocabulary $V$ contains hundreds of thousands of words. The naive approach to representing such a distribution is to apply an aﬃne transformation from a hidden representation to the output space, then apply the softmax function. Suppose we have a vocabulary $V$ with size $|V|$. The weight matrix describing the linear component of this aﬃne transformation is very large, because its output dimension is $|V|$. This imposes a high memory cost to represent the matrix, and a high computational cost to multiply by it. Because the softmax is normalized across all $|V|$ outputs, it is necessary to perform the full matrix multiplication at training time as well as test time—we cannot calculate only the dot product with the weight vector for the correct output. The high computational costs of the output layer thus arise both at training time (to compute the likelihood and its gradient) and at test time (to compute probabilities for all or selected words). More clearly, the aﬃne-softmax output layer performs the following computations:
 
@@ -448,54 +444,12 @@ If $\bm h$ contains $n_h$ elements then the above operation is $O(|V|n_h)$. With
 - Hierarchical Softmax
 - Importance Sampling (or Negative Sampling)
 
-##### Negative Sampling
+### Negative Sampling
 A simple idea is we could instead just approximate the loss function. For every training step, instead of looping over the entire vocabulary, we can just sample several negative examples! We "sample" from a noise distribution (Pn(w)) whose probabilities match the ordering of the frequency of the vocabulary. To augment our formulation of the problem to incorporate Negative Sampling, all we need to do is update the objective function, then gradient and the update rule. See [notes](https://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes01-wordvecs1.pdf) for more details. Using this technique, the computational complexity of gradient estimation for the output layer is reduced to be proportional to the number of negative samples rather than proportional to the size of the output vector.
 
 ### Some application of word embedding?
-- Sentiment Analysis: use well-know word embeddings to train RNNs for sentiment analysis - many-to-one RNNs... takes a sentence which is a sequence of word embeddings and outputs a a fix number of class prediction (positive/negative) 
-- Debiasing Word Embeddings: Modify word embedding so they are less bias
-
-
-# Evaluation of Language Model
-
-We will now discuss the train/val/test splits and perplexity.
-
-### Train/Val/Test splits
-Smaller Corpora: 
-- 80% train
-- 10% val 
-- 10% test
-
-Larger Corpora: 
-- 98% train
-- 1% val 
-- 1% test
-
-There are two main methods for splitting the data: 
-- Continous Text
-- Random Short Sequences
-
-### Perplexity
-Perplexity is used to tell us whether a set of sentences look like they were written by humans rather than by a simple program choosing words at random. A text that is written by humans is more likely to have lower perplexity, where a text generated by random word choice would have a higher perplexity.
-Perplexity is defined as the exponentiated average negative log-likelihood of a sequence. If we have a tokenized sequence $\bm X = (\bm x^{(1)}, ..., X^{(t)})$, then the perplexitiy of $\bm X$ is
-
-$$
-PPL(\bm X) = \sqrt[t]{\prod_{i=1}^t \frac{1}{P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})}}
-$$
-
-Use log for more computationally stable formula:
-
-$$
-PPL(\bm X) = \exp(-\frac{1}{t}{\sum_{i=1}^t \log P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})})
-$$
-
-Another version of this uses $P(x^{(i)}|x^{(i-1)})$ instead of $P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})$ in th eabove formula. If there are $m$ sentences $(s_1,..., s_m)$ in the text, the formula becomes:
-
-$$
-PPL(\bm X) = \sqrt[m]{\prod_{i=1}^m \prod_{j=1}^{|s_i|} \frac{1}{P(x_i^{(j)}|x_i^{(j-1)})}}
-$$
-
-Probabilities are given according to our model. Intuitively, perplexitiy can be thought of as an evaluation of the model’s ability to predict uniformly among the set of specified tokens in a corpus. Importantly, this means that the tokenization procedure has a direct impact on a model’s perplexity which should always be taken into consideration when comparing different models.  This is also equivalent to the exponentiation of the cross-entropy between the data and model predictions. 
+- **Sentiment Analysis**: use well-know word embeddings to train RNNs for sentiment analysis - many-to-one RNNs... takes a sentence which is a sequence of word embeddings and outputs a a fix number of class prediction (positive/negative) 
+- **Debiasing Word Embeddings**: Modify word embedding so they are less bias
 
 
 # Recurrent Neural Nets (RNNs)
@@ -506,7 +460,7 @@ Previously, we tried using traditional language models, but it turns out they to
 
 An N-gram (trigram) would only look at "did not" and would try to complete the sentence from there based on frequencies. As a result, the model will not be able to see the beginning of the sentence "I called her but she" and understand dependecies of the end of the sentence on the beginning so probably the most likely word is to have after "did not". RNNs help us solve this problem by being able to track dependencies that are much further apart from each other. 
 
-Recurrent neural networks or RNNs are a family of neural networks for processing sequential data. Much as a convolutional network is a neural network that is specialized for processing a grid of values X such as an image, a recurrent neural network is a neural network that is specialized for processing a sequence of vectors (such as one-hot vectors) $\bm {x}(1)$, ..., $\bm {x}(τ)$. Just as convolutional networks can readily scale to images with large width and height, and some convolutional networks can process images of variable size, recurrent networks can scale to much longer sequences than would be practical for networks without sequence-based specialization. Most recurrent networks can also process sequences of variable length.
+_**Recurrent neural networks** or RNNs are a family of neural networks for processing sequential data_. Much as a convolutional network is a neural network that is specialized for processing a grid of values X such as an image, a recurrent neural network is a neural network that is specialized for processing a sequence of vectors (such as one-hot vectors) $\bm {x}(1)$, ..., $\bm {x}(τ)$. Just as convolutional networks can readily scale to images with large width and height, and some convolutional networks can process images of variable size, recurrent networks can scale to much longer sequences than would be practical for networks without sequence-based specialization. Most recurrent networks can also process sequences of variable length.
 
 To go from multilayer networks to recurrent networks, we need to take advantage of one of the early ideas found in machine learning and statistical models of the 1980s: _sharing parameters across diﬀerent parts of a model_. If we had separate parameters for each value of the time index, we could not generalize to sequence lengths not seen during training, nor share statistical strength across diﬀerent sequence lengths and across diﬀerent positions in time. A traditional fully connected feedforward network would have separate parameters for each input feature, so it would need to learn all of the rules of the language separately at each position in the sentence. By comparison, _a recurrent neural network shares the same weights across several time steps_. The convolution operation allows a network to share parameters across time, but is shallow. The output of convolution is a sequence where each member of the output is a function of a small number of neighboring members of the input. The idea of parameter sharing manifests in the application of the same convolution kernel at each time step. Recurrent networks share parameters in a diﬀerent way. Each member of the output is a function of the previous members of the output. Each member of the output is produced using the same update rule applied to the previous outputs. This recurrent formulation results in the sharing of parameters through a very deep computational graph.
 
@@ -547,7 +501,7 @@ Forward propagation begins with a specification of the initial state $\bm {h}(0)
 \end{equation}
 \]
 
-The non-linearity $\text{tanh}$ can be replaced by Relu. Also $W$ and $U$ can be horizontally stack and $\bm h^{(t-1)}$, $\bm x^{(t)}$ veritcally stacked to do only one matrix multiplication to optimize computations. This also perfectly matches backprop gradient using the same way of stacking gradiants and inputs.   
+The non-linearity $\text{tanh}$ can be replaced by Relu. Also $\bm W$ and $\bm U$ can be horizontally stack and $\bm h^{(t-1)}$, $\bm x^{(t)}$ veritcally stacked to do only one matrix multiplication to optimize computations. This also perfectly matches backprop gradient using the same way of stacking gradiants and inputs.   
 
 This is an example of a recurrent network that maps an input sequence to an output sequence of the same length. The total loss for a given sequence of $\bm x$ values paired with a sequence of $\bm y$ values would then be just the sum of the losses over all the time steps. For example, if $L^{(t)}$ is the negative log-likelihood of $y{(t)}$, given $(\bm {x}^{(t)}, \bm {x}^{(t-1)}, \bm {x}^{(t-2)},...,\bm {x}^{(2)},\bm {x}^{(1)})
 $, then
@@ -562,12 +516,12 @@ L \Big((\bm {x}^{(1)}, \bm {x}^{(2)},...,\bm {x}^{(t)}),\; &(\bm {y}^{(1)}, \bm 
 \end{equation*}
 \]
 
-where $p_{\text{model}} \Big( y^{(t)} \; | \; \bm {x}^{(1)}, \bm {x}^{(2)},...,\bm {x}^{(t)}\Big)$ is given by reading the entry for $y^{(t)}$ from the model’s output vector $\bm {\hat y}^{(t)}$. In other words,
+where $p_{\text{model}} \Big( \bm y^{(t)} \; | \; \bm {x}^{(1)}, \bm {x}^{(2)},...,\bm {x}^{(t)}\Big)$ is given by reading the entry for $y^{(t)}$ from the model’s output vector $\bm {\hat y}^{(t)}$. In other words,
 
 \[
 \begin{equation*}
 \begin{split}
-p_{\text{model}} \Big( y^{(t)} \; | \; \bm {x}^{(1)},\; \bm {x}^{(2)},...,\bm {x}^{(t)}\Big)= (\text{softmax}(\bm {o^{(t)}}))_k 
+p_{\text{model}} \Big( \bm y^{(t)} \; | \; \bm {x}^{(1)},\; \bm {x}^{(2)},...,\bm {x}^{(t)}\Big)= (\text{softmax}(\bm {o^{(t)}}))_k 
 \end{split}
 \end{equation*}
 \]
@@ -586,7 +540,7 @@ $$
 \frac{\partial L}{\partial L^{(t)}} = 1
 $$
 
-Assuming that the loss is the negative log-likelihood of the true target $y^{(t)}$ given the input:
+Assuming that the loss is the negative log-likelihood of the true target $\bm y^{(t)}$ given the input:
 
 \[
 \begin{equation*}
@@ -594,7 +548,7 @@ Assuming that the loss is the negative log-likelihood of the true target $y^{(t)
 (∇_{\bm o^{(t)}} L)_i &= \frac{\partial L}{\partial o^{(t)}_i} \\
 &= \frac{\partial L}{\partial L^{(t)}} \frac{\partial L^{(t)}}{\partial o^{(t)}_i}\\
 &= \frac{\partial L^{(t)}}{\partial o^{(t)}_i}\\
-&= \frac{\partial }{\partial o^{(t)}_i} - \text{log} \; p_{\text{model}} \Big( y^{(t)} \; | \; \bm {x}^{(1)},\; \bm {x}^{(2)},...,\bm {x}^{(t)}\Big)\\
+&= \frac{\partial }{\partial o^{(t)}_i} - \text{log} \; p_{\text{model}} \Big( \bm y^{(t)} \; | \; \bm {x}^{(1)},\; \bm {x}^{(2)},...,\bm {x}^{(t)}\Big)\\
 &= \frac{\partial }{\partial o^{(t)}_i} - \log (\text{softmax}(\bm {o^{(t)}}))_k\\
 &= - \frac{\partial }{\partial o^{(t)}_i} \log \frac{e^{o_k^{(t)}}}{\sum_j e^{o_j^{(t)}}}\\
 &= \frac{e^{o_i^{(t)}}}{\sum_j e^{o_j^{(t)}}} - \delta_{ik} \\
@@ -603,7 +557,7 @@ Assuming that the loss is the negative log-likelihood of the true target $y^{(t)
 \end{equation*}
 \]
 
-where $k$ is the index of token $y^{(t)}$ in the target $\bm y$.
+where $k$ is the index of token $\bm y^{(t)}$ in the target $\bm y$.
 
 We work our way backwards, starting from the end of the sequence. At the final time step , $τ$, ${\bm h}(τ)$ only has ${\bm o}^{(τ)}$ as a descendent, so its gradient is simple:
 
@@ -651,7 +605,7 @@ RNNs could be used in a variety of tasks ranging from machine translation to cap
 
 Some examples of important design patterns for recurrent neural networks include the following:
 
-- Recurrent networks that produce an output at each time step and have recurrent connections between hidden units (many-to-many). The input and output size might be different. This is the simple RNN application. Part-of-speech tagging as sequence labeling is an application.
+- Recurrent networks that produce an output at each time step and have recurrent connections between hidden units (many-to-many). The input and output size might be different. This is the simple RNN application. **Part-of-speech tagging** as sequence labeling is an application.
 
     <p align="center">
         <img src="./assets/seq-models/part-of-speech-tagging-rnn.png" alt="drawing" width="400" height="300" style="center" />
@@ -663,12 +617,8 @@ Some examples of important design patterns for recurrent neural networks include
         <img src="./assets/seq-models/rnn-design1.png" alt="drawing" width="400" height="300" style="center" />
     </p>
 
-    The advantage of eliminating hidden-to-hidden recurrence is that, for any loss function based on comparing the prediction at time $t$ to the training target at time $t$, all the time steps are decoupled. Thus _training can thus be parallelized  (becuase previous hidden state not needed) and the gradient for each step can be computed in isolation_. Because this network lacks hidden-to-hidden recurrence, it requires that the output units capture all of the information about the past that the network will use to predict the future. Because the output units are explicitly trained to match the training set targets, they are unlikely to capture the necessary information about the past history of the input, unless the user knows how to describe the full state of the system an provides it as part of the training set targets. This training technique is called **teacher forcing**. At train time, we feed the correct output $\bm y{(t)}$ (instead of $\bm h{(t)}$) drawn from the train set as input to $\bm h{(t+1)}$. When the model is deployed, the true output is generally not known. In this case, we approximate the correct output $\bm y^{(t)}$ with the model’s output $\bm o^{(t)}$, and feed the output back into the model. Teacher forcing is very common technique for training that emerges from the maximum likelihood criterion, in which during training the model receives the ground truth output $\bm y{(t)}$ as input at time $t+1$. Teacher forcing is commonly used for training models with hidden-to-hidden connections such as NMT as shwon below: 
-    <p align="center">
-        <img src="./assets/seq-models/teacher-forcing.png" alt="drawing" width="500" height="300" style="center" />
-    </p>
+    The advantage of eliminating hidden-to-hidden recurrence is that, for any loss function based on comparing the prediction at time $t$ to the training target at time $t$, all the time steps are decoupled. Thus _training can thus be parallelized  (becuase previous hidden state not needed) and the gradient for each step can be computed in isolation_.,which results in a faster training process. However, since this network lacks hidden-to-hidden recurrence, it requires that the output units capture all of the information about the past that the network will use to predict the future. Because the output units are explicitly trained to match the training set targets, they are unlikely to capture the necessary information about the past history of the input, unless the user knows how to describe the full state of the system an provides it as part of the training set targets. This training technique is called **teacher forcing**. At train time, we feed the correct output $\bm y{(t)}$ (instead of $\bm h{(t)}$) drawn from the train set as input to $\bm h{(t+1)}$. When the model is deployed, the true output is generally not known. In this case, we approximate the correct output $\bm y^{(t)}$ with the model’s output $\bm o^{(t)}$, and feed the output back into the model. Teacher forcing is a very common technique for training that emerges from the maximum likelihood criterion, in which during training the model receives the ground truth output $\bm y{(t)}$ as input at time $t+1$. Teacher forcing is commonly used for training models with hidden-to-hidden connections, for example in langugage modeling: 
 
-    Or for language modeling:
     <p align="center">
         <img src="./assets/seq-models/language-model-rnn.png" alt="drawing" width="500" height="300" style="center" />
     </p>
@@ -677,30 +627,26 @@ Some examples of important design patterns for recurrent neural networks include
 
     In these cases, target value $\bm y{(t)}$ at eah time step becomes the input to the model at the next time step. 
 
-- Recurrent networks with recurrent connections between hidden units that read an entire sequence and then produce a single output (many-to-one). Snetence classification is an application for this network.
+- Recurrent networks with recurrent connections between hidden units that read an entire sequence and then produce a single output (many-to-one). Sentence classification is an application for this network.
 
 <p align="center">
     <img src="./assets/seq-models/rnn-design2.png" alt="drawing" width="400" height="300" style="center" />
 </p>
 
+
+
 ## Language models and Text Generation
 
 Recall that we saw how to generate text from an n-gram language model by adapting a sampling technique. We first randomly sample a word to begin a sequence based on its suitability as the start of a sequence. We then continue to sample words conditioned on our previous choices until we reach a pre-determined length, or an end of sequence token is generated.
 
-Today, this approach of using a language model to incrementally generate words by repeatedly sampling the next word conditioned on our previous choices is called **autoregressive generation**  or **causal LM generation**. Technically an autoregressive model is a model that predicts a value at time $t$ based on a linear function of the previous values at times $t−1$, $t−2$, and so on. Although
-language models are not linear (since they have many layers of non-linearities), we loosely refer to this generation technique as autoregressive generation since the word generated at each time step is conditioned on the word selected by the network from the previous step.eally linear functions as they have non-linear layers.
+Today, this approach of using a language model to incrementally generate words by repeatedly sampling the next word conditioned on our previous choices is called **autoregressive generation**  or **causal LM generation**. Technically an autoregressive model is a model that predicts a value at time $t$ based on a linear function of the previous values at times $t−1$, $t−2$, and so on. Although language models are not linear (since they have many layers of non-linearities), we loosely refer to this generation technique as autoregressive generation since the word generated at each time step is conditioned on the word selected by the network from the previous step.
 
 Text generation is of enormous practical importance, part of tasks like question answering, machine translation, text summarization, grammar correction, story generation, and conversational dialogue; any task where a system needs to produce text, conditioned on some other text. This use of a language model to generate text is one of the areas in which the impact of neural language models on NLP has been the largest. Text generation, along with image generation and code generation, constitute a new area of AI that is often called **generative AI**.
 
-Language modeling is one of the most basic and important task in natural language processing. What is a language model? Let's say you're building a speech recognition system and you hear the sentence, "The apple and pear salad was delicious". What did you just hear me say? Did I say the apple and pair salad? Or did I say the apple and pear salad? You probably think the second sentence is much more likely. In fact, that's what a good speech recognition system would output, even though these two sentences sound exactly the same. The way a speech recognition system picks the second sentence is by using a language model which tells it what is the probability of either of these two sentences. 
 
-How do you build a language model in English? To build a language model using a RNN, you will first need a training set comprising a **large corpus** of English text. The word corpus just means a large body or a very large number of English sentences. Let's say you have a sentence in your training set: "_cats average 15 hours of sleep a day_.". The first thing you would do is to **tokenize** the sentence: form a vocabulary, and then map each of these words to one-hot vectors or to indices in your vocabulary. Also model when sentences end commonly done by adding an extra token called `<EOS>` that stands for end of sentence. But the EOS token can be appended to the end of every sentence in your training set if you want your model to explicitly capture when sentences end: "_cats average 15 hours of sleep a day_`<EOS>`".
+How do you build a language model in English? To build a language model using a RNN, you will first need a training set comprising a **large corpus** of English text. The word corpus just means a large body or a very large number of English sentences. Let's say you have a sentence in your training set: "_cats average 15 hours of sleep a day_.". The first thing you would do is to **tokenize** the sentence: form a vocabulary, and then map each of these words to one-hot vectors or to indices in your vocabulary. Also model when sentences end commonly done by adding an extra token called `<EOS>` that stands for end of sentence. But `<EOS>` token can be appended to the end of every sentence in your training set if you want your model to explicitly capture when sentences end: "_cats average 15 hours of sleep a day_`<EOS>`". Having carried out the tokenization step, let's build an RNN to model the chance of these different sequences. One of the things we'll see later is that you end up setting the inputs $\bm x^{(t)}$ to be equal to $\bm y^{(t-1)}$. 
 
-In this example, we have nine inputs including the end of sentence token. Doing the tokenization step, you can decide whether or not the period should be a token as well. If some of the words in your training set are not in your vocabulary? If your vocabulary uses 10,000 words, maybe the 10,000 most common words in English, then the term "Mau" as a breed of cat might not be in one of your top 10,000 tokens. In that case, you could take the word "Mau" and replace it with a unique token called `<UNK>`, which stands for unknown words. Having carried out the tokenization step, let's build an RNN to model the chance of these different sequences. One of the things we'll see later is that you end up setting the inputs $\bm x^{(t)}$ to be equal to $\bm y^{(t-1)}$. 
-
-Let's go on to build the RNN model, and I'm going to continue to use this sentence as the running example. This will be the RNN architecture. At time zero, set the initial state $\bm h_0 = \bm 0$ by convention. Also set the first input $\bm x^{(1)} = \bm 0$, zero vector. Model will make a Softmax prediction to try to figure out the probability of the first word $\bm y^{(1)}$. The Softmax generates the probability of any word in the dictionary to be the winning candidate for $\bm y^{(1)}$. In our example, this would be a 10,000 way Softmax output if you have 10,000 word vocabulary (or 10,002, I guess you can't unknown word and the sentence has two additional tokens). 
-
-Then the RNN steps forward to the next step and it tries to figure out what is the second word. But now we will also give it the correct first word as input (teacher forcing mentioned before). We'll tell it that the first word was actually "cats", so that's $\bm y^{(1)}$, so tell it cats. This is why $\bm y^{(1)}$ is equal to $\bm x^{(2)}$. At the second step, the output is again predicted by Softmax, the RNN's job is to predict what's the chance of it being whatever word it is, given what had come previously. In this case, the right answer was "average" since the sentence starts with "cats average". 
+At time zero, set the initial state $\bm h_0 = \bm 0$ by convention. Also set the first input $\bm x^{(1)} = \bm 0$, zero vector. Model will make a Softmax prediction to try to figure out the probability of the first word $\bm y^{(1)}$. The Softmax generates the probability of any word in the dictionary to be the winning candidate for $\bm y^{(1)}$. In our example, this would be a 10,000 way Softmax output if you have 10,000 word vocabulary. Then the RNN steps forward to the next step and it tries to figure out what is the second word. But now we will also give it the correct first word as input (teacher forcing mentioned before). We'll tell it that the first word was actually "cats", so that's $\bm y^{(1)}$, so tell it cats. This is why $\bm y^{(1)}$ is equal to $\bm x^{(2)}$. At the second step, the output is again predicted by Softmax, the RNN's job is to predict what's the chance of it being whatever word it is, given what had come previously. In this case, the right answer was "average" since the sentence starts with "cats average". 
 
 $$\bm y^{(2)} = P(\text{"average"} \; | \; \text{"cats"})$$
 
@@ -746,8 +692,6 @@ It is more interesting to consider the graphical model structure of RNNs that re
 
 The parameter sharing used in recurrent networks relies on the assumption that the same parameters can be used for diﬀerent time steps. Equivalently, the assumption is that the conditional probability distribution over the variables at time $t+1$ given the variables at time $t$ is **stationary**, meaning that the relationship between the previous time step and the next time step does not depend on $t$. In principle, it would be possible to use t as an extra input at each time step and let the learner discover any time-dependence while sharing as much as it can between diﬀerent time steps. This would already be much better than using a diﬀerent conditional probability distribution for each t, but the network would then have to $t$ extrapolate when faced with new values of $t$.
 
-### Sampling from RNNs
-
 To complete our view of an RNN as a graphical model, we must describe how to draw samples from the model. The main operation that we need to perform is simply to sample from the conditional distribution at each time step. However, there is one additional complication. The RNN must have some mechanism for determining the length of the sequence.
 
 After you train a sequence model, one of the ways you can informally get a sense of what is learned is to have a sample novel sequences. First sample what is the first word you want your model to generate. For that you input the usual $\bm  x_1^{(t)} = 0$. And now your first time stamp will have some softmax probability over possible outputs. So you then randomly sample according to this softmax distribution. You take this vector and use, for example, the numpy command `np.random.choice` to sample according to distribution defined by this vector probabilities, and that lets you sample the first words. You then take the $\bm  y_1^{(t)}$ that you just sampled and pass that as the input to the next timestep and so on. 
@@ -764,6 +708,35 @@ $$
 P(\bm  x^{(1)}, ..., \bm  x^{(τ)}) = P(τ)P(\bm  x^{(1)}, ..., \bm  x^{(τ)}\; | \;τ)
 $$
 
+### More about Sampling
+
+As we mentioned, you can think of machine translation as building a conditional language model. In language modeling, the network could be based on a simple RNNs with $\bm x^{(t)} = \bm y^{(t-1)}$. And this model allows you to estimate the probability of a sentence $P(\bm y^{(1)},...,\bm y^{(t_y)})$ as described before. You could also use this model to generate novel sentences. The machine translation model has a encoder-decoder architecture because it needs to generate sequences of diffrent length. The decoder network looks pretty much identical to the language model that we had before. So machine translation model is very similar to the language model, except that instead of always starting with the vector of all zeros, it  with the output of the encoder (called conditioned on the encoder).  
+
+Now, if you want to apply this model to actually translate a sentence from French into English, the model might tell you what is the probability of difference in corresponding English translations. So, $\bm x$ is the French sentence, "Jane visite l'Afrique en septembre." And, this now tells you what is the probability of different English translations of that French input. And, what you do not want is to sample outputs at random. If you sample words from this distribution, $P(\bm y|\bm x)$ maybe one time you get a pretty good translation, "Jane is visiting Africa in September." But, maybe another time you get a different translation, "Jane is going to be visiting Africa in September. " Which sounds a little awkward but is not a terrible translation, just not the best one. What you would like is to find the English sentence, $\bm y$, that maximizes that conditional probability. So in developing a machine translation system, one of the things you need to do is come up with an algorithm that can actually find the value of y that maximizes this term over here:
+
+$$
+\text{argmax}_{\bm y^{(1)}, ..., \bm y^{(t_y)}}P(\bm y^{(1)}, ..., \bm y^{(t_y)}| \bm x).
+$$
+
+The answer could be **beam search**. This can not be a greedy search. You canot find $\text{argmax}_{\bm y^{(1)}}P(\bm y^{(1)}| \bm x)$ and then $\text{argmax}_{\bm y^{(1)}, \bm y^{(2)}}P(\bm y^{(1)}, \bm y^{(2)}| \bm x)$ and so on. So, it's quite possible that if you just pick the third word based on whatever maximizes the probability of just the first three words, you end up choosing non optimal option . So, if you have just 10,000 words in a dictionary and if you're contemplating translations that are up to ten words long, then there are 10000 to the tenth possible sentences that are ten words long which is just a huge space of possible sentences, and it's impossible to rate them all, which is why the most common thing to do is use an approximate search algorithm. Even though it's not guaranteed to find the value of y that maximizes this, it usually does a good enough job. 
+
+#### Beam Search
+
+Beam search is the most widely used algorithm to get the best output sequence. It's a heuristic (approximate) search algorithm which is an improvement to greedy search algorithm. While greedy search will pick only the one most likely words at each step and move on, Beam Search instead can consider multiple alternatives. It has a parameter called B, which is called the beam width. This means that Beam search will consider not just one possibility but three at the time. 
+
+Let's say evaluating this probability over different choices the first words, it finds that the choices in, Jane and September are the most likely three possibilities for the first words in the English outputs. Then Beam search will keep in memory which were the top three choices from softmax output of $\bm y^{(1)}$. For each of these three choices, Beam Search will consider what should be the second word. To evaluate the probability of second word, it will use the decoder portion to decide what comes after in. Beam Search will pick 3 of the pairs $\bm y^{(1)}, \bm y^{(2)}$ that maximize $p(\bm y^{(1)}, \bm y^{(2)} | \bm x)$ where $\bm x$ is input from the decoder. And so on ... . Note that 
+$$p(\bm y^{(1)}, \bm y^{(2)} | \bm x) = p(\bm y^{(2)}| \bm y^{(1)}, \bm x)p(\bm y^{(1)}| \bm x).$$
+
+The two terms on the right are model outputs. Finally, with $B=1$, Beam search is the same as Greedy search. The larger $B$ give better are results but it will be more computationally expensive. In practice, you might see in the production setting $B=10$. However, $B>100$ is uncommon. In preactice, we should calulate Log probabilities instead of probabilies themselves to **avoid underflow** because $P(\bm y^{(1)}, ..., \bm y^{(t)})$ is the product of many probabilities which might be very small numbers (near zero). 
+
+##### Error Abalysis in Beam Search
+
+Beam Search doesnt always output the most likely sentence. Suppose Beam Search translation of the sentence x = "Jane visite l’Afrique en septembre" is y="Jane visited Africa last September" but the human answer is y*= "Jane visits Africa in September" which is right. So the result of the model is not satisfactory. There are two possible cases:
+
+- $P(\bm y^*|\bm x) > P(\bm {\hat y}|\bm x)$: means model is perfomring fine but Beam Search is not doing its job. So we need to fix Beam Search part
+- $P(\bm y^*|\bm x) \leq P(\bm {\hat y}|\bm x)$: means model is not performing to its best and its nothign about Beam Search to be fixed. Maybe we need to improve the model
+
+It makes sense to collect more of these examples and investigate them before concluding which part is really at fault. 
 
 
 ## Modeling Sequences Conditioned on Context with RNNs
@@ -779,24 +752,18 @@ The interaction between the input $\bm x$ and each hidden unit vector $\bm h^{(t
 
 Shown in the picture below, an RNN that maps a fixed-length vector $\bm x$ into a distribution over sequences $Y$. This RNN is appropriate for tasks such as image captioning, where a single image is used as input to a model that then produces a sequence of words describing the image. Each element $\bm y^{(t)}$ of the observed output sequence serves both as input (for the current time step) and, during training, as target (for the previous time step).
 
-<p align="center">
-    <img src="./assets/seq-models/rnn-conditional.png" alt="drawing" width="400" height="400" style="center" />
-</p>
-
-
 Rather than receiving only a single vector $\bm x$ as input, the RNN may receive a sequence of vectors $\bm x^{(t)}$ as input. The RNN described in equations (1) corresponds to a conditional distribution $P(\bm y^{(1)},..., \bm y^{(τ)} \;| \;\bm x^{(1)},..., \bm x^{(τ)})$ that makes a conditional independence assumption that this distribution factorizes as
 
 $$
 P(\bm y^{(1)},..., \bm y^{(τ)} \;| \;\bm x^{(1)},..., \bm x^{(τ)}) = \prod_t P(\bm y^{(t)} \;| \;\bm x^{(1)},..., \bm x^{(t)})
 $$
 
-To remove the conditional independence assumption, we can add connections from the output at time $t$ to the hidden unit at time $t+ 1$, as shown in figure below. The
-model can then represent arbitrary probability distributions over the y sequence. This kind of model representing a distribution over a sequence given another sequence still has one restriction, which is that the length of both sequences must
-be the same. We describe how to remove this restriction later.
+To remove the conditional independence assumption, we can add connections from the output at time $t$ to the hidden unit at time $t+ 1$, as shown in figure below. The model can then represent arbitrary probability distributions over the y sequence. This kind of model representing a distribution over a sequence given another sequence still has one restriction, which is that the length of both sequences must be the same. We describe how to remove this restriction later.
 
 <p align="center">
-    <img src="./assets/seq-models/rnn-graph2.png" alt="drawing" width="400" height="500" style="center" />
+    <img src="./assets/seq-models/rnn-conditional.png" alt="drawing" width="400" height="400" style="center" />
 </p>
+
 
 The above RNN shows a conditional recurrent neural network mapping a variable-length sequence of $\bm x$ values into a distribution over sequences of $\bm y$ values of the same length. Compared to RNN in equations (1), this RNN contains connections from the previous output to the current state. These connections allow this RNN to model an _arbitrary distribution over sequences of $\bm y$ given sequences of $\bm x$ of the same length_. The RNN in equations (1) is only able to represent distributions in which they values are conditionally independent from each other given the values.
 
@@ -819,9 +786,7 @@ Computation of a typical bidirectional recurrent neural network, meant to learn 
 
 RNNs allow us to capture dependancies within a short range and they take up less RAM than other n-gram models. However, there is mathematical challenges of learning long-term dependencies in recurrent networks. The basic problem is that gradients propagated over many stages tend to either vanish (most of the time) or explode (rarely, but with much damage to the optimization). Even if we assume that the parameters are such that the recurrent network is stable (can store memories, with gradients not exploding), the diﬃculty with long-term dependencies arises from the exponentially smaller weights given to long-term interactions (involving the multiplication of many Jacobians) compared to short-term ones.
 
-Recurrent networks involve the composition of the same function multiple times, once per time step. These compositions can result in extremely nonlinear behavior. In particular, the function composition employed by recurrent neural networks somewhat resembles matrix multiplication. We can think of the recurrence relation $\bm h^{(t)} = \bm W^T \bm h^{(t-1)}$ as a very simple recurrent neural network lacking a nonlinear activation function, and lacking inputs $\bm x$. This recurrence relation essentially describes the power method. It may be simplified to $\bm h^{(t)} = \bm (W^T)^t \bm h^{(0)}$, and if $\bm W$ admits an eigendecomposition of the form $\bm W = \bm Q \bm \Lambda \bm Q^T$. With orthogonal $\bm Q$, the recurrence may be simplified further to $\bm h^{(t)} = \bm Q \bm \Lambda^t \bm Q^T\bm h^{(0)}$. 
-
-The eigenvalues are raised to the power of $t$ causing eigenvalues with magnitude less than one to decay to zero and eigenvalues with magnitude greater than one to explode. Any component of $\bm h^{(0)}$ that is not aligned with the largest eigenvector will eventually be discarded. Specifically, whenever the model is able to represent long term dependencies, the gradient of a long term interaction has exponentially smaller magnitude than the gradient of a short term interaction. It does not mean that it is impossible to learn, but that it might take a very long time to learn long-term dependencies, because the signal about these dependencies will tend to be hidden by the smallest fluctuations arising from short-term dependencies. 
+Recurrent networks involve the composition of the same function multiple times, once per time step. These compositions can result in extremely nonlinear behavior. In particular, the function composition employed by recurrent neural networks somewhat resembles matrix multiplication. We can think of the recurrence relation $\bm h^{(t)} = \bm W^T \bm h^{(t-1)}$ as a very simple recurrent neural network lacking a nonlinear activation function, and lacking inputs $\bm x$. This recurrence relation essentially describes the power method. It may be simplified to $\bm h^{(t)} = \bm (W^T)^t \bm h^{(0)}$, and if $\bm W$ admits an eigendecomposition of the form $\bm W = \bm Q \bm \Lambda \bm Q^T$. With orthogonal $\bm Q$, the recurrence may be simplified further to $\bm h^{(t)} = \bm Q \bm \Lambda^t \bm Q^T\bm h^{(0)}$. The eigenvalues are raised to the power of $t$ causing eigenvalues with magnitude less than one to decay to zero and eigenvalues with magnitude greater than one to explode. Any component of $\bm h^{(0)}$ that is not aligned with the largest eigenvector will eventually be discarded. Specifically, whenever the model is able to represent long term dependencies, the gradient of a long term interaction has exponentially smaller magnitude than the gradient of a short term interaction. It does not mean that it is impossible to learn, but that it might take a very long time to learn long-term dependencies, because the signal about these dependencies will tend to be hidden by the smallest fluctuations arising from short-term dependencies. 
 
 In practice, as we increase the span of the dependencies that need to be captured, gradient-based optimization becomes increasingly diﬃcult, with the probability of successful training of a traditional RNN via SGD rapidly reaching 0 for sequences of only length 10 or 20. So it is more difficult for gradient singal to reach the begining of the sequence and then more difficult to reduce the error at each stage. 
 
@@ -960,50 +925,11 @@ Source: [Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3
 One clear limitation of this architecture is when the context encoder RNN has a dimension that is too small to properly summarize a long sequence. Becuase of this flaw, only a fixed amont of information can be passed to decoder no matter how inofrmation exists in the encoder. So the power of seq-to-seq which allows variable sizes of input and output becomes less effective with this bottleneck. The result is lower model performance as the sequence size increases. In other words, one fixed size hidden state from encoder is that it struglles to compress longer sequences and it ends up throttling itself and punishing the decoder. This phenomenon known as **information bottleneck** was observed by Bahdanau et al. 2015 in the context of machine translation. They proposed to make $c$ a variable-length sequence rather than a fixed-size vector. Additionally, they introduced an **attention mechanism** that learns to associate elements of the sequence $C$ to elements of the output sequence.
 
 
-## Machine Translation Model: Sampling
 
-You can think of machine translation as building a conditional language model. In language modeling, the network could be based on a simple RNNs with $\bm x^{(t)} = \bm y^{(t-1)}$. And this model allows you to estimate the probability of a sentence $P(\bm y^{(1)},...,\bm y^{(t_y)})$ as described before. You could also use this model to generate novel sentences. The machine translation model has a encoder-decoder architecture because it needs to generate sequences of diffrent length. The decoder network looks pretty much identical to the language model that we had before. So machine translation model is very similar to the language model, except that instead of always starting with the vector of all zeros, it  with the output of the encoder (called conditioned on the encoder).  
-
-Now, if you want to apply this model to actually translate a sentence from French into English, the model might tell you what is the probability of difference in corresponding English translations. So, $\bm x$ is the French sentence, "Jane visite l'Afrique en septembre." And, this now tells you what is the probability of different English translations of that French input. And, what you do not want is to sample outputs at random. If you sample words from this distribution, $P(\bm y|\bm x)$ maybe one time you get a pretty good translation, "Jane is visiting Africa in September." But, maybe another time you get a different translation, "Jane is going to be visiting Africa in September. " Which sounds a little awkward but is not a terrible translation, just not the best one. What you would like is to find the English sentence, $\bm y$, that maximizes that conditional probability. So in developing a machine translation system, one of the things you need to do is come up with an algorithm that can actually find the value of y that maximizes this term over here:
-
-$$
-\text{argmax}_{\bm y^{(1)}, ..., \bm y^{(t_y)}}P(\bm y^{(1)}, ..., \bm y^{(t_y)}| \bm x).
-$$
-
-The answer could be **beam search**. This can not be a greedy search. You canot find $\text{argmax}_{\bm y^{(1)}}P(\bm y^{(1)}| \bm x)$ and then $\text{argmax}_{\bm y^{(1)}, \bm y^{(2)}}P(\bm y^{(1)}, \bm y^{(2)}| \bm x)$ and so on. So, it's quite possible that if you just pick the third word based on whatever maximizes the probability of just the first three words, you end up choosing non optimal option . So, if you have just 10,000 words in a dictionary and if you're contemplating translations that are up to ten words long, then there are 10000 to the tenth possible sentences that are ten words long which is just a huge space of possible sentences, and it's impossible to rate them all, which is why the most common thing to do is use an approximate search algorithm. Even though it's not guaranteed to find the value of y that maximizes this, it usually does a good enough job. 
-
-### Beam Search
-
-Beam search is the most widely used algorithm to get the best output sequence. It's a heuristic (approximate) search algorithm which is an improvement to greedy search algorithm. While greedy search will pick only the one most likely words at each step and move on, Beam Search instead can consider multiple alternatives. It has a parameter called B, which is called the beam width. This means that Beam search will consider not just one possibility but three at the time. 
-
-Let's say evaluating this probability over different choices the first words, it finds that the choices in, Jane and September are the most likely three possibilities for the first words in the English outputs. Then Beam search will keep in memory which were the top three choices from softmax output of $\bm y^{(1)}$. For each of these three choices, Beam Search will consider what should be the second word. To evaluate the probability of second word, it will use the decoder portion to decide what comes after in. Beam Search will pick 3 of the pairs $\bm y^{(1)}, \bm y^{(2)}$ that maximize $p(\bm y^{(1)}, \bm y^{(2)} | \bm x)$ where $\bm x$ is input from the decoder. And so on ... . Note that 
-$$p(\bm y^{(1)}, \bm y^{(2)} | \bm x) = p(\bm y^{(2)}| \bm y^{(1)}, \bm x)p(\bm y^{(1)}| \bm x).$$
-
-The two terms on the right are model outputs. Finally, with $B=1$, Beam search is the same as Greedy search. The larger $B$ give better are results but it will be more computationally expensive. In practice, you might see in the production setting $B=10$. However, $B>100$ is uncommon. In preactice, we should calulate Log probabilities instead of probabilies themselves to **avoid underflow** because $P(\bm y^{(1)}, ..., \bm y^{(t)})$ is the product of many probabilities which might be very small numbers (near zero). 
-
-#### Error Abalysis in Beam Search
-
-Beam Search doesnt always output the most likely sentence. Suppose Beam Search translation of the sentence x = "Jane visite l’Afrique en septembre" is y="Jane visited Africa last September" but the human answer is y*= "Jane visits Africa in September" which is right. So the result of the model is not satisfactory. There are two possible cases:
-
-- $P(\bm y^*|\bm x) > P(\bm {\hat y}|\bm x)$: means model is perfomring fine but Beam Search is not doing its job. So we need to fix Beam Search part
-- $P(\bm y^*|\bm x) \leq P(\bm {\hat y}|\bm x)$: means model is not performing to its best and its nothign about Beam Search to be fixed. Maybe we need to improve the model
-
-It makes sense to collect more of these examples and investigate them before concluding which part is really at fault. 
 
 
 ## Seq-to-Seq Models with Attention Mechanisms
-Recurrent models typically take in a sequence in the order it is written and use that to output a sequence. Each element in the sequence is associated with its step in computation time $t$, i.e. if a word is in the third element, it will be computed at $t_3$. These models generate a sequence of hidden states $\bm h^{(t)}$, as a function of the previous hidden state $h^{(t−1)}$ and the input for position $t$.
-
-The sequential nature of models you learned in the previous course (RNNs, LSTMs, GRUs) does not allow for **parallelization** within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples. In other words, if you rely on sequences and you need to know the beginning of a text before being able to compute something about the ending of it, then you can not use parallel computing. You would have to wait until the initial computations are complete. This is not good, because if your text is too long, then 
-
-1) It will take a long time for you to process it
-2) you will lose a good amount of information mentioned earlier in the text as you approach the end 
-
-Therefore, **attention mechanisms** have become critical for sequence modeling in various tasks, allowing modeling of dependencies without caring too much about their distance in the input or output sequences. Two other issues with RNNs are the:
-- **Loss of Information**: For example, it is harder to keep track of whether the subject is singular or plural as you move further away from the subject.
-- **Vanishing Gradient**: when you back-propagate, the gradients can become really small and as a result, your model will not be learning much. 
-
-Later we will learn about **transformers** are based on attention only  and don't require any sequential computation per layer.Additionally, the gradient steps that need to be taken from the last output to the first input in a transformer is just one. For RNNs, the number of steps increases with longer sequences. Finally transformers don't suffer from vanishing gradients problems that are related to the length of the sequences. 
+Recurrent models typically take in a sequence in the order it is written and use that to output a sequence. Each element in the sequence is associated with its step in computation time $t$, i.e. if a word is in the third element, it will be computed at $t_3$. These models generate a sequence of hidden states $\bm h^{(t)}$, as a function of the previous hidden state $h^{(t−1)}$ and the input for position $t$. The sequential nature of models you learned before (RNNs, LSTMs, GRUs) make training slow and increases information loss for longer sequence lengths.
 
 
 Vanilla RNN Encoder-Decoder architecture passes only the last hidden state from the encoder to the decoder. This leads to the problem that information has to be compressed into a fixed length vector and information can be lost in this compression. Especially information found early in the sequence tends to be “forgotten” after the entire sequence is processed. The addition of bi-directional layers remedies this by processing the input in reversed order. While this helps for shorter sequences, the problem still persists for long input sequences. The development of attention enables the decoder to attend to the whole sequence and thus use the context of the entire sequence during the decoding step.
@@ -1022,15 +948,7 @@ Attention was originally developed for machine translation, but it's since being
 
 The seq-to-seq models perform well when sentences have about 10-20 words, but they fall off beyond that. This is expected because seq-to-seq models must store the meaning of the entire input sequence, any single vector. The models developed in the paper, RNN search 13-15, use bidirectional encoders and decoders, but with attention. First, these models perform better than the traditional seq-to-seq models across all sentence length. The RNN search 50 model has basically no fall off in performance as sentence lengths increase. This is because the models are able to focus on specific inputs to predict words in the output translation, instead of having to memorize the entire input sentence. 
 
-As explained before, traditional seq-to-seq models, use the final hidden states of the encoder as the initial hidden state of the decoder. This forces the encoder to store the meaning of the entire input sequence into this one hidden states. Instead of using only the final hidden states, you can pass all the hidden states to the decoder. However, this quickly becomes inefficient as you must retain the hidden states for each input step in memory. 
-
-
-
-Attention replaces the single context vector $c$ that a decoder uses by a sequence of context vectors $\bm c^{(t)}$s which are weighted sum of the encoder hidden states. These weights are indications of how important some states are for the next decoder outputs based of the size of them. This way, the context vector holds more information about the most important words and less information about other words. 
-
-<p align="center">
-    <img src="./assets/seq-models/seq-to-seq-attention2.png" alt="drawing" width="700" height="300" style="center" />
-</p>
+As explained before, traditional seq-to-seq models, use the final hidden states of the encoder as the initial hidden state of the decoder. This forces the encoder to store the meaning of the entire input sequence into this one hidden states. Instead of using only the final hidden states, you can pass all the hidden states to the decoder. However, this quickly becomes inefficient as you must retain the hidden states for each input step in memory. _Attention replaces the single context vector $c$ that a decoder uses by a sequence of context vectors $\bm c^{(t)}$s which are weighted sum of the encoder hidden states_. These weights are indications of how important some states are for the next decoder outputs based of the size of them. This way, the context vector holds more information about the most important words and less information about other words. 
 
 But how are these weights calculated to determine which input words are important at each step? The decoders previous hidden states, denoted as $\bm s^{(t'-1)}$, contains information about the previous words in the output translation. This means, you can compare the decoder states with each encoder state to determine the most important inputs. Intuitively, the decoder can set the weights such that if it focuses on only the most important inputs words for the next prediction, it decides which parts of the input sequence to pay attention to. The goal of the attention layer is to return a context vector that contains the relevant information from the encoder states. The first step is to calculate the **alignments**, $e_{tt'} = \text{score}(\bm s^{(t'-1)}, \bm h^{(t)})$, which is a score of how well the inputs around $t$ match the expected output around $t'$. The higher the match, the higher of this score is expected and as a resuult, the next word in the decoder's output will be more strongly influenced by this word than by other words in the sequence. 
 
@@ -1057,9 +975,7 @@ with $\bm s^{(t'-1)}$ being the hidden state of the decoder at time-step $t'-1$.
     <img src="./assets/seq-models/seq-to-seq-attention3.png" alt="drawing" width="700" height="300" style="center" />
 </p>
 
-The normalized alignment score $\alpha_{t,t'}$ models how well input $\bm x^{(t)}$ and output $y^{(t)}$ match and assigns the weight to $\bm h^{(t)}$. At time-point $t'$, the decoder hidden state $\bm s^{(t')}$ is computed as $\bm s^{(t')} = f(\bm s^{(t'-1)}, \bm y^{(t'-1)}, \bm c^{(t')})$ is the function resulting from the use of a RNN, LSTM or GRU cell.
-
-Bahdanau, Cho, and Bengio (2014) parametrize their alignment score with a single-hidden-layer feed-forward neural network which is jointly trained with the other parts of the architecture. The score function used by Bahdanau et al. is given as
+The normalized alignment score $\alpha_{t,t'}$ models how well input $\bm x^{(t)}$ and output $y^{(t)}$ match and assigns the weight to $\bm h^{(t)}$. At time-point $t'$, the decoder hidden state $\bm s^{(t')}$ is computed as $\bm s^{(t')} = f(\bm s^{(t'-1)}, \bm y^{(t'-1)}, \bm c^{(t')})$ is the function resulting from the use of a RNN, LSTM or GRU cell. Bahdanau, Cho, and Bengio (2014) parametrize their alignment score with a single-hidden-layer feed-forward neural network which is jointly trained with the other parts of the architecture. The score function used by Bahdanau et al. is given as
 
 $$
 \text{score}(\bm s^{(t'-1)},\bm h^{(t)}) = V^T_\alpha\tanh(\bm W_\alpha[\bm s^{(t'-1)};\bm h^{(t)}]).
@@ -1068,12 +984,17 @@ $$
 The attention model proposed by Bahdanau et al. is also called a **global attention model** as it attends to every input in the sequence. Another name this attention model is **soft attention** because the attention is spread thinly/weakly/softly over the input and does not have an inherent hard focus on specific inputs. A nice by-product of attention mechanisms is the matrix of alignment scores which can be visualised to show the correlation between source and target words:
 
 <p align="center">
-    <img src="./assets/seq-models/alignment-matrix.png" alt="drawing" width="700" height="500" style="center" />
+    <img src="./assets/seq-models/alignment-matrix.png" alt="drawing" width="600" height="400" style="center" />
 </p>
 
-Alignment Matrix visualised for a French to English translation. White squares indicate high aligment weights between input and output (Source:Bahdanau, Cho, and Bengio 2014).
+Alignment Matrix visualised for a French to English translation. White squares indicate high aligment weights between input and output (Source:Bahdanau, Cho, and Bengio 2014). Since attention looks at the entire input and target sentences at once and calculates alignments based on word pairs, weights are assigned appropriately regardless of word order.
+- Self-attention is permutation invariant
+- We expect values along the diaogonal of the attention matrix to be the highest.
 
-## Train a RNN Neural Machine Translation with Attention
+See this notebook for a demonstration of training RNN based model with attention: [A mre modern implementation of a seq2seq model (for Spanish-to-English translation) roughly based on Effective Approaches to Attention-based Neural Machine Translation (Luong et al., 2015)](https://www.tensorflow.org/text/tutorials/nmt_with_attention) using TensorFlow.
+
+
+<!-- ## Train a RNN Neural Machine Translation with Attention
 
 
 - Use pre-trained vector embeddings. Otherwise, initially represent words with one-hot vectors
@@ -1135,7 +1056,7 @@ Due to this, you don't get exact matches but the model can learn which words are
     <img src="./assets/seq-models/scaled-dot-product2.png" alt="drawing" width="600" height="300" style="center" />
 </p> -->
 
-
+<!-- 
 First, the queries and keys matrices are multiplied together to get a matrix of alignments score. These are then scaled by the square root of the key vector dimension $d_k$. The scaling improves the model performance for larger model sizes and could be seen as a regularization constants. Next the scale scores are converted to weights using the softmax function. Such that the weights for each query sum to one. Finally the weights and the value matrices are multiplied to get the **attention vectors** for each query. You can think of the keys and the values as being the same. So when you multiply the softmax output with $V$ you are taking a linear combination of your initial input which is then being fed to the decoder. 
 
 Note that unlike the original form of attention, scale dot-product attention consists of only two Matrix multiplications and no neural networks. Since matrix multiplication is highly optimized in modern deep learning frameworks, this form of attention is much faster to compute but this also means that the alignments between the source and target languages must be learned elsewhere. Typically, alignment is learned in the input embeddings or in other linear layers before the attention layer. The alignment weights form a matrix with queries or targets words on the rows and keys or source words on the columns. Each entry in this matrix is the weight for the correspondent (query, key) pair or word pairs that have similar meanings, $K$ and $T$, for example, will have larger weights than the similar words like day and time. 
@@ -1155,18 +1076,21 @@ Through training, the model learns which words have similar meanings and encodes
 
 
 
-Also see [A more modern implementation of a seq2seq model (for Spanish-to-English translation) roughly based on Effective Approaches to Attention-based Neural Machine Translation (Luong et al., 2015)](https://www.tensorflow.org/text/tutorials/nmt_with_attention) using TensorFlow.
+Also see [A more modern implementation of a seq2seq model (for Spanish-to-English translation) roughly based on Effective Approaches to Attention-based Neural Machine Translation (Luong et al., 2015)](https://www.tensorflow.org/text/tutorials/nmt_with_attention) using TensorFlow. 
+-->
 
 
 # Transformers
 
-Transformer is the standard architecture for building large language models. Transformer-based large language models have completely changed the field of speech and language processing. Indeed, every coming topic from now on will make use of them. We’ll focus for now on left-to-right (sometimes called causal or autoregressive) language modeling, in which we are given a sequence of input tokens and predict output tokens one by one by conditioning on the prior context.
 
-RNNs were, prior to Transformers, the state-of-the-art model for machine translation, language modeling and other NLP tasks. But the sequential nature of a RNN precludes _parallelization within training examples_. This becomes critical at longer sequence lengths as memory constraints limit batching across examples. While much has been done to minimize these problems, they are inherent in the architecture and thus still remain. An attention mechanism allows the modelling of dependencies without regard for the distance in either input or output sequences. 
+As we saw, the concept of “attention” in deep learning has its roots in the effort to improve Recurrent Neural Networks (RNNs) for handling longer sequences. Remember that with RNNs, it is inevitable to take sequential steps to encode your inputs from the beginning and to make computations at every step until you reach the end. Then you decode the information following a similar sequential procedure in the decoder. The more words you have in the input sentence, the more time and memory it will take to process that sentence. On the other hand, the information tends to get lost within the network and vanishing gradients problems arise related to the length of your input sequences. LSTMs and GRUs help a little with these problems, but even those architectures stop working well when they try to  process very long sequences due to the information bottleneck.
 
-The Transformer is a purely attention based model that was developed at Google to remedy the problems with RNNs. No RNN is needed but _Attention is all you need_. Remember that with RNNs, it is inevitable to take sequential steps to encode your inputs from the beginning and to make computations at every step until you reach the end. Then you decode the information following a similar sequential procedure in the decoder. The more words you have in the input sentence, the more time and memory it will take to process that sentence. On the other hand, the information tends to get lost within the network and vanishing gradients problems arise related to the length of your input sequences. LSTMs and GRUs help a little with these problems, but even those architectures stop working well when they try to process very long sequences due to the information bottleneck. 
+RNNs were, prior to Transformers, the state-of-the-art model for machine translation, language modeling and other NLP tasks. But the sequential nature of a RNN precludes parallelization within training examples. This becomes critical at longer sequence lengths as memory constraints limit batching across examples. While much has been done to minimize these problems, they are inherent in the architecture and thus still remain. RNNs process one token at a time in a sequence. To compute the hidden state at time step $t$, the model needs the hidden state from time step . That means:
+- You must process $x_1$ → $x_2$ → $x_3$ → ... in order, since each depends on the previous.
+- You cannot compute $h_2$, $h_3$, or $h_4$ until h₁ is done.
 
-The transformer is a neural network with a specific structure that includes a mechanism called **self-attention** or **multi-head attention**. Attention can be thought of as a way to build contextual representations of a token’s meaning by attending to and integrating information from surrounding tokens, helping the model learn how tokens relate to each other over large spans.
+Because of this dependency chain, you can’t process the tokens in parallel for a single training sequence. In contrast, Transformers compute attention over all positions _simultaneously_, since they don’t depend on previous states in the same way. The Transformer is a purely attention based model that was developed at Google to remedy the problems with RNNs. No RNN is needed but Attention is all you need. In 2017, the transformer architecture introduced a standalone self-attention mechanism, eliminating the need for RNNs altogether. The self-attention mechanism enables the model to weigh the importance of different elements in an input sequence and dynamically adjust their influence on the output. This is especially important for language processing tasks, where the meaning of a word can change based on its context within a sentence or document Today, Transformer is the standard architecture for building large language models. RNNs were slow to train on long sequences. They could not fully exploit GPUs/TPUs, which are designed for parallel computation. Transformers replaced RNNs because they scale better thanks to this parallelizable architecture. Transformer-based large language models have completely changed the field of speech and language processing. Indeed, every coming topic from now on will make
+use of them. We’ll focus for now on left-to-right (sometimes called causal or autoregressive) language modeling, in which we are given a sequence of input tokens and predict output tokens one by one by conditioning on the prior context.
 
 <!-- <p align="center">
     <img src="./assets/seq-models/transformer.png" alt="drawing" width="600" height="300" style="center" />
@@ -1195,10 +1119,7 @@ Each of these layers has two sub-layers:
 - A multi-head self-attention mechanism
 - A position-wise fully connected feed-forward network
 
-Transformers can build contextual representations of word meaning, contextual embeddings, by integrating the meaning of these helpful contextual words. In a transformer, layer by layer, we build up richer and richer contextualized representations of the meanings of input tokens. At each layer, we compute the representation of a token $i$ by combining information about $i$ from the previous layer with information about the neighboring tokens to produce a contextualized representation for each word at each position. Attention is the mechanism in the transformer that weighs and combines the representations from appropriate other tokens in the context from layer $k−1$ to build the representation for tokens in layer $k$.
-
-
-The sub-layers have a residual connection around the main components which is followed by a normalization layer. The output of each sub-layer is $\text{LayerNorm}(x + \text{Sublayer}(x))$ where $\text{Sublayer}(x)$ is the output of the function of the sublayer itself. All sub-layers and the embedding layer before the encoder/decoder produce outputs of dimension 512 to allow these residual connections to work. The position-wise feed-forward network used in the sublayer is applied to each position separately and identically. This network consists of two linear transformations with a ReLU activation function in between.
+Transformers can build contextual representations of word meaning, contextual embeddings, by integrating the meaning of these helpful contextual words. In a transformer, layer by layer, we build up richer and richer contextualized representations of the meanings of input tokens. At each layer, we compute the representation of a token $i$ by combining information about $i$ from the previous layer with information about the neighboring tokens to produce a contextualized representation for each word at each position. Attention is the mechanism in the transformer that weighs and combines the representations from appropriate other tokens in the context from layer $k−1$ to build the representation for tokens in layer $k$. The sub-layers have a residual connection around the main components which is followed by a normalization layer. The output of each sub-layer is $\text{LayerNorm}(x + \text{Sublayer}(x))$ where $\text{Sublayer}(x)$ is the output of the function of the sublayer itself. All sub-layers and the embedding layer before the encoder/decoder produce outputs of dimension 512 to allow these residual connections to work. The position-wise feed-forward network used in the sublayer is applied to each position separately and identically. This network consists of two linear transformations with a ReLU activation function in between.
 
 The decoder is composed of a stack of $N$ identical layers. 
 
@@ -1208,10 +1129,7 @@ The decoder is composed of a stack of $N$ identical layers.
 
 It inserts, in addition to the two already known sub-layers from the encoder, a third sub-layer which also performs multihead attention. This third sub-layer uses the encoder output as two of its three input values, which will be described in the next part of the chapter, for the multi-head attention. This sub-layer is in its function very close to the before seen attention mechanisms between encoders and decoders. It uses, same as the encoder, residual connections around each of the sub-layers.  The decoder also uses a modified, **masked self-attention** sub-layer to prevent positions from attending to subsequent positions - Vaswani et al. (2017). This, coupled with the fact that the output embeddings are shifted by one position to the right ensures that the predictions for position $i$ only depend on previous known outputs. The output of this layer become the third input value for the multi-head attention. This attention is called **cross attention** becuase it calulate attention between input (after encoding) and output after masking. 
 
-
-
-
-### Queries, Keys, Values
+## Self-attention: Queries, Keys, Values
 
 
 The follwoing figure shows information flow in **causal self-attention**. When processing each input $x_i$, the model attends to all the inputs up to, and including $x_i$. The arrows shows the inputs to each attention at evry position $i$.
@@ -1228,15 +1146,15 @@ The **attention head** allows us to distinctly represent three different roles t
 - And finally, as a **value** of a preceding element that gets weighted and summed up to compute the output for the current element.
 
 
-To capture these three different roles, transformers introduce weight matrices $W_Q$, $W_K$, and $W_V$. These weights will project each input vector xi into a representation of its role as a key, query, or value:
+To capture these three different roles, transformers introduce weight matrices $\bm W_Q$, $\bm W_K$, and $\bm W_V$. These weights will project each input vector xi into a representation of its role as a key, query, or value:
 
 - Query sequence: $\bm q_i=\bm x_i\bm W_Q$ 
 - Key sequence: $\bm k_i=\bm x_i\bm W_K$ 
 - Query sequence: $\bm v_i=\bm x_i\bm W_V$ 
 
-for every embedding input $\bm x_i$. The index $i$ refers to the token index position in the input sequence. Vectors $q_i$ and $k_i$ are of dimension $d_k$. The projection matrices $\bm W_Q$ and $\bm W_K$ have dimension $d\times d_k$, while $\bm W_V$ is of dimension $d\times d_v$. $d$ represents the size of each word vector $\bm x_i$ in the embedding space, i.e. embedding dimension. 
+for every embedding input $\bm x_i$. The index $i$ refers to the token index position in the input sequence. Vectors $q_i$ and $k_i$ are of dimension $d_k$. The projection matrices $\bm W_Q$ and $\bm W_K$ have dimension $d\times d_k$, while $\bm W_V$ is of dimension $d\times d_v$. The embedding dimension $d$ represents the size of each word vector $\bm x_i$ in the embedding space, i.e. embedding dimension. 
 
-Given these projections, when we are computing the similarity of the current element $x_i$ with some prior element $x_j$, we’ll use the dot product between the current element’s query vector $q_i$ and the preceding element’s key vector $\bm k_j$ for $j\leq i$. Furthermore, the result of a dot product can be an arbitrarily large (positive or negative) value, and exponentiating large values can lead to numerical issues and loss of gradients during training. To avoid this, we scale the dot product by a factor related to the size of the embeddings, via dividing by the square root of the dimensionality of the query and key vectors $d_k$. The ensuing softmax calculation resulting in $α_{ij}$ remains the same, but the output calculation for **head**$_i$ is now based on a weighted sum over the value vectors $\bm v$. This will lead to an atttenion type called **scale dot-product attention**.
+Given these projections, when we are computing the similarity of the current element $\bm x_i$ with some prior element $\bm x_j$, we’ll use the dot product between the current element’s query vector $\bm q_i$ and the preceding element’s key vector $\bm k_j$ for $j\leq i$. Furthermore, the result of a dot product can be an arbitrarily large (positive or negative) value, and exponentiating large values can lead to numerical issues and loss of gradients during training. To avoid this, we scale the dot product by a factor related to the size of the embeddings, via dividing by the square root of the dimensionality of the query and key vectors $d_k$. The ensuing softmax calculation resulting in $α_{ij}$ remains the same, but the output calculation for **head**$_i$ is now based on a weighted sum over the value vectors $\bm v$. This will lead to an atttenion type called **scale dot-product attention**.
 
 Here’s a final set of equations for computing attention for a single causal attention output vector $\bm a_i$ from a single input vector $\bm x_i$. This version of attention computes $\bm a_i$ by summing the values of the prior elements, each weighted by the similarity of its key to the query from the current element:
 
@@ -1256,7 +1174,7 @@ The figure below shows calculating the value of $\bm a_3$, the third element of 
 <img src="./assets/seq-models/alignment-compute.png" alt="drawing" width="600" height="400" style="center" />
 </p>
 
-At the end, the attention head is multiplied by the matrix $W_O$. This is necessary to reshape the output of the head. The input to attention $\bm x_i$ and the output from attention $\bm a_i$ both have the same dimensionality $[1 \times d]$. We often call $d$ the model dimensionality. Later we see that the output $h_i$ of each transformer block, as well as the intermediate vectors inside the transformer block also have the same dimensionality $[1 \times d]$. Having everything be the same dimensionality makes the transformer very modular.
+At the end, the attention head is multiplied by the matrix $\bm W_O$. This is necessary to reshape the output of the head. The input to attention $\bm x_i$ and the output from attention $\bm a_i$ both have the same dimensionality $[1 \times d]$. We often call $d$ the model dimensionality. Later we see that the output $h_i$ of each transformer block, as well as the intermediate vectors inside the transformer block also have the same dimensionality $[1 \times d]$. Having everything be the same dimensionality makes the transformer very modular.
 
 
 ### Multi-head Attention
@@ -1284,6 +1202,32 @@ The attention calculation lies at the core of what’s called a **transformer bl
 - Residual connections
 - Normalizing layers (colloquially called **layer norm**).
 
+In the Transformer architecture, the Transformer blocks are stacked sequentially, layer by layer. Each block (also called a layer) takes the output of the previous layer as its input. That means:
+
+- Each layer applies self-attention and a feedforward network to its input.
+- Residual connections and LayerNorm wrap the sub-layers.
+- The whole stack is deep, e.g., 12 layers in GPT-2, 96 in GPT-3.
+
+As important clarification, while the tokens in a sequence can be processed in parallel within each layer (because of self-attention), the layers themselves must be applied in sequence, since each one depends on the output of the one before it. So:
+- Parallelism across tokens
+- Sequential execution across layers
+
+```sh
+Input Embeddings
+↓
+[Transformer Block 1]
+↓
+[Transformer Block 2]
+↓
+[Transformer Block 3]
+↓
+...
+↓
+[Transformer Block N]
+↓
+Final Output
+```
+
 The input $\bm x_i$ at the bottom of the stream is an embedding for a token, which has dimensionality $d$. This initial embedding gets passed up (by **residual connections**), and is progressively added to by the other components of the transformer: the attention layer and a feedforward layer. Before the attention and feedforward layer is a computation called the **layer norm**. Thus the initial vector is passed through a layer norm and attention layer, and the result is added back into the stream, in this case to the original input vector $\bm x_i$. And then this summed vector is again passed through another layer norm and a feedforward layer, and the output of those is added back into the residual, and we’ll use $h_i$ to refer to the resulting output of the transformer block for token $i$. Residual connections were first successfully used in the CNNs architecture **ResNet** in form of skip connections which allowed training much deeper nets of stacked layers (strengthened backprop signals). 
 
 The **feedforward layer** is a fully-connected 2-layer network, i.e., one hidden layer, two weight matrices. The weights are the same for each token position $i$, but are different from layer to layer. It is common to make the dimensionality $dff$ of the hidden layer of the feedforward network be larger than the model dimensionality $d$. For example, in the original transformer model, $d= 512$ and $dff= 2048$.
@@ -1291,6 +1235,13 @@ The **feedforward layer** is a fully-connected 2-layer network, i.e., one hidden
 $$
 FFN(\bm x_i) = \text{ReLU}(\bm x_i\bm W_1 + \bm b_1)\bm W_2 + \bm b_2 
 $$
+
+- $\bm x_i$ is a token's embedding (after self-attention)
+- $\bm W_1$ expands the hidden size (e.g., 768 → 3072)
+- $\bm W_2$ projects it back (3072 → 768)
+- This is done independently for each token
+
+That’s why it’s called _position-wise_ — it applies the same MLP to each token’s vector, independently of others. The FFN injects non-linearity with ReLU or GELU, allowing deeper function approximation. After attention mixes info across tokens, FFN lets each token transform its own representation independently. While attention mixes across time/position, FFN mixes across embedding dimensions (like a 1x1 conv).
 
 At two stages in the transformer block, we normalize the vector. This process, called **layer norm** (short for layer normalization), is one of many forms of normalization that can be used to improve training performance in deep neural networks by keeping the values of a hidden layer in a range that facilitates gradient-based training. Layer norm is a variation of the $z$-score from statistics, applied to _a single vector_ in a hidden layer. That is, the term layer norm is a bit confusing; layer norm is **not** applied to an entire transformer layer or over all tokens, but just to the embedding vector of a single token. Thus the input to layer norm is a single vector of dimensionality $d$ and the output is that vector normalized, again of dimensionality $d$. The first step in layer normalization is to calculate the mean, $\mu$, and standard deviation, $\sigma$ , over the elements of the vector to be normalized. Given an embedding vector $x$ of dimensionality $d$, these values are calculated as follows:
 
@@ -1312,6 +1263,8 @@ Finally, in the standard implementation of layer normalization, two learnable pa
 $$
 \text{LayerNorm}(\bm x) = \gamma \frac{\bm x - \bm \mu}{\bm \sigma} +\beta
 $$
+
+LayerNorm is position-agnostic and batch-agnostic, making it ideal for variable-length sequences for training transformers.
 
 The function computed by a transformer block can be expressed by breaking it down with one equation for each component computation,
 using $t$ (of shape $1 ×d$) to stand for transformer and superscripts to demarcate each computation inside the block:
@@ -1379,11 +1332,7 @@ $$
 Given a sequence of $N$ tokens ($N$ is the context length in tokens), the matrix $\bm X$ of shape $N \times d$ has an embedding for each word in the context. The transformer does this by separately computing two embeddings: an input token embedding, and an input positional embedding. A token embedding is a vector of dimension $d$ that will be our initial representation for the input token. As we pass vectors up through the transformer layers in the residual stream, this embedding representation will change and grow, incorporating context and playing a different role depending on the kind of language model we are building. The set of initial embeddings are stored in the embedding matrix $\bm E$, which has a row for each of the $|V|$ tokens in the vocabulary. Thus each word is a row vector of $d$ dimensions, and $\bm E$ has shape $|V |\times d$. Given an input token string like `Thanks for all the`, we first convert the tokens into vocabulary indices (these were created when we first tokenized the input using BPE or SentencePiece). So the representation of thanks for all the might be $w = [5,4000,10532,2224]$. Next we use indexing to select the corresponding rows from $\bm E$, (row 5, row 4000, row 10532, row 2224). Another way to think about selecting token embeddings from the embedding matrix is to represent tokens as one-hot vectors of shape $1 ×|V |$, i.e., with one dimension for each word in the vocabulary. Recall that in a one-hot vector all the elements are 0 except one, the element whose dimension is the word’s index in the vocabulary, which has value 1. Multiplying by a one-hot vector simply selects out the relevant row vector for word $i$, resulting in the embedding for word $i$.
 
 
-These token embeddings are not position-dependent. Transformers also incorporate a positional encoding stage which encodes each input position in the sequence. This is necessary because transformers dont use recurrent or convolutional neural networks but the word order is relevant for any word language. To this end, some _positional encodings_ will be added to the input embeddings at the bottoms of the encoder and decoder stack. They have the same dimension $d$ as embedding.   
-
-To represent the position of each token in the sequence, we combine these token embeddings with positional embeddings specific to each position in an input sequence. Where do we get these positional embeddings? The simplest method, called *absolute position*, is to start with randomly initialized embeddings corresponding to each possible input position up to some maximum length. For example, just as we have an embedding for the word `fish`, we’ll have an embedding for the position 3. As with word embeddings, these positional embeddings are _learned_ along with other parameters during training. We can store them in a matrix $\bm E_{pos}$ of shape $N \times d$.
-
-To produce an input embedding that captures positional information, we just add the word embedding for each input to its corresponding positional embedding. The individual token and position embeddings are both of size $1 \times d$, so their sum is also $1 \times d$. This new embedding serves as the input for further processing. 
+These token embeddings are not position-dependent. Transformers also incorporate a positional encoding stage which encodes each input position in the sequence. This is necessary because transformers dont use recurrent or convolutional neural networks but the word order is relevant for any word language. To this end, some _positional encodings_ will be added to the input embeddings at the bottoms of the encoder and decoder stack. They have the same dimension $d$ as embedding.   To represent the position of each token in the sequence, we combine these token embeddings with positional embeddings specific to each position in an input sequence. Where do we get these positional embeddings? The simplest method, called *absolute position*, is to start with randomly initialized embeddings corresponding to each possible input position up to some maximum length. For example, just as we have an embedding for the word `fish`, we’ll have an embedding for the position 3. As with word embeddings, these positional embeddings are _learned_ along with other parameters during training. We can store them in a matrix $\bm E_{pos}$ of shape $N \times d$. To produce an input embedding that captures positional information, we just add the word embedding for each input to its corresponding positional embedding. The individual token and position embeddings are both of size $1 \times d$, so their sum is also $1 \times d$. This new embedding serves as the input for further processing. 
 
 
 A potential problem with the simple position embedding approach is that there will be plenty of training examples for the initial positions in our inputs and correspondingly fewer at the outer length limits. These latter embeddings may be poorly trained and may not generalize well during testing. An alternative is to choose a static function that maps integer inputs to real-valued vectors in a way that better handle sequences of arbitrary length. A combination of sine and cosine functions with differing frequencies was used in the original transformer work. Sinusoidal position embeddings may also help in capturing the inherent relationships among the positions, like the fact that position 4 in an input is more closely related to position 5 than it is to position 17.
@@ -1406,17 +1355,16 @@ All these features make transformer architecture easy to parallelize compared to
 
 ### Language Model Head
 
-The last component of the transformer is the language modeling head. The job of the language modeling head is to take the output of the final transformer layer from the last token $i$ and use it to predict the upcoming word at position $i + 1$. This is done by taking the output of the last token at the last layer and producing a probability distribution over words in the vocabulary. This is shown the following figure: A transformer language model (decoder-only), stacking transformer blocks and mapping from an input token $w_i$ to to a predicted next token $w_{i+1}$.
+The last component of the transformer is the language modeling head. The job of the language modeling head is to take the output of the final transformer layer from the last token $i$ and use it to predict the upcoming word at position $i + 1$. This is done by taking the output of the last token at the last layer and producing a probability distribution over words in the vocabulary. 
 
 <p align="center">
 <img src="./assets/seq-models/transformer-lmh.png" alt="drawing" width="500" height="500" style="center" />
 </p>
 
-Sources: 
-- Source: [Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3)
+Sources: [Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3)
  
 
-
+See [Neural machine translation with a Transformer and Keras](https://www.tensorflow.org/text/tutorials/transformer) for a minimal but full implementation of Transformer architecture in TensorFLow.
 
 
 
@@ -1433,28 +1381,37 @@ Sources:
 Here is a collection of **foundation models**, sometimes called **base models** and their relative size in terms of #parameters which are based on transformers. Either using these models as they are or by applying fine tuning techniques to adapt them to your specific use case, you can rapidly build customize solutions without the need to train a model from scratch. _The input to LLM is called prompt and the output is called completion_.
 
 <p align="center">
-    <img src="./assets/llm/llm-models.png" alt="drawing" width="600" height="250" style="center" />
+    <img src="./assets/llm/llm-models.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 
-You can split the components transformer model apart for variations of the architecture. **Encoder-only** models also works as seq2seq models (input and output length are the same) but with further modification, you can perform tasks such as sentiment analysis. **BERT** is an example of only encoder model. 
+You can split the components transformer model apart for variations of the architecture.
 
-**Encoder-decoder** models allows for different input output size such as `T5`. **Decoder-only** models are some the most commonly used ones such as `GPT`, `BLOOM`, `Lalma`.
+- **Encoder-only** models also work as seq2seq models (input and output length are the same) but with further modification, you can perform tasks such as sentiment analysis, classification (use the ouput of `[CLS]` token), span extraction, embedding tasks, Token Classification (e.g., NER), Embedding
+(e.g., sentence similarity), etc. **BERT** is an example of only encoder model.Characteristics:
+  - Input: full sequence (e.g., a sentence or pair of sentences)
+  - Output: same length — one output embedding per token
+  - No autoregression or masking — full bidirectional attention
 
+- **Encoder-decoder** models allows for different input output size such as `T5` . The encoder produces a sequence of hidden states (contextualized representations). This is fully bidirectional — each token attends to all others. Its decoder part takes previously generated tokens as input (with masking to
+prevent seeing the future) . It also attends both to its own previous outputs(causal self-attention) and the encoder outputs (via cross-attention). The model predicts the next token autoregressively
+
+- **Decoder-only** models are some the most commonly used ones such as `GPT`, `BLOOM`, `Lalma. These are used for text generation tasks. Characteristics:
+    - Input: a prompt
+    - Output: generated tokens, one at a time, not tied to input length
+    - Attention is causal/masked, so the model only attends to past tokens
+
+Typical behavior of these models is that the model predicts the next token based on all previous ones. Generation continues until a stop token or max length is reached So input and output lengths can differ.
 
 ## Large Language Models with Transformers
 
-We have introduced most of the components of a transformer in the domain of language modeling: the **transformer block** including multi-head attention, the **language modeling head**, and the **positional encoding** of the input. In the following sections we’ll introduce the remaining aspects of the transformer LLM: **sampling** and **training**.
-
-We can use transformer-based large language models to NLP tasks. The tasks that are cases of **conditional generation**. Conditional generation is the task of generating text conditioned on an input piece of text. That is, we give the LLM an input piece of text, generally called a **prompt**, and then have the LLM continue generating text token by token, conditioned on the prompt and the previously generated tokens. The fact that transformers have such long contexts (many thousands of tokens) makes them very powerful for conditional generation, because they can look back so far into the prompting text. The insight of large language modeling is that _many practical NLP tasks can be cast as word prediction_, and that a powerful-enough language model can solve them with a high degree of accuracy. Tasks such as text completion, text summarization, qeustion-answering, naming entity recognition, sentiment analysis are a few examples.
+We have introduced most of the components of a transformer in the domain of language modeling: the **transformer block** including multi-head attention, the **language modeling head**, and the **positional encoding** of the input. In the following sections we’ll introduce the remaining aspects of the transformer LLM: **sampling** and **training**. We can use transformer-based large language models to NLP tasks. The tasks that are cases of **conditional generation**. Conditional generation is the task of generating text conditioned on an input piece of text. That is, we give the LLM an input piece of text, generally called a **prompt**, and then have the LLM continue generating text token by token, conditioned on the prompt and the previously generated tokens. The fact that transformers have such long contexts (many thousands of tokens) makes them very powerful for conditional generation, because they can look back so far into the prompting text. The insight of large language modeling is that _many practical NLP tasks can be cast as word prediction_, and that a powerful-enough language model can solve them with a high degree of accuracy. Tasks such as text completion, text summarization, qeustion-answering, naming entity recognition, sentiment analysis are a few examples.
 
 Which words do we generate at each step? One simple way to generate words is to always generate the most likely word given the context. Generating the most likely word given the context is called **greedy decoding**. A greedy algorithm is one that make a choice that is locally optimal, whether or not it will turn out to have been the best choice globally.
 
-### Sampling for LLM Generation  
+### Generation in LLMs  
 
-The core of the generation process for large language models is the task of choosing the single word to generate next based on the context and based on the probabilities that the model assigns to possible words. This task of choosing a word to generate based on the model’s probabilities is called **decoding**. Decoding from a language model in a left-to-right manner (or right-to-left for languages like Arabic in which we read from right to left), and thus repeatedly choosing the next word conditioned on our previous choices is called **autoregressive generation** or **causal LM generation**.
-
-We will give a tour of the currently most prominent decoding methods, mainly **Greedy search**, **Beam search**, **Top-K sampling** and **Top-p sampling**.
+The core of the generation process for large language models is the task of choosing the single word to generate next based on the context and based on the probabilities that the model assigns to possible words. This task of choosing a word to generate based on the model’s probabilities is called **decoding**. Decoding from a language model in a left-to-right manner (or right-to-left for languages like Arabic in which we read from right to left), and thus repeatedly choosing the next word conditioned on our previous choices is called **autoregressive generation** or **causal LM generation**. We will give a tour of the currently most prominent decoding methods, mainly **Greedy search**, **Beam search**, **Top-K sampling** and **Top-p sampling**.
 
 Let's quickly install transformers and load the model. We will use GPT2 in Tensorflow 2.1 for demonstration, but the API is 1-to-1 the same for PyTorch.
 
@@ -1471,8 +1428,7 @@ model = TFGPT2LMHeadModel.from_pretrained("gpt2", pad_token_id=tokenizer.eos_tok
 
 #### Greedy Search
 
-One simple way to generate words is to always generate the most likely word given the context. Generating the most likely word given the context is called **greedy decoding** or greedy search.
-In practice, however, we don’t use greedy decoding with large language models. A major problem with greedy decoding is that because the words it chooses are (by definition) extremely predictable, the resulting text is generic and often quite repeti- tive. Indeed, greedy decoding is so predictable that it is deterministic; if the context is identical, and the probabilistic model is the same, greedy decoding will always result in generating exactly the same string.
+One simple way to generate words is to always generate the most likely word given the context. Generating the most likely word given the context is called **greedy decoding** or greedy search. In practice, however, we don’t use greedy decoding with large language models. _A major problem with greedy decoding is that because the words it chooses are (by definition) extremely predictable, the resulting text is generic and often quite repeti- tive. Indeed, greedy decoding is so predictable that it is deterministic; if the context is identical, and the probabilistic model is the same, greedy decoding will always result in generating exactly the same string_.
 
 <p align="center">
     <img src="./assets/seq-models/greedy-search.png" alt="drawing" width="500" height="300" style="center" />
@@ -1540,11 +1496,11 @@ Another important feature about beam search is that we can compare the top beams
 Source: Hugging Face, [Colab Notebook](https://colab.research.google.com/github/huggingface/blog/blob/main/notebooks/53_constrained_beam_search.ipynb#scrollTo=KxLvv6UaPa33) for contrained beam search. 
 
 
-The most common method for decoding in large language models is sampling.
+
 
 #### Sampling
 
-Sampling means randomly picking the next word according to its conditional probability distribution. Language generation using sampling is not deterministic anymore. The word  "car"  is sampled from the conditioned probability distribution $P( \; .\;|\text{'The'})$ , followed by sampling  "drives"  from distribution $P(\; .\; |\text{'The', 'car'})$. In transformers, we set `do_sample=True` and deactivate Top-K sampling `top_k=0`:
+The most common method for decoding in large language models is **sampling**. Sampling means randomly picking the next word according to its conditional probability distribution. Language generation using sampling is not deterministic anymore. The word  "car"  is sampled from the conditioned probability distribution $P( \; .\;|\text{'The'})$ , followed by sampling  "drives"  from distribution $P(\; .\; |\text{'The', 'car'})$. In transformers, we set `do_sample=True` and deactivate Top-K sampling `top_k=0`:
 
 ```python
 # set seed to reproduce results. Feel free to change the seed though to get different results
@@ -1567,19 +1523,16 @@ But it seems that the dogs have learned a lot from teasing at the local batte ha
 ```
 Interesting! The text seems alright - but when taking a closer look, it is not very coherent. The 3-grams _new hand sense_ and _local batte harness_ are very weird and don't sound like they were written by a human. That is the big problem when sampling word sequences: The models often generate incoherent gibberish.
 
-The algorithm above is called **random sampling**, and it turns out random sampling doesn’t work well enough. The problem is that even though random sampling is mostly going to generate sensible, high-probable words, there are many odd, low probability words in the tail of the distribution, and even though each one is low probability, if you add up all the rare words, they constitute a large enough portion of the distribution that they get chosen often enough to result in generating weird sentences. For this reason, instead of random sampling, we usually use sampling
-methods that avoid generating the very unlikely words.
+The algorithm above is called **random sampling**, and it turns out random sampling doesn’t work well enough. The problem is that even though random sampling is mostly going to generate sensible, high-probable words, there are many odd, low probability words in the tail of the distribution, and even though each one is low probability, if you add up all the rare words, they constitute a large enough portion of the distribution that they get chosen often enough to result in generating weird sentences. For this reason, instead of random sampling, we usually use sampling methods that avoid generating the very unlikely words.
 
-#### Temperature:
+##### Temperature:
 A trick is to make the distribution sharper (increasing the likelihood of high probability words and decreasing the likelihood of low probability words) by lowering the so-called **temperature** of the softmax. Temprature changes the variance of probability distribution from the softmax layer. The smaller temperature (cooler) results in less variance or more peak distribution. So smaller number of words have higher probability of being picked. The warmer the temp, the flatter the distribution  with more variability that helps generating text that sounds more creative! Temperature value = 1 leaves the softmax output as default.
 
 <p align="center">
-    <img src="./assets/llm/tempreture-inference.png" alt="drawing" width="600" height="200" style="center" />
+    <img src="./assets/llm/tempreture-inference.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
-The conditional next word distribution of step becomes much sharper leaving almost no chance for word "car" to be selected.
-
-Let's see how we can cool down the distribution in the library by setting `temperature=0.7`:
+The conditional next word distribution of step becomes much sharper leaving almost no chance for word "car" to be selected. Let's see how we can cool down the distribution in the library by setting `temperature=0.7`:
 
 ```python
 # set seed to reproduce results. Feel free to change the seed though to get different results
@@ -1599,9 +1552,10 @@ print(tokenizer.decode(sample_output[0], skip_special_tokens=True))
 ```sh
 I enjoy walking with my cute dog, but I don't like to be at home too much. I also find it a bit weird when I'm out shopping. I am always away from my house a lot, but I do have a few friends
 ```
+
 OK. There are less weird n-grams and the output is a bit more coherent now! While applying temperature can make a distribution less random, in its limit, when setting temperature close to 0, temperature scaled sampling becomes equal to greedy decoding and will suffer from the same problems as before.
 
-#### Top-k Sampling
+##### Top-k Sampling
 
 **Top-k sampling** is a simple generalization of greedy decoding. Instead of choosing the single most probable word to generate, we first truncate the distribution to the top k most likely words, renormalize to produce a legitimate probability distribution, and then randomly sample from within these k words according to their renormalized probabilities.
 
@@ -1632,11 +1586,9 @@ I enjoy walking with my cute dog. It's so good to have an environment where your
 We hope you'll find this story interesting!
 I am from
 ```
-Not bad at all! 
+Not bad at all! One concern though with Top-k sampling is that it does not dynamically adapt the number of words that are filtered from the next word probability distribution. This can be problematic as some words might be sampled from a very sharp distribution, whereas others from a much more flat distribution. For example, in step one, Top-K eliminates the possibility to sample  "people", "big", "house", "cat", which seem like reasonable candidates. On the other hand, in step two, the method includes the arguably ill-fitted words  "down", "a" in the sample pool of words. Thus, limiting the sample pool to a fixed size K could endanger the model to produce gibberish for sharp distributions and limit the model's creativity for flat distribution. This intuition led to create **Top-p** or **nucleus-sampling**.
 
-One concern though with Top-k sampling is that it does not dynamically adapt the number of words that are filtered from the next word probability distribution. This can be problematic as some words might be sampled from a very sharp distribution, whereas others from a much more flat distribution. For example, in step one, Top-K eliminates the possibility to sample  "people", "big", "house", "cat", which seem like reasonable candidates. On the other hand, in step two, the method includes the arguably ill-fitted words  "down", "a" in the sample pool of words. Thus, limiting the sample pool to a fixed size K could endanger the model to produce gibberish for sharp distributions and limit the model's creativity for flat distribution. This intuition led to create **Top-p** or **nucleus-sampling**.
-
-#### Top-p Sampling
+##### Top-p Sampling
 
 Instead of sampling only from the most likely k words, Top-p sampling chooses from the smallest possible set of words whose cumulative probability exceeds the probability p. The probability mass is then redistributed among this set of words. This way, the size of the pool of words can dynamically increase and decrease according to the next word's probability distribution.
 
@@ -1666,9 +1618,7 @@ I enjoy walking with my cute dog. He will never be the same. I watch him play.
 Guys, my dog needs a name. Especially if he is found with wings.
 What was that? I had a lot of
 ```
-While in theory, Top-p seems more elegant than Top-k, both methods work well in practice. Top-p can also be used in combination with Top-k, which can avoid very low ranked words while allowing for some dynamic selection.
-
-Finally, to get multiple independently sampled outputs, we can again set the parameter `num_return_sequences > 1`:
+While in theory, Top-p seems more elegant than Top-k, both methods work well in practice. Top-p can also be used in combination with Top-k, which can avoid very low ranked words while allowing for some dynamic selection. Finally, to get multiple independently sampled outputs, we can again set the parameter `num_return_sequences > 1`:
 
 ```python
 # set seed to reproduce results. Feel free to change the seed though to get different results
@@ -1697,10 +1647,7 @@ for i, sample_output in enumerate(sample_outputs):
 Source: Hugging Face, [Colab Notebook](https://colab.research.google.com/github/huggingface/blog/blob/main/notebooks/02_how_to_generate.ipynb) for implementing the code.
 
 
-Training language models involves multiple stages and methods, depending on the goal (e.g., general language understanding, specific domain expertise, or conversational ability). Here’s a breakdown of the key methods and phases:
-
-
-# Training Large Language Models
+## Training Large Language Models
 
 Training large language models involves multiple stages and methods, depending on the goal (e.g., general language understanding, specific domain expertise, or conversational ability). Here’s a breakdown of the key methods and phases:
 
@@ -1745,7 +1692,7 @@ The model keeps learning from new data without forgetting what it already knows.
 We will cover the first two training types of language models. In causal language modeling the model has to predict the next token in the sentence so the labels are the same as the inputs but shifted to the right by one step. To make sure the model does not cheat, it gets an attention mask that will prevent it to access the tokens after token $i$ when trying to predict the token $i+1$ in the sentence. In masked language modeling the model has to predict some tokens that are masked in the input. It still has access to the whole sentence, so it can use the tokens before and after the tokens masked to predict their value.
 
 
-## Pertaining Large Language Models 
+### Pertaining Large Language Models 
 
 
 We introduced most of the components of a transformer in the domain of language modeling: **transformer block** including multi-head attention, the **language modeling head**, and the **positional encoding** of the input and **sampling**. But how do we teach a transformer to be a language model? What is the algorithm and what data do we train on?
@@ -1774,29 +1721,29 @@ There were three variance of the transformer model: encoder-only, encoder-decode
 ### Autoencoding Models
 
 <p align="center">
-    <img src="./assets/llm/autoencoding-model.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/llm/autoencoding-model.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 **Encoder-only models** are also known as **Autoencoding models**, and they are pre-trained using _masked language modeling_. Here, tokens in the input sequence or randomly mask, and the training objective is to predict the mask tokens in order to reconstruct the original sentence. This is also called a **denoising objective**. Autoencoding models spilled bi-directional representations of the input sequence, meaning that the model has an understanding of the full context of a token and not just of the words that come before. Encoder-only models are ideally suited to task that benefit from this bi-directional contexts. You can use them to carry out _sentence classification tasks_, for example, _sentiment analysis_ or token-level tasks like _name entity recognition_ or _word classification_. Some well-known examples of an autoencoder model are BERT and RoBERTa. 
 
 
 
-#### Autoregressive Models
+### Autoregressive Models
 
 Now, let's take a look at **decoder-only** or **autoregressive models**, which are pre-trained using **causal language modeling**. Here, the _training objective is to predict the next token based on the previous sequence of tokens_. Predicting the next token is sometimes called full language modeling by researchers. Decoder-based autoregressive models, mask the input sequence and can only see the input tokens leading up to the token in question. The model has no knowledge of the end of the sentence. The model then iterates over the input sequence one by one to predict the following token. In contrast to the encoder architecture, this means that the context is unidirectional. By learning to predict the next token from a vast number of examples, the model builds up a statistical representation of language. Models of this type make use of the decoder component off the original architecture without the encoder. **Decoder-only** models are often used for text generation, although larger decoder-only models show strong zero-shot inference abilities, and can often perform a range of tasks well. Well known examples of decoder-based autoregressive models are GBT and BLOOM. 
 
 <p align="center">
-    <img src="./assets/llm/autoregressive-model.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/llm/autoregressive-model.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
-#### Seq-to-Seq Models
+### Seq-to-Seq Models
 
 The final variation of the transformer model is the **sequence-to-sequence model** that uses both the encoder and decoder parts off the original transformer architecture. The exact details of the pre-training objective vary from model to model. A popular sequence-to-sequence model T5, pre-trains the encoder using span corruption, which masks random sequences of input tokens. Those mass sequences are then replaced with a unique **Sentinel token**, shown here as x. Sentinel tokens are special tokens added to the vocabulary, but do not correspond to any actual word from the input text. The decoder is then tasked with reconstructing the mask token sequences auto-regressively. The output is the Sentinel token followed by the predicted tokens. You can use sequence-to-sequence models for translation, summarization, and question-answering. They are generally useful in cases where you have a body of texts as both input and output. Besides T5, which you'll use in the labs in this course, another well-known encoder-decoder model is BART, not bird. 
 
 To summarize, here's a quick comparison of the different model architectures and the targets off the pre-training objectives. Autoencoding models are pre-trained using masked language modeling. They correspond to the encoder part of the original transformer architecture, and are often used with sentence classification or token classification. 
 
 <p align="center">
-    <img src="./assets/llm/model-arch.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/llm/model-arch.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 Researchers have found that the larger a model, the more likely it is to work as you needed to without additional in-context learning or further training. This observed trend of increased model capability with size has driven the development of larger and larger models in recent years. This growth has been fueled by inflection points and research, such as the introduction of the highly scalable transformer architecture, access to massive amounts of data for training, and the development of more powerful compute resources.
@@ -1807,21 +1754,19 @@ Researchers have found that the larger a model, the more likely it is to work as
 
 It turns out that training these enormous models is difficult and very expensive, so much so that it may be infeasible to continuously train larger and larger models.
 
-### Computational challenges of training LLMs
-One of the most common issues you still counter when you try to train large language models is running out of memory. If you've ever tried training or even just loading your model on Nvidia GPUs, this error message might look familiar.
-
-**CUDA**, short for Compute Unified Device Architecture, is a collection of libraries and tools developed for Nvidia GPUs. Libraries such as PyTorch and TensorFlow use CUDA to boost performance on metrics multiplication and other operations common to deep learning. You'll encounter these out-of-memory issues because most LLMs are huge, and require a ton of memory to store and train all of their parameters.
+## Computational challenges of training LLMs
+One of the most common issues you still counter when you try to train large language models is running out of memory. If you've ever tried training or even just loading your model on Nvidia GPUs, this error message might look familiar **CUDA**, short for Compute Unified Device Architecture, is a collection of libraries and tools developed for Nvidia GPUs. Libraries such as PyTorch and TensorFlow use CUDA to boost performance on metrics multiplication and other operations common to deep learning. You'll encounter these out-of-memory issues because most LLMs are huge, and require a ton of memory to store and train all of their parameters.
 
 Let's do some quick math to develop intuition about the scale of the problem. A single parameter is typically represented by a 32-bit float, which is a way computers represent real numbers. You'll see more details about how numbers gets stored in this format shortly. A 32-bit float takes up 4 bytes of memory. So to store one billion parameters you'll need four bytes times one billion parameters, or _4 gigabyte of GPU RAM at 32-bit full precision_. This is a lot of memory, and note, if only accounted for the memory to store the model weights so far. If you want to train the model, you'll have to plan for additional components that use GPU memory during training. _These include two Adam optimizer states, gradients, activations, and temporary variables_ needed by your functions. This can easily lead to 20 extra bytes of memory per model parameter. In fact, to account for all of these overhead during training, you’ll actually require approximately 6 times the amount of GPU RAM that the model weights alone take up. _To train a 1 billion parameter model at 32-bit full precision, you'll need approximately 24 gigabyte of GPU RAM_. This is definitely too large for consumer hardware, and even challenging for hardware used in data centers, if you want to train with a single processor. What options do you have to reduce the memory required for training?
 
 One technique that you can use to reduce the memory is called **quantization**. The main idea here is that you reduce the memory required to store the weights of your model by reducing their precision from 32-bit floating point numbers to 16-bit floating point numbers, or eight-bit integer numbers. 
 
-The corresponding data types used in deep learning frameworks and libraries are FP32 for 32-bit full position, FP16, or Bfloat16 for 16-bit half precision, and int8 eight-bit integers. The range of numbers you can represent with FP32 goes from approximately -3*10^38 to 3*10^38. By default, model weights, activations, and other model parameters are stored in FP32. Quantization statistically projects the original 32-bit floating point numbers into a lower precision space, using scaling factors calculated based on the range of the original 32-bit floating point numbers. 
+The corresponding data types used in deep learning frameworks and libraries are FP32 for 32-bit full position, FP16, or Bfloat16 for 16-bit half precision, and int8 eight-bit integers. The range of numbers you can represent with FP32 goes from approximately $-3*10^{38}$ to $3*10^{38}$. By default, model weights, activations, and other model parameters are stored in FP32. Quantization statistically projects the original 32-bit floating point numbers into a lower precision space, using scaling factors calculated based on the range of the original 32-bit floating point numbers. 
 
 Let's look at an example. Suppose you want to store a PI to six decimal places in different positions. Floating point numbers are stored as a series of bits zeros and ones. The 32 bits to store numbers in full precision with FP32 consist of one bit for the sign where zero indicates a positive number, and one a negative number. Then 8 bits for the exponent of the number, and 23 bits representing the fraction of the number. The fraction is also referred to as the _significant_. It represents the precision bits off the number. _If you convert the 32-bit floating point value back to a decimal value, you notice the slight loss in precision_. For reference, here's the real value of Pi to 19 decimal places. Now, let's see what happens if you project this FP32 representation of Pi into the FP16, 16-bit lower precision space. The 16 bits consists of one bit for the sign, as you saw for FP32, but now FP16 only assigns five bits to represent the exponent and 10 bits to represent the fraction.
 
 <p align="center">
-    <img src="./assets/llm/quantization-technique.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/llm/quantization-technique.png" alt="drawing" width="700" height="300" style="center" />
 </p>
 
 Therefore, the range of numbers you can represent with FP16 is vastly smaller from negative 65,504 to positive 65,504. The original FP32 value gets projected to 3.140625 in the 16-bit space. Notice that you lose some precision with this projection. There are only six places after the decimal point now. You'll find that this loss in precision is acceptable in most cases because you're trying to optimize for memory footprint. Storing a value in FP32 requires 4 bytes of memory. In contrast, storing a value on FP16 requires only two bytes of memory, so with quantization you have reduced the memory requirement by half. 
@@ -1829,7 +1774,7 @@ Therefore, the range of numbers you can represent with FP16 is vastly smaller fr
 The AI research community has explored ways to optimize16-bit quantization. One datatype in particular `BFLOAT16`, has recently become a popular alternative to `FP16`. `BFLOAT16`, short for Brain Floating Point Format developed at Google Brain has become a popular choice in deep learning. Many LLMs, including FLAN-T5, have been pre-trained with BFLOAT16. BFLOAT16 or BF16 is a hybrid between half precision FP16 and full precision FP32. BF16 significantly helps with training stability and is supported by newer GPU's such as NVIDIA's A100. BFLOAT16 is often described as a truncated 32-bit float, as it captures the full dynamic range of the full 32-bit float, that uses only 16-bits. BFLOAT16 uses the full 8 bits to represent the exponent, but truncates the fraction to just 7 bits. This not only saves memory, but also increases model performance by speeding up calculations. The downside is that BF16 is not well suited for integer calculations, but these are relatively rare in deep learning. For completeness let's have a look at what happens if you quantize Pi from the 32-bit into the even lower precision eight bit space.
 
 <p align="center">
-    <img src="./assets/llm/BF16.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/llm/BF16.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 If you use one bit for the sign INT8 values are represented by the remaining seven bits. This gives you a range to represent numbers from negative 128 to positive 127 and unsurprisingly Pi gets projected two or three in the 8-bit lower precision space. This brings new memory requirement down from originally four bytes to just one byte, but obviously results in a pretty dramatic loss of precision.
@@ -1843,13 +1788,10 @@ It's very likely that at some point you will need to scale your model training e
 Let's discuss how you can carry out this scaling across multiple GPUs in an efficient way. You'll begin by considering the case where your model is still fits on a single GPU. _The first step in scaling model training is to distribute large data-sets across multiple GPUs and process these batches of data in parallel_. A popular implementation of this model replication technique is **Pytorch’ s distributed data-parallel** (DDP). 
 
 <p align="center">
-    <img src="./assets/llm/DDP.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/llm/DDP.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
-DDP copies your model onto each GPU and sends batches of data to each of the GPUs in parallel. Each data-set is processed in parallel and then a synchronization step combines the results of each GPU, which in turn updates the model on each GPU, which is always identical across chips.
-This implementation allows parallel computations across all GPUs that results in faster training. _Note that DDP requires that your model weights and all of the additional parameters, gradients, and optimizer states that are needed for training, fit onto a single GPU_. 
-
-If your model is too big for this, you should look into another technique called **model sharding**. A popular implementation of model sharding is Pytorch is **fully sharded data parallel (FSDP)**. FSDP is motivated by a paper published by researchers at Microsoft in 2019 that proposed a technique called **ZeRO**. ZeRO stands for _zero redundancy optimizer_ and the goal of ZeRO is to optimize memory by distributing or sharding model states across GPUs with ZeRO data overlap. This allows you to scale model training across GPUs when your model doesn't fit in the memory of a single chip.
+DDP copies your model onto each GPU and sends batches of data to each of the GPUs in parallel. Each data-set is processed in parallel and then a synchronization step combines the results of each GPU, which in turn updates the model on each GPU, which is always identical across chips. This implementation allows parallel computations across all GPUs that results in faster training. _Note that DDP requires that your model weights and all of the additional parameters, gradients, and optimizer states that are needed for training, fit onto a single GPU_. If your model is too big for this, you should look into another technique called **model sharding**. A popular implementation of model sharding is Pytorch is **fully sharded data parallel (FSDP)**. FSDP is motivated by a paper published by researchers at Microsoft in 2019 that proposed a technique called **ZeRO**. ZeRO stands for _zero redundancy optimizer_ and the goal of ZeRO is to optimize memory by distributing or sharding model states across GPUs with ZeRO data overlap. This allows you to scale model training across GPUs when your model doesn't fit in the memory of a single chip.
 
 
 One limitation of the model replication strategy that I showed about DDP is that you need to keep a full model copy on each GPU, which leads to redundant memory consumption. You are storing the same numbers on every GPU. ZeRO, on the other hand, eliminates this redundancy by distributing (also referred to as sharding) the model parameters, gradients, and optimizer states across GPUs instead of replicating them. At the same time, the communication overhead for a sinking model states stays close to that of the previously discussed ADP. ZeRO offers three optimization stages. 
@@ -1859,13 +1801,13 @@ One limitation of the model replication strategy that I showed about DDP is that
 - ZeRO Stage 3: shards all components including the model parameters across GPUs 
 
 <p align="center">
-    <img src="./assets/llm/ZeRO.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/llm/ZeRO.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 For example, sharding across 64 GPUs could reduce your memory by a factor of 64. Let's apply this concept to the visualization of GDP and replace the LLM by the memory representation of model parameters, gradients, and optimizer states. When you use FSDP, you distribute the data across multiple GPUs as you saw happening in GDP. But with FSDP, you also distributed or shard the model parameters, gradients, and optimize the states across the GPU nodes using one of the strategies specified in the ZeRO paper. With this strategy, you can now work with models that are too big to fit on a single chip. In contrast to GDP, where each GPU has all of the model states required for processing each batch of data available locally, FSDP requires you to collect this data from all of the GPUs before the forward and backward pass.
 
 <p align="center">
-    <img src="./assets/llm/FSDP.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/llm/FSDP.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 Each GPU requests data from the other GPUs on-demand to materialize the sharded data into uncharted data for the duration of the operation. After the operation, you release the uncharted non-local data back to the other GPUs as original sharded data. You can also choose to keep it for future operations during backward pass for example. Note, this requires more GPU RAM again, this is a typical performance versus memory trade-off decision. In the final step after the backward pass, FSDP is synchronizes the gradients across the GPUs in the same way they were for DDP. Model sharding S described with FSDP allows you to reduce your overall GPU memory utilization. Optionally, you can specify that FSDP offloads part of the training computation to GPUs to further reduce your GPU memory utilization.
@@ -1875,7 +1817,6 @@ If your target domain uses vocabulary and language structures that are not commo
 
 Pretraining your model from scratch will result in better models for highly specialized domains like law, medicine, finance or science. Now let's return to BloombergGPT, first announced in 2023 in a paper by Shijie Wu, Steven Lu, and colleagues at Bloomberg. BloombergGPT is an example of a large language model that has been pretrained for a specific domain, in this case, finance. The researchers chose data consisting of 51% financial data and 49% public data.
 
-These two graphs compare a number of LLMs, including BloombergGPT, to scaling laws that have been discussed by researchers.
 
 ## Mask Language Models
 We have introduced the transformer and saw how to pretrain a transformer language model as a causal or left-to-right language model. Here we introduce a second paradigm for pretrained language models, the **bidirectional transformer encoder**, and the most widely-used version, the **BERT** model (Devlin et al., 2019). This model is trained via **masked language modeling**, where instead of predicting the following word, we mask a word in the middle and ask the model to guess the word given the words on both sides. This method thus allows the model to see both the right and left context.
@@ -1885,7 +1826,7 @@ We have introduced the transformer and saw how to pretrain a transformer languag
 
 Bidirectional Encoder representations from transformers underlies models like BERT and its descendants like RoBERTa (Liu et al., 2019) or SpanBERT (Joshi et al., 2020). We introduced causal (left-to-right) transformers and saw how they can serve as the basis for language models that can be applied to autoregressive contextual generation problems like question answering or summarization. But this left-to-right nature of these models is also a limitation, because there are tasks for which it would be useful, when processing a token, to be able to peak at future tokens. This is especially true for **sequence labeling** tasks in which we want to tag each token with a label, such as the **named entity tagging** task.
 
-The focus of bidirectional encoders is instead on computing contextualized representations of the input tokens. Bidirectional encoders use self-attention to map sequences of input embeddings $(\bm x_1,...,\bm x_n)$ to sequences of output embeddings of the **same** length $(\bm h_1,..., \bm h_n)$, where the output vectors have been contextualized using information from the entire input sequence. These output embeddings are contextualized representations of each input token that are useful across a range of applications where we need to do a classification or a decision based on the token in context. The masked language models of we talk about here are sometimes called **encoder-only**, because they produce an encoding for each input token but generally aren’t used to produce running text by decoding or sampling. That’s an important point: **masked language models are not used for generation**. _They are generally instead used for interpretative tasks_. They do not have the decoder part (of the full encoder-decoder transformer architecture) which is used for generating text.
+The focus of bidirectional encoders is instead on computing contextualized representations of the input tokens. Bidirectional encoders use self-attention to map sequences of input embeddings $(\bm x_1,...,\bm x_n)$ to sequences of output embeddings of the **same** length $(\bm h_1,..., \bm h_n)$, where the output vectors have been contextualized using information from the entire input sequence. These output embeddings are contextualized representations of each input token that are useful across a range of applications where we need to do a classification or a decision based on the token in context. The masked language models of we talk about here are sometimes called **encoder-only**, because they produce an encoding for each input token but generally aren’t used to produce running text by decoding or sampling. That’s an important point: **masked language models are not used for generation**. _They are generally instead used for interpretative tasks_. They do not have the decoder part (of the full encoder-decoder transformer architecture) which is used for generating text. The output embeddings are the final layer’s output of BERT which are vectors of shape shape: (sequence_length, hidden_size). Each vector corresponds to one input token, each vector contains information about that token in context. These contextual embeddings can be pooled (e.g., [CLS] token) for classification, passed to a decoder for question answering, used token-wise for NER or POS tagging, Aggregated to create sentence embeddings etc.
 
 Bidirectional encoders allow the attention mechanism to attend to all tokens ranging over the entire input. This is simply the self-attention, without mask (as the case for the causal attention). The original English-only bidirectional transformer encoder model, BERT (Devlin et al., 2019), consisted of the following:
 - An English-only subword vocabulary consisting of 30,000 tokens generated using the **WordPiece** algorithm (Schuster and Nakajima, 2012)
@@ -1912,9 +1853,7 @@ Note that 550M parameters is relatively small as large language models go (Llama
 - 10% of the time: The token is replaced with another token, randomly sampled from the vocabulary based on token unigram probabilities. e.g. `lunch was delicious` → `lunch was gasp`.
 - 10% of the time: the token is left unchanged. e.g. `lunch was delicious` → `lunch was delicious`.
 
-We then train the model to guess the correct token for the manipulated tokens. Why the three possible manipulations? Adding the `[MASK]` token creates a mismatch between pretraining and downstream fine-tuning or inference, since when we employ the MLM model to perform a downstream task, we don’t use any `[MASK]` tokens. If we just replaced tokens with the `[MASK]`, the model might only predict tokens when it sees a `[MASK]`, but we want the model to try to always predict the input token. 
-
-To train the model to make the prediction, the original input sequence is tokenized using a subword model and tokens are sampled to be manipulated. Word embeddings for all of the tokens in the input are retrieved from the $E$ embedding matrix and combined with positional embeddings to form the input to the transformer, passed through the stack of bidirectional transformer blocks, and then the language modeling head. The MLM training objective is to predict the original inputs for each of the masked tokens and the cross-entropy loss from these predictions drives the training process for all the parameters in the model. That is, all of the input tokens play a role in the self-attention process, but only the sampled tokens are used for learning.
+We then train the model to guess the correct token for the manipulated tokens. Why the three possible manipulations? Adding the `[MASK]` token creates a mismatch between pretraining and downstream fine-tuning or inference, since when we employ the MLM model to perform a downstream task, we don’t use any `[MASK]` tokens. If we just replaced tokens with the `[MASK]`, the model might only predict tokens when it sees a `[MASK]`, but we want the model to try to always predict the input token. To train the model to make the prediction, the original input sequence is tokenized using a subword model and tokens are sampled to be manipulated. Word embeddings for all of the tokens in the input are retrieved from the $E$ embedding matrix and combined with positional embeddings to form the input to the transformer, passed through the stack of bidirectional transformer blocks, and then the language modeling head. The MLM training objective is to predict the original inputs for each of the masked tokens and the cross-entropy loss from these predictions drives the training process for all the parameters in the model. That is, all of the input tokens play a role in the self-attention process, but only the sampled tokens are used for learning.
 
 In the following figure, three of the input tokens are selected, two of which are masked and the third is replaced with an unrelated word. The probabilities assigned by the model to these three items are used as the training loss. The other 5 tokens don’t play a role in training loss.
 
@@ -1923,11 +1862,9 @@ In the following figure, three of the input tokens are selected, two of which ar
 </p>
 
 
-The focus of mask-based learning is on predicting words from surrounding contexts with the goal of producing effective word-level representations. However, an important class of applications involves determining the relationship between pairs of sentences. These include tasks like paraphrase detection (detecting if two sentences have similar meanings), entailment (detecting if the meanings of two sentences entail or contradict each other) discourse coherence (deciding if two neighboring sentences form a coherent discourse).
+_The focus of mask-based learning is on predicting words from surrounding contexts with the goal of producing effective word-level representations_. However, an important class of applications involves determining the relationship between pairs of sentences. These include tasks like paraphrase detection (detecting if two sentences have similar meanings), entailment (detecting if the meanings of two sentences entail or contradict each other) discourse coherence (deciding if two neighboring sentences form a coherent discourse).
 
-For this reason, some models in the BERT family include a second learning objective called **Next Sentence Prediction (NSP)**. In this task, the model is presented with pairs of sentences and is asked to predict whether each pair consists of an actual pair of adjacent sentences from the training corpus or a pair of unrelated sentences. In BERT, 50% of the training pairs consisted of positive pairs, and in the other 50% the second sentence of a pair was randomly selected from elsewhere in the corpus. The NSP loss is based on how well the model can distinguish true pairs from random pairs.
-
-To facilitate NSP training, BERT introduces two special tokens to the input representation (tokens that will prove useful for finetuning as well). After tokenizing the input with the subword model, the token `[CLS]` (for "classify") is prepended to the input sentence pair, and the token `[SEP]` (for "separate") is placed between the sentences and after the final token of the second sentence. There are actually two more special tokens, a ‘First Segment’ token, and a ‘Second Segment’ token. These tokens are added in the input stage to the word and positional embeddings. That is, each token of the input X is actually formed by summing 3 embeddings: word, position, and first/second segment embeddings. 
+For this reason, some models in the BERT family include a second learning objective called **Next Sentence Prediction (NSP)**. In this task, the model is presented with pairs of sentences and is asked to predict whether each pair consists of an actual pair of adjacent sentences from the training corpus or a pair of unrelated sentences. In BERT, 50% of the training pairs consisted of positive pairs, and in the other 50% the second sentence of a pair was randomly selected from elsewhere in the corpus. The NSP loss is based on how well the model can distinguish true pairs from random pairs. To facilitate NSP training, BERT introduces two special tokens to the input representation (tokens that will prove useful for finetuning as well). After tokenizing the input with the subword model, the token `[CLS]` (for "classify") is prepended to the input sentence pair, and the token `[SEP]` (for "separate") is placed between the sentences and after the final token of the second sentence. There are actually two more special tokens, a ‘First Segment’ token, and a ‘Second Segment’ token. These tokens are added in the input stage to the word and positional embeddings. That is, each token of the input X is actually formed by summing 3 embeddings: word, position, and first/second segment embeddings. 
 
 After processing the two spans, the 1st output vector (the vector coding for `[CLS]`) is passed to a separate neural network for the binary classification. In fact, we add a special head, in this case an NSP head, which consists of a learned set of classification weights for binary classification (outputs `[IsNext]` or `[NotNext]`).
 
@@ -1947,7 +1884,7 @@ Over here you can see you have masked sentence A, you have masked sentence B, th
     <img src="./assets/seq-models/BERT-output.png" alt="drawing" width="700" height="300" style="center" />
 </p>
 
-### Fine-Tuning for Classification
+### Fine-Tuning BERT for NLP Tasks
 
 The power of pretrained language models lies in their ability to extract generalizations from large amounts of text—generalizations that are useful for myriad downstream applications. There are two ways to make practical use of the generalizations to solve downstream tasks. The most common way is to use natural language to prompt the model, putting it in a state where it contextually generates what we want.
 
@@ -1960,7 +1897,7 @@ For sequence classification we represent the entire input to be classified by a 
 As an example, let’s return to the problem of **sentiment classification**. Finetuning a classifier for this application involves learning a set of weights, $W_C$, to map the output vector for the `[CLS]` token to a set of scores over the possible sentiment classes. Assuming a three-way sentiment classification task (positive, negative, neutral) and dimensionality $d$ as the model dimension, $W_C$ will be of size $d ×3$. Finetuning the values in WC requires supervised training data consisting of input sequences labeled with the appropriate sentiment class. Training proceeds in the usual way; cross-entropy loss between the softmax output and the correct answer is used to drive the learning that produces WC.
 
 
-### Fine-Tuning for Sequence Labelling: Named Entity Recognition
+#### Sequence Labelling: Named Entity Recognition
 
 A named entity is, roughly speaking, anything that can be referred to with a proper name: a person, a location, an organization. The task of **named entity recognition (NER)** is to find spans of text that constitute proper names and tag the type of the entity. Four entity tags are most common: **PER** (person), **LOC** (location), **ORG** (organization), or **GPE** (geo-political entity).
 
@@ -1976,9 +1913,9 @@ B-LOC I-LOC   O  O   B-LOC   I-LOC. O
 ```
 
 Unfortunately, the sequence of WordPiece tokens for this sentence doesn’t align directly with BIO tags in the annotation:
-<br>
-```o
-’Mt’, ’.’, ’San’, ’##itas’, ’is’, ’in’, ’Sunshine’, ’Canyon’ ’.’
+
+```sh
+'Mt', '.', 'San', '##itas', 'is', 'in', 'Sunshine', 'Canyon' '.'
 ```
 
 To deal with this misalignment, we need a way to assign BIO tags to subword tokens during training and a corresponding way to recover word-level tags from subwords during decoding. For training, we can just assign the gold-standard tag associated with each word to all of the subword tokens derived from it. For decoding, the simplest approach is to use the argmax BIO tag associated with the first subword token of a word. Thus, in our example, the BIO tag assigned to “Mt” would be assigned to “Mt.” and the tag assigned to “San” would be assigned to “Sanitas”, effectively ignoring the information in the tags assigned to “.” and “##itas”. More complex approaches combine the distribution of tag probabilities across the subwords in an attempt to find an optimal word-level tag.
@@ -1997,6 +1934,150 @@ BERT can be used for some other NLP tasks in a similar way. Form example, if you
 Sources:
 - [Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3)
 
+- [Generative AI with Large Language Models - Coursera](https://www.coursera.org/learn/generative-ai-with-llms/home/week/1)
+
+
+
+### Transformer T5
+T5, also known as **text-to-text transformer**, can be used on several tasks and it is trained similar to BERT, that is, using mask language modelling (known as _span corruption_) and transfer learning. It also uses encoder-decoder transformers when training. 
+
+<p align="center">
+    <img src="./assets/seq-models/T5-masking.png" alt="drawing" width="700" height="300" style="center" />
+</p>
+
+For example, you represent the “for inviting” with `<X>` and last with `<Y>` then the model predicts what the `X` should be and what the `Y` should be. This is exactly what we saw in the BERT loss. You can also mask out a few positions, not just one. The loss is only on the mask for BERT, for T5 it is on the target.
+
+
+ <p align="center">
+    <img src="./assets/seq-models/T52.png" alt="drawing" width="700" height="300" style="center" />
+</p>
+
+So we start with the basic encoder-decoder representation.  There you have a fully visible attention in the encoder and then causal attention in the decoder. So light gray lines correspond to causal masking. And dark gray lines correspond to the fully visible masking. In the middle we have the language model which consists of a single transformer layer stack. And it's being fed the concatenation of the inputs and the target. So it uses causal masking throughout as you can see because they're all gray lines. And you have X1 going inside, you get `X2`, `X2` goes into the model and you get `X3` and so forth. To the right, we have prefix language model which corresponds to allowing fully visible masking over the inputs as you can see with the dark arrows. And then causal masking in the rest.
+
+#### Multi-Task Training Strategy
+This is a reminder of how the T5 model works:
+
+<p align="center">
+    <img src="./assets/seq-models/T53.png" alt="drawing" width="700" height="300" style="center" />
+</p>
+
+You can see that you only have to add a small prefix to the input and the model as a result will solve the task for you. There are many tasks that the T5 model can do for you. It is possible to formulate most NLP tasks in a “text-to-text” format – that is, a task where the model is fed some text for context or conditioning and is then asked to produce some output text. This framework provides a consistent training objective both for pre-training and fine-tuning. Specifically, the model is trained with a maximum likelihood objective (using “teacher forcing” ) regardless of the task. The main objective of the multitasking training strategy is to improve the performance of the various tasks by learning them together.
+
+Last but not least, T5 uses the encoder and the decoder transformer architectures with bidirectional context which makes it a robust model. T5 can perform several tasks including question answering. How do you know which task the model is performing? Include the word specifies the task at the begining of the request: "classify", "summarize", "question" etc. Here is an illustration of how it works.
+
+<p align="center">
+    <img src="./assets/seq-models/T5.png" alt="drawing" width="700" height="300" style="center" />
+</p>
+
+
+
+
+## Evaluation of LLMs
+
+We will now discuss the train/val/test splits and perplexity.
+
+### Train/Val/Test splits
+Smaller Corpora: 
+- 80% train
+- 10% val 
+- 10% test
+
+Larger Corpora: 
+- 98% train
+- 1% val 
+- 1% test
+
+There are two main methods for splitting the data: 
+- Continous Text
+- Random Short Sequences
+
+### Perplexity
+Perplexity is used to tell us whether a set of sentences look like they were written by humans rather than by a simple program choosing words at random. A text that is written by humans is more likely to have lower perplexity, where a text generated by random word choice would have a higher perplexity.
+
+Perplexity is defined as the exponentiated average negative log-likelihood of a sequence. If we have a tokenized sequence $\bm X = (\bm x^{(1)}, ..., X^{(t)})$, then the perplexitiy of $\bm X$ is
+
+$$
+PPL(\bm X) = \sqrt[t]{\prod_{i=1}^t \frac{1}{P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})}}
+$$
+
+Use log for more computationally stable formula:
+
+$$
+PPL(\bm X) = \exp(-\frac{1}{t}{\sum_{i=1}^t \log P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})})
+$$
+
+Another version of this uses $P(x^{(i)}|x^{(i-1)})$ instead of $P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})$ in th eabove formula. If there are $m$ sentences $(s_1,..., s_m)$ in the text, the formula becomes:
+
+$$
+PPL(\bm X) = \sqrt[m]{\prod_{i=1}^m \prod_{j=1}^{|s_i|} \frac{1}{P(x_i^{(j)}|x_i^{(j-1)})}}
+$$
+
+_Probabilities are given according to our model_. Intuitively, perplexitiy can be thought of as an evaluation of the model’s ability to predict uniformly among the set of specified tokens in a corpus. Importantly, this means that the tokenization procedure has a direct impact on a model’s perplexity which should always be taken into consideration when comparing different models.  This is also equivalent to the exponentiation of the cross-entropy between the data and model predictions. 
+
+
+Transformer based models have various applications:
+
+- Text Summarization
+- Auto Complete
+- Named-Entity Recognition
+- Question Answering 
+- Translation
+- Chatbots
+
+and other NLP tasks such as:
+
+- Sentiment Analysis
+- Market Intelligence
+- Text Classification
+- Character Recognition
+- Spell Checking
+
+
+How do we evaluate LLMs performace after training or fine-tuning?
+
+### GLUE Benchmark
+
+This is used to train, evaluate, analyze NLP tasks. The glue benchmark stands for **General Language Understanding Evaluation**. It is basically a 
+- Collection that is used to train, evaluate, analyze natural language understanding systems
+- Has a lot of datasets and each dataset has several genres and there are different sizes and different difficulties. Some of them are, for example, used for co-reference resolution. Others are just used for simple sentiment analysis, others are used for question answering, and so forth 
+- Used with a leaderboard, so people can use the datasets and see how well their models perform compared to others
+
+<p align="center">
+    <img src="./assets/seq-models/GLUE.png" alt="drawing" width="700" height="300" style="center" />
+</p>
+ 
+
+It is also a model agnostic, so it doesn't matter which model you use. Just evaluate on GLUE and see how well your model performs. Finally, it allows you to make use of transfer learning because you have access to several datasets and you can learn certain things from different datasets that will help you evaluate on a completely new datasets within GLUE. 
+
+### Bleu Score
+
+One of the challenges of machine translation is that, given a French sentence, there could be multiple English translations that are equally good translations of that French sentence. So how do you evaluate a machine translation system if there are multiple equally good answers, unlike, say, image recognition where there's one right answer? You just measure accuracy. If there are multiple great answers, how do you measure accuracy? The way this is done conventionally is through something called the **BLEU score**. 
+
+Example: 
+
+Input = "Le chat est sur le tapis."
+R1 = "The cat is on the mat." (human reference 1)
+R2 = "There is a cat on the mat." (human reference 2)
+ML: "the the the the the the the." (Machine Translation output)
+
+**Precision** = 7/7, becuase all seven words in predictions appear in both R1, R2.
+
+**Modified Precision** = 2/7. We put a cap on the number of time a word can be counted, in this case is 2 because it repeated at most 2 times in a reference.
+
+We can measure Bleu score on bigrams too. Bleu score is great but it neither consider semantic meaning of words nor the sentence structure
+
+
+### ROUGE-N Score
+
+candidate = `I I am I`
+Reference 1 = `Younes said I am hungry`
+Reference 2 = `He said I am hungry`
+
+How many words from each reference appear in the candiate translations? Like Recall...
+
+ROUGE_N = max (R1: 2/5=0.4, R2:2/5=0.4) = 0.4
+
+Then find F1 score of Bleu and ROUGE_N = 1/2 (Precision x Recal)/ (Precision+ Recall) = 1/2 (0.5x0.4)/(0.5+0.4) ~ 0.44
 
 
 
@@ -2023,7 +2104,7 @@ Let's take a look at the three main classes of PEFT methods:
 
 ## Prompting
 
-A prompt is a text string that a user issues to a language model to get the model to do something useful. In prompting, the user’s prompt string is passed to the language model, which iteratively generates tokens conditioned on the prompt. Thus the prompt creates a context that guides LLMs to generate useful outputs to achieve some user goal. The process of finding effective prompts for a task is known as prompt engineering.
+A prompt is a text string that a user issues to a language model to get the model to do something useful. In prompting, the user’s prompt string is passed to the language model, which iteratively generates tokens conditioned on the prompt. Thus the_ prompt creates a context that guides LLMs to generate useful outputs to achieve some user goal_. The process of finding effective prompts for a task is known as **prompt engineering**.
 
 Let’s see how to prompt a language model to solve a simple sentiment classification task. Consider this hotel review from the BLT corpus (Salvetti et al., 2016):
 
@@ -2047,7 +2128,7 @@ As we can see, the overall negative context of the review results in negative co
 
 LLMs have a striking ability to perform tasks like these, needing just the appropriate contextual nudge to get the LLM to generate the desired output. 
 
-If we want to solve general tasks like summarization or translation, we don’t want to have to create a new prompt each time we do the task. Instead the first step in prompting is to design one or more **templates**: task-specific prompting text along with slots for the particular input that is being processed. 
+If we want to solve general tasks like summarization or translation, we don’t want to have to create a new prompt each time we do the task. Instead the first step in prompting is to design one or more **templates**: _task-specific prompting text along with slots for the particular input that is being processed_. 
 
 Consider the following basic prompt templates for a variety of tasks:
 
@@ -2107,9 +2188,9 @@ Q: When did Beyonc´ e start becoming popular?
 A:
 ```
 
-How Many Demonstrations? The number of demonstrations doesn’t have to be large. A small number of randomly selected labeled examples used as demonstrations can be sufficient to improve performance over the zero-shot setting. Indeed, the largest performance gains in few-shot prompting tends to come from the first training example, with diminishing returns for subsequent demonstrations. This is in contrast with finetuning of specialized classifier heads. Why isn’t it useful to have more demonstrations? The reason is that the primary benefit in examples is to demonstrate the task to be performed to the LLM and the format of the sequence, not to provide relevant information as to the right answer for any particular question. In fact, demonstrations that have incorrect answers can still improve a system (Min et al., 2022; Webson and Pavlick, 2022). Adding too many examples seems to cause the model to overfit to details of the exact examples chosen and generalize poorly.
+How Many **demonstrations**? The number of demonstrations doesn’t have to be large. A small number of randomly selected labeled examples used as demonstrations can be sufficient to improve performance over the zero-shot setting. Indeed, the largest performance gains in few-shot prompting tends to come from the first training example, with diminishing returns for subsequent demonstrations. This is in contrast with finetuning of specialized classifier heads. Why isn’t it useful to have more demonstrations? The reason is that the primary benefit in examples is to demonstrate the task to be performed to the LLM and the format of the sequence, not to provide relevant information as to the right answer for any particular question. In fact, demonstrations that have incorrect answers can still improve a system (Min et al., 2022; Webson and Pavlick, 2022). Adding too many examples seems to cause the model to overfit to details of the exact examples chosen and generalize poorly.
 
-How to Select Demonstrations? Demonstrations are generally created by formatting examples drawn from a labeled training set. There are some heuristics about what makes a good demonstration. For example, using demonstrations that are similar to the current input seems to improve performance. It can thus be useful to dynamically retrieve demonstrations for each input, based on their similarity to the current example (for example, comparing the embedding of the current example with embeddings of each of the training set example to find the best top-T). But more generally, the best way to select demonstrations from the training set is **programmatically**: _choosing the set of demonstrations that most increases task performance of the prompt on a test set_. Task performance for sentiment analysis or multiple-choice question answering can be measured in accuracy; for machine translation with chrF, and for summarization via Rouge. Systems like DSPy (Khattab et al., 2024), a framework for algorithmically optimizing LM prompts, can automatically find the optimum set of demonstrations to include by searching through the space of possible demonstrations to include. We’ll return to automatic prompt optimization.
+How to Select demonstrations? Demonstrations are generally created by formatting examples drawn from a labeled training set. There are some heuristics about what makes a good demonstration. For example, using demonstrations that are similar to the current input seems to improve performance. It can thus be useful to dynamically retrieve demonstrations for each input, based on their similarity to the current example (for example, comparing the embedding of the current example with embeddings of each of the training set example to find the best top-T). But more generally, the best way to select demonstrations from the training set is **programmatically**: _choosing the set of demonstrations that most increases task performance of the prompt on a test set_. Task performance for sentiment analysis or multiple-choice question answering can be measured in accuracy; for machine translation with chrF, and for summarization via Rouge. Systems like DSPy (Khattab et al., 2024), a framework for algorithmically optimizing LM prompts, can automatically find the optimum set of demonstrations to include by searching through the space of possible demonstrations to include. We’ll return to automatic prompt optimization.
 
 ## Post-training and Model Alignment
 
@@ -2134,14 +2215,9 @@ In an attempt to address these two problems, language models generally include t
 ### Model Alignment: Instruction Tuning
 It involves taking a base pretrained LLM and training it to follow instructions for a range of tasks, from machine translation to meal planning, by finetuning it on a corpus of instructions and responses. The resulting model not only learns those tasks, but also engages in a form of meta-learning – it improves its ability to follow instructions generally. Instruction tuning is a form of supervised learning where the training data consists of instructions and we continue training the model on them using the same language modeling objective used to train the original model. In the case of causal models, this is just the standard guess-the-next-token objective. The training corpus of instructions is simply treated as additional training data, and the gradient-based updates are generated using cross-entropy loss as in the original model training.
 
-Even though it is trained to predict the next token (which we traditionally think of as self-supervised), we call this method supervised fine tuning (or SFT) because unlike in pretraining, each instruction or question in the instruction tuning data has a supervised objective: a correct answer to the question or a response to the instruction. Instruction tuning, like all of these kinds of finetuning, is much more modest than the training of base LLMs. Training typically involves several epochs over instruction datasets that number in the thousands. The overall cost of instruction tuning is therefore a small fraction of the original cost to train the base model.
+Even though it is trained to predict the next token (which we traditionally think of as self-supervised), we call this method supervised fine tuning (or SFT) because unlike in pretraining, each instruction or question in the instruction tuning data has a supervised objective: a correct answer to the question or a response to the instruction. Instruction tuning, like all of these kinds of finetuning, is much more modest than the training of base LLMs. Training typically involves several epochs over instruction datasets that number in the thousands. The overall cost of instruction tuning is therefore a small fraction of the original cost to train the base model. You saw that some models are capable of identifying instructions contained in a prompt and correctly carrying out zero shot inference, while others, such as smaller LLMs, may fail to carry out the task. You also saw that including one or more examples of what you want the model to do, known as one shot or few shot inference, can be enough to help the model identify the task and generate a good completion.
 
-
-You saw that some models are capable of identifying instructions contained in a prompt and correctly carrying out zero shot inference, while others, such as smaller LLMs, may fail to carry out the task. You also saw that including one or more examples of what you want the model to do, known as one shot or few shot inference, can be enough to help the model identify the task and generate a good completion.
-
-In contrast to pre-training, where you train the LLM using vast amounts of unstructured textual data via self-supervised learning, _fine-tuning is a supervised learning process where you use a data set of labeled examples to update the weights of the LLM_. The labeled examples are prompt completion pairs, the fine-tuning process extends the training of the model to improve its ability to generate good completions for a specific task. 
-
-One strategy, known as **instruction fine tuning**, is particularly good at improving a model's performance on a variety of tasks.  
+In contrast to pre-training, where you train the LLM using vast amounts of unstructured textual data via self-supervised learning, _fine-tuning is a supervised learning process where you use a data set of labeled examples to update the weights of the LLM_. The labeled examples are prompt completion pairs, the fine-tuning process extends the training of the model to improve its ability to generate good completions for a specific task. One strategy, known as **instruction fine tuning**, is particularly good at improving a model's performance on a variety of tasks.  
 
 <p align="center">
     <img src="./assets/llm/Finetune-prompts.png" alt="drawing" width="600" height="500" style="center" />
@@ -2233,24 +2309,6 @@ The inclusion of a single example in the prompt is called **one-shot inference**
 
 In short, while large models are good at zero shot inference, smaller models might benefit from zero or a few shot inference. But mind the size of context window because the is limit for the amount of income text. Generally, if you find your model is not performing well when including 5, 6 examples, you should try fine-tuning your model instead.
 
-#### Generative Configuration 
-These are the configurations invoked at the inference time. Normally the token with maximum probability is chosen (greedy) unless random(-weighted) sampling is manually chosen. For more flexibility with random sampling, use top-k and top-p sampling adjustments.
-
-<p align="center">
-    <img src="./assets/llm/gen-random-sampling.png" alt="drawing" width="500" height="200" style="center" />
-</p>
-
-
-<p align="center">
-    <img src="./assets/llm/gen-top-k.png" alt="drawing" width="500" height="200" style="center" />
-</p>
-
-<p align="center">
-    <img src="./assets/llm/gen-top-p.png" alt="drawing" width="500" height="200" style="center" />
-</p>
-
-
-
 
 ## Helping LLMs reason and plan with chain-of-thought
 
@@ -2276,18 +2334,20 @@ Here's an example of a simple physics problem, where the model is being asked to
 
 Chain of thought prompting is a powerful technique that improves the ability of your model to reason through problems. While this can greatly improve the performance of your model, the limited math skills of LLMs can still cause problems if your task requires accurate calculations, like totaling sales on an e-commerce site, calculating tax, or applying a discount.
 
-### Catastrophic Forgetting
+
+## Fine-tuning
+
 However, there is a potential downside to fine-tuning on a single task. The process may lead to a phenomenon called **catastrophic forgetting**. Catastrophic forgetting happens because the full fine-tuning process modifies the weights of the original LLM. While this leads to great performance on the single fine-tuning task, it can degrade performance on other tasks. For example, while fine-tuning can improve the ability of a model to perform sentiment analysis on a review and result in a quality completion, the model may forget how to do other tasks. This model knew how to carry out named entity recognition before fine-tuning correctly identifying Charlie as the name of the cat in the sentence. But after fine-tuning, the model can no longer carry out this task, confusing both the entity it is supposed to identify and exhibiting behavior related to the new task. What options do you have to avoid catastrophic forgetting? First of all, it's important to decide whether catastrophic forgetting actually impacts your use case. If all you need is reliable performance on the single task you fine-tuned on, it may not be an issue that the model can't generalize to other tasks. If you do want or need the model to maintain its multitask generalized capabilities, you can perform fine-tuning on multiple tasks at one time.
 
 Our second option is to perform parameter eﬃcient fine-tuning (PEFT) instead of full fine-tuning. PEFT is a set of techniques that preserves the weights of the original LLM and trains only a small number of task-specific adapter layers and parameters. PEFT shows greater robustness to catastrophic forgetting since most of the pre-trained weights are left unchanged.
 
-### PEFT techniques 1: Soft FineTuning
+### PEFT 1: Soft FineTuning
 
-With LoRA, the goal was to find an efficient way to update the weights of the model without having to train every single parameter again. There are also additive methods within PEFT that aim to improve model performance without changing the weights at all. 
+There are also additive methods within PEFT that aim to improve model performance without changing the weights at all.
 
 **Prompt Tuning** sounds a bit like prompt engineering, but they are quite different from each other. With prompt engineering, you work on the language of your prompt to get the completion you want. This could be as simple as trying different words or phrases or more complex, like including examples for one or few-shot inference. The goal is to help the model understand the nature of the task you’re asking it to carry out and to generate a better completion. However, it can require a lot of manual effort by humans to write and try different prompts. You're also limited by the length of the context window, and at the end of the day, you may still not achieve the performance you need for your task.  Soft prompts are *learned embeddings*, not human-written text. They're prepended to your input, like this:
 
-```
+```sh
 [soft_prompt_1] [soft_prompt_2] ... [soft_prompt_n] Input text
 ```
 
@@ -2297,14 +2357,7 @@ Each `[soft_prompt_i]` is a learned embedding vector (same size as normal token 
     <img src="./assets/llm/soft-prompt.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
-During training the LLM’s weights stay frozen (no updates). Only the soft prompts are updated to optimize performance on your task. Instead of fine-tuning the whole model, you train a small set of learnable "soft prompts"—basically special input embeddings—that guide the model to perform a specific task. Instead, the embedding vectors of the soft prompt gets updated over time to optimize the model's completion of the prompt. Prompt tuning is a very parameter efficient strategy because only a few parameters are being trained. In contrast with the millions to billions of parameters in full fine tuning, similar to what you saw with LoRA. It is also much faster than full fine-tuning. During training or inference with soft prompts, the input looks like this: 
-
-```sh
-[soft_prompt_1] [soft_prompt_2] ... [soft_prompt_n] Input text
-```
-Just like in regular language modeling, the model is still predicting the next token (or sequence of tokens), based on the full input. That doesn't change. When we use soft prompt tuning, we’re not changing the goal of the model. We're changing the context it sees at the start of every input via learnable embeddings. So the model is still doing its usual job (e.g., predicting a translation, a summary, a classification label, etc.), but now it’s guided by a trained prefix.
-
-Think of the soft prompts as adding task-specific context to the model’s input space. Here’s what’s happening: These embeddings are prepended to the tokenized input. The full sequence (soft prompts + real tokens) goes through the frozen LLM. During training, the model’s weights don’t change. The gradients flow only into the soft prompt vectors, which are updated to better “steer” the model toward the desired output. At inference time, you just stick the trained soft prompts in front of any input to get task-specific behavior. So you're not tuning the model internally, but you're optimizing how it uses what it already knows.
+_During training the LLM’s weights stay frozen (no updates)_. Only the soft prompts are updated to optimize performance on your task. Instead of fine-tuning the whole model, you train a small set of learnable "soft prompts"—basically special input embeddings—that guide the model to perform a specific task. Instead,the embedding vectors of the soft prompt gets updated over time to optimize the  model's completion of the prompt. Prompt tuning is a very parameter efficient strategy because only a few parameters are being trained and it is much faster than full fine-tuning. Just like in regular language modeling, the model is still predicting the next token (or sequence of tokens), based on the full input. That doesn't change. When we use soft prompt tuning, we’re not changing the goal of the model. We're changing the context it sees at the start of every input via learnable embeddings. So the model is still doing its usual job (e.g., predicting a translation, a summary, a classification label, etc.), but now it’s guided by a trained prefix. Think of the soft prompts as adding task-specific context to the model’s input space. Here’s what’s happening: These embeddings are prepended to the tokenized input. The full sequence (soft prompts + real tokens) goes through the frozen LLM. During training, the model’s weights don’t change. The gradients flow only into the soft prompt vectors. At inference time, you just stick the trained soft prompts in front of any input to get task-specific behavior.
 
 You can train a different set of soft prompts for each task and then easily swap them out at inference time. You can train a set of soft prompts for one task and a different set for another. To use them for inference, you prepend your input prompt with the learned tokens to switch to another task, you simply change the soft prompt. Soft prompts are very small on disk, so this kind of fine tuning is extremely efficient and flexible. You'll notice the same LLM is used for all tasks, all you have to do is switch out the soft prompts at inference time.
 
@@ -2312,36 +2365,31 @@ You can train a different set of soft prompts for each task and then easily swap
     <img src="./assets/llm/prompt-tuning-multitasks.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
-So how well does prompt tuning perform? In the original paper, "Exploring the Method" by Brian Lester and collaborators at Google. The authors compared prompt tuning to several other methods for a range of model sizes.
+So how well does prompt tuning perform? In the original paper, "Exploring the Method" by Brian Lester and collaborators at Google. The authors compared prompt tuning to several other methods for a range of model sizes. In the figure below from the paper, you can see the Model size on the X axis and the SuperGLUE score on the Y axis. This is the evaluation benchmark that grades model performance on a
+number of different language tasks:
+- The red line shows the scores for models that were created through full fine tuning on a single task
+- The orange line shows the score for models created using multitask fine tuning
+- The green line shows the performance of prompt tuning
+- The blue line shows scores for prompt engineering only
 
-In this figure from the paper, you can see the Model size on the X axis and the SuperGLUE score on the Y axis. This is the evaluation benchmark you learned about earlier this week that grades model performance on a number of different language tasks. The red line shows the scores for models that were created through full fine tuning on a single task. While the orange line shows the score for models created using multitask fine tuning. The green line shows the performance of prompt tuning and finally, the blue line shows scores for prompt engineering only. As you can see, prompt tuning doesn't perform as well as full fine tuning for smaller LLMs. However, as the model size increases, so does the performance of prompt tuning. And once models have around 10 billion parameters, prompt tuning can be as effective as full fine tuning and offers a significant boost in performance over prompt engineering alone. One potential issue to consider is the interpretability of learned virtual tokens. Remember, because the soft prompt tokens can take any value within the continuous embedding vector space. The trained tokens don't correspond to any known token, word, or phrase in the vocabulary of the LLM.
+As you can see, prompt tuning doesn't perform as well as full fine tuning for smaller LLMs. However, as the model size increases, so does the performance of prompt tuning. And once models have around 10 billion parameters, prompt tuning can be as effective as full fine tuning and offers a significant boost in performance over prompt engineering alone.
 
 <p align="center">
     <img src="./assets/llm/prompt-tuning-performance.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
-However, an analysis of the nearest neighbor tokens to the soft prompt location shows that they form tight semantic clusters. In other words, the words closest to the soft prompt tokens have similar meanings. The words identified usually have some meaning related to the task, suggesting that the prompts are learning word like representations. You explored two PEFT methods in this lesson LoRA, which uses rank decomposition matrices to update the model parameters in an efficient way. And Prompt Tuning, where trainable tokens are added to your prompt and the model weights are left untouched. Both methods enable you to fine tune models with the potential for improved performance on your tasks while using much less compute than full fine tuning methods. LoRA is broadly used in practice because of the comparable performance to full fine tuning for many tasks and data sets.
+One potential issue to consider is the interpretability of learned virtual tokens. Remember, because the soft prompt tokens can take any value within the continuous embedding vector space, the trained tokens don't correspond to any known token, word, or phrase in the vocabulary of the LLM. However, an analysis of the nearest neighbor tokens to the soft prompt location shows that they form tight semantic clusters. In other words, the words closest to the soft prompt tokens have similar meanings. The words identified usually have some meaning related to the task, suggesting that the prompts are learning word-like representations.
 
 
-## PEFT techniques 2: Finetuning 
+### PEFT 2: Finetuning with LoRA 
 
-Many open-source models are available for members of the AI community like you to use in your application. The developers of some of the major frameworks for building generative AI applications like Hugging Face and PyTorch, have curated **hubs** where you can browse these models. A really useful feature of these hubs is the inclusion of **model cards**, that describe important details including the best use cases for each model, how it was trained, and known limitations. You'll find some links to these **model hubs** in the reading at the end of the week. The exact model that you'd choose will depend on the details of the task you need to carry out. _Variance of the transformer model architecture are suited to different language tasks, largely because of differences in how the models are trained._ 
+Although the enormous pretraining data for a large language model includes text from many domains, it’s often the case that we want to apply it in a new domain or task that might not have appeared sufficiently in the pre-training data. For example, we might want a language model that’s specialized to legal or medical text. Or we might have a multilingual language model that knows many languages but might benefit from some more data in our particular language of interest. Or we want a language model that is specialized to a particular task. In such cases,we can simply continue training the model on relevant data from the new domain or language. This process of taking a fully pretrained model and running additional training passes on some new data is called finetuning. Finetuning means the process of taking a pre-trained model and further adapting some or all of its parameters to some new data. But they differ on exactly which parameters get updated. In a sense, it’s as if the new data were at the tail end of the pretraining data, and so you’ll sometimes see this method called continued pre-training.
 
+Retraining all the parameters of the model is very slow and expensive when the language model is huge. There are enormous numbers of parameters to train; each pass of batch gradient descent has to backpropagate through many many huge layers. This makes finetuning huge language models extremely expensive in processing power, in memory, and in time. So instead we can freeze some of the parameters (i.e., leave them unchanged from their pretrained value) and train only a subset of parameters on the new data. This is described as the second variety of finetuning, called parameter-efficient finetuning, or PEFT, because we efficiently select specific parameters to update when finetuning, and leave the rest in theirpretrained values.
 
-Although the enormous pretraining data for a large language model includes text from many domains, it’s often the case that we want to apply it in a new domain or task that might not have appeared sufficiently in the pre-training data. For example, we might want a language model that’s specialized to legal or medical text. Or we might have a multilingual language model that knows many languages but might benefit from some more data in our particular language of interest. Or we want a language model that is specialized to a particular task. In such cases, we can simply continue training the model on relevant data from the new domain or language.
+A common kind of parameter-efficient finetuning is when we want to use a language model as a kind of classifier or labeler for a specific task. For example we might train the model to be a sentiment classifier.We do this by adding an extra head after the top layer of the model. This classification head takes as input some of the top layer embeddings of the transformer and produces as output a classification. In this method, most commonly used with masked language models like BERT, we freeze the entire pretrained model and only train the classification head on some new data, usually labeled with some class that we want to predict.
 
-This process of taking a fully pretrained model and running additional training passes on some new data is called **finetuning**. Finetuning means the process of taking a pre- trained model and further adapting some or all of its parameters to some new data. But they differ on exactly which parameters get updated.
-
-In a sense it’s as if the new data were at the tail end of the pretraining data, and so you’ll sometimes see this method called **continued pre-training**. Retraining all the parameters of the model is very slow and expensive when the language model is huge. So instead we can **freeze** some of the parameters (i.e., leave them unchanged from their pretrained value) and train only a subset of parameters on the new data. This is described as the second variety of finetuning, called **parameter-efficient finetuning**, or **PEFT**, because we efficiently select specific parameters to update when finetuning, and leave the rest in their pretrained values.
-
-A third kind of finetuning is also parameter-efficient. Its goal is to use a language model as a kind of classifier or labeler for a specific task. For example we might train the model to be a sentiment classifier. We do this by **adding an extra head** after the top layer of the model. This _classification head_ takes as input some of the top layer embeddings of the transformer and produces as output a classification. In this method, most commonly used with masked language models like BERT, we freeze the entire pretrained model and only train the classification head on some new data, usually labeled with some class that we want to predict.
-
-A fourth kind of finetuning, that is a crucial component of the largest language models: **supervised finetuning** or **SFT**. SFT is often used for **instruction finetuning**, in which we want a pretrained language model to learn to follow text instructions, for example to answer questions or follow a command to write something. Here we create a dataset of prompts and desired responses (for example questions and their answers, or commands and their fulfillments), and we train the language model using the normal cross-entropy loss to predict each token in the instruction prompt iteratively, essentially training it to produce the desired response from the command in the prompt. It’s called supervised because unlike in pretraining, where we just take any data and predict the words in it, we build the special finetuning dataset by hand, creating supervised responses to each command.
-
-
-Fine-tuning can be very difficult with very large language models, because there are enormous numbers of parameters to train; each pass of batch gradient descent has to backpropagate through many many huge layers. This makes finetuning huge language models extremely expensive in processing power, in memory, and in time. For this reason, there are alternative methods that allow a model to be finetuned _without changing all the parameters_. Such methods are called parameter-efficient fine tuning or sometimes PEFT, because we efficiently select a subset of parameters to update when finetuning. For example we freeze some of the parameters (don’t change them), and only update some particular subset of parameters.
-
-One such model, called **LoRA**, for **Low-Rank Adaptation**. LoRA is a parameter efficient fine-tuning technique that falls into the re parameterization category. The intuition of LoRA is that transformers have many dense layers which perform matrix multiplication (for example the $\bm W_Q,, \bm W_K, \bm W_V , \bm W_O$ layers in the attention computation). Instead of updating these layers during finetuning, with LoRA we freeze these layers and instead update a low-rank approximation that has fewer parameters. 
+Another type of PEFT method that is particularly effective for large language models is called LoRA, for Low-Rank Adaptation. LoRA is a parameter efficient fine-tuning technique that falls into the re parameterization category. The intuition of LoRA is that transformers have many dense layers which perform matrix multiplication (for example the $\bm W_Q,, \bm W_K, \bm W_V , \bm W_O$ layers in the attention computation). Instead of updating these layers during finetuning, with LoRA we freeze these layers and instead update a low-rank approximation that has fewer parameters. 
 
 LoRA is a strategy that reduces the number of parameters to be trained during fine-tuning by freezing all of the original model parameters $W$ and then injecting a pair of rank decomposition matrices $A$ of size $N \times r$ and $B$ of size $r \times d$ alongside the original weights such that $r$ << $\min(N,d)$ while size of $W$ is the same as that of $A \times B$. You then keep the original weights $W$ of the LLM layer frozen and train the smaller matrices using the same supervised learning process you saw earlier. For inference, the two low-rank matrices are multiplied together to create a matrix with the same dimensions as the frozen weights.
 
@@ -2349,9 +2397,7 @@ LoRA is a strategy that reduces the number of parameters to be trained during fi
     <img src="./assets/seq-models/lora.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
-You then add this to the original weights and replace them in the model with these updated values $W \leftarrow W + A\times B$. You now have a LoRA fine-tuned model that can carry out your specific task. _Because this model has the same number of parameters as the original, there is little to no impact on inference latency_. 
-
-In its original version LoRA was applied just to the matrices in the attention computation (the $W_Q, W_K, W_V$, and $W_O$ layers). Many variants of LoRA exist. However, in principle, you can also use LoRA on other components like the feed-forward layers. But since most of the parameters of LLMs are in the attention layers, you get the biggest savings in trainable parameters by applying LoRA to these weights matrices. Let's look at a practical example using the transformer architecture described in the Attention is All You Need paper. The paper specifies that the transformer weights have dimensions of 512 by 64. This means that each weights matrix has 32,768 trainable parameters. If you use LoRA as a fine-tuning method with the rank equal to 8, you will instead train two small rank decomposition matrices whose small dimension is 8. This means that Matrix A will have dimensions of 512 by 8, resulting in 4,096 total parameters. Matrix B will have dimensions of 8 by 64, or 512 trainable parameters. By updating the weights of these new low-rank matrices $A\times B$, instead of the original weights, you'll be training 4,608 parameters instead of 32,768 and 86% reduction. 
+You then add this to the original weights and replace them in the model with these updated values $W \leftarrow W + A\times B$. You now have a LoRA fine-tuned model that can carry out your specific task. _Because this model has the same number of parameters as the original, there is little to no impact on inference latency_. In its original version LoRA was applied just to the matrices in the attention computation (the $W_Q, W_K, W_V$, and $W_O$ layers). Many variants of LoRA exist. However, in principle, you can also use LoRA on other components like the feed-forward layers. But since most of the parameters of LLMs are in the attention layers, you get the biggest savings in trainable parameters by applying LoRA to these weights matrices. Let's look at a practical example using the transformer architecture described in the Attention is All You Need paper. The paper specifies that the transformer weights have dimensions of 512 by 64. This means that each weights matrix has 32,768 trainable parameters. If you use LoRA as a fine-tuning method with the rank equal to 8, you will instead train two small rank decomposition matrices whose small dimension is 8. This means that Matrix A will have dimensions of 512 by 8, resulting in 4,096 total parameters. Matrix B will have dimensions of 8 by 64, or 512 trainable parameters. By updating the weights of these new low-rank matrices $A\times B$, instead of the original weights, you'll be training 4,608 parameters instead of 32,768 and 86% reduction. 
 
 LoRA has a number of advantages. It dramatically reduces hardware requirements, since gradients don’t have to be calculated for most parameters. The weight updates can be simply added in to the pretrained weights, since $A\times B$ has the same size as $W$. That means it doesn’t add any time during inference. And it also means it’s possible to build LoRA modules for different domains and just swap them in and out by adding them in or subtracting them from W. Because LoRA allows you to significantly reduce the number of trainable parameters, you can often perform this method of parameter efficient fine tuning with a single GPU and avoid the need for a distributed cluster of GPUs. 
 
@@ -2363,16 +2409,14 @@ Since the rank-decomposition matrices are small, you can fine-tune a different s
 
 If instead, you want to carry out a different task, say Task B, you simply take the LoRA matrices you trained for this task, calculate their product, and then add this matrix to the original weights and update the model again. The memory required to store these LoRA matrices is very small. So in principle, you can use LoRA to train for many tasks. Switch out the weights when you need to use them, and avoid having to store multiple full-size versions of the LLM.
 
-How good are these models? Let's use the ROUGE metric you learned about earlier this week to compare the performance of a LoRA fine-tune model to both an original base model and a full fine-tuned version. 
-
-Let's focus on fine-tuning the FLAN-T5 for dialogue summarization, which you explored earlier in the week. Just to remind you, the FLAN-T5-base model has had an initial set of full fine-tuning carried out using a large instruction data set. First, let's set a baseline score for the FLAN-T5 base model and the summarization data set we discussed earlier. Here are the ROUGE scores for the base model where a higher number indicates better performance. You should focus on the ROUGE 1 score for this discussion, but you could use any of these scores for comparison. As you can see, the scores are fairly low. Next, look at the scores for a model that has had additional full fine-tuning on dialogue summarization. Remember, although FLAN-T5 is a capable model, it can still benefit from additional fine-tuning on specific tasks. With full fine-tuning, you update every way in the model during supervised learning. You can see that this results in a much higher ROUGE 1 score increasing over the base FLAN-T5 model by 0.19. 
+How good are these models? Let's use the ROUGE metric you learned about earlier this week to compare the performance of a LoRA fine-tune model to both an original base model and a full fine-tuned version. Let's focus on fine-tuning the FLAN-T5 for dialogue summarization, which you explored earlier in the week. Just to remind you, the FLAN-T5-base model has had an initial set of full fine-tuning carried out using a large instruction data set. First, let's set a baseline score for the FLAN-T5 base model and the summarization data set we discussed earlier. Here are the ROUGE scores for the base model where a higher number indicates better performance. You should focus on the ROUGE 1 score for this discussion, but you could use any of these scores for comparison. As you can see, the scores are fairly low. Next, look at the scores for a model that has had additional full fine-tuning on dialogue summarization. Remember, although FLAN-T5 is a capable model, it can still benefit from additional fine-tuning on specific tasks. With full fine-tuning, you update every way in the model during supervised learning. You can see that this results in a much higher ROUGE 1 score increasing over the base FLAN-T5 model by 0.19. 
 
 <p align="center">
     <img src="./assets/llm/ROGUE-LoRA.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
 
-The additional round of fine-tuning has greatly improved the performance of the model on the summarization task. Now let's take a look at the scores for the LoRA fine-tune model. You can see that this process also resulted in a big boost in performance. The ROUGE-1 score has increased from the baseline by 0.17. This is a little lower than full fine-tuning, but not much. However, using LoRA for fine-tuning trained a much smaller number of parameters than full fine-tuning using significantly less compute, so this small trade-off in performance may well be worth it. 
+The additional round of fine-tuning has greatly improved the performance of the model on the summarization task. Now let's take a look at the scores for the LoRA fine-tune model. You can see that this process also resulted in a big boost in performance. The `ROUGE-1` score has increased from the baseline by 0.17. This is a little lower than full fine-tuning, but not much. However, using LoRA for fine-tuning trained a much smaller number of parameters than full fine-tuning using significantly less compute, so this small trade-off in performance may well be worth it. 
 
 You might be wondering how to choose the rank of the LoRA matrices. This is a good question and still an active area of research. In principle, the smaller the rank, the smaller the number of trainable parameters, and the bigger the savings on compute. However, there are some issues related to model performance to consider. In the paper that first proposed LoRA, researchers at Microsoft explored how different choices of rank impacted the model performance on language generation tasks. You can see the summary of the results in the table here. The table shows the rank of the LoRA matrices in the first column, the final loss value of the model, and the scores for different metrics, including BLEU and ROUGE. The bold values indicate the best scores that were achieved for each metric. 
 
@@ -2382,6 +2426,47 @@ You might be wondering how to choose the rank of the LoRA matrices. This is a go
 
 
 The authors found a plateau in the loss value for ranks greater than 16. In other words, using larger LoRA matrices didn't improve performance. _The takeaway here is that ranks in the range of 4-32 can provide you with a good trade-off between reducing trainable parameters and preserving performance_. Optimizing the choice of rank is an ongoing area of research and best practices may evolve as more practitioners like you make use of LoRA. LoRA is a powerful fine-tuning method that achieves great performance. The principles behind the method are useful not just for training LLMs, but for models in other domains.
+
+You explored two PEFT methods in this lesson LoRA, which uses rank decomposition matrices to update the model parameters in an efficient way. And Prompt Tuning, where trainable tokens are added to your prompt and the model weights are left untouched. Both methods enable you to fine tune models with thepotential for improved performance on your tasks while using much less compute than full fine tuning methods. LoRA is broadly used in practice because of the comparable performance to full fine tuning for many tasks and data sets.
+
+
+## Transfer Learning in NLP
+
+Transfer learning will come in two basic forms: **Feature-Based Learning** and **Fine-Tuning**.
+
+
+- In feature based transfer learning, you learn new features or word embeddings by training one model and then you use those word embeddings in a different model on a different task. Fine-tuning is to take an existing model with its weights, and then you tweak them a little bit to make sure that they work on the specific task you're working on. 
+
+    <p align="center">
+        <img src="./assets/seq-models/transfer-learning.png" alt="drawing" width="700" height="300" style="center" />
+    </p>
+
+    Now, on the fine-tuning side, you have your embeddings, you feed it into your model, you get a prediction, and then you fine-tune on this model on the downstream task. Let's say you have movies and you're predicting one star, two stars, or three stars. You pre-trained and now you have course reviews. One way you can do this is you fix all of these weights that you already have. Then you add a new feed-forward network while keeping everything else frozen here. Then you just tune on this new network that you just added. 
+
+    <p align="center">
+        <img src="./assets/seq-models/transfer-learning2.png" alt="drawing" width="700" height="300" style="center" />
+    </p>
+
+- Data affects performance a lot. The more data, the larger model (and generally better) you can build and then you get a much better outcome. Usually you have way more unlabeled text data than labeled text data. In pre-training, you have no labels. Then in downstream task, you could have something like, feed this into your model and you get the prediction which is the label for you data. 
+
+    <p align="center">
+        <img src="./assets/seq-models/transfer-learning4.png" alt="drawing" width="700" height="300" style="center" />
+    </p>
+
+- You can also use unlabelled data when pre-training by masking words and trying to predict which word was masked.  A **self-supervised** task: You have the unlabeled data from which you create input features, targets or labels. You're trying to predict the target. You feed this into your model to get the prediction. The target is friend, here prediction goes in. You have the loss here and then you use this loss to update your model. This is basic language modeling that you've already seen before. 
+
+    <p align="center">
+        <img src="./assets/seq-models/transfer-learning3.png" alt="drawing" width="700" height="300" style="center" />
+    </p>
+
+Let's look at fine-tuning a model in the downstream task. You did some pre-training on your model either by masking words or predicting the next sentence. Then use this model to train it on downstream tasks. You can  fine-tune this model on translation or summarization, or question answering. 
+
+<p align="center">
+    <img src="./assets/seq-models/transfer-learning5.png" alt="drawing" width="700" height="300" style="center" />
+</p>
+
+[Slides Source](https://www.coursera.org/learn/attention-models-in-nlp/lecture/qMRXX/transfer-learning-in-nlp) - Lectures on Coursera.
+
 
 
 ## Generative AI Project Lifecycle
@@ -2403,14 +2488,14 @@ You may start by trying prompt engineering and evaluating the outputs, then usin
 
 There are some fundamental limitations of LLMs that can be difficult to overcome through training alone like their tendency to invent information when they don't know an answer, or their limited ability to carry out complex reasoning and mathematics. Later, you'll learn some powerful techniques that you can use to overcome these limitations.
 
+
+<br><br><br><br>
+
 # Aligning Models with Human Values
 
-Without very specific instructions, language models have little ability to understand user intent. Though prompt engineering can help provide the context necessary for an LLM to cater its response to a user’s needs, it's impractical to require prompt engineering for every single exchange with a chatbot.
-
-The goal of fine-tuning with instructions is to further train your models so that they better understand human like prompts and generate more human-like responses. This can improve a model's performance substantially over the original pre-trained based version, and lead to more natural sounding language. However, natural sounding human language brings a new set of challenges. Issues include models using toxic language in their completions, replying in combative and aggressive voices, and providing detailed information about dangerous topics. These problems exist because large models are trained on vast amounts of texts data from the Internet where such language appears frequently. Also concepts like truth, helpfulness, creativity or even what makes a code snippet executable are far more context-dependent than word meanings and linguistic structure.
-
-LLM might give misleading or simply incorrect answers with confidence, definitely not the truthful and honest answer a person is seeking. Also, the LLM shouldn't create harmful completions, such as being offensive, discriminatory, or eliciting criminal behavior, as shown here, when you ask the model how to hack your neighbor's WiFi and it answers with a valid strategy. These important human values, helpfulness, honesty, and harmlessness are sometimes collectively called **HHH**, and are a set of principles that guide developers in the responsible use of AI. Additional fine-tuning with human feedback helps to better align models with human preferences and to increase the helpfulness, honesty, and harmlessness of the completions and to decrease the toxicity.
-
+Without very specific instructions, language models have little ability to understand user intent. Though prompt engineering can help provide the context necessary for an LLM to cater its response to a user’s needs, it's impractical to require prompt engineering for every single exchange with a chatbot. The goal of
+fine-tuning with instructions is to further train your models so that they better understand human like prompts and generate more human-like responses. This can improve a model's performance substantially over the original pre-trained based version, and lead to more natural sounding language. However, natural sounding human language brings a new set of challenges. Issues include models using toxic language in their completions replying in combative and aggressive voices providing detailed information about dangerous topics. These problems exist because large models are trained on vast amounts of texts data from the Internet where such language appears frequently. Also concepts like truth, helpfulness creativity or even what makes a code snippet executable are far more context-dependent than word meanings and linguistic structure. LLM might give misleading or simply incorrect answers with confidence, definitely not the truthful and honest answer a person is seeking. Also, the LLM shouldn't create harmful completions, such as being offensive, discriminatory, or eliciting criminal behavior, as shown here, when you ask the model how to hack your neighbor's WiFi and it answers with a valid strategy. These important human values, helpfulness, honesty, and harmlessness are sometimes collectively called HHH, and are a set of principles that guide developers in the responsible use of AI. Additional fine-tuning with human feedback helps to better align models with human preferences and to increase the helpfulness, honesty, and harmlessness
+of the completions and to decrease the toxicity.
 
 To make language models better at human interaction, data scientists turned to reinforcement learning with human feedback. The RLHF-enhanced InstructGPT models meaningfully outperformed their GPT-3 predecessors, particularly in terms of following instructions, maintaining factual accuracy and avoiding model hallucinations.5 Likewise, research released by OpenAI upon the launch of GPT-4 showed that RLHF doubled accuracy on adversarial questions.8. The benefits of RLHF can even supersede the value of larger training datasets, allowing for more data-efficient model development: OpenAI noted that its labelers preferred outputs from the 1.3B-parameter version of InstructGPT over even outputs from the 175B-parameter version of GPT-3.5
 
@@ -2419,9 +2504,7 @@ To make language models better at human interaction, data scientists turned to r
 
 In 2020, researchers at OpenAI published a paper that explored the use of fine-tuning with human feedback to train a model to write short summaries of text articles. The model fine-tuned on human feedback produced better responses than a pretrained model, an instruct fine-tuned model, and even the reference human baseline. 
 
-A popular technique to finetune large language models with human feedback is called **reinforcement learning from human feedback (RLHF)**. The technique is based on a very natural and intuitive pradigm of learning called **Reinforecment Learning** in which the model interacts with its environment through actions based on the return reward. Over many iterations, the models learns to choose the optimal actions at different states in the environment such that it maximizes some notions of the expected reward. If you want a quick review, [see my notes on the basics of Reinforcement Learning](https://yas2020.github.io/Notes/deep_RL.html).  
-
-You can use RLHF to make sure that your model produces outputs that maximize usefulness and relevance to the input prompt. Perhaps most importantly, RLHF can help minimize the potential for harm. You can train your model to give caveats that acknowledge their limitations and to avoid toxic language and topics. One potentially exciting application of RLHF is the **personalizations** of LLMs, where models learn the preferences of each individual user through a continuous feedback process. This could lead to exciting new technologies like **personalized AI assistants**. 
+A popular technique to finetune large language models with human feedback is called **reinforcement learning from human feedback (RLHF)**. The technique is based on a very natural and intuitive pradigm of learning called **Reinforecment Learning** in which the model interacts with its environment through actions based on the return reward. Over many iterations, the models learns to choose the optimal actions at different states in the environment such that it maximizes some notions of the expected reward. If you want a quick review, see my notes on the [basics of Reinforcement Learning](https://yas2020.github.io/Notes/deep_RL.html).  You can use RLHF to make sure that your model produces outputs that maximize usefulness and relevance to the input prompt. Perhaps most importantly, RLHF can help minimize the potential for harm. You can train your model to give caveats that acknowledge their limitations and to avoid toxic language and topics. One potentially exciting application of RLHF is the **personalizations** of LLMs, where models learn the preferences of each individual user through a continuous feedback process. This could lead to exciting new technologies like **personalized AI assistants**. 
 
 Let's start by taking a closer look at how RLHF works. In the case of fine-tuning large language models with RLHF, the agent's policy is an LLM. In fact LLM itself is the policy network we are trying to finetune using policy optimization algorithms. The action here is the act of generating text by the LLM which could be a single word or a sentence. The action space is the token vocabulary, meaning all the possible tokens that the model can choose from to generate the completion. The environment is the context window of the model, the space in which text can be entered via a prompt. The current state is the current context that is, any text currently contained in the context window. A response or completion is a trajectory in the space-action space. The reward is assigned based on how closely the completions align with human preferences. The objective is to generate text that is perceived as being aligned with the human preferences generating maximum _expected return_ from the rewards.
 
@@ -2435,9 +2518,9 @@ In RLHF, two different models are trained: a reward model (RM) and a reinforceme
 
 In the original [paper by OpenAI](https://arxiv.org/pdf/2203.02155), the process go as follows: Start with a pretrained language model, a distribution of prompts on which we want our model to produce aligned outputs, and a team of trained human labelers. Then apply the following three steps:
 
-- Step 1: Collect demonstration data, and train a supervised policy. The labelers provide demonstrations of the desired behavior on the input prompt distribution. Then fine-tune a pretrained GPT-3 model on this data using supervised learning.
-- Step 2: Collect comparison data, and train a reward model. Collect a _dataset of comparisons between model outputs_, where labelers indicate which output they prefer for a given input. We then train a reward model to predict the human-preferred output.
-- Step 3: Optimize a policy against the reward model using PPO. We use the output of the RM as a scalar reward. We fine-tune the supervised policy to optimize this reward using the PPO algorithm.
+- Step 1: Collect **demonstration data**, and train a supervised policy. The labelers provide demonstrations of the desired behavior on the input prompt distribution. Then fine-tune a pretrained GPT-3 model on this data using supervised learning.
+- Step 2: Collect **comparison data**, and train a reward model. Collect a _dataset of comparisons between model outputs_, where labelers indicate which output they prefer for a given input. We then train a reward model to predict the human-preferred output.
+- Step 3: **Optimize a policy against the reward model using PPO**. We use the output of the RM as a scalar reward. We fine-tune the supervised policy to optimize this reward using the PPO algorithm.
 
 Steps 2 and 3 can be iterated continuously; more comparison data is collected on the current best policy, which is used to train a new RM and then a new policy. In practice, most of our comparison data comes from our supervised policies, with some coming from our PPO policies.
 
@@ -2446,7 +2529,7 @@ Three different datasets were used in the fine-tuning procedure:
 - RM dataset, with labeler rankings of model outputs used to train RMs
 - PPO dataset, without any human labels, which are used as inputs for RLHF fine-tuning. 
 
-The SFT dataset contains about 13k training prompts (from the API and labeler-written), the RM dataset has 33k training prompts (from the API and labeler-written), and the PPO dataset has 31k training prompts (only from the API). The prompts datasets are very diverse and include generation, question answering, dialog, summarization, extractions, and other natural language tasks. For each natural language prompt, the task is most often specified directly through a natural language instruction (e.g. “Write a story about a wise frog”), but could also be indirectly through either few-shot examples (e.g. giving two examples of frog stories, and prompting the model to generate a new one) or implicit continuation (e.g. providing the start of a story about a frog). In each case, labelers do their best to infer the intent of the user who wrote the prompt, and they skip inputs where the task is very unclear. Moreover, labelers also take into account the implicit intentions such as truthfulness of the response, and potentially harmful outputs such as biased or toxic language.
+The SFT dataset contains about 13k training prompts (from the API and labeler-written), the RM dataset has 33k training prompts (from the API and labeler-written), and the PPO dataset has 31k training prompts (only from the API). The prompts datasets are very diverse and include **generation**, **question answering**, **dialog**, **summarization**, **extractions**, and other natural language tasks. For each natural language prompt, the task is most often specified directly through a natural language instruction (e.g. “Write a story about a wise frog”), but could also be indirectly through either few-shot examples (e.g. giving two examples of frog stories, and prompting the model to generate a new one) or implicit continuation (e.g. providing the start of a story about a frog). In each case, labelers do their best to infer the intent of the user who wrote the prompt, and they skip inputs where the task is very unclear. Moreover, labelers also take into account the implicit intentions such as truthfulness of the response, and potentially harmful outputs such as biased or toxic language.
 
 #### Pretraining language models
 
@@ -2554,7 +2637,7 @@ Evaluations are split into two parts:
 
 - Public NLP dataset evaluations: These include safety-related tasks (truthfulness, bias, toxicity) and traditional zero-shot NLP tasks, with additional human reviews for toxicity.
 
-[Training language models to follow instructions with human feedback](https://arxiv.org/pdf/2203.02155)
+Source: [Training language models to follow instructions with human feedback](https://arxiv.org/pdf/2203.02155)
 
 ### Open-source Tools
 
@@ -2577,35 +2660,29 @@ Sources:
 - [Training language models to follow instructions with human feedback](https://arxiv.org/pdf/2203.02155)
 - [Hugging Face](https://huggingface.co/blog/rlhf)
 
+To see an implemention of RLHF pipeline with GPT-2 as the base model, see [my notebook](https://github.com/Yas2020/Notes/blob/main/HuggingFace/RLHF_gpt2.ipynb).
+
+<br><br><br>
 
 # Question Answering, Information Retrieval, and Retrieval-Augmented Generation
 
 Source: [Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3)
 
-Modern NLP systems answer questions using large language models, in one of two ways. The first is to make use of the method such as prompting a pretrained and instruction-tuned LLM, an LLM that has been finetuned on question/answer datasets with the question in the prompt. For example, we could prompt a causal language model with a string like
-```
-Q: Where is the Louvre Museum located? A:
-```
+Modern NLP systems answer questions using large language models, in one of two ways. The first is to make use of prompting a pretrained and instruction-tuned LLM, an LLM that has been finetuned on question/answer datasets with the question in the prompt. The idea is that language models have read a lot of facts in their pretraining data, presumably including the location of the Louvre, and have encoded this information in their parameters. Simply prompting an LLM can be a useful approach to answer many factoid questions. But it is not yet a complete solution for question answering. The first and main problem is that large language models often give the wrong answer! Large language models hallucinate. A **hallucination** is a response that is not faithful to the facts of the world. That is, when asked questions, large language models simply make up answers that sound reasonable. And it’s not always possible to tell when language models are hallucinating, partly because LLMs aren’t well-calibrated. In a calibrated system, the confidence of a system in the correctness of its answer is highly correlated with the probability of an answer being correct. So if a calibrated system is wrong, at least it might hedge its answer or tell us to go check another source. But since language models are not well-calibrated, they often give a very wrong answer with complete certainty.
 
-have it do conditional generation given this prefix, and take the response as the answer. The idea is that language models have read a lot of facts in their pretraining data, presumably including the location of the Louvre, and have encoded this information in their parameters. Simply prompting an LLM can be a useful approach to answer many factoid questions. But it is not yet a complete solution for question answering. The first and main problem is that large language models often give the wrong answer! Large language models hallucinate. A **hallucination** is a response that is not faithful to the facts of the world. That is, when asked questions, large language models simply make up answers that sound reasonable. And it’s not always possible to tell when language models are hallucinating, partly because LLMs aren’t well-calibrated. In a calibrated system, the confidence of a system in the correctness of its answer is highly correlated with the probability of an answer being correct. So if a calibrated system is wrong, at least it might hedge its answer or tell us to go check another source. But since language models are not well-calibrated, they often give a very wrong answer with complete certainty.
+A second problem is that simply prompting a large language model doesn’t allow us to ask questions about _proprietary data_. A common use of question answering is about data like our personal email or medical records. Or a company may have internal documents that contain answers for customer service or internal use. Or legal firms need to ask questions about legal discovery from proprietary documents. Finally, static large language models also have problems with questions about rapidly changing information (like questions about something that happened last week) since LLMs won’t have up-to-date information from after their release data.
 
-A second problem is that simply prompting a large language model doesn’t allow us to ask questions about proprietary data. A common use of question answering is about data like our personal email or medical records. Or a company may have internal documents that contain answers for customer service or internal use. Or legal firms need to ask questions about legal discovery from proprietary documents. Finally, static large language models also have problems with questions about rapidly changing information (like questions about something that happened last week) since LLMs won’t have up-to-date information from after their release data.
-
-For this reason the most common way to do question-answering with LLMs is **retrieval-augmented generation** or **RAG**. In RAG, we use **information retrieval** (IR) techniques to retrieve documents that are likely to have information that might help answer the question. Then we use a large language model to generate an answer given these documents.
-
-Basing our answers on retrieved documents can solve some of the problems with using simple prompting to answer questions. First, it helps ensure that the answer is grounded in facts from some curated dataset. And the system can give the user the answer accompanied by the context of the passage or document the answer came from. This information can help users have confidence in the accuracy of the answer (or help them spot when it is wrong!). And these retrieval techniques can be used on any proprietary data we want, such as legal or medical data for those applications.
+For this reason the most common way to do question-answering with LLMs is **retrieval-augmented generation** or **RAG**. In RAG, we use **information retrieval** (IR) techniques to retrieve documents that are likely to have information that might help answer the question. Then we use a large language model to generate an answer given these documents. Basing our answers on retrieved documents can solve some of the problems with using simple prompting to answer questions. First, it helps ensure that the answer is grounded in facts from some curated dataset. And the system can give the user the answer accompanied by the context of the passage or document the answer came from. This information can help users have confidence in the accuracy of the answer (or help them spot when it is wrong!). And these retrieval techniques can be used on any proprietary data we want, such as legal or medical data for those applications.
 
 ## Information Retrieval
 
-**Information retrieval** or **IR** is the name of the field encompassing the retrieval of all manner of media based on user information needs. The resulting IR system is often called a **search engine**. 
-
-The IR task we consider is called **ad hoc retrieval**, in which a user poses a query to a retrieval system, which then returns an ordered set of **documents** from some **collection**. A document refers to whatever unit of text the system indexes and retrieves (web pages, scientific papers, news articles, or even shorter passages like paragraphs). A collection refers to a set of documents being used to satisfy user requests. A term refers to a word in a collection, but it may also include phrases. Finally, a query represents a user’s information need expressed as a set of terms.
+**Information retrieval** or **IR** is the name of the field encompassing the retrieval of all manner of media based on user information needs. The resulting IR system is often called a **search engine**. The IR task we consider is called **ad hoc retrieval**, in which a user poses a query to a retrieval system, which then returns an ordered set of **documents** from some **collection**. A document refers to whatever unit of text the system indexes and retrieves (web pages, scientific papers, news articles, or even shorter passages like paragraphs). A collection refers to a set of documents being used to satisfy user requests. A term refers to a word in a collection, but it may also include phrases. Finally, a query represents a user’s information need expressed as a set of terms.
 
 <p align="center">
     <img src="./assets/seq-models/Adhoc-IR-system.png" alt="drawing" width="600" height="250" style="center" />
 </p>
 
-The basic IR architecture uses the **vector space model** in which we map queries and document to vectors based on unigram word counts, and use the _cosine similarity_ between the vectors to rank potential documents. This is thus an example of the bag-of-words model since words are considered independently of their positions.
+The basic IR architecture uses the **vector space model** in which we map queries and document to vectors based on unigram word counts, and use the _cosine similarity_ between the vectors to rank potential documents.
 
 ### Information Retrieval with Dense Vectors
 One can use tf-idf or BM25 algorithms to represent words and documents as vectors. From there, we can score document $\bm d$ using its cosine metric with the query vector $\bm q$:
@@ -2624,7 +2701,7 @@ The solution to this problem is to use an approach that can handle synonymy: ins
 
 You can use separate encoders for query and document, and use the dot product between `CLS` token outputs for the query and document as the score. This is less compute-expensive, but not as accurate. The problem with the full BERT architecture in (one encoder only) is the expense in computation and time. With this architecture, every time we get a query, we have to pass every single document in our entire collection through a BERT encoder jointly with the new query! This enormous use of resources is impractical for real cases.
 
-At the other end of the computational spectrum is a much more efficient architecture, the bi-encoder. In this architecture we can encode the documents in the collection only one time by using two separate encoder models, one to encode the query and one to encode the document. We encode each document, and store all the encoded document vectors in advance. When a query comes in, we encode just this query and then use the dot product between the query vector and the precomputed document vectors as the score for each candidate document. For example, if we used BERT, we would have two encoders BERTQ and BERTD and
+
 
 Usually the retrieval step is not done on an entire document. Instead documents are broken up into smaller passages, such as non-overlapping fixed-length chunks of say 100 tokens, and the retriever encodes and retrieves these passages rather than entire documents. The query and document have to be made to fit in the BERT 512-token window, for example by truncating the query to 64 tokens and truncating the document if necessary so that it, the query, `[CLS]`, and `[SEP]` fit in 512 tokens. The BERT system together with the linear layer U can then be fine-tuned for the relevance task by gathering a tuning dataset of relevant and non-relevant passages.
 
@@ -2633,7 +2710,7 @@ Efficiency is an important issue, since every possible document must be ranked f
 
 ### Answering Questions with RAG
 
-The dominant paradigm for question answering is to answer a user’s question by first finding supportive text segments from the web or another other large collection of documents, and then generating an answer based on the documents. The method of generating based on retrieved documents is called retrieval-augmented generation or RAG, and the two components are sometimes called the retriever and the reader. 
+The dominant paradigm for question answering is to answer a user’s question by first finding supportive text segments from the web or another other large collection of documents, and then generating an answer based on the documents. The method of generating based on retrieved documents is called **retrieval-augmented generation** or RAG, and the two components are sometimes called the retriever and the generator.
 
 In the first stage of the 2-stage retrieve and read model, we retrieve relevant passages from a text collection, for example using the dense retrievers of the previous section. In the second reader stage, we generate the answer via retrieval-augmented generation. In this method, we take a large pretrained language model, give it the set of retrieved passages and other text as its prompt, and autoregressively generate a new answer token by token.
 
@@ -2641,9 +2718,8 @@ In the first stage of the 2-stage retrieve and read model, we retrieve relevant 
     <img src="./assets/seq-models/rag.png" alt="drawing" width="600" height="150" style="center" />
 </p>
 
-### Retrieval-Augmented Generation
+The standard generator algorithm is to generate from a large language model, conditioned on the retrieved passages. The idea of retrieval-augmented generation is to condition responses on the retrieved passages as part of the prefix,  perhaps with some prompt text like “Based on these texts, answer this question:”. Let’s suppose we have a query $\bm q$, and call the set of retrieved passages based on it R(q). For example, we could have a prompt like:
 
-The standard reader algorithm is to generate from a large language model, conditioned on the retrieved passages. This method is known as **retrieval-augmented generation**, or **RAG**. Recall that in simple conditional generation, we can cast the task of question answering as word prediction by giving a language model a question and a token like `A:` suggesting that an answer should come next:
 `Q: Who wrote the book ‘‘The Origin of Species"? A:`
 
 Then we generate autoregressively conditioned on this text. The idea of retrieval-augmented generation is to address these problems by conditioning on the retrieved passages as part of the prefix, perhaps with some prompt text like “Based on these texts, answer this question:”. Let’s suppose we have a query $q$, and call the set of retrieved passages based on it $R(q)$. For example, we could have a prompt like:
@@ -2675,16 +2751,18 @@ Three techniques are commonly employed to evaluate question-answering systems, w
 
 For questions with free text answers, like Natural Questions, we commonly evaluated with token F1 score to roughly measure the partial string overlap between the answer and the reference answer:
 
-- F1 score: The average token overlap between predicted and gold answers. Treat the prediction and gold as a bag of tokens, and compute F1 for each question, then return the average F1 over all questions.
+- **F1 score**: The average token overlap between predicted and gold answers. Treat the prediction and gold as a bag of tokens, and compute F1 for each question, then return the average F1 over all questions.
 
-Finally, in some situations QA systems give multiple ranked answers. In such cases we evaluated using **mean reciprocal rank**, or **MRR** (Voorhees, 1999). MRR is designed for systems that return a short ranked list of answers or passages for each test set question, which we can compare against the (human-labeled) correct answer.
-
-First, each test set question is scored with the reciprocal of the rank of the first correct answer. For example if the system returned five answers to a question but the first three are wrong (so the highest-ranked correct answer is ranked fourth), the reciprocal rank for that question is 1/4. The score for questions that return no correct answer is 0. The MRR of a system is the average of the scores for each question in the test set. In some versions of MRR, questions with a score of zero are ignored in this calculation. More formally, for a system returning ranked answers to each question in a test set Q, (or in the alternate version, let Q be the subset of test set questions that have non-zero scores). MRR is then defined as
+Finally, in some situations QA systems give multiple ranked answers. In such cases we evaluated using **mean reciprocal rank**, or **MRR** (Voorhees, 1999). MRR is designed for systems that return a short ranked list of answers or passages for each test set question, which we can compare against the (human-labeled) correct answer. First, each test set question is scored with the reciprocal of the rank of the first correct answer. For example if the system returned five answers to a question but the first three are wrong (so the highest-ranked correct answer is ranked fourth), the reciprocal rank for that question is 1/4. The score for questions that return no correct answer is 0. The MRR of a system is the average of the scores for each question in the test set. In some versions of MRR, questions with a score of zero are ignored in this calculation. More formally, for a system returning ranked answers to each question in a test set Q, (or in the alternate version, let Q be the subset of test set questions that have non-zero scores). MRR is then defined as
 
 $$
 MRR = \frac{1}{|Q|}\sum^{|Q|}_{i=1}\frac{1}{rank_i}
 $$
 
+
+
+
+<br><br><br>
 
 # Model optimizations for deployment
 Now that you've explored the work required to adapt and align large language models to your tasks, let's talk about the things you'll have to consider to integrate your model into applications.
@@ -2777,8 +2855,410 @@ The actions that the app will take in response to user requests will be determin
 
 
 
+<br><br><br>
 
-# Fine-tuning using Hugging Face
+
+# Hugging Face
+
+Transformers Python Library is a great tool for using transformer models in your projects on top of Pytorch, TensorFlow of Flax. You can use it for:
+1. Applying state of art transformer model out of the box for variety of NLP tasks
+2. Fine tuning pertained models using datasets provided by Hugging Face
+3. The transformer library has a pipeline object that encapsulates everything you need to run a model in your examples. Pipelines takes care of:
+    - Pre-processing your inputs
+    - Running the model to obtain output
+    - Post-processing to the final inference
+
+To use a transformer model, you need to indicate the task that you need your pipeline to work on, plus the model checkpoint to be used. Pipelines are objects built for specific NLP tasks such as _sentiment analysis, question answering, fill-mask_ and more. Hugging Face has a growing library with > 15K pretrained model check points that you can use to fine tune the most popular transformer architectures. A checkpoint is a set of parameters learned for a specific model trained with a specific dataset for a specific task like question-answering. You can fine tune a model starting from a check point using one of the thousands datasets available at hugging face or your own data. 
+
+The transformer library offers **tokenizers** associated with every check point to preprocess the data by translating your text to be readable for the model you want to fine tune. It's important to use the associated pretrained tokenizer becuase this ensures the text is split the same way as the pretraining corpus, and uses the same corresponding tokens-to-index (usually referred to as the vocab) during pretraining.
+
+<p align="center">
+    <img src="./assets/seq-models/tokenizer.png" alt="drawing" width="700" height="300" style="center" />
+</p>
+
+## Preprocessing and Tokenizers
+There are three main types of tokenizers used in 🤗 Transformers: **Byte-Pair Encoding (BPE)**, **WordPiece**, and **SentencePiece**, and show examples of which tokenizer type is used by which model. Note that on each model page, you can look at the documentation of the associated tokenizer to know which tokenizer type was used by the pretrained model. For instance, if we look at BertTokenizer, we can see that the model uses WordPiece.
+
+Load a pretrained tokenizer with the `AutoTokenizer.from_pretrained()` method. This downloads the vocab a model was pretrained with.
+
+The output can be translated back to human readable text using the same tokenizer. Hugging Face also provides metrics to be integrated in the training process to evaluate your model:
+
+```python
+from transformers import AutoTokenizer
+tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
+
+encoded_input = tokenizer("Do not meddle in the affairs of wizards, for they are subtle and quick to anger.")
+print(encoded_input)
+```
+
+Return your input by decoding the `input_ids`:
+
+```python
+tokenizer.decode(encoded_input["input_ids"])
+```
+As you can see, the tokenizer added two special tokens - `CLS` and `SEP` (classifier and separator) - to the sentence. Not all models need special tokens, but if they do, the tokenizer automatically adds them for you. This how the data was prepared for the pre-trained model before training. If there are several sentences you want to preprocess, pass them as a list to the tokenizer:
+
+```python
+batch_sentences = [
+    "But what about second breakfast?",
+    "Don't think he knows about second breakfast, Pip.",
+    "What about elevensies?",
+]
+encoded_inputs = tokenizer(batch_sentences)
+print(encoded_inputs)
+```
+
+### Padding
+
+Sentences aren't always the same length which can be an issue because tensors, the model inputs, need to have a uniform shape. Padding is a strategy for ensuring tensors are rectangular by adding a special padding token to shorter sentences.  Set the padding parameter to True to pad the shorter sequences in the batch to match the longest sequence in the batch 
+```python
+tokenizer(batch_sentences, padding=True)
+```
+
+### Truncation
+On the other end of the spectrum, sometimes a sequence may be too long for a model to handle. In this case, you'll need to truncate the sequence to a shorter length. Set the truncation parameter to True to truncate a sequence to the maximum length accepted by the model: 
+```python
+tokenizer(batch_sentences, padding=True, truncation=True)
+```
+
+### Build tensors and apply preprocessing transformations
+
+Finally, you want the tokenizer to return the actual tensors that get fed to the model. Set the return_tensors parameter to either `pt` for PyTorch, or `tf` for TensorFlow:
+
+```python
+tokenizer(batch_sentences, padding=True, truncation=True, return_tensors="pt")
+```
+You may want to use some transformation function before batching into tensors. Also you want to so the process using Python generator so data is not fully loaded into the memory.
+
+
+Source: Hugging Face [Colab Notebook](https://github.com/huggingface/transformers/tree/main/notebooks) for more about preparing data for Computer Vision or Multimodal Tasks. 
+
+
+### Train your own tokenizer
+
+After some preprocesing, you can feed the training corpus (either the list of list or an iterator) to the `train_new_from_iterator` method. We also have to specify the vocabulary size we want to use:
+
+```python
+new_tokenizer = tokenizer.train_new_from_iterator(batch_iterator(), vocab_size=25000)
+```
+
+And that's all there is to it! The training goes very fast thanks to the 🤗 Tokenizers library, backed by Rust. You now have a new tokenizer ready to preprocess your data and train a language model. You can feed it input texts as usual. You can save it locally with the save_pretrained method: 
+```python
+new_tokenizer.save_pretrained("my-new-tokenizer")
+```
+```sh
+('my-new-tokenizer/tokenizer_config.json',
+ 'my-new-tokenizer/special_tokens_map.json',
+ 'my-new-tokenizer/vocab.json',
+ 'my-new-tokenizer/merges.txt',
+ 'my-new-tokenizer/added_tokens.json',
+ 'my-new-tokenizer/tokenizer.json')
+ ```
+Or even push it to the Hugging Face Hub to use that new tokenzier from anywhere. The tokenizer can now be reloaded on this machine with:
+
+```python
+new_tokenizer.from_pretrained("my-new-tokenizer")
+```
+
+To understand how to build your tokenizer from scratch, we have to dive a little bit more in the 🤗 Tokenizers library and the tokenization pipeline. This pipeline takes several steps:
+- **Normalization**: Executes all the initial transformations over the initial input string. For example when you need to lowercase some text, maybe strip it, or even apply one of the common unicode normalization process, you will add a Normalizer.
+- **Pre-tokenization**: In charge of splitting the initial input string. That's the component that decides where and how to pre-segment the origin string. The simplest example would be to simply split on spaces.
+- **Model**: Handles all the sub-token discovery and generation, this is the part that is trainable and really dependent of your input data.
+- **Post-Processing**: Provides advanced construction features to be compatible with some of the Transformers-based SoTA models. For instance, for BERT it would wrap the tokenized sentence around `[CLS]` and `[SEP]` tokens.
+- **Decoding**: In charge of mapping back a tokenized input to the original string. The decoder is usually chosen according to the PreTokenizer we used previously. This method will be used for inference.
+
+For the training of the model, the 🤗 Tokenizers library provides a Trainer class that we will use. The `tokenizer` library can help you build these components and then combine them to create working tokenization pipelines. 
+
+```python
+from tokenizers import decoders, models, normalizers, pre_tokenizers, processors, trainers, Tokenizer
+```
+
+As an example, we replicate BERT. To build a tokenizer such as the one for BERT, begin with WordPiece model:
+
+```python
+tokenizer = Tokenizer(models.WordPiece(unk_token="[UNK]"))
+```
+Use lowercasing as a normalizaion step:
+```python
+tokenizer.normalizer = normalizers.BertNormalizer(lowercase=True)
+```
+
+You can also combine multiple normalization step using sequence method:
+
+```python
+tokenizer.normalizer = normalizers.Sequence(
+    [normalizers.NFD(), normalizers.Lowercase(), normalizers.StripAccents()]
+)
+```
+There is also a `BertPreTokenizer` we can use directly. It pre-tokenizes using white space and punctuation:
+
+```python
+tokenizer.pre_tokenizer = pre_tokenizers.BertPreTokenizer()
+tokenizer.pre_tokenizer.pre_tokenize_str("This is an example!")
+```
+```sh
+[('This', (0, 4)),
+ ('is', (5, 7)),
+ ('an', (8, 10)),
+ ('example', (11, 18)),
+ ('!', (18, 19))]
+ ```
+ We can now train our tokenizer. Although the pipeline is not entirely finished but we will need a trained tokenizer to build the post-processor. We use a `WordPieceTrainer` for that. The key thing to remember is to pass along the special tokens to the trainer, as they won't be seen in the corpus.
+
+ ```python
+ special_tokens = ["[UNK]", "[PAD]", "[CLS]", "[SEP]", "[MASK]"]
+trainer = trainers.WordPieceTrainer(vocab_size=25000, special_tokens=special_tokens)
+```
+Now train the tokenizer:
+```python
+tokenizer.train_from_iterator(batch_iterator(), trainer=trainer)
+```
+Now that the tokenizer is trained, we can define the post-processor: we need to add the `CLS` token at the beginning and the `SEP` token at the end (for single sentences) or several `SEP` tokens (for pairs of sentences). We use a `TemplateProcessing` to do this, which requires to know the IDs of the `CLS` and `SEP` token (which is why we waited for the training).
+```python
+cls_token_id = tokenizer.token_to_id("[CLS]")
+sep_token_id = tokenizer.token_to_id("[SEP]")
+print(cls_token_id, sep_token_id)
+```
+```sh
+2 3
+```
+
+And here is how we can build our post processor. We have to indicate in the template how to organize the special tokens with one sentence `$A` or two sentences `$A` and `$B`. The `:` followed by a number indicates the token type ID to give to each part.
+```python
+tokenizer.post_processor = processors.TemplateProcessing(
+    single=f"[CLS]:0 $A:0 [SEP]:0",
+    pair=f"[CLS]:0 $A:0 [SEP]:0 $B:1 [SEP]:1",
+    special_tokens=[
+        ("[CLS]", cls_token_id),
+        ("[SEP]", sep_token_id),
+    ],
+)
+```
+Check that we get the expected results by encoding a pair of sentences for instance:
+```python
+encoding = tokenizer.encode("This is one sentence.", "With this one we have a pair.")
+encoding.tokens
+```
+```sh
+['[CLS]',
+ 'this',
+ 'is',
+ 'one',
+ 'sentence',
+ '.',
+ '[SEP]',
+ 'with',
+ 'this',
+ 'one',
+ 'we',
+ 'have',
+ 'a',
+ 'pair',
+ '.',
+ '[SEP]']
+ ```
+ ```
+ encoding.type_ids
+ ```
+ ```sh
+ [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+ ```
+The last piece in this tokenizer is the decoder, we use a WordPiece decoder and indicate the special prefix `##`:
+```python
+tokenizer.decoder = decoders.WordPiece(prefix="##")
+```
+Now that our tokenizer is finished, we need to wrap it inside a Transformers object to be able to use it with the Transformers library. More specifically, we have to put it inside the class of tokenizer fast corresponding to the model we want to use, here a BertTokenizerFast:
+```python
+from transformers import BertTokenizerFast
+new_tokenizer = BertTokenizerFast(tokenizer_object=tokenizer)
+```
+And like before, we can use this tokenizer as a normal Transformers tokenizer, and use the save_pretrained or push_to_hub methods. 
+
+Source: Hugging Face, [Colab Notebook](https://colab.research.google.com/github/huggingface/notebooks/blob/main/examples/tokenizer_training.ipynb) for tokenizers of T5 or GPT2.
+
+
+
+
+### Causal Language Model Training
+
+Here is how to load and preprocess the dataset for each one of those tasks, and how to use 🤗 Trainer API to train a model on it.
+
+1. Assuming you have trained a tokenizer on your corpus, first load your data (could be a csv or a JSON file as well) using 🤗 Datasets library:
+```python
+from datasets import load_dataset
+
+datasets = load_dataset('wikitext', 'wikitext-2-raw-v1')
+```
+For causal language modeling (CLM), we can concatenate all the text after they are tokenized and then split them into examples of a certain sequence length up to the maximum length allowed by the model. As said before, the labels will be the same as the inputs, shifted to the left. 
+
+We will use the **gpt2** architecture here. You can pick any of the checkpoints instead. For the tokenizer, you can replace the checkpoint by the one you trained yourself:
+```python
+model_checkpoint = "gpt2"
+tokenizer_checkpoint = "sgugger/gpt2-like-tokenizer"
+```
+To tokenize all our texts with the same vocabulary that was used when training the model, we have to download a pretrained tokenizer. This is all done by the `AutoTokenizer` class:
+```python
+from transformers import AutoTokenizer
+    
+tokenizer = AutoTokenizer.from_pretrained(tokenizer_checkpoint)
+```
+Use the `map` method from the Datasets library to apply tokenizer to the examples in the batch. We won't need the text column afterward, so we discard it.
+
+```python
+tokenized_datasets = datasets.map(lambda ex: tokenizer(ex['text']), batched=True, num_proc=4, remove_columns=["text"])
+
+# Look at a typical example in the dataset
+tokenized_datasets["train"][1]
+```
+
+```sh
+{'attention_mask': [1, 1, 1, 1, 1, 1],
+ 'input_ids': [238, 8576, 9441, 2987, 238, 252]}
+ ```
+
+Now concatenate all our texts together and then split the result in small chunks of a certain `block_size` length. To do this, use the `map` method again, with the option `batched=True`. Choose the maximum length our model was pretrained with as `block_size` if not too big to fit in your GPU RAM. Otherwise take a bit less at just 128!
+```python
+# block_size = tokenizer.model_max_length
+block_size = 128
+
+lm_datasets = tokenized_datasets.map(
+    group_texts, # The function that concats and then cuts text to size
+    batched=True,
+    batch_size=1000,
+    num_proc=4,
+)
+```
+See what you got:
+```python
+tokenizer.decode(lm_datasets["train"][1]["input_ids"])
+```
+```sh
+' the " Nameless ", a penal military unit serving the nation of Gallia during the Second Europan War who perform secret black operations and are pitted against the Imperial unit " Calamaty Raven ". \n The game began development in 2010, carrying over a large portion of the work done on Valkyria Chronicles II. While it retained the standard features of the series, it also underwent multiple adjustments, such as making the game more forgiving for series newcomers. Character designer Raita Honjou and composer Hitoshi Sakimoto both returned from previous entries, along with Valkyria Chronicles II director Takeshi Ozawa. A large'
+```
+
+Now that the data has been cleaned, we're ready to instantiate our `Trainer`. First we create the model using the same config as our checkpoint, but initialized with random weights:
+
+```python
+from transformers import AutoConfig, AutoModelForCausalLM
+
+config = AutoConfig.from_pretrained(model_checkpoint)
+model = AutoModelForCausalLM.from_config(config)
+```
+
+Before we start training, make it clear if you want to push the trained model to the Hub regularly during training or you want to save your model locally in a name that is different than the name of the repository it will be pushed, or if you want to push your model under an organization and not your name space. 
+```python
+from transformers import Trainer, TrainingArguments
+
+training_args = TrainingArguments(
+    f"{model_checkpoint}-wikitext2",
+    evaluation_strategy = "epoch",
+    learning_rate=2e-5,
+    weight_decay=0.01,
+    push_to_hub=True
+)
+```
+```python
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=lm_datasets["train"],
+    eval_dataset=lm_datasets["validation"],
+)
+```
+And we can train our model:
+
+```python
+trainer.train()
+```
+Evaluate the model:
+```python
+import math
+eval_results = trainer.evaluate()
+print(f"Perplexity: {math.exp(eval_results['eval_loss']):.2f}")
+```
+You can now upload the result of the training to the Hub, just execute this instruction `trainer.push_to_hub()`. Then you can load it with the identifier you chose:
+```python
+from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained("sgugger/my-awesome-model")
+```
+
+### Masked language model Training
+For masked language modeling (MLM) we are going to use the same preprocessing as before for our dataset with one additional step: we will randomly mask some tokens (by replacing them by `[MASK]`) and the labels will be adjusted to only include the masked tokens (we don't have to predict the non-masked tokens). If you use a tokenizer you trained yourself, make sure the `[MASK]` token is among the special tokens you passed during training!
+
+We will use the bert-base-cased model for this example. You can pick any of the checkpoints listed here instead. For the tokenizer, replace the checkpoint by the one you trained.
+
+```python
+model_checkpoint = "bert-base-cased"
+tokenizer_checkpoint = "sgugger/bert-like-tokenizer"
+```
+We can apply the same tokenization function as before, we just need to update our tokenizer to use the checkpoint we just picked:
+
+```python
+tokenizer = AutoTokenizer.from_pretrained(tokenizer_checkpoint)
+tokenized_datasets = datasets.map(lambda ex: tokenizer(ex['text']), batched=True, num_proc=4, remove_columns=["text"])
+```
+And like before, group texts together and chunk them in samples of length block_size. You can skip that step if your dataset is composed of individual sentences.
+
+```python
+lm_datasets = tokenized_datasets.map(
+    group_texts,
+    batched=True,
+    batch_size=1000,
+    num_proc=4,
+)
+```
+Use a model suitable for masked LM:
+```python
+from transformers import AutoConfig, AutoModelForMaskedLM
+
+config = AutoConfig.from_pretrained(model_checkpoint)
+model = AutoModelForMaskedLM.from_config(config)
+
+training_args = TrainingArguments(
+    "test-clm",
+    evaluation_strategy = "epoch",
+    learning_rate=2e-5,
+    weight_decay=0.01,
+    push_to_hub=True,
+    push_to_hub_model_id=f"{model_checkpoint}-wikitext2",
+)
+```
+Use `data_collator` to ensure the random masking is done in a new way each time we go over the data. The library provides a `DataCollatorForLanguageModeling`. We can adjust the probability of the masking:
+
+```python
+from transformers import DataCollatorForLanguageModeling
+data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm_probability=0.15)
+```
+Pass everything to Trainer and begin training:
+```python
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=lm_datasets["train"],
+    eval_dataset=lm_datasets["validation"],
+    data_collator=data_collator,
+)
+```
+```python
+trainer.train()
+```
+Evaluate the model on the validation set. The perplexity is much lower than for the CLM objective because for the MLM objective, we only have to make predictions for the masked tokens (which represent 15% of the total here) while having access to the rest of the tokens. It's thus an easier task for the model.
+```python
+eval_results = trainer.evaluate()
+print(f"Perplexity: {math.exp(eval_results['eval_loss']):.2f}")
+```
+
+Source: Hugging Face, [Colab Notebook](https://colab.research.google.com/github/huggingface/notebooks/blob/main/examples/language_modeling_from_scratch.ipynb) for full implementation.
+
+
+
+
+
+## Fine-tuning using Hugging Face
+
+Many open-source models are available for members of the AI community like you to use in your application. The developers of some of the major frameworks for building generative AI applications like Hugging Face and PyTorch, have curated hubs where you can browse these models. A really useful feature of these hubs is the inclusion of model cards, that describe important details including the best  use cases for each model, how it was trained, and known limitations. You'll find some links to these model hubs in the reading at the end of the week. The exact model that you'd choose will depend on the details of the 
+
 
 Although the enormous pretraining data for a large language model includes text from many domains, it’s often the case that we want to apply it in a new domain or task that might not have appeared sufficiently in the pre-training data. For example, we might want a language model that’s specialized to legal or medical text. Or we might have a multilingual language model that knows many languages but might benefit from some more data in our particular language of interest. Or we want a language model that is specialized to a particular task. In such cases, we can simply continue training the model on relevant data from the new domain or language. This process of taking a fully pretrained model and running additional training passes on some new data is called **finetuning**. In the first kind of finetuning we retrain all the parameters of the model on this new data, using the same method (word prediction) and loss function (cross-entropy loss) as for pretraining. In a sense it’s as if the new data were at the tail end of the pretraining data, and so you’ll sometimes see this method called **continued pre-training**. Retraining all the parameters of the model is very slow and expensive when the
 language model is huge. So instead we can **freeze** some of the parameters (i.e., leave them unchanged from their pretrained value) and train only a subset of parameters on the new data. The following examples are of this type of finetuning. 
@@ -3437,569 +3917,10 @@ Source: Hugging Face [Colab Notebook](https://colab.research.google.com/github/h
 
 
 
-
-
-
-## Transformer Applications
-Here is a brief summary of all the different applications you can build using transformers:
-
-- Text Summarization
-- Auto Complete
-- Named-Entity Recognition
-- Question Answering 
-- Translation
-- Chatbots
-
-and other NLP tasks such as:
-
-- Sentiment Analysis
-- Market Intelligence
-- Text Classification
-- Character Recognition
-- Spell Checking
-
-
-
-
-
-
-
-
-
-#### Bleu Score
-
-One of the challenges of machine translation is that, given a French sentence, there could be multiple English translations that are equally good translations of that French sentence. So how do you evaluate a machine translation system if there are multiple equally good answers, unlike, say, image recognition where there's one right answer? You just measure accuracy. If there are multiple great answers, how do you measure accuracy? The way this is done conventionally is through something called the **BLEU score**. 
-
-Example: 
-
-Input = "Le chat est sur le tapis."
-R1 = "The cat is on the mat." (human reference 1)
-R2 = "There is a cat on the mat." (human reference 2)
-ML: "the the the the the the the." (Machine Translation output)
-
-**Precision** = 7/7, becuase all seven words in predictions appear in both R1, R2.
-
-**Modified Precision** = 2/7. We put a cap on the number of time a word can be counted, in this case is 2 because it repeated at most 2 times in a reference.
-
-We can measure Bleu score on bigrams too. Bleu score is great but it neither consider semantic meaning of words nor the sentence structure
-
-
-#### ROUGE-N Score
-
-candidate = `I I am I`
-Reference 1 = `Younes said I am hungry`
-Reference 2 = `He said I am hungry`
-
-How many words from each reference appear in the candiate translations? Like Recall...
-
-ROUGE_N = max (R1: 2/5=0.4, R2:2/5=0.4) = 0.4
-
-Then find F1 score of Bleu and ROUGE_N = 1/2 (Precision x Recal)/ (Precision+ Recall) = 1/2 (0.5x0.4)/(0.5+0.4) ~ 0.44
-
-
-## Transfer Learning in NLP
-
-Transfer learning will come in two basic forms: **Feature-Based Learning** and **Fine-Tuning**.
-
-
-- In feature based transfer learning, you learn new features or word embeddings by training one model and then you use those word embeddings in a different model on a different task. Fine-tuning is to take an existing model with its weights, and then you tweak them a little bit to make sure that they work on the specific task you're working on. 
-
-    <p align="center">
-        <img src="./assets/seq-models/transfer-learning.png" alt="drawing" width="700" height="300" style="center" />
-    </p>
-
-    Now, on the fine-tuning side, you have your embeddings, you feed it into your model, you get a prediction, and then you fine-tune on this model on the downstream task. Let's say you have movies and you're predicting one star, two stars, or three stars. You pre-trained and now you have course reviews. One way you can do this is you fix all of these weights that you already have. Then you add a new feed-forward network while keeping everything else frozen here. Then you just tune on this new network that you just added. 
-
-    <p align="center">
-        <img src="./assets/seq-models/transfer-learning2.png" alt="drawing" width="700" height="300" style="center" />
-    </p>
-
-- Data affects performance a lot. The more data, the larger model (and generally better) you can build and then you get a much better outcome. Usually you have way more unlabeled text data than labeled text data. In pre-training, you have no labels. Then in downstream task, you could have something like, feed this into your model and you get the prediction which is the label for you data. 
-
-    <p align="center">
-        <img src="./assets/seq-models/transfer-learning4.png" alt="drawing" width="700" height="300" style="center" />
-    </p>
-
-- You can also use unlabelled data when pre-training by masking words and trying to predict which word was masked.  A **self-supervised** task: You have the unlabeled data from which you create input features, targets or labels. You're trying to predict the target. You feed this into your model to get the prediction. The target is friend, here prediction goes in. You have the loss here and then you use this loss to update your model. This is basic language modeling that you've already seen before. 
-
-    <p align="center">
-        <img src="./assets/seq-models/transfer-learning3.png" alt="drawing" width="700" height="300" style="center" />
-    </p>
-
-Let's look at fine-tuning a model in the downstream task. You did some pre-training on your model either by masking words or predicting the next sentence. Then use this model to train it on downstream tasks. You can  fine-tune this model on translation or summarization, or question answering. 
-
-<p align="center">
-    <img src="./assets/seq-models/transfer-learning5.png" alt="drawing" width="700" height="300" style="center" />
-</p>
-
-[Slides Source](https://www.coursera.org/learn/attention-models-in-nlp/lecture/qMRXX/transfer-learning-in-nlp) - Lectures on Coursera.
-
-
-
-### ELMo, GPT, BERT, T5
-
-Some famous models discovered in the following order:
-
-`CBOW --> ELMo --> GPT --> BERT --> T5`
-
-In CBOW, you want to encode a word as a vector. To do this we used the context before the word and the context after the word and we use that model to learn and create features for the word. CBOW however uses a fixed window C (for the context). 
-
-As an improvement to CBOW, ELMo uses a bi-directional LSTM to have the context from the left and the right of the traget word in an RNN model.
-
-<p align="center">
-    <img src="./assets/seq-models/ELMo.png" alt="drawing" width="700" height="300" style="center" />
-</p>
-
-
-Open AI introduced GPT, which is a uni-directional model that uses transformer decoder stack only (no encoder). Although ELMo was bi-directional, it suffered from some issues such as capturing longer-term dependencies becuase it was RNN based model, which transformers tackle much better. GPT solved that using transformers but as we know, decoder uses masked attention (also known as causal attention) which prevents attending to future words beyond a target word. That means the right side context of a word is not accessible. 
-
-
-
-### Transformer T5
-T5, also known as text-to-text transformer, can be used on several tasks and it is trained similar to BERT, that is, using mask language modelling and transfer learning. It also uses encoder-decoder transformers when training. One of the major techniques that allowed the T5 model to reach state of the art is the concept of masking:
-
-<p align="center">
-    <img src="./assets/seq-models/T5-masking.png" alt="drawing" width="700" height="300" style="center" />
-</p>
-
-For example, you represent the “for inviting” with `<X>` and last with `<Y>` then the model predicts what the `X` should be and what the `Y` should be. This is exactly what we saw in the BERT loss. You can also mask out a few positions, not just one. The loss is only on the mask for BERT, for T5 it is on the target.
-
-
- <p align="center">
-    <img src="./assets/seq-models/T52.png" alt="drawing" width="700" height="300" style="center" />
-</p>
-
-So we start with the basic encoder-decoder representation.  There you have a fully visible attention in the encoder and then causal attention in the decoder. So light gray lines correspond to causal masking. And dark gray lines correspond to the fully visible masking. In the middle we have the language model which consists of a single transformer layer stack. And it's being fed the concatenation of the inputs and the target. So it uses causal masking throughout as you can see because they're all gray lines. And you have X1 going inside, you get `X2`, `X2` goes into the model and you get `X3` and so forth. To the right, we have prefix language model which corresponds to allowing fully visible masking over the inputs as you can see with the dark arrows. And then causal masking in the rest.
-
-#### Multi-Task Training Strategy
-This is a reminder of how the T5 model works:
-
-<p align="center">
-    <img src="./assets/seq-models/T53.png" alt="drawing" width="700" height="300" style="center" />
-</p>
-
-You can see that you only have to add a small prefix to the input and the model as a result will solve the task for you. There are many tasks that the T5 model can do for you. It is possible to formulate most NLP tasks in a “text-to-text” format – that is, a task where the model is fed some text for context or conditioning and is then asked to produce some output text. This framework provides a consistent training objective both for pre-training and fine-tuning. Specifically, the model is trained with a maximum likelihood objective (using “teacher forcing” ) regardless of the task. The main objective of the multitasking training strategy is to improve the performance of the various tasks by learning them together.
-
-Last but not least, T5 uses the encoder and the decoder transformer architectures with bidirectional context which makes it a robust model. T5 can perform several tasks including question answering. How do you know which task the model is performing? Include the word specifies the task at the begining of the request: "classify", "summarize", "question" etc. Here is an illustration of how it works.
-
-<p align="center">
-    <img src="./assets/seq-models/T5.png" alt="drawing" width="700" height="300" style="center" />
-</p>
-
-
-### GLUE Benchmark
-
-This is used to train, evaluate, analyze NLP tasks. The glue benchmark stands for **General Language Understanding Evaluation**. It is basically a 
-- Collection that is used to train, evaluate, analyze natural language understanding systems
-- Has a lot of datasets and each dataset has several genres and there are different sizes and different difficulties. Some of them are, for example, used for co-reference resolution. Others are just used for simple sentiment analysis, others are used for question answering, and so forth 
-- Used with a leaderboard, so people can use the datasets and see how well their models perform compared to others
-
-<p align="center">
-    <img src="./assets/seq-models/GLUE.png" alt="drawing" width="700" height="300" style="center" />
-</p>
- 
-
-It is also a model agnostic, so it doesn't matter which model you use. Just evaluate on GLUE and see how well your model performs. Finally, it allows you to make use of transfer learning because you have access to several datasets and you can learn certain things from different datasets that will help you evaluate on a completely new datasets within GLUE. 
-
-See [Attention-models-in-nlp](https://www.coursera.org/learn/attention-models-in-nlp/home/week/3) - Lectures on Coursera.
-
-# Hugging Face
-
-Transformers Python Library is a great tool for using transformer models in your projects on top of Pytorch, TensorFlow of Flax. You can use it for:
-1. Applying state of art transformer model out of the box for variety of NLP tasks
-2. Fine tuning pertained models using datasets provided by Hugging Face
-3. The transformer library has a pipeline object that encapsulates everything you need to run a model in your examples. Pipelines takes care of:
-    - Pre-processing your inputs
-    - Running the model to obtain output
-    - Post-processing to the final inference
-
-To use a transformer model, you need to indicate the task that you need your pipeline to work on, plus the model checkpoint to be used. Pipelines are objects built for specific NLP tasks such as _sentiment analysis, question answering, fill-mask_ and more. Hugging Face has a growing library with > 15K pretrained model check points that you can use to fine tune the most popular transformer architectures. A checkpoint is a set of parameters learned for a specific model trained with a specific dataset for a specific task like question-answering. You can fine tune a model starting from a check point using one of the thousands datasets available at hugging face or your own data. 
-
-The transformer library offers **tokenizers** associated with every check point to preprocess the data by translating your text to be readable for the model you want to fine tune. It's important to use the associated pretrained tokenizer becuase this ensures the text is split the same way as the pretraining corpus, and uses the same corresponding tokens-to-index (usually referred to as the vocab) during pretraining.
-
-<p align="center">
-    <img src="./assets/seq-models/tokenizer.png" alt="drawing" width="700" height="300" style="center" />
-</p>
-
-## Preprocessing and Tokenizers
-There are three main types of tokenizers used in 🤗 Transformers: **Byte-Pair Encoding (BPE)**, **WordPiece**, and **SentencePiece**, and show examples of which tokenizer type is used by which model. Note that on each model page, you can look at the documentation of the associated tokenizer to know which tokenizer type was used by the pretrained model. For instance, if we look at BertTokenizer, we can see that the model uses WordPiece.
-
-Load a pretrained tokenizer with the `AutoTokenizer.from_pretrained()` method. This downloads the vocab a model was pretrained with.
-
-The output can be translated back to human readable text using the same tokenizer. Hugging Face also provides metrics to be integrated in the training process to evaluate your model:
-
-```python
-from transformers import AutoTokenizer
-tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
-
-encoded_input = tokenizer("Do not meddle in the affairs of wizards, for they are subtle and quick to anger.")
-print(encoded_input)
-```
-
-Return your input by decoding the `input_ids`:
-
-```python
-tokenizer.decode(encoded_input["input_ids"])
-```
-As you can see, the tokenizer added two special tokens - `CLS` and `SEP` (classifier and separator) - to the sentence. Not all models need special tokens, but if they do, the tokenizer automatically adds them for you. This how the data was prepared for the pre-trained model before training. If there are several sentences you want to preprocess, pass them as a list to the tokenizer:
-
-```python
-batch_sentences = [
-    "But what about second breakfast?",
-    "Don't think he knows about second breakfast, Pip.",
-    "What about elevensies?",
-]
-encoded_inputs = tokenizer(batch_sentences)
-print(encoded_inputs)
-```
-
-### Padding
-
-Sentences aren't always the same length which can be an issue because tensors, the model inputs, need to have a uniform shape. Padding is a strategy for ensuring tensors are rectangular by adding a special padding token to shorter sentences.  Set the padding parameter to True to pad the shorter sequences in the batch to match the longest sequence in the batch 
-```python
-tokenizer(batch_sentences, padding=True)
-```
-
-### Truncation
-On the other end of the spectrum, sometimes a sequence may be too long for a model to handle. In this case, you'll need to truncate the sequence to a shorter length. Set the truncation parameter to True to truncate a sequence to the maximum length accepted by the model: 
-```python
-tokenizer(batch_sentences, padding=True, truncation=True)
-```
-
-### Build tensors and apply preprocessing transformations
-
-Finally, you want the tokenizer to return the actual tensors that get fed to the model. Set the return_tensors parameter to either `pt` for PyTorch, or `tf` for TensorFlow:
-
-```python
-tokenizer(batch_sentences, padding=True, truncation=True, return_tensors="pt")
-```
-You may want to use some transformation function before batching into tensors. Also you want to so the process using Python generator so data is not fully loaded into the memory.
-
-
-Source: Hugging Face [Colab Notebook](https://github.com/huggingface/transformers/tree/main/notebooks) for more about preparing data for Computer Vision or Multimodal Tasks. 
-
-
-### Train your own tokenizer
-
-After some preprocesing, you can feed the training corpus (either the list of list or an iterator) to the `train_new_from_iterator` method. We also have to specify the vocabulary size we want to use:
-
-```python
-new_tokenizer = tokenizer.train_new_from_iterator(batch_iterator(), vocab_size=25000)
-```
-
-And that's all there is to it! The training goes very fast thanks to the 🤗 Tokenizers library, backed by Rust. You now have a new tokenizer ready to preprocess your data and train a language model. You can feed it input texts as usual. You can save it locally with the save_pretrained method: 
-```python
-new_tokenizer.save_pretrained("my-new-tokenizer")
-```
-```sh
-('my-new-tokenizer/tokenizer_config.json',
- 'my-new-tokenizer/special_tokens_map.json',
- 'my-new-tokenizer/vocab.json',
- 'my-new-tokenizer/merges.txt',
- 'my-new-tokenizer/added_tokens.json',
- 'my-new-tokenizer/tokenizer.json')
- ```
-Or even push it to the Hugging Face Hub to use that new tokenzier from anywhere. The tokenizer can now be reloaded on this machine with:
-
-```python
-new_tokenizer.from_pretrained("my-new-tokenizer")
-```
-
-To understand how to build your tokenizer from scratch, we have to dive a little bit more in the 🤗 Tokenizers library and the tokenization pipeline. This pipeline takes several steps:
-- **Normalization**: Executes all the initial transformations over the initial input string. For example when you need to lowercase some text, maybe strip it, or even apply one of the common unicode normalization process, you will add a Normalizer.
-- **Pre-tokenization**: In charge of splitting the initial input string. That's the component that decides where and how to pre-segment the origin string. The simplest example would be to simply split on spaces.
-- **Model**: Handles all the sub-token discovery and generation, this is the part that is trainable and really dependent of your input data.
-- **Post-Processing**: Provides advanced construction features to be compatible with some of the Transformers-based SoTA models. For instance, for BERT it would wrap the tokenized sentence around `[CLS]` and `[SEP]` tokens.
-- **Decoding**: In charge of mapping back a tokenized input to the original string. The decoder is usually chosen according to the PreTokenizer we used previously. This method will be used for inference.
-
-For the training of the model, the 🤗 Tokenizers library provides a Trainer class that we will use. The `tokenizer` library can help you build these components and then combine them to create working tokenization pipelines. 
-
-```python
-from tokenizers import decoders, models, normalizers, pre_tokenizers, processors, trainers, Tokenizer
-```
-
-As an example, we replicate BERT. To build a tokenizer such as the one for BERT, begin with WordPiece model:
-
-```python
-tokenizer = Tokenizer(models.WordPiece(unk_token="[UNK]"))
-```
-Use lowercasing as a normalizaion step:
-```python
-tokenizer.normalizer = normalizers.BertNormalizer(lowercase=True)
-```
-
-You can also combine multiple normalization step using sequence method:
-
-```python
-tokenizer.normalizer = normalizers.Sequence(
-    [normalizers.NFD(), normalizers.Lowercase(), normalizers.StripAccents()]
-)
-```
-There is also a `BertPreTokenizer` we can use directly. It pre-tokenizes using white space and punctuation:
-
-```python
-tokenizer.pre_tokenizer = pre_tokenizers.BertPreTokenizer()
-tokenizer.pre_tokenizer.pre_tokenize_str("This is an example!")
-```
-```sh
-[('This', (0, 4)),
- ('is', (5, 7)),
- ('an', (8, 10)),
- ('example', (11, 18)),
- ('!', (18, 19))]
- ```
- We can now train our tokenizer. Although the pipeline is not entirely finished but we will need a trained tokenizer to build the post-processor. We use a `WordPieceTrainer` for that. The key thing to remember is to pass along the special tokens to the trainer, as they won't be seen in the corpus.
-
- ```python
- special_tokens = ["[UNK]", "[PAD]", "[CLS]", "[SEP]", "[MASK]"]
-trainer = trainers.WordPieceTrainer(vocab_size=25000, special_tokens=special_tokens)
-```
-Now train the tokenizer:
-```python
-tokenizer.train_from_iterator(batch_iterator(), trainer=trainer)
-```
-Now that the tokenizer is trained, we can define the post-processor: we need to add the `CLS` token at the beginning and the `SEP` token at the end (for single sentences) or several `SEP` tokens (for pairs of sentences). We use a `TemplateProcessing` to do this, which requires to know the IDs of the `CLS` and `SEP` token (which is why we waited for the training).
-```python
-cls_token_id = tokenizer.token_to_id("[CLS]")
-sep_token_id = tokenizer.token_to_id("[SEP]")
-print(cls_token_id, sep_token_id)
-```
-```sh
-2 3
-```
-
-And here is how we can build our post processor. We have to indicate in the template how to organize the special tokens with one sentence `$A` or two sentences `$A` and `$B`. The `:` followed by a number indicates the token type ID to give to each part.
-```python
-tokenizer.post_processor = processors.TemplateProcessing(
-    single=f"[CLS]:0 $A:0 [SEP]:0",
-    pair=f"[CLS]:0 $A:0 [SEP]:0 $B:1 [SEP]:1",
-    special_tokens=[
-        ("[CLS]", cls_token_id),
-        ("[SEP]", sep_token_id),
-    ],
-)
-```
-Check that we get the expected results by encoding a pair of sentences for instance:
-```python
-encoding = tokenizer.encode("This is one sentence.", "With this one we have a pair.")
-encoding.tokens
-```
-```sh
-['[CLS]',
- 'this',
- 'is',
- 'one',
- 'sentence',
- '.',
- '[SEP]',
- 'with',
- 'this',
- 'one',
- 'we',
- 'have',
- 'a',
- 'pair',
- '.',
- '[SEP]']
- ```
- ```
- encoding.type_ids
- ```
- ```sh
- [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
- ```
-The last piece in this tokenizer is the decoder, we use a WordPiece decoder and indicate the special prefix `##`:
-```python
-tokenizer.decoder = decoders.WordPiece(prefix="##")
-```
-Now that our tokenizer is finished, we need to wrap it inside a Transformers object to be able to use it with the Transformers library. More specifically, we have to put it inside the class of tokenizer fast corresponding to the model we want to use, here a BertTokenizerFast:
-```python
-from transformers import BertTokenizerFast
-new_tokenizer = BertTokenizerFast(tokenizer_object=tokenizer)
-```
-And like before, we can use this tokenizer as a normal Transformers tokenizer, and use the save_pretrained or push_to_hub methods. 
-
-Source: Hugging Face, [Colab Notebook](https://colab.research.google.com/github/huggingface/notebooks/blob/main/examples/tokenizer_training.ipynb) for tokenizers of T5 or GPT2.
-
-
-
-
-### Causal Language Model Training
-
-Here is how to load and preprocess the dataset for each one of those tasks, and how to use 🤗 Trainer API to train a model on it.
-
-1. Assuming you have trained a tokenizer on your corpus, first load your data (could be a csv or a JSON file as well) using 🤗 Datasets library:
-```python
-from datasets import load_dataset
-
-datasets = load_dataset('wikitext', 'wikitext-2-raw-v1')
-```
-For causal language modeling (CLM), we can concatenate all the text after they are tokenized and then split them into examples of a certain sequence length up to the maximum length allowed by the model. As said before, the labels will be the same as the inputs, shifted to the left. 
-
-We will use the **gpt2** architecture here. You can pick any of the checkpoints instead. For the tokenizer, you can replace the checkpoint by the one you trained yourself:
-```python
-model_checkpoint = "gpt2"
-tokenizer_checkpoint = "sgugger/gpt2-like-tokenizer"
-```
-To tokenize all our texts with the same vocabulary that was used when training the model, we have to download a pretrained tokenizer. This is all done by the `AutoTokenizer` class:
-```python
-from transformers import AutoTokenizer
-    
-tokenizer = AutoTokenizer.from_pretrained(tokenizer_checkpoint)
-```
-Use the `map` method from the Datasets library to apply tokenizer to the examples in the batch. We won't need the text column afterward, so we discard it.
-
-```python
-tokenized_datasets = datasets.map(lambda ex: tokenizer(ex['text']), batched=True, num_proc=4, remove_columns=["text"])
-
-# Look at a typical example in the dataset
-tokenized_datasets["train"][1]
-```
-
-```sh
-{'attention_mask': [1, 1, 1, 1, 1, 1],
- 'input_ids': [238, 8576, 9441, 2987, 238, 252]}
- ```
-
-Now concatenate all our texts together and then split the result in small chunks of a certain `block_size` length. To do this, use the `map` method again, with the option `batched=True`. Choose the maximum length our model was pretrained with as `block_size` if not too big to fit in your GPU RAM. Otherwise take a bit less at just 128!
-```python
-# block_size = tokenizer.model_max_length
-block_size = 128
-
-lm_datasets = tokenized_datasets.map(
-    group_texts, # The function that concats and then cuts text to size
-    batched=True,
-    batch_size=1000,
-    num_proc=4,
-)
-```
-See what you got:
-```python
-tokenizer.decode(lm_datasets["train"][1]["input_ids"])
-```
-```sh
-' the " Nameless ", a penal military unit serving the nation of Gallia during the Second Europan War who perform secret black operations and are pitted against the Imperial unit " Calamaty Raven ". \n The game began development in 2010, carrying over a large portion of the work done on Valkyria Chronicles II. While it retained the standard features of the series, it also underwent multiple adjustments, such as making the game more forgiving for series newcomers. Character designer Raita Honjou and composer Hitoshi Sakimoto both returned from previous entries, along with Valkyria Chronicles II director Takeshi Ozawa. A large'
-```
-
-Now that the data has been cleaned, we're ready to instantiate our `Trainer`. First we create the model using the same config as our checkpoint, but initialized with random weights:
-
-```python
-from transformers import AutoConfig, AutoModelForCausalLM
-
-config = AutoConfig.from_pretrained(model_checkpoint)
-model = AutoModelForCausalLM.from_config(config)
-```
-
-Before we start training, make it clear if you want to push the trained model to the Hub regularly during training or you want to save your model locally in a name that is different than the name of the repository it will be pushed, or if you want to push your model under an organization and not your name space. 
-```python
-from transformers import Trainer, TrainingArguments
-
-training_args = TrainingArguments(
-    f"{model_checkpoint}-wikitext2",
-    evaluation_strategy = "epoch",
-    learning_rate=2e-5,
-    weight_decay=0.01,
-    push_to_hub=True
-)
-```
-```python
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=lm_datasets["train"],
-    eval_dataset=lm_datasets["validation"],
-)
-```
-And we can train our model:
-
-```python
-trainer.train()
-```
-Evaluate the model:
-```python
-import math
-eval_results = trainer.evaluate()
-print(f"Perplexity: {math.exp(eval_results['eval_loss']):.2f}")
-```
-You can now upload the result of the training to the Hub, just execute this instruction `trainer.push_to_hub()`. Then you can load it with the identifier you chose:
-```python
-from transformers import AutoModelForCausalLM
-
-model = AutoModelForCausalLM.from_pretrained("sgugger/my-awesome-model")
-```
-
-### Masked language model Training
-For masked language modeling (MLM) we are going to use the same preprocessing as before for our dataset with one additional step: we will randomly mask some tokens (by replacing them by `[MASK]`) and the labels will be adjusted to only include the masked tokens (we don't have to predict the non-masked tokens). If you use a tokenizer you trained yourself, make sure the `[MASK]` token is among the special tokens you passed during training!
-
-We will use the bert-base-cased model for this example. You can pick any of the checkpoints listed here instead. For the tokenizer, replace the checkpoint by the one you trained.
-
-```python
-model_checkpoint = "bert-base-cased"
-tokenizer_checkpoint = "sgugger/bert-like-tokenizer"
-```
-We can apply the same tokenization function as before, we just need to update our tokenizer to use the checkpoint we just picked:
-
-```python
-tokenizer = AutoTokenizer.from_pretrained(tokenizer_checkpoint)
-tokenized_datasets = datasets.map(lambda ex: tokenizer(ex['text']), batched=True, num_proc=4, remove_columns=["text"])
-```
-And like before, group texts together and chunk them in samples of length block_size. You can skip that step if your dataset is composed of individual sentences.
-
-```python
-lm_datasets = tokenized_datasets.map(
-    group_texts,
-    batched=True,
-    batch_size=1000,
-    num_proc=4,
-)
-```
-Use a model suitable for masked LM:
-```python
-from transformers import AutoConfig, AutoModelForMaskedLM
-
-config = AutoConfig.from_pretrained(model_checkpoint)
-model = AutoModelForMaskedLM.from_config(config)
-
-training_args = TrainingArguments(
-    "test-clm",
-    evaluation_strategy = "epoch",
-    learning_rate=2e-5,
-    weight_decay=0.01,
-    push_to_hub=True,
-    push_to_hub_model_id=f"{model_checkpoint}-wikitext2",
-)
-```
-Use `data_collator` to ensure the random masking is done in a new way each time we go over the data. The library provides a `DataCollatorForLanguageModeling`. We can adjust the probability of the masking:
-
-```python
-from transformers import DataCollatorForLanguageModeling
-data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm_probability=0.15)
-```
-Pass everything to Trainer and begin training:
-```python
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=lm_datasets["train"],
-    eval_dataset=lm_datasets["validation"],
-    data_collator=data_collator,
-)
-```
-```python
-trainer.train()
-```
-Evaluate the model on the validation set. The perplexity is much lower than for the CLM objective because for the MLM objective, we only have to make predictions for the masked tokens (which represent 15% of the total here) while having access to the rest of the tokens. It's thus an easier task for the model.
-```python
-eval_results = trainer.evaluate()
-print(f"Perplexity: {math.exp(eval_results['eval_loss']):.2f}")
-```
-
-Source: Hugging Face, [Colab Notebook](https://colab.research.google.com/github/huggingface/notebooks/blob/main/examples/language_modeling_from_scratch.ipynb) for full implementation.
-
-
 --------
-Reference: Mainly from the following
+References - mainly from the following:
 
 - [Generative AI with Large Language Models](https://www.coursera.org/learn/generative-ai-with-llms)
 - [Natural Language Processing with Attention Models](https://www.coursera.org/learn/attention-models-in-nlp)
 - [Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3)
+
