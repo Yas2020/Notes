@@ -597,6 +597,27 @@ In TRPO, an objective function (the “surrogate” objective) is maximized subj
 
 $$
 \begin{align*}
+\hat g &= \underset{\tau \sim \pi_\theta}{\hat {\mathbb E}}\left[{
+    \sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}(a_t|s_t) \hat {A}(s_t,a_t)
+    }\right]\\
+    &= \underset{\tau \sim \pi_{\theta_{\text{old}}}}{\hat {\mathbb E}}\left[{
+    \sum_{t=0}^{T} \frac{\pi_{\theta}(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)} \nabla_{\theta} \log \pi_{\theta}(a_t|s_t) \hat {A}(s_t,a_t)
+    }\right]\\
+    &= \underset{\tau \sim \pi_{\theta_{\text{old}}}}{\hat {\mathbb E}}\left[{
+    \sum_{t=0}^{T} \frac{\nabla_{\theta} \pi_{\theta}(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)}  \hat {A}(s_t,a_t)
+    }\right]
+\end{align*}
+$$
+So the off policy objective can be expressed as:
+
+$$
+\hat g = \underset{\tau \sim \pi_{\theta_{\text{old}}}}{\hat {\mathbb E}}\left[{
+    \sum_{t=0}^{T} \frac{ \pi_{\theta}(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)}  \hat {A}(s_t,a_t)
+    }\right]
+$$
+Therefore the new optimization problems is:
+$$
+\begin{align*}
 \underset{\theta}{\text{maximize}}\;\;\underset{\tau \sim \pi_\theta}{\hat {\mathbb E}} \left[ \frac{\pi_\theta (a_t|s_t)}{\pi_{\theta_{\text{old}}} (a_t|s_t)} \hat A(s_t,a_t) \right]\\
 \text{subject to}\;\;\underset{\tau \sim \pi_\theta}{\hat {\mathbb E}} \left[ KL[\pi_{\theta_{\text{old}}}(.|s_t), \pi_{\theta}(.|s_t)] \right]\leq \delta
 \end{align*}
@@ -622,8 +643,7 @@ $$
 \hat {\mathbb E}_t \left[ \min(r_t(\theta) \hat A_t, \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat A_t)\right]
 $$
 
-where epsilon is a hyperparameter, say, $\epsilon = 0.2$. The
-first term inside the min is TRPO objective function. The second term, $\text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat A_t)$ modifies the surrogate objective by clipping the probability ratio, which removes the incentive for moving $r_t$ outside of the interval $[1−ϵ,1 + ϵ]$. Finally, we take the minimum of the clipped and unclipped objective, so the final objective is a lower bound (i.e., a pessimistic bound) on the unclipped objective. With this scheme, we only ignore the change in probability ratio when it would make the objective improve, and we include it when it makes the objective worse.
+where epsilon is a hyperparameter, say, $\epsilon = 0.2$. The first term inside the min is TRPO objective function. The second term, $\text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat A_t)$ modifies the surrogate objective by clipping the probability ratio, which removes the incentive for moving $r_t$ outside of the interval $[1−ϵ,1 + ϵ]$. Finally, we take the minimum of the clipped and unclipped objective, so the final objective is a lower bound (i.e., a pessimistic bound) on the unclipped objective. With this scheme, we only ignore the change in probability ratio when it would make the objective improve, and we include it when it makes the objective worse.
 
 
 There are two primary variants of PPO: **PPO-Clip** that was just explained and **PPO-Penalty**.
@@ -633,3 +653,5 @@ There are two primary variants of PPO: **PPO-Clip** that was just explained and 
 - PPO-Penalty approximately solves a KL-constrained update like TRPO, but penalizes the KL-divergence in the objective function instead of making it a hard constraint, and automatically adjusts the penalty coefficient over the course of training so that it’s scaled appropriately.
 
 PPO trains a stochastic policy in an on-policy way. This means that it explores by sampling actions according to the latest version of its stochastic policy. The amount of randomness in action selection depends on both initial conditions and the training procedure. Over the course of training, the policy typically becomes progressively less random, as the update rule encourages it to exploit rewards that it has already found. This may cause the policy to get trapped in local optima. While PPO clipping method goes a long way towards ensuring reasonable policy updates, it is still possible to end up with a new policy which is too far from the old policy, and there are a bunch of tricks used by different PPO implementations to stave this off. [Spinning UP implementation](https://spinningup.openai.com/en/latest/algorithms/ppo.html) uses a particularly simple method: **early stopping**. If the mean KL-divergence of the new policy from the old grows beyond a threshold, taking gradient steps is stoped.
+
+Useful Ref: [newfacade](https://newfacade.github.io/notes-on-reinforcement-learning/17-ppo-trl.html)
