@@ -1,5 +1,192 @@
 <h1 class='title'>Kubernetes</h1>
 
+### Table of Contents
+- [Kubernetes](#kubernetes)
+  - [Kubernetes Architecture](#kubernetes-architecture)
+    - [Control Plane](#control-plane)
+      - [API Server](#api-server)
+      - [Scheduler](#scheduler)
+      - [Controller Managers](#controller-managers)
+      - [Key-Value Data Store](#key-value-data-store)
+    - [Data Plane](#data-plane)
+      - [Container Runtime](#container-runtime)
+      - [Node Agent - kubelet](#node-agent---kubelet)
+      - [Proxy-Kube-proxy](#proxy-kube-proxy)
+      - [Add-ons](#add-ons)
+    - [Networking Challenges](#networking-challenges)
+    - [kubeadm](#kubeadm)
+      - [kubectl](#kubectl)
+      - [Namespaces](#namespaces)
+    - [Pods](#pods)
+    - [Labels](#labels)
+    - [Deployment](#deployment)
+    - [Service](#service)
+- [Authorization](#authorization)
+    - [Node](#node)
+    - [Webhook](#webhook)
+    - [Role-Based Access Control (RBAC)](#role-based-access-control-rbac)
+    - [Example of User Autherization using RBAC](#example-of-user-autherization-using-rbac)
+    - [ServiceAccount Permissions](#serviceaccount-permissions)
+    - [Use cases for Kubernetes Service Accounts](#use-cases-for-kubernetes-service-accounts)
+      - [Grant Permissions to Service Accounts](#grant-permissions-to-service-accounts)
+    - [Admission Control](#admission-control)
+- [Services](#services)
+    - [Connecting Users or Applications to Pods](#connecting-users-or-applications-to-pods)
+    - [kube-proxy](#kube-proxy)
+  - [Traffic Policies](#traffic-policies)
+    - [ServiceType: ClusterIP and NodePort](#servicetype-clusterip-and-nodeport)
+    - [ServiceType: LoadBalancer](#servicetype-loadbalancer)
+  - [Liveness and Readiness Probes](#liveness-and-readiness-probes)
+    - [Liveness](#liveness)
+    - [Liveness HTTP Request](#liveness-http-request)
+    - [TCP Liveness Probe](#tcp-liveness-probe)
+    - [Readiness Probes](#readiness-probes)
+- [Kubernetes Volume Management](#kubernetes-volume-management)
+  - [PersistentVolumes](#persistentvolumes)
+    - [Persistent Volume Claims](#persistent-volume-claims)
+    - [Container Storage Interface (CSI)](#container-storage-interface-csi)
+      - [Using a Shared hostPath Volume Type Demo Guide](#using-a-shared-hostpath-volume-type-demo-guide)
+- [ConfigMaps and Secrets](#configmaps-and-secrets)
+    - [Use ConfigMaps Inside Pods: As Environment Variables](#use-configmaps-inside-pods-as-environment-variables)
+      - [Using ConfigMaps as Volumes Demo Guide](#using-configmaps-as-volumes-demo-guide)
+  - [Secrets](#secrets)
+      - [Use Secrets Inside Pods: As Environment Variables](#use-secrets-inside-pods-as-environment-variables)
+    - [Use Secrets Inside Pods: As Volumes](#use-secrets-inside-pods-as-volumes)
+- [Ingress](#ingress)
+    - [Ingress Controller](#ingress-controller)
+      - [Deploy an Ingress Resource](#deploy-an-ingress-resource)
+      - [Access Services Using Ingress](#access-services-using-ingress)
+- [Advanced Topics](#advanced-topics)
+    - [Annotations](#annotations)
+    - [Quota and Limits Management](#quota-and-limits-management)
+    - [Autoscaling](#autoscaling)
+    - [Jobs and CronJobs](#jobs-and-cronjobs)
+    - [StatefulSets](#statefulsets)
+    - [Network Policies](#network-policies)
+    - [Monitoring, Logging, and Troubleshooting](#monitoring-logging-and-troubleshooting)
+    - [Helm](#helm)
+    - [Service Mesh](#service-mesh)
+    - [Application Deployment Strategies](#application-deployment-strategies)
+- [Introduction to Istio](#introduction-to-istio)
+    - [The Shift to Cloud-Native Applications](#the-shift-to-cloud-native-applications)
+    - [New Problems](#new-problems)
+    - [Early Solutions](#early-solutions)
+  - [Service Meshes](#service-meshes)
+    - [Features of Istio Service Mesh](#features-of-istio-service-mesh)
+    - [Security](#security)
+    - [Service Discovery](#service-discovery)
+    - [Traffic Management](#traffic-management)
+    - [Resilience](#resilience)
+    - [Observability](#observability)
+      - [Advanced Deployment](#advanced-deployment)
+  - [Istio Architecture](#istio-architecture)
+    - [How Does Istio Work?](#how-does-istio-work)
+    - [Sidecar Injection](#sidecar-injection)
+      - [Routing Application Traffic Through the Sidecar](#routing-application-traffic-through-the-sidecar)
+    - [Install Istio - Commmand Line](#install-istio---commmand-line)
+  - [Observability](#observability-1)
+    - [How Service Meshes Simplify and Improve Observability](#how-service-meshes-simplify-and-improve-observability)
+    - [How Istio Exposes Workload Metrics (1)](#how-istio-exposes-workload-metrics-1)
+    - [Grafana Dashboards for Istio (1)](#grafana-dashboards-for-istio-1)
+    - [Distributed Tracing](#distributed-tracing)
+      - [Terms](#terms)
+    - [Deploy Jaeger and Review Some Traces](#deploy-jaeger-and-review-some-traces)
+  - [Traffic Management](#traffic-management-1)
+    - [Gateways](#gateways)
+    - [Traffic Routing in Istio](#traffic-routing-in-istio)
+      - [Where to Route the Traffic?](#where-to-route-the-traffic)
+    - [Advanced Traffic Routing](#advanced-traffic-routing)
+    - [Rewriting and Redirecting Traffic](#rewriting-and-redirecting-traffic)
+- [Security](#security-1)
+  - [Access Control](#access-control)
+    - [Authentication (authn)](#authentication-authn)
+      - [Mutual TLS](#mutual-tls)
+        - [Provisioning Identities at Runtime](#provisioning-identities-at-runtime)
+        - [Certificate issuance flow in Istio](#certificate-issuance-flow-in-istio)
+        - [Inbound Traffic to the Proxy](#inbound-traffic-to-the-proxy)
+        - [Outbound Traffic from the Proxy](#outbound-traffic-from-the-proxy)
+      - [Gateways and TLS](#gateways-and-tls)
+    - [Mutual TLS - Lab](#mutual-tls---lab)
+        - [Disabling Sidecar Injection](#disabling-sidecar-injection)
+        - [Permissive Mode in Action](#permissive-mode-in-action)
+        - [Observing the Permissive Mode in Kiali](#observing-the-permissive-mode-in-kiali)
+        - [Exposing the "customers" Service](#exposing-the-customers-service)
+        - [Generating Traffic to the "customers" Service](#generating-traffic-to-the-customers-service)
+        - [Observing the Traffic in Kiali](#observing-the-traffic-in-kiali)
+        - [Enabling "STRICT" mode](#enabling-strict-mode)
+          - [Cleanup](#cleanup)
+  - [Authenticating Users](#authenticating-users)
+    - [Authorization (authz)](#authorization-authz)
+      - [Authorization Policies](#authorization-policies)
+        - [Sources Identities ("from" field)](#sources-identities-from-field)
+        - [Request Operation ("to" field)](#request-operation-to-field)
+        - [Conditions ("when" field)](#conditions-when-field)
+        - [Configure the "action" Field](#configure-the-action-field)
+      - [How Are Rules Evaluated?](#how-are-rules-evaluated)
+    - [Access Control - Lab](#access-control---lab)
+      - [Enabling Requests from Ingress to “web-frontend"](#enabling-requests-from-ingress-to-web-frontend)
+        - [Enabling Requests from "web-frontend" to “customers"](#enabling-requests-from-web-frontend-to-customers)
+      - [Gateway and Auth](#gateway-and-auth)
+  - [Policy storage](#policy-storage)
+- [Advanced Topics for Istio](#advanced-topics-for-istio)
+  - [External Authorization](#external-authorization)
+  - [Deployment Models for Serice Mesh](#deployment-models-for-serice-mesh)
+    - [Multi-cluster Deployments](#multi-cluster-deployments)
+        - [Network Deployment Models](#network-deployment-models)
+        - [Control Plane Deployment Models](#control-plane-deployment-models)
+      - [Mesh Deployment Models](#mesh-deployment-models)
+    - [Tenancy Models](#tenancy-models)
+    - [Locality Failover](#locality-failover)
+    - [Onboarding VMs](#onboarding-vms)
+      - [Connect a VM Workload to the Istio Mesh](#connect-a-vm-workload-to-the-istio-mesh)
+        - [Create a Kubernetes Cluster](#create-a-kubernetes-cluster)
+        - [Install the Ratings Service on the VM](#install-the-ratings-service-on-the-vm)
+        - [Allow POD-to-VM Traffic on Port 9080](#allow-pod-to-vm-traffic-on-port-9080)
+        - [Install the East-West Gateway and Expose Istiod](#install-the-east-west-gateway-and-expose-istiod)
+        - [Create the WorkloadGroup](#create-the-workloadgroup)
+        - [Generate VM Artifacts](#generate-vm-artifacts)
+        - [VM Configuration Recipe](#vm-configuration-recipe)
+    - [Custom CA Integration using Kubernetes CSR](#custom-ca-integration-using-kubernetes-csr)
+      - [What Is a Certificate?](#what-is-a-certificate)
+      - [Certificate Trust Chain](#certificate-trust-chain)
+      - [How to Incorporate Istio into the PKI Certificate Trust Chain](#how-to-incorporate-istio-into-the-pki-certificate-trust-chain)
+      - [Steps for Using a Custom CA in Istio](#steps-for-using-a-custom-ca-in-istio)
+        - [Deploy cert-manager according to the installation doc.](#deploy-cert-manager-according-to-the-installation-doc)
+        - [Create self-signed cluster issuers](#create-self-signed-cluster-issuers)
+        - [Deploy Istio on the cluster](#deploy-istio-on-the-cluster)
+        - [Install Istio](#install-istio)
+        - [Congigure sidecars to use custom CA in each namespace](#congigure-sidecars-to-use-custom-ca-in-each-namespace)
+        - [Test](#test)
+    - [Secure Gatways using TLS self-signed certificates](#secure-gatways-using-tls-self-signed-certificates)
+        - [Add our CA to a secret](#add-our-ca-to-a-secret)
+  - [Use Envoy as Front Proxy (or Reverse Proxy)](#use-envoy-as-front-proxy-or-reverse-proxy)
+    - [Proxy Protocol and Envoy](#proxy-protocol-and-envoy)
+      - [What is the Proxy Protocol?](#what-is-the-proxy-protocol)
+- [GitOps: FluxCD](#gitops-fluxcd)
+    - [Control and feedback loop](#control-and-feedback-loop)
+    - [Key GitOps benefits](#key-gitops-benefits)
+    - [GitOps delivery pipeline](#gitops-delivery-pipeline)
+    - [FluxCD](#fluxcd)
+      - [Bootstrap Flux:](#bootstrap-flux)
+      - [Create a K8s secret to be used by flux to access repos instead of PAT:](#create-a-k8s-secret-to-be-used-by-flux-to-access-repos-instead-of-pat)
+      - [Specify the source repo for flux to monitor](#specify-the-source-repo-for-flux-to-monitor)
+      - [Specify the location of manifests in the source repo](#specify-the-location-of-manifests-in-the-source-repo)
+      - [Create a kustomization resource](#create-a-kustomization-resource)
+      - [Automating Image Updates](#automating-image-updates)
+    - [Progressive Deployment: Flagger](#progressive-deployment-flagger)
+      - [Test the Canary:](#test-the-canary)
+        - [Prometheus](#prometheus)
+        - [Workload-level aggregation via recording rules](#workload-level-aggregation-via-recording-rules)
+- [Kubernetes on Linux](#kubernetes-on-linux)
+      - [MetalLB Installation](#metallb-installation)
+        - [Installation - Manifest](#installation---manifest)
+        - [Configuration](#configuration)
+      - [Install Helm](#install-helm)
+      - [Useful commands for Kubernetes:](#useful-commands-for-kubernetes)
+        - [kubectl exec Syntax](#kubectl-exec-syntax)
+    - [How to find unused IP address on my network?](#how-to-find-unused-ip-address-on-my-network)
+
+
 ## From Monolith to Microservices
 
 Most new companies today run their business processes in the cloud. Newer startups and enterprises which realized early enough the direction technology was headed developed their applications for the cloud.
@@ -165,7 +352,7 @@ Kubernetes supports several container runtimes:
 - CRI-O: A lightweight container runtime for Kubernetes, supporting quay.io and Docker Hub image registries
 - containerd: A simple, robust, and portable container runtime
 - Docker Engine: A popular and complex container platform which uses containerd as a container runtime
-- Mirantis Container Runtime 
+- Mirantis Container Runtime
 - Formerly known as the Docker Enterprise Edition.
 
 #### Node Agent - kubelet
@@ -421,8 +608,8 @@ Create a private key for the new user bob with the `openssl` tool, then creat
 
 ```sh
 ~/rbac$ openssl genrsa -out bob.key 2048
-Generating RSA private key, 2048 bit long modulus (2 primes) .................................................+++++ .........................+++++ e is 65537 (0x010001)
-~/rbac$ openssl req -new -key bob.key \   -out bob.csr -subj "/CN=bob/O=learner"
+Generating RSA private key, 2048 bit long modulus (2 primes).................................................+++++.........................+++++e is 65537 (0x010001)
+~/rbac$ openssl req -new -key bob.key \  -out bob.csr -subj "/CN=bob/O=learner"
 ```
 
 Create a YAML definition manifest for a certificate signing request object, and save it with a blank value for the request field: 
@@ -503,27 +690,27 @@ bob-csr   57s   kubernetes.io/kube-apiserver-client   minikube-user   Ap
 Extract the approved certificate from the certificate signing request, decode it with base64 and save it as a certificate file. Then view the certificate in the newly created certificate file:
 
 ```sh
-~/rbac$ kubectl get csr bob-csr \   -o jsonpath='{.status.certificate}' | \   base64 -d > bob.crt
+~/rbac$ kubectl get csr bob-csr \  -o jsonpath='{.status.certificate}' | \  base64 -d > bob.crt
 ```
 
 ```sh
 ~/rbac$ cat bob.crt
 -----BEGIN CERTIFICATE-----
-MIIDGzCCA... ... ...NOZRRZBVunTjK7A==
+MIIDGzCCA.........NOZRRZBVunTjK7A==
 -----END CERTIFICATE-----
 ```
 
 Configure the kubectl client's configuration manifest with user bob's credentials by assigning his key and certificate: 
 
 ```sh
-~/rbac$ kubectl config set-credentials bob \   --client-certificate=bob.crt --client-key=bob.key
+~/rbac$ kubectl config set-credentials bob \  --client-certificate=bob.crt --client-key=bob.key
 User "bob" set.
 ```
 
 Create a new context entry in the kubectl client's configuration manifest for user bob, associated with the `lfs158` namespace in the minikube cluster:
 
 ```sh
-~/rbac$ kubectl config set-context bob-context \   --cluster=minikube --namespace=lfs158 --user=bob
+~/rbac$ kubectl config set-context bob-context \  --cluster=minikube --namespace=lfs158 --user=bob
 Context "bob-context" created.
 ```
 
@@ -1233,7 +1420,7 @@ my-file-password   Opaque   1      8m
 ```sh
 $ kubectl describe secret my-file-password
 Name:          my-file-password
-Namespace:     default Labels:        <none>
+Namespace:     defaultLabels:        <none>
 Annotations:   <none>
 Type  Opaque
 Data

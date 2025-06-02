@@ -2,6 +2,33 @@
 
 <h1 class='title'>Deep Reinforcement Learning</h1>
 
+### Table of Content
+
+- [Terminology and Notation](#terminology-and-notation)
+  - [States and Observations](#states-and-observations)
+  - [Action Spaces](#action-spaces)
+  - [Policies](#policies)
+  - [Trajectories](#trajectories)
+  - [Reward and Return](#reward-and-return)
+  - [The RL Problem](#the-rl-problem)
+  - [Value Functions](#value-functions)
+  - [The Optimal Q-Function and the Optimal Action](#the-optimal-q-function-and-the-optimal-action)
+  - [Bellman Equations](#bellman-equations)
+  - [Advantage Functions](#advantage-functions)
+- [RL Algorithms](#rl-algorithms)
+  - [What to Learn in Model-Free RL](#what-to-learn-in-model-free-rl)
+    - [Trade-offs Between Policy Optimization and Q-Learning](#trade-offs-between-policy-optimization-and-q-learning)
+    - [Interpolating Between Policy Optimization and Q-Learning](#interpolating-between-policy-optimization-and-q-learning)
+- [Intro to Policy Optimization](#intro-to-policy-optimization)
+  - [Deriving the Simplest Policy Gradient](#deriving-the-simplest-policy-gradient)
+  - [Don’t Let the Past Distract You](#dont-let-the-past-distract-you)
+  - [Baselines in Policy Gradients](#baselines-in-policy-gradients)
+  - [Other Forms of the Policy Gradient](#other-forms-of-the-policy-gradient)
+  - [Some Policy Gradient Optimization Algorithms](#some-policy-gradient-optimization-algorithms)
+    - [Vanilla Policy Gradient (VPG)](#vanilla-policy-gradient-vpg)
+  - [Proximal Policy Optimization](#proximal-policy-optimization)
+
+
 Main Source: 
 
 - [SpinningUp - OpenAI](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html)

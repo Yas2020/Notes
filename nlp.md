@@ -2,8 +2,7 @@
 
 <h1 class='title'>Natural Language Processing</h1>
 
-# Table of Content
-- [Table of Content](#table-of-content)
+### Table of Content
 - [N-Gram Language Model Overview](#n-gram-language-model-overview)
 - [Training Tokenizers](#training-tokenizers)
     - [Byte Pair Encoding (BPE) Tokenizer](#byte-pair-encoding-bpe-tokenizer)
@@ -1858,7 +1857,7 @@ We then train the model to guess the correct token for the manipulated tokens. W
 In the following figure, three of the input tokens are selected, two of which are masked and the third is replaced with an unrelated word. The probabilities assigned by the model to these three items are used as the training loss. The other 5 tokens don’t play a role in training loss.
 
 <p align="center">
-    <img src="./assets/seq-models/BERT-training.png" alt="drawing" width="700" height="300" style="center" />
+    <img src="./assets/seq-models/bert-training.png" alt="drawing" width="700" height="300" style="center" />
 </p>
 
 
@@ -1869,7 +1868,7 @@ For this reason, some models in the BERT family include a second learning object
 After processing the two spans, the 1st output vector (the vector coding for `[CLS]`) is passed to a separate neural network for the binary classification. In fact, we add a special head, in this case an NSP head, which consists of a learned set of classification weights for binary classification (outputs `[IsNext]` or `[NotNext]`).
 
 <p align="center">
-    <img src="./assets/seq-models/BERT-nsp.png" alt="drawing" width="700" height="300" style="center" />
+    <img src="./assets/seq-models/bert-nsp.png" alt="drawing" width="700" height="300" style="center" />
 </p>
 
 But how BERT inputs are fed into the model? You start with position embeddings to indicate the position of words in the sentence. Then you have the segment embeddings to indicate whether it's a sentence A or sentence B (remember in BERT you also use next sentence prediction). Then you have the token embeddings or the input embeddings. You also have a `CLS` token, which is used to indicate the beginning of the sentence, and a `SEP` token, which is used to indicate the end of the sentence. Then you just take the sum of the token embeddings, the segmentation embeddings, and the position embeddings, and then you get your new input.

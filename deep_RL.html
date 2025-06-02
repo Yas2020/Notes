@@ -10,7 +10,7 @@
       
       
       <style>
-body::after {
+  body::after {
           content: "Created by Yas2020";
           position: fixed;
           bottom: 10px;
@@ -62,7 +62,7 @@ body::after {
   font-style: normal;
   font-weight: 400;
   font-stretch: normal;
-  src: url(https://fonts.gstatic.com/s/opensans/v40/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4gaVc.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/opensans/v43/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4gaVc.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Kode Mono';
@@ -245,6 +245,17 @@ body::after {
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
+@media screen and (max-width: 960px) {
+  .markdown-preview.markdown-preview h1 {
+    font-size: 30px;
+  }
+  .markdown-preview.markdown-preview h1.title {
+    font-size: 100px;
+  }
+  .markdown-preview.markdown-preview button {
+    font-size: 10px;
+  }
+}
 
       </style>
       <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
@@ -257,6 +268,47 @@ body::after {
       <div class="crossnote markdown-preview  ">
       
 <h1 class="title">Deep Reinforcement Learning</h1>
+<h3 id="table-of-content">Table of Content </h3>
+<ul>
+<li><a href="#terminology-and-notation">Terminology and Notation</a>
+<ul>
+<li><a href="#states-and-observations">States and Observations</a></li>
+<li><a href="#action-spaces">Action Spaces</a></li>
+<li><a href="#policies">Policies</a></li>
+<li><a href="#trajectories">Trajectories</a></li>
+<li><a href="#reward-and-return">Reward and Return</a></li>
+<li><a href="#the-rl-problem">The RL Problem</a></li>
+<li><a href="#value-functions">Value Functions</a></li>
+<li><a href="#the-optimal-q-function-and-the-optimal-action">The Optimal Q-Function and the Optimal Action</a></li>
+<li><a href="#bellman-equations">Bellman Equations</a></li>
+<li><a href="#advantage-functions">Advantage Functions</a></li>
+</ul>
+</li>
+<li><a href="#rl-algorithms">RL Algorithms</a>
+<ul>
+<li><a href="#what-to-learn-in-model-free-rl">What to Learn in Model-Free RL</a>
+<ul>
+<li><a href="#trade-offs-between-policy-optimization-and-q-learning">Trade-offs Between Policy Optimization and Q-Learning</a></li>
+<li><a href="#interpolating-between-policy-optimization-and-q-learning">Interpolating Between Policy Optimization and Q-Learning</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#intro-to-policy-optimization">Intro to Policy Optimization</a>
+<ul>
+<li><a href="#deriving-the-simplest-policy-gradient">Deriving the Simplest Policy Gradient</a></li>
+<li><a href="#dont-let-the-past-distract-you">Don’t Let the Past Distract You</a></li>
+<li><a href="#baselines-in-policy-gradients">Baselines in Policy Gradients</a></li>
+<li><a href="#other-forms-of-the-policy-gradient">Other Forms of the Policy Gradient</a></li>
+<li><a href="#some-policy-gradient-optimization-algorithms">Some Policy Gradient Optimization Algorithms</a>
+<ul>
+<li><a href="#vanilla-policy-gradient-vpg">Vanilla Policy Gradient (VPG)</a></li>
+</ul>
+</li>
+<li><a href="#proximal-policy-optimization">Proximal Policy Optimization</a></li>
+</ul>
+</li>
+</ul>
 <p>Main Source:</p>
 <ul>
 <li><a href="https://spinningup.openai.com/en/latest/spinningup/rl_intro.html">SpinningUp - OpenAI</a></li>

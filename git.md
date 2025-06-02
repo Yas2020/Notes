@@ -1,4 +1,33 @@
-<h1 class='title'>Git</h1>
+<h1 class='title'>Distributed Version Control </h1>
+
+### Table of Content
+- [Branches](#branches)
+    - [Reasons for Using Branches](#reasons-for-using-branches)
+    - [Creating Branches](#creating-branches)
+    - [Checking out when you have uncommitted changes](#checking-out-when-you-have-uncommitted-changes)
+    - [Create/delete new branches](#createdelete-new-branches)
+- [diff](#diff)
+- [Merges](#merges)
+  - [Merge Strategies](#merge-strategies)
+- [Altering Commits: Change History](#altering-commits-change-history)
+  - [Using 'git reset' to change history](#using-git-reset-to-change-history)
+  - [Using 'git cherry-pick'](#using-git-cherry-pick)
+  - [Using 'git revert'](#using-git-revert)
+    - [Changing the Top Commit](#changing-the-top-commit)
+  - [Rebasing Commits](#rebasing-commits)
+    - [Using 'git rebase -i'](#using-git-rebase--i)
+- [Remote Repositories](#remote-repositories)
+    - [Referring to Remote Repositories](#referring-to-remote-repositories)
+    - [Make Your Own Origin Remote](#make-your-own-origin-remote)
+    - [Pushing Your Changes](#pushing-your-changes)
+    - [Adding a new developer](#adding-a-new-developer)
+    - [Getting Repository Updates](#getting-repository-updates)
+    - [Should you merge or rebase when pulling?](#should-you-merge-or-rebase-when-pulling)
+- [GitHub](#github)
+  - [Creating Pull Request](#creating-pull-request)
+  - [Notifications](#notifications)
+  - [GitHub Pages (Git for Websites)](#github-pages-git-for-websites)
+  - [Notes](#notes)
 
 
 **Git** is a distributed source code management tool used by developers worldwide. It was invented by Linus Torvalds in 2005 for Linux kernel development and is now the most widely used version control system. Code can be completely local, or it can be kept in a remote repository so that developers can collaborate. Every developer also has a full copy of the code. Git is the current standard for version control software. It completely changed how developers do their job, allowing them greater control over their code, and the ability to roll back changes precisely if needed.
