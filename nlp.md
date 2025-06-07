@@ -3,24 +3,49 @@
 <h1 class='title'>Natural Language Processing</h1>
 
 ### Table of Content
-- [N-Gram Language Model Overview](#n-gram-language-model-overview)
-- [Training Tokenizers](#training-tokenizers)
+- [Regular Expressions](#regular-expressions)
+    - [Substitution, Capture Groups](#substitution-capture-groups)
+    - [Lookahead Assertions](#lookahead-assertions)
+- [Words](#words)
+  - [Word and Subword Tokenization](#word-and-subword-tokenization)
+    - [Top-down (rule-based) tokenization](#top-down-rule-based-tokenization)
     - [Byte Pair Encoding (BPE) Tokenizer](#byte-pair-encoding-bpe-tokenizer)
     - [WordPiece Tokenizer](#wordpiece-tokenizer)
     - [Unigram Tokenizer](#unigram-tokenizer)
     - [SentencePiece](#sentencepiece)
+  - [Word Normalization, Lemmatization and Stemming](#word-normalization-lemmatization-and-stemming)
+    - [Lemmatization](#lemmatization)
+    - [Sentence Segmentation](#sentence-segmentation)
+- [N-gram Language Models](#n-gram-language-models)
+    - [Markov Assumption](#markov-assumption)
+    - [Evaluating Language Models](#evaluating-language-models)
+      - [Perplexity](#perplexity)
+- [Text Classification and Sentiment](#text-classification-and-sentiment)
+  - [Naive Bayes](#naive-bayes)
+    - [Training Naive Bayes Classifiers](#training-naive-bayes-classifiers)
+    - [Evaluation: Precision, Recall, F-measure](#evaluation-precision-recall-f-measure)
+    - [Evaluating with more than two classes](#evaluating-with-more-than-two-classes)
+  - [Lagistic Regression](#lagistic-regression)
+    - [Other classification tasks and features](#other-classification-tasks-and-features)
+    - [Designing versus learning features:](#designing-versus-learning-features)
+    - [Multinomial Logistic Regression](#multinomial-logistic-regression)
+    - [Learning in Multinomial Logistic Regression](#learning-in-multinomial-logistic-regression)
 - [Vector Semantics and Word Embeddings](#vector-semantics-and-word-embeddings)
+  - [Word2Vec](#word2vec)
+    - [Vector Semantics](#vector-semantics)
+    - [Word Embeddings](#word-embeddings)
   - [How to Create Word Embeddings?](#how-to-create-word-embeddings)
     - [Continuous Bag of Words Model (CBOW)](#continuous-bag-of-words-model-cbow)
     - [Continuous Skip-grams](#continuous-skip-grams)
-  - [High-Dimensional Outputs](#high-dimensional-outputs)
-    - [Negative Sampling](#negative-sampling)
-    - [Some application of word embedding?](#some-application-of-word-embedding)
+    - [High-Dimensional Outputs](#high-dimensional-outputs)
+      - [Negative Sampling](#negative-sampling)
+  - [Visualizing Embeddings](#visualizing-embeddings)
+  - [Some application of word embedding?](#some-application-of-word-embedding)
 - [Recurrent Neural Nets (RNNs)](#recurrent-neural-nets-rnns)
   - [Training RNN](#training-rnn)
     - [Computing the Gradient in RNN](#computing-the-gradient-in-rnn)
   - [Different Types of RNNs](#different-types-of-rnns)
-  - [Language models and Text Generation](#language-models-and-text-generation)
+  - [Language Models and Text Generation](#language-models-and-text-generation)
     - [More about Sampling](#more-about-sampling)
       - [Beam Search](#beam-search)
         - [Error Abalysis in Beam Search](#error-abalysis-in-beam-search)
@@ -68,7 +93,6 @@
       - [Multi-Task Training Strategy](#multi-task-training-strategy)
   - [Evaluation of LLMs](#evaluation-of-llms)
     - [Train/Val/Test splits](#trainvaltest-splits)
-    - [Perplexity](#perplexity)
     - [GLUE Benchmark](#glue-benchmark)
     - [Bleu Score](#bleu-score)
     - [ROUGE-N Score](#rouge-n-score)
@@ -134,87 +158,129 @@
 
 <br><br><br><br>
 
-# N-Gram Language Model Overview
+# Regular Expressions
 
-N-grams are fundamental and give you a foundation that will allow you to understand more complicated models in the specialization. These models allow you to calculate probabilities of certain words happening in a specific sequence. Using that, you can build an auto-correct or even a search suggestion tool. Other applications of N-gram language modeling include: 
-
-- **Speech Recognition**: $P(\text{I saw a van}) > P(\text{eyes awe of an})$
-- **Spelling Correction**: $P(\text{entered the shop to buy}) > P(\text{entered the shop to buy})$
-- **Augmentative Communication**: prdict modt likely word from menu for people unable to physically talk or sign
-
-An N-gram is a sequence of N words sitting next to each other in the corpus. Example:
-Corpus: `I am happy becuse I am learning`
-Unigrams: {`I`, `am`, `happy`, `because`, `learning`}
-Bigrams: {`I am`, `am happy`, `happy because`, `because I`, `am learning`}
-Bigrams: {`I am happy`, `am happy becuse`, `happy because I`, `becuase I am`, `I am learning`}
-
-Given the corpus:
-
-\[
-\begin{align*}
-P(\text{I}) &= \frac{2}{7}\\
-P(\text{happy}) &= \frac{1}{7}\\
-P(\text{am}|\text{I}) &= \frac{C(\text{I am})}{C(\text{I})} = \frac{2}{2} = 1\\
-P(\text{happy}|\text{I}) &= \frac{0}{2} = 0 \\
-\end{align*}
-\]
-
-Probability of bigram $x, y$ is $P(y|x)$. In general, n-gram probability $w_1,...,w_n$ are estimated like this $P(w_n|w_1,...w_{n-1})$. Approximate the probability of a sentence using 
-
-$$
-P(A,B,C,D)=P(A)P(B∣A)P(C∣A,B)P(D∣A,B,C).
-$$ 
-
-Example:
-
-$$
-\begin{align*}
-P(\text{the teacher drinks tea}) &= P(\text{the})\times P( \text{teacher} | \text{the}) \\ & \times P(\text{drinks}| \text{the teacher})\times P(\text{tea}∣\text{the teacher drinks})
-\end{align*}
-$$
-
-In practice, the corpus rarely contains the exact same phrases as the ones you computed your probabilities on. Hence, you can easily end up getting a probability of 0. To make an estimation of these probabilities, we might want to follow the Markov assumption that indicates only the last word matters. Hence: you can model the entire sentence as follows:
-
-$$P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-N+1}^{n-1})$$
-
-for some $N$. You can model the entire sentence as follows:
-
-$$P(w^n_1) \approx \prod^n_{i=1} P(w_i | w_{i-1})$$
-
-To avoid **underflow**, you can multiply by the log:
-
-$$\log P(w^n_1) \approx \sum^n_{i=1} \log P(w_i | w_{i-1})$$
-
-Now that we have joint distribution of words, we have a generative model using N-grams:
-- Choose sentence start
-- Choose next bigram starting with previous word
-- Continue until `</s>` is picked 
-
-We usually start and end a sentence with the following tokens respectively: `<s> </s>`.  When computing probabilities using a unigram, you can append an `<s>` in the beginning of the sentence. To generalize to an N-gram language model, you can add N-1 start tokens `<s>`.  For the end of sentence token `</s>`, you only need one even if it is an N-gram. Example of bigram:
-
-corpus=`<s>Lyn drinks chocolate</s> <s>John drinks tea</s> <s>Lyn eats chocolate</s>`
-
-\[
-\begin{align*}
-P(\text{John}|<s>)&=\frac{1}{3}\\
-P(\text{</s>}|tea)&=\frac{1}{1}\\
-P(Lyn|\text{</s>})&=\frac{2}{3}\\
-P(\text{chocolate}|\text{eats})&=\frac{1}{1}
-\end{align*}
-\]
+One of the most useful tools for text processing in computer science has been the **regular expression** (often shortened to **regex**). Formally, a regular expression is an algebraic notation for characterizing a set of strings. Regular expressions are particularly useful for searching in texts, when we have a pattern to search for and a **corpus** of texts to search through. Unix command-line tool `grep` takes a regular expression and returns every line of the input document that matches the expression.
 
 
-# Training Tokenizers
+The simplest kind of regular expression is a sequence of simple characters; putting characters in sequence is called _concatenation_. To search for `woodchuck`, we type `woodchuck`. _Regular expressions are case sensitive_. The string of characters inside the braces specifies a disjunction of characters to match. For example, the pattern `[wW]` matches patterns containing either `w` or `W`.
 
-How a computer can represent language such as words and sentences, in a numeric format that can then later be used to train neural networks. This process is called **tokenization**.
+The brackets can be used with the dash (-) to specify any one character in a range. The pattern `[2-5]` specifies any one of the characters 2, 3, 4, or 5.
+
+If the caret`^` is the first symbol after the open square brace `[`, the resulting pattern is _negated_. For example, the pattern `[^a]` matches any single character (including special characters) except `a`.
+
+The question mark `?` means “the preceding character or nothing”.
+
+| Regex | Match (single characters) | Example Patterns Matched |
+|------| ------------------------- | -------------------------|
+| `[^A-Z]` | not an upper case letter | “Oyfn pripetchik” |
+| `[^Ss]` | neither ‘S’ nor ‘s’ | “I have no exquisite reason for’t” |
+| `[^.]` |  not a period | “our resident Djinn” |
+| `[e^]` | either ‘e’ or ‘^’ |  “look up ^ now” |
+| `a^b` | the pattern ‘a^b’ | “look up a^ b now” |
+| `woodchucks?` | woodchuck or woodchucks | “woodchuck” |
+| `colou?r` | color or colour | “color” |
+
+
+`a*` means “any string of zero or more as”. This will match `a` or `aaaaaa`, but it will also match the empty string at the start of Off Minor since the string Off Minor starts with zero a’s. So the regular expression for matching one or more `a` is `aa*`.
+
+`[ab]*` means “zero or more a’s or b’s”. `+`, which means “one or more occurrences of the immediately preceding character or regular expression”. Thus, the expression `[0-9]+` is the normal way to specify “a sequence of digits”. There are thus two ways to specify the sheep language: `baaa*!` or `baa+!`.
+
+One very important special character is the period `.`, a wildcard expression that matches any single character (except a carriage return).
+
+|Regex | Match | Example Matches |
+| ------ | ----- | --------- |
+| `beg.n` | any character between beg and n begin | beg’n, begun |
+
+The wildcard is often used together with the `*` to mean “any string of characters”. For example, suppose we want to find any line in which a particular word, for example, `aardvark`, appears twice. We can specify this with the regular expression `aardvark.*aardvark`.
+
+
+The most common anchors are the caret`^` and the dollar sign `$`. The caret `^` matches the start of a line. Thus, the caret `^` has three uses: to match the start of a line, to indicate a negation inside of square brackets, and just to mean a caret. The dollar sign `$` matches the end of a line. So the pattern ` $` is a useful pattern for matching a space at the end of a line, and `^The dog\.$` matches a line that contains only the phrase `The dog.`. 
+
+
+`\b` matches a word boundary, and `\B` matches a non word-boundary. Thus, `\bthe\b` matches the word the but not the word _other_. A “word” for the purposes of a regular expression is defined based on the definition of words in programming languages as a sequence of digits, underscores, or letters. Thus `\b99\b` will match the string `99` in There are `99` bottles of beer on the wall (because `99` follows a space) but not `99` in There are `299` bottles of beer on the wall (since `99` follows a number). But it will match `99` in `$99` (since `99` follows a dollar sign (`$`), which is not a digit, underscore, or letter).
+
+Search for “cat or dog” ? we need a new operator, the **disjunction** operator, also called the pipe symbol `|` . The pattern `cat|dog` matches either the string cat or the string dog.
+
+How can I specify both guppy and guppies? the pattern `gupp(y|ies)` would specify that we meant the disjunction only to apply to the suffixes yand ies. Unlike the `|` operator, the `*` operator applies by default only to a single character, not to a whole sequence.
+
+With the parentheses, we could write the expression `Column [0-9]+ *` to match the word Column, followed by a number and optional spaces, the whole pattern repeated zero or more times. This idea that one operator may take precedence over another, requiring us to sometimes use parentheses to specify what we mean, is formalized by the operator precedence hierarchy for regular expressions. The following table gives the order of RE operator precedence, from highest precedence to lowest precedence.
+
+|  |  |
+| ------ | ------- |  
+|Parenthesis | `()` |
+|Counters | `*+?{}` |
+| Sequences and anchors | `^my end$` |
+|Disjunction | `\|` |
+
+Thus, because counters have a higher precedence than sequences, `the*` matches `theeeee` but not `thethe`. Because sequences have a higher precedence than disjunction, `the|any` matches the or any but not `thany` or `theny`. Patterns can be ambiguous in another way. Consider the expression `[a-z]*` when matching against the text once upon a time. Since `[a-z]*` matches zero or more letters, this expression could match nothing, or just the first letter `o` in `once. In these cases regular expressions always match the largest string they can; we say that patterns are **greedy**, expanding to cover as much of a string as they can.
+
+There are, however, ways to enforce _non-greedy matching_, using another meaning of the `?` qualifier. The operator `*?` is a `*` that matches as little text as possible. The operator `+?` is a `+` that matches as little text as possible.
+
+
+|Regex | Expansion | Match | First Matches |
+|----- | --------- | ----- | ------------  |
+|`\d` | `[0-9]` | any digit | `5` in `Party of 5` |
+|`\D` | `[^0-9]`| any non-digit |``B in `Blue moon` |
+|`\w` | `[a-zA-Z0-9_]` | any alphanumeric/underscore |`D` in `Daiyu` |
+|`\W` | `[^\w]` | a non-alphanumeric |`!` in `!!!!` |
+| `\s` | `[ \r\t\n\f]` | whitespace (space, tab) | 
+|`\S` | `[^\s]` | Non-whitespace | `i` in `in Concord` |
+
+`{n,m}` specifies from n to m occurrences of the previous char or expression, and  `{n,}` means at least n occurrences of the previous expression.
+
+### Substitution, Capture Groups
+
+An important use of regular expressions is in **substitutions**. For example, the substitution operator `s/regexp1/pattern/` used in Python and in Unix commands like `vim` or `sed` allows a string characterized by a regular expression to be replaced by another string: `s/colour/color/`
+
+It is often useful to be able to refer to a particular subpart of the string matching the first pattern. To do this, we put parentheses ( and ) around the first pattern and use the number operator `\1` in the second pattern to refer back. Here’s how it looks: `s/([0-9]+)/<\1>/`. For example, suppose we are looking for the pattern “the Xer they were, the Xer they will be”, where we want to constrain the two X’s to be the same string. 
+
+Consider, `the (.*)er they were, the \1er they will be`. This use of parentheses to store a pattern in memory is called a **capture group**. Every time a capture group is used (i.e., parentheses surround a pattern), the resulting match is stored in a numbered register. If you match two different sets of parentheses, `\2` means whatever matched the second capture group. Thus `the (.*)er they (.*), the \1er we \2` will match `the faster they ran, the faster we ran` but not `the faster they ran, the faster we ate`.
+
+Parentheses thus have a double function in regular expressions; they are used to group terms for specifying the order in which operators should apply, and they are used to capture something in a register. Occasionally we might want to use parentheses for grouping, but don’t want to capture the resulting pattern in a register. In that case we use a **non-capturing group**, which is specified by putting the special commands `?:` after the open parenthesis, in the form `(?: pattern )`. For example, `(?:some|a few) (people|cats) like some \1`  will match `some cats like some cats` but not `some cats like some some`.
+
+### Lookahead Assertions
+
+Finally, there will be times when we need to predict the future: look ahead in the text to see if some pattern matches, but not yet advance the pointer we always keep to where we are in the text, so that we can then deal with the pattern if it occurs, but if it doesn’t we can check for something else instead.
+
+These lookahead assertions make use of the `(?` syntax that we saw in the previous section for non-capture groups. The operator `(?= pattern)` is true if pattern occurs, but is zero-width, i.e. the match pointer doesn’t advance. The operator `(?! pattern)` only returns true if a pattern does not match, but again is zero-width and doesn’t advance the pointer. Negative lookahead is commonly used when we are parsing some complex pattern but want to rule out a special case. For example suppose we want to match, at the beginning of a line, any single word that doesn’t start with “Volcano”. We can use negative lookahead to do this: `^(?!Volcano)[A-Za-z]+`. 
+
+<br><br><br><br>
+
+# Words
+
+Before we talk about processing words, we need to decide what counts as a word. Let’s start by looking at one particular corpus (plural corpora), a computer-readable collection of text or speech. Whether we treat period `.`, comma `,`, and so on as words depends on the task. Punctuation is critical for finding boundaries of things (commas, periods, colons) and for identifying some aspects of meaning (question marks, exclamation marks, quotation marks). For some tasks, like part-of-speech tagging or parsing or speech synthesis, we sometimes treat punctuation marks as if they were separate words.
+
+An **utterance** is the spoken correlate of a sentence:
+
+`I do uh main- mainly business data processing`
+
+This utterance has two kinds of disfluencies. The broken-off word main- is called a **fragment**. Words like uh and um are called **fillers** or filled pauses. Should we consider these to be words? Again, it depends on the application. If we are building a speech transcription system, we might want to eventually strip out the disfluencies. They and they might be lumped together as the same type in some tasks, like speech recognition, where we care more about the sequence of words and less about the formatting, while for other tasks, such as deciding whether a particular word is a name of a person or location (named-entity tagging), capitalization is a useful feature and is retained. Sometimes we keep around two versions of a particular NLP model, one with capitalization and one without capitalization.
+
+It’s sometimes useful to make a further distinction. Consider inflected forms like cats versus cat. We say these two words are different **wordforms** but have the same lemma. A lemma is a set of lexical forms having the same **stem**, and usually the same major part-of-speech. The wordform is the full inflected or derived form of the word. The two wordforms cat and cats thus have the same lemma, which we can represent as cat. For morphologically complex languages like Arabic, we often need to deal with lemmatization. For most tasks in English, however, wordforms are sufficient, and when we talk about words in this book we almost always mean wordforms.
+
+One of the situations even in English where we talk about lemmas is when we measure the number of words in a dictionary. Dictionary entries or boldface forms are a very rough approximation to (an upper bound on) the number of lemmas (since some lemmas have multiple boldface forms).
+
+Finally, we should note that in practice, for many NLP applications (for example for neural language modeling) we don’t actually use words as our internal unit of representation at all! We instead tokenize the input strings into tokens, which can be words but can also be only parts of words. Before almost any natural language processing of a text, the text has to be normalized, a task called **text normalization**. At least three tasks are commonly applied as part of any normalization process:
+
+1. Tokenizing (segmenting) words
+2. Normalizing word formats
+3. Segmenting sentences
+
+
+## Word and Subword Tokenization
+
+The simple Unix tools are fine for getting rough word statistics but more sophisticated algorithms are generally necessary for **tokenization**, the task of segmenting running text into words. There are roughly two classes of tokenization algorithms. In **top-down tokenization**, we define a standard and implement rules to implement that kind of tokenization. But more commonly instead of using words as the input to NLP algorithms, we break up words into **subword** tokens, which can be words or parts of words or even individual letters. These are derived via bottom-up tokenization, in which we use simple statistics of letter sequences to come up with the _vocabulary of subword tokens_, and break up the input text into those subwords.
+ 
 
 Consider the word "listen,"and it consists of six letters. How can a computer understand this word? Assign a number to each letter? A common coding formatis called ASCII, where common letters and symbols are encoded into the values from 0 to 255. It's useful in that only one byte is needed to store the value for a letter. For example, the letter L is 76, I is 73, and so on. This is a perfectly valid encoding but then it becomes much harder to extract meaning from these numbers after breaking down the structure to the smallest building blocks like this. For example, in a sentence, if we change the order of words, one can still extract the moeaning of the sentence. But at character level, this is not easy for English language. For example the words LISTEN and SILENT are totally irrelevant although made of the same letters. 
 
-There are some other subtelty into how to tokenize. Consider the sentenct: `"Don't you love 🤗 Transformers? We sure do."`. If tokenized by whit space only, Then we get `["Don't", "you", "love", "🤗", "Transformers?", "We", "sure", "do."]`. The punctuations are attached to the words "Transformer" and "do", which is suboptimal. We should take the punctuation into account so that a model does not have to learn a different representation of a word and every possible punctuation symbol that could follow it, which would explode the number of representations the model has to learn. Taking punctuation into account, tokenizing our exemplary text would give:
+There are some other subtelty into how to tokenize. Consider the sentenct: `"Don't you love 🤗 Transformers? We sure do."`. If tokenized by white space only, Then we get `["Don't", "you", "love", "🤗", "Transformers?", "We", "sure", "do."]`. The punctuations are attached to the words "Transformer" and "do", which is suboptimal. We should take the punctuation into account so that a model does not have to learn a different representation of a word and every possible punctuation symbol that could follow it, which would explode the number of representations the model has to learn. Taking punctuation into account, tokenizing our exemplary text would give:
 
 ```sh
 ["Don", "'", "t", "you", "love", "🤗", "Transformers", "?", "We", "sure", "do", "."]
 ```
+
 Better. However, it is disadvantageous, how the tokenization dealt with the word "Don't". "Don't" stands for "do not", so it would be better tokenized as `["Do", "n't"]`. Depending on the rules we apply for tokenizing a text, a different tokenized output is generated for the same text. A pretrained model only performs properly if you feed it an input that was tokenized with the same rules that were used to tokenize its training data. 
 
 For instance, the BertTokenizer tokenizes `"I have a new GPU!"` as follows:
@@ -225,12 +291,43 @@ from transformers import BertTokenizer
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 tokenizer.tokenize("I have a new GPU!")
 ```
+
 ```sh
 ["i", "have", "a", "new", "gp", "##u", "!"]
 ```
 Because we are considering the uncased model, the sentence was lowercased first. We can see that the words `["i", "have", "a", "new"]` are present in the tokenizer's vocabulary, but the word "gpu" is not. Consequently, the tokenizer splits `"gpu"` into known subwords: `["gp" and "##u"]`. `"##"` means that the rest of the token should be attached to the previous one, without space (for decoding or reversal of the tokenization).
 
 The way we tokenize would directly affect the output vocabulary size. A large vocab size forces the model to have an enormous embedding matrix as the input and output layer, which causes both an increased memory and time complexity at training and for inference as well. In general, transformers models rarely have a vocabulary size greater than 50,000, especially if they are pretrained only on a single language. 
+
+
+### Top-down (rule-based) tokenization
+
+While the Unix command sequence just removed all the numbers and punctuation, for most NLP applications we’ll need to keep these in our tokenization. We often want to break off punctuation as a separate token; commas are a useful piece of information for parsers, and periods help indicate sentence boundaries. But we’ll often want to keep the punctuation that occurs word _internally_, in examples like `m.p.h.`, `Ph.D.`, `AT&T`, and `cap’n`. Special characters and numbers will need to be kept in prices ($45.55) and dates (01/02/06); we don’t want to segment that price into separate tokens of “45” and “55”. And there are URLs (https://www.stanford.edu), Twitter hashtags (#nlproc), or email addresses (someone@cs.colorado.edu). Number expressions introduce complications; in addition to appearing at word boundaries, commas appear inside numbers in English, every three digits: 555,500.50. Tokenization differs by language. 
+
+A tokenizer can also be used to expand clitic contractions that are marked by apostrophes, converting what’re to the two tokens what are, and we’re to we are. A clitic is a part of a word that can’t stand on its own, and can only occur when it is attached to another word. Depending on the application, tokenization algorithms may also tokenize multiword expressions like New York or rock ’n’ roll as a single token, which requires a multiword expression dictionary of some sort. Tokenization is thus intimately tied up with named entity recognition, the task of detecting names, dates, and organizations. In practice, since tokenization is run before any other language processing, it needs to be very fast. For word tokenization we generally use deterministic algorithms based on regular expressions compiled into efficient finite state automata.
+
+```python
+
+text = 'That U.S.A. poster-print costs $12.40...'
+pattern = r’’’(?x) # set flag to allow verbose regexps
+     (?:[A-Z]\.)+ # abbreviations, e.g. U.S.A.
+     | \w+(?:-\w+)* # words with optional internal hyphens
+     | \$?\d+(?:\.\d+)?%? # currency, percentages, e.g. $12.40, 82%
+     | \.\.\. # ellipsis
+     | [][.,;"’?():_‘-] # these are separate tokens; includes ], [
+     ’’’
+nltk.regexp_tokenize(text, pattern)
+```
+```sh
+['That', 'U.S.A.', 'poster-print', 'costs', '$12.40', '...']
+```
+
+NLP algorithms often learn some facts about language from one corpus (a training corpus) and then use these facts to make decisions about a separate test corpus and its language. Thus if our training corpus contains, say the words low, new, newer, but not lower, then if the word lower appears in our test corpus, our system will not know what to do with it. To deal with this unknown word problem, modern tokenizers automatically induce sets of tokens that include tokens smaller than words, called **subwords**. Subwords can be arbitrary substrings, or they can be meaning-bearing units like the morphemes `-est` or `-er`. (A morpheme is the smallest meaning-bearing unit of a language; for example the word "unwashable" has the morphemes `un-`, `wash`, and `-able`.). In modern tokenization schemes, most tokens are words, but some tokens are frequently occurring morphemes or other subwords like `-er`. 
+
+Most tokenization schemes have two parts:
+
+- **Token learner** takes a raw training corpus (sometimes roughly pre-separated into words, for example by whitespace) and induces a vocabulary, a set of tokens
+- **Token segmenter** takes a raw test sentence and segments it into the tokens in the vocabulary 
 
 There are known algorithms for tokenizing text which uses the corpus statistics to decide how to segment a text into tokens. Instead of just breaking words at every white space or at every character (in Chinese, for example), these algorithms use the data to determine how to tokenize it. This family is often called **subword tokenization** because tokens can be parts of words or a whole word. Three common algorithm here are:
 
@@ -239,36 +336,26 @@ There are known algorithms for tokenizing text which uses the corpus statistics 
 - **Unigram Language Modeling Tokenization**
 
 
-These tokenizers have 2 parts: 
-- A token learner that takes raw training corpus and induces a vocabulary (se set of tokens)
-- A token segmenter that takes a raw test sentence and tokenizes it according to that vocabulary
+Two algorithms are widely used: **byte-pair encoding** (Sennrich et al., 2016), and **unigram language modeling** (Kudo, 2018), There is also a **SentencePiece** library that includes implementations of both of these (Kudo and Richardson, 2018a), and people often use the name SentencePiece to simply mean unigram language modeling tokenization.
 
-These algorithms are implmented in Pytorch, [TensorFlow](https://www.tensorflow.org/text/guide/subwords_tokenizer) or Hugging Face. 
 
 ### Byte Pair Encoding (BPE) Tokenizer
 
 BPE relies on a pre-tokenizer that splits the training data into words. Pretokenization can be as simple as space tokenization, e.g. GPT-2, Roberta. More advanced pre-tokenization include rule-based tokenization, e.g. XLM, FlauBERT which uses Moses for most languages, or GPT which uses Spacy and ftfy, to count the frequency of each word in the training corpus.
 
-After pre-tokenization, a set of unique words has been created and the frequency with which each word occurred in the training data has been determined. Next, BPE creates a base vocabulary consisting of all symbols that occur in the set of unique words and learns merge rules to form a new symbol from two symbols of the base vocabulary. It does so until the vocabulary has attained the desired vocabulary size. Note that the desired vocabulary size is a hyperparameter to define before training the tokenizer.
+After pre-tokenization, a set of unique words has been created and the frequency with which each word occurred in the training data has been determined. The BPE token learner begins with a vocabulary that is just the set of all individual characters. It then examines the training corpus,
+
+- Chooses the two symbols that are most frequently adjacent (say ‘A’, ‘B’) 
+- Adds a new merged symbol ‘AB’ to the vocabulary, and replaces every adjacent ’A’ ’B’ in the corpus with the new ‘AB’
+- It continues to count and merge, creating new longer and longer character strings, until $k$ merges have been done creating $k$ novel tokens
+  
+$k$ is the hyperparameter of the algorithm to define before training the tokenizers. The resulting vocabulary consists of the original set of characters plus $k$ new symbols. The algorithm is usually run inside words (not merging across word boundaries), so the input corpus is first white-space-separated to give a set of strings, each corresponding to the characters of a word, plus a special end-of-word symbol , and its counts.
+
+Once we’ve learned our vocabulary, the token segmenter is used to tokenize a test sentence. The token segmenter just runs on the merges we have learned from the training data on the test data. It runs them greedily, in the order we learned them. (Thus the frequencies in the test data don’t play a role, just the frequencies in the training data). So first we segment each test sentence word into characters. Then we apply the first rule, then the second rule and so on. Of course in real settings BPE is run with many thousands of merges on a very large input corpus. The result is that most words will be represented as full symbols, and only the very rare words (and unknown words) will have to be represented by their parts. There might inevitably be some unseen symbols that are unencodable by the generated vocabulary. One solution is to replace any unencodable symbol with a special name UNK ("unknown"). 
 
 Byte pair encoding replaces the highest-frequency pair of bytes with a new byte that was not contained in the initial dataset. A lookup table of the replacements is required to rebuild the initial dataset. The modified version builds "tokens" (units of recognition) that match varying amounts of source text, from single characters (including single digits or single punctuation marks) to whole words (even long compound words).
 
-Start with characters as initial set of tokens. Repeats the following:
-1. Choose the two toekns that are most frequently adjacent in the training corpus (say 'A', 'B')
-2. Add a new merged symbol 'AB' to vocabulary
-3. Replace every adjacent 'A''B' in the corpus with 'AB'
-
-Continue until k merges have been done. 
-
-Based on this algorithm, the tokenizer has learned a set of merges in a specific order (first merge was 'A', 'B' -> 'AB' and son on). Each merge operation produces a new symbol which represents a character n-gram. Frequent character n-grams (or whole words) are eventually merged into a single symbol, thus BPE requires no shortlist. The final symbol vocabulary size is equal to the size of the initial vocabulary, plus the number of merge operations – the latter is the only hyperparameter of the algorithm.
-
-For the test set (a new sentenct probably not existed in the trainng set), the tokenizer will do the same merges it learned at the time of training in the same order. There might inevitably be some symbols that are enencodable by the generated vocabulary. One solution is to replace any unencodable symbol with a special name UNK ("unknown"). 
-
 The byte-level BPE is another approach. It simply converts the text into UTF-8 first, and treat it as a stream of bytes. This guarantees that any text encoded in UTF-8 can be encoded by the BPE. This has been used in BERT-like models like RoBERTa, BART, and DeBERTa, and GPT-like models like GPT-2. A base vocabulary that includes all possible base characters can be quite large if e.g. all unicode characters are considered as base characters. To have a better base vocabulary, GPT-2 uses bytes as the base vocabulary, which is a clever trick to force the base vocabulary to be of size 256 while ensuring that every base character is included in the vocabulary. With some additional rules to deal with punctuation, the GPT2's tokenizer can tokenize every text without the need for the symbol. GPT-2 has a vocabulary size of 50,257, which corresponds to the 256 bytes base tokens, a special end-of-text token and the symbols learned with 50,000 merges.
-
-BPE tokens usually include frequent words and frequent subwords (like -est, -er, -un, -ly). The algorithm initially treats the set of unique characters as 1-character-long n-grams (the initial tokens). Then, successively, the most frequent pair of adjacent tokens is merged into a new, longer n-gram and all instances of the pair are replaced by this new token. This is repeated until a vocabulary of prescribed size is obtained. 
-
-Maximum number of merges are determined by the vocabulary size chosen. If we choose a large vocab size, then the text will be compressed too much into bigger tokens which may not be ideal. 
 
 
 ### WordPiece Tokenizer
@@ -323,8 +410,476 @@ tokenizer.tokenize("Don't you love 🤗 Transformers? We sure do.")
 ```
 All transformers models in the library that use SentencePiece use it in combination with unigram. Examples of models using SentencePiece are ALBERT, XLNet, Marian, and T5.
 
+These algorithms mentioned above are implmented in Pytorch, [TensorFlow](https://www.tensorflow.org/text/guide/subwords_tokenizer) or Hugging Face. 
+
+## Word Normalization, Lemmatization and Stemming
+
+**Word normalization** is the task of putting words or tokens in a standard format. The simplest case of word normalization is _case folding_. Mapping everything to lower case means that `Woodchuck` and `woodchuck` are represented identically, which is very helpful for generalization in many tasks, such as _information retrieval_ or _speech recognition_. For sentiment analysis and other text classification tasks, information extraction, and machine translation, by contrast, case can be quite helpful and case folding is generally not done. This is because maintaining the difference between, for example, `US` the country and `us` the pronoun can outweigh the advantage in generalization that case folding would have provided for other words. Sometimes we produce both cased (i.e. including both upper and lower case words or tokens) and uncased versions of language models.
+
+Systems that use BPE or other kinds of bottom-up tokenization may do no further word normalization. In other NLP systems, we may want to do further normalizations, like choosing a single normal form for words with multiple forms like USA and US or uh-huh and uhhuh. This standardization may be valuable, despite the spelling information that is lost in the normalization process. For information retrieval or information extraction about the US, we might want to see information from documents whether they mention the US or the USA.
+
+### Lemmatization
+
+For other natural language processing situations we also want two **morphologic**ally different forms of a word to behave similarly. For example in web search, someone may type the string `woodchucks` but a useful system might want to also return pages that mention `woodchuck` with no `s`. 
+
+**Lemmatization** is the task of determining that two words have the same root, despite their surface differences. The words `am`, `are`, and `is` have the shared lemma _`be`_; the words `dinner` and `dinners` both have the lemma _`dinner`_. The lemmatized form of a sentence like _`He is reading detective stories`_ would thus be _`He be read detective story`_.
+
+How is lemmatization done? The most sophisticated methods for lemmatization involve complete morphological parsing of the word. **Morphology** is the study of the way words are built up from smaller meaning-bearing units called **morphemes**. Two broad classes of **morphemes** can be distinguished: **stems** the central morpheme of the word, supplying the main meaning—and affixes—adding “additional” meanings of various kinds. A morphological parser takes a word like cats and parses it into the two morphemes cat and s, or parses a Spanish word like amaren (‘if in the future they would love’) into the morpheme amar ‘to love’, and the morphological features 3PL (third person plural) and future subjunctive.
+
+Simple stemmers can be useful in cases where we need to collapse across different variants of the same lemma. Nonetheless, they are less commonly used in modern systems since they commit errors of both over-generalizing (lemmatizing policyto police) and under-generalizing (not lemmatizing Europeanto Europe).
+
+### Sentence Segmentation
+
+**Sentence segmentation** is another important step in text processing. The most useful cues for segmenting a text into sentences are punctuation, like periods, question marks, and exclamation points. Question marks and exclamation points are relatively unambiguous markers of sentence boundaries. Periods, on the other hand, are more ambiguous. The period character “.” is ambiguous between a sentence bound- ary marker and a marker of abbreviations like Mr. or Inc. The previous sentence that you just read showed an even more complex case of this ambiguity, in which the final period of Inc. marked both an abbreviation and the sentence boundary marker. For this reason, sentence tokenization and word tokenization may be addressed jointly.
+
+In general, sentence tokenization methods work by first deciding (based on rules or machine learning) whether a period is part of the word or is a sentence-boundary marker. An abbreviation dictionary can help determine whether the period is part of a commonly used abbreviation; the dictionaries can be hand-built or machine- learned (Kiss and Strunk, 2006), as can the final sentence splitter.
+
+
+
+
+<br><br><br><br>
+
+
+
+# N-gram Language Models
+
+N-grams are fundamental and give you a foundation that will allow you to understand more complicated models in the specialization. These models allow you to calculate probabilities of certain words happening in a specific sequence. Using that, you can build an auto-correct or even a search suggestion tool. Other applications of N-gram language modeling include: 
+
+- **Speech Recognition**: 
+  $$P(\text{I saw a van}) > P(\text{eyes awe of an})$$
+- **Spelling Correction**: 
+  $$P(\text{entered the shop to buy}) > P(\text{entered the shop to buy})$$
+- **Augmentative Communication**: prdict modt likely word from menu for people unable to physically talk or sign
+
+A n-gram is a sequence of n words sitting next to each other in the corpus. 
+
+Example:
+Corpus: `I am happy becuse I am learning`
+Unigrams: {`I`, `am`, `happy`, `because`, `learning`}
+Bigrams: {`I am`, `am happy`, `happy because`, `because I`, `am learning`}
+Trigrams: {`I am happy`, `am happy becuse`, `happy because I`, `becuase I am`, `I am learning`}
+
+Given the corpus:
+
+\[
+\begin{align*}
+P(\text{I}) &= \frac{2}{7}\\
+P(\text{happy}) &= \frac{1}{7}\\
+P(\text{am} \mid \text{I}) &= \frac{C(\text{I am})}{C(\text{I})} = \frac{2}{2} = 1\\
+P(\text{happy} \mid \text{I}) &= \frac{C(\text{I happy})}{C(\text{I})} = \frac{0}{2} = 0 \\
+\end{align*}
+\]
+
+
+Suppose the history h is `The water of Walden Pond is so beautifully ` and we want to know the probability that the next word is `blue`: 
+
+$$
+P(\text{blue} \mid \text{The water of Walden Pond is so beautifully})
+$$
+
+One way to estimate this probability is directly from relative frequency counts: take a very large corpus, count the number of times we see "The water of Walden Pond is so beautifully", and count the number of times this is followed by "blue". Then the ratio is the answer:  C(The water of Walden Pond is so beautifully blue) divided by C(The water of Walden Pond is so beautifully) 
+
+If we had a large enough corpus, we could compute these two counts and estimate the probability. But even the entire web isn’t big enough to give us good estimates for counts of entire sentences. This is because language is creative; new sentences are invented all the time, and we can’t expect to get accurate counts for such large objects as entire sentences. For this reason, we’ll need more clever ways to estimate the probability of a word (more accurately, token) w given a history h, or the probability of an entire word sequence W.
+
+Now, how can we compute probabilities of entire sequences like $P(w_1,w_2,...,w_n)$? One thing we can do is decompose this probability using the **chain rule of probability**:
+
+$$
+P(X_1,X_2, \dots, X_n)= \prod_{k=1}^n P(X_K \mid  X_{1:K-1})
+$$
+
+Approximate the probability of a sentence using 
+
+$$
+P(A,B,C,D)=P(A)P(B∣A)P(C∣A,B)P(D∣A,B,C).
+$$ 
+
+For example:
+
+$$
+\begin{align*}
+P(\text{the teacher drinks tea}) = P&(\text{the})\\
+& \times P( \text{teacher} \mid  \text{the})   \\
+& \times P(\text{drinks}\mid  \text{the teacher}) \\
+& \times P(\text{tea}\mid \text{the teacher drinks}).
+\end{align*}
+$$
+
+The chain rule shows the link between computing the joint probability of a sequence and computing the conditional probability of a word given previous words. But again, we come back to computing the exact probability of a word given a long sequence of preceding words, $P(w_n\mid w_{1:n−1})$. 
+
+
+### Markov Assumption
+
+In practice, the corpus rarely contains the exact same phrases as the ones you computed your probabilities on. Hence, you can easily end up getting a probability of 0. To make an estimation of these probabilities, we might want to follow the Markov assumption that indicates only the last word matters. 
+
+The intuition of the $n$-gram model is that instead of computing the probability of a word given its entire history, we can approximate the history by just the last $n-1$ few words. Hence you can model the entire sentence as follows:
+
+$$
+P(w_m \mid w_{1:m-1}) \approx P(w_m \mid w_{m-n: m-1})
+$$
+
+for $m > n$. 
+
+The bigram model, for example, approximates the probability of a word given all the previous words $P(w_n \mid w_{1:n−1})$ by using only the conditional probability given the preceding word $P(w_n \mid w_{n−1})$. That is, you can model the entire sentence as follows:
+
+$$
+P(w_{1:n}) \approx \prod^n_{i=1} P(w_i  \mid  w_{i-1})
+$$
+
+For example, instead of computing the probability
+
+$$
+P(\text{blue} \mid \text{The water of Walden Pond is so beautifully})
+$$
+
+we approximate it with the probability
+
+$$
+P(\text{blue} \mid \text{beautifully})
+$$
+
+The assumption that the probability of a word depends only on the previous word is called a **Markov** assumption. Given the bigram assumption for the probability of an individual word, we can compute the probability of a complete word sequence by substituting:
+
+$$
+P(w_{1:n}) ≈ \prod_{k=1}^n P(w_k \mid w_{k−1})
+$$
+
+How do we estimate these bigram or n-gram probabilities? An intuitive way to estimate probabilities is called **maximum likelihood estimation** or **MLE**. We get the MLE estimate for the parameters of an $n$-gram model by getting counts from a corpus, and normalizing the counts so that they lie between 0 and 1. For probabilistic models, normalizing means dividing by some total count so that the resulting probabilities fall between 0 and 1 and sum to 1.
+
+For example, to compute a particular bigram probability of a word $w_n$ given a previous word $w_{n−1}$, we’ll compute the count of the bigram $C(w_{n−1}w_n)$ and normalize by the sum of all the bigrams that share the same first word $w_{n−1}$:
+
+$$
+P(w_n \mid w_{n−1}) = \frac{C(w_{n−1}w_n)}{\sum_w C(w_{n−1}w)}
+$$
+
+This ratio is called a _relative frequency_. 
+
+Although for pedagogical purposes we have only described bigram models, when there is sufficient training data we use trigram models, which condition on the previous two words, or 4-gram or 5-gram models. For these larger n-grams, we’ll need to assume extra contexts to the left and right of the sentence end. For example, to compute trigram probabilities at the very beginning of the sentence, we use two pseudo-words for the first trigram i.e., $P(I \mid \;<s><s>)$.
+
+Language model probabilities are always stored and computed as **log probabilities** in log space. This is because probabilities are (by definition) less than or equal to 1, and so the more probabilities we multiply together, the smaller the product becomes. Multiplying enough n-grams together would result in numerical underflow. To avoid **underflow**, you can work with log probabilities:
+
+$$
+\log P(w^n_1) \approx \sum^n_{i=1} \log P(w_i  \mid  w_{i-1})
+$$
+
+
+Adding in log space is equivalent to multiplying in linear space, so we combine log probabilities by adding them. By adding log probabilities instead of multiplying probabilities, we get results that are not as small. We do all computation and storage in log space, and just convert back into probabilities if we need to report probabilities at the end by taking the exp of the logprob.
+
+Now that we have joint distribution of words, we have a generative model using 2-grams:
+
+- Choose sentence start
+- Choose next bigram starting with previous word
+- Continue until `</s>` is picked 
+
+We usually start and end a sentence with the following tokens respectively: `<s> </s>`.  When computing probabilities using a unigram, you can append an `<s>` in the beginning of the sentence. To generalize to an N-gram language model, you can add N-1 start tokens `<s>`.  For the end of sentence token `</s>`, you only need one even if it is an N-gram. Example of bigram:
+
+corpus=`<s>Lyn drinks chocolate</s> <s>John drinks tea</s> <s>Lyn eats chocolate</s>`
+
+\[
+\begin{align*}
+P(\text{John} \mid <s>)&=\frac{1}{3}\\
+P(\text{</s>} \mid tea)&=\frac{1}{1}\\
+P(Lyn \mid \text{</s>})&=\frac{2}{3}\\
+P(\text{chocolate} \mid \text{eats})&=\frac{1}{1}
+\end{align*}
+\]
+
+
+### Evaluating Language Models
+
+The best way to evaluate the performance of a language model is to embed it in an application (downstream tasks) and measure how much the application improves. Such end-to-end evaluation is called **extrinsic evaluation**. Extrinsic evaluation is the only way to know if a particular improvement in the language model (or any component) is really going to help the task at hand. Thus for evaluating n-gram language models that are a component of some task like speech recognition or machine translation, we can compare the performance of two candidate language models by running the speech recognizer or machine translator twice, once with each language model, and seeing which gives the more accurate transcription.
+
+Unfortunately, running big NLP systems end-to-end is often very expensive. Instead, it’s helpful to have a metric that can be used to quickly evaluate potential improvements in a language model. An intrinsic evaluation metric is one that measures the quality of a model independent of any application. 
+
+In order to evaluate any machine learning model, we need to have at least three distinct data sets: the training set, the development set, and the test set. The training set is the data we use to learn the parameters of our model; for simple n-gram language models it’s the corpus from which we get the counts that we normalize into the probabilities of the n-gram language model. The test set is a different, held-out set of data, not overlapping with the training set, that we use to evaluate the model. We need a separate test set to give us an unbiased estimate of how well the model we trained can generalize when we apply it to some new unknown dataset. A machine learning model that perfectly captured the training data, but performed terribly on any other data, wouldn’t be much use when it comes time to apply it to any new data or problem! We thus measure the quality of an n-gram model by its performance on this unseen test set or test corpus.
+
+How should we choose a training and test set? The test set should reflect the language we want to use the model for. If we’re going to use our language model for speech recognition of chemistry lectures, the test set should be text of chemistry lectures. The standard answer is simple: whichever language model assigns a higher probability to the test set—which means it more accurately predicts the test set—is a better model. Given two probabilistic models, the better model is the one that better predicts the details of the test data, and hence will assign a higher probability to the test data.
+
+How do we divide our data into training, development, and test sets? We want our test set to be as large as possible, since a small test set may be accidentally unrepresentative, but we also want as much training data as possible. At the minimum, we would want to pick the smallest test set that gives us enough statistical power to measure a statistically significant difference between two potential models. It’s important that the devset be drawn from the same kind of text as the test set, since its goal is to measure how we would do on the test set.
+
+#### Perplexity
+
+A better model is better at predicting upcoming words, and so it will be less surprised by (i.e., assign a higher probability to) each word when it occurs in the test set. Indeed, a perfect language model would correctly guess each next word in a corpus, assigning it a probability of 1, and all the other words a probability of zero. So given a test corpus, a better language model will assign a higher probability to it than a worse language model.
+
+The probability of a test set (or any sequence) depends on the number of words or tokens in it; the probability of a test set gets smaller the longer the text. We’d prefer a metric that is per-word, normalized by length, so we could compare across texts of different lengths. The metric we use is, a function of probability called perplexity, is one of the most important metrics in NLP, used for evaluating large language models as well as n-gram models. The perplexity (sometimes abbreviated as PP or PPL) of a language model on a test set is the inverse probability of the test set (one over the probability of the test set), normalized by the number of words (or tokens). For this reason it’s sometimes called the per-word or **per-token perplexity**. A text that is written by humans is more likely to have lower perplexity, where a text generated by random word choice would have a higher perplexity.
+
+Perplexity is defined as the exponentiated average negative log-likelihood of a sequence. If we have a tokenized sequence $\bm X = (\bm x^{(1)}, ..., X^{(t)})$, then the perplexitiy of $\bm X$ is
+
+$$
+PPL(\bm X) = \sqrt[t]{\prod_{i=1}^t \frac{1}{P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})}}
+$$
+
+Use log for more computationally stable formula:
+
+$$
+PPL(\bm X) = \exp(-\frac{1}{t}{\sum_{i=1}^t \log P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})})
+$$
+
+Another version of this uses $P(x^{(i)}|x^{(i-1)})$ instead of $P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})$ in th eabove formula. If there are $m$ sentences $(s_1,..., s_m)$ in the text, the formula becomes:
+
+$$
+PPL(\bm X) = \sqrt[m]{\prod_{i=1}^m \prod_{j=1}^{|s_i|} \frac{1}{P(x_i^{(j)}|x_i^{(j-1)})}}
+$$
+
+_Probabilities are given according to our model_. Intuitively, perplexitiy can be thought of as an evaluation of the model’s ability to predict uniformly among the set of specified tokens in a corpus. Importantly, this means that the tokenization procedure has a direct impact on a model’s perplexity which should always be taken into consideration when comparing different models.  This is also equivalent to the exponentiation of the cross-entropy between the data and model predictions. 
+ 
+Thus the the **lower the perplexity of a model on the data, the better the model**. Minimizing perplexity is equivalent to maximizing the test set probability according to the language model. 
+
+
+
+# Text Classification and Sentiment
+
+The goal of classification is to take a single observation, extract some useful features, and thereby classify the observation into one of a set of discrete classes. The most common way of doing text classification in language processing is instead via supervised machine learning, the subject of this chapter. In supervised learning, we have a data set of input observations, each associated with some correct output (a ‘supervision signal’). The goal of the algorithm is to learn how to map from a new observation to a correct output.
+
+A probabilistic classifier additionally will tell us the probability of the observation being in the class. Many kinds of machine learning algorithms are used to build classifiers. **Generative classifiers** like naive Bayes build a model of how a class could generate some input data. Given an observation, they return the class most likely to have generated the observation. **Discriminative classifiers** like logistic regression instead learn what features from the input are most useful to discriminate between the different possible classes. While discriminative systems are often more accurate and hence more commonly used, generative classifiers still have a role.
+
+## Naive Bayes
+
+Naive Bayes is a probabilistic classifier, meaning that for a document d, out of all classes $c \in C$ the classifier returns the class $\hat c$ which has the maximum posterior probability given the document $d$:
+
+$$
+\hat c = \argmax_{c \in C}  P(c \mid d)
+$$
+
+This idea of _**Bayesian** inference_ has been known since the work of Bayes (1763), and was first applied to text classification by Mosteller and Wallace (1964).  The intuition of Bayesian classification is to use Bayes’ rule to transform Eq. 4.1 into other probabilities that have some useful properties. Based on Bayes’ rule, we can write $\hat c$ as:
+
+$$
+\hat c =  \argmax_{c \in C}\frac{P(d\mid c)P(c)}{P(d)} = \argmax_{c \in C}P(d\mid c)P(c)
+$$
+
+Because $P(d)$ doesn’t change for each class; we are always asking about the most likely class for the same document d, which must have the same probability $P(d)$. We call Naive Bayes a **generative model**: first a class is sampled from the **prior** $P(c)$, and then the words are generated by sampling from the **likelihood** $P(d\mid c)$.
+
+Without loss of generality, we can represent a document $d$ as a set of features $f_1,f_2,...,f_n$:
+
+$$
+\hat c =  \argmax_{c \in C}P(f_1,f_2,...,f_n \mid c)P(c)
+$$
+
+This equation is still too hard to compute directly: without some simplifying assumptions, estimating the probability of every possible combination of features (for example, every possible set of words and positions) would require huge numbers of parameters and impossibly large training sets. Naive Bayes classifiers therefore make two simplifying assumptions:
+
+- The first is the _bag-of-words_ assumption discussed intuitively above: we assume position doesn’t matter, and that the word “love” has the same effect on classification whether it occurs as the 1st, 20th, or last word in the document. Thus we assume that the features $f_1,f_2,...,f_n$ only encode word identity and not position. Therefore, we represent a text document as an unordered set of words with their position ignored, keeping only their frequency in the document. 
+- The second is commonly called the naive Bayes assumption: this is the conditional independence assumption that the probabilities $P( f_i\mid c)$ are independent given the class $c$ and hence can be ‘naively’ multiplied as follows:
+
+$$
+P(f_1,f_2,...,f_n \mid c) = \prod_{i=1}^n P(f_i\mid c)
+$$
+
+To apply the naive Bayes classifier to text, we will use each word in the documents as a feature, as suggested above, and we consider each of the words in the document by walking an index through every word position in the document. Naive Bayes calculations, like calculations for language modeling, are done in log space, to avoid underflow and increase speed.
+
+### Training Naive Bayes Classifiers
+
+How can we learn the probabilities $P(c)$ and $P( f_i\mid c)$? Let’s first consider the maximum likelihood estimate. We’ll simply use the frequencies in the data. For the class prior $P(c)$, we ask what percentage of the documents in our training set are in each class $c$. Let $N_c$ be the number of documents in our training data with class $c$ and N_{doc} be the total number of documents. Then: $\hat P(c) = \frac{N_c}{N_{doc}}$
+
+To learn the probability $P( f_i\mid c)$, we’ll assume a feature is just the existence of a word in the document’s bag of words, and so we’ll want $P( w_i\mid c)$, which we compute as the fraction of times the word $w_i$ appears among all words in all documents of class c:
+
+$$
+\hat P(w_i \mid c) = \frac{\text{count}(w_i, c)}{\sum_{w \in V} \text{count}(w,c)}
+$$
+
+where $V$ is the vocabulary. Remeber that Bayes naively multiplies all the feature likelihoods $\hat P(w_i \mid c)$ together, zero probabilities in the likelihood term for any class will cause the probability of the class to be zero, no matter the other evidence! The simplest solution is the add-one (Laplace) smoothing. While Laplace smoothing is usually replaced by more sophisticated smoothing algorithms in language modeling, it is commonly used in naive Bayes text categorization:
+
+$$
+\hat P(w_i \mid c) = \frac{\text{count}(w_i, c) + 1}{\sum_{w \in V} \text{count}(w,c) + |V|}
+$$
+
+What do we do about words that occur in our test data but are not in our vocabulary at all because they did not occur in any training document in any class? The solution for such unknown words is to ignore them—remove them from the test document and not include any probability for them at all. 
+
+Finally, some systems choose to completely ignore another class of words: **stop words**, very frequent words like _the_ and _a_. This can be done by sorting the vocabulary by frequency in the training set, and defining the top 10–100 vocabulary entries as stop words, or alternatively by using one of the many predefined stop word lists available online. Then each instance of these stop words is simply removed from both training and test documents as if it had never occurred. In most text classification applications, however, using a stop word list doesn’t improve performance, and so it is more common to make use of the entire vocabulary and not use a stop word list.
+
+### Evaluation: Precision, Recall, F-measure
+
+To evaluate any system for detecting things, we start by building a confusion matrix. To the bottom right of the table is the equation for accuracy, which asks what percentage of all the observations (for the spam or pie examples that means all emails or tweets) our system labeled correctly. Although accuracy might seem a natural metric, we generally don’t use it for text classification tasks because accuracy doesn’t work well when the classes are unbalanced. Instead of accuracy we generally turn to two other metrics: **precision** and **recall**. 
+
+- **Precision** measures the percentage of the items that the system detected that are in fact positive: $ \frac{tp}{tp + fp}$. 
+- **Recall** measures the percentage of items actually present in the input that were correctly identified by the system: $\text{Recall} = \frac{tp}{tp + fn}$.
+
+Thus precision and recall, unlike accuracy, emphasize true positives: finding the things that we are supposed to be looking for. A balence of precision P and recall R is $F_1$ score: $ 2.\frac{PR}{P + R}$ which the the most commonly used metric. Harmonic mean is used because the harmonic mean of two values is closer to the minimum of the two values than the arithmetic mean is.
+
+### Evaluating with more than two classes
+
+Lots of classification tasks in language processing have more than two classes. For sentiment analysis we generally have 3 classes (positive, negative, neutral) and even more classes are common for tasks like part-of-speech tagging, word sense disambiguation, semantic role labeling, emotion detection, and so on.
+
+<p align="center">
+    <img src="./assets/seq-models/confusion_matrix.png" alt="drawing" width="600" height="300" style="center" />
+</p>
+
+In order to derive a single metric that tells us how well the system is doing, we can combine these values in two ways. In macroaveraging, we compute the performance for each class, and then average over classes. In microaveraging, we collect the decisions for all classes into a single confusion matrix, and then compute precision and recall from that table:
+
+<p align="center">
+    <img src="./assets/seq-models/micro-macro-averaging.png" alt="drawing" width="600" height="300" style="center" />
+</p>
+
+A microaverage is dominated by the more frequent class, since the counts are pooled. The macroaverage better reflects the statistics of the smaller classes, and so is more appropriate when performance on all the classes is equally important. Similarly, micr-macro averaging for recall is computed. Harmonic averaging of these give micro-macro averagin for $F_1$. 
+
+## Lagistic Regression
+
+**Logistic regression** is one of the most important analytic tools in the social and natural sciences. In natural language processing, logistic regression is the base-line supervised machine learning algorithm for classification, and also has a very close relationship with neural networks. Logistic regression can be used to classify an observation into one of two classes, or into one of many classes (multinomial logistic regression). The most important difference between naive Bayes and logistic regression is that logistic regression is a discriminative classifier while naive Bayes is a generative classifier. The goal of binary logistic regression is to train a classifier that can make a binary decision about the class of a new input observation.
+
+Consider a single input observation $\bm x$, which we will represent by a vector of features $(x_1,x_2,...,x_n)$. We want to know the probability, $P(y= 1\mid \bm x)$ that this observation is a member of the class. So perhaps the decision is “positive sentiment” versus “negative sentiment”, the features represent counts of words in a document, $P(y= 1\mid \bm x)$ is the probability that the document has positive sentiment, and $P(y= 0\mid \bm x)$ is the probability that the document has negative sentiment.
+
+Logistic regression solves this task by learning, from a training set, a vector of weights and a bias term. Each weight $w_i$ is a real number, and is associated with one of the input features $x_i$. The weight $w_i$ represents how important that input feature is to the classification decision. Geometrically, the linear classifier is a hyperplane spliting the feature space into three regions: on the hyperplane, on one side of it or on the other side of it. To make a decision on a test instance $x$ in the feature space $\mathbb R^n$, the linear classifier can simply evaluate the linear function $z = \bm w \cdot \bm x + \bm b$ at input $x$ to classify it: 
+
+- $z$ can be positive, meaning $x$ is on one side of the hyperplane. Then the classifier assign $\bm x$ class $y=1$. The larger $z$ indicates the further $\bm x$ is from the hyperplane on that side. This gives the classifier more confidence on its prediction.
+- $z$ can be negative, meaning $\bm x$ is on the opposite side of the hyperplane. Then the classifier assign $x$ class $y=0$. The larger $|z|$ indicates the further $\bm x$ is from the hyperplane on that side. This gives the classifier more confidence on its prediction.
+- $z$ can be zero, meaning $\bm x$ is right on the hyperplane. In this case the classifier is not decisive. $\bm x$ is equally likely to belong to either classes.
+
+We can mathematically achieve this just by apply **Sigmoid** function $\sigma(z) = \frac{1}{1 + \exp(-z)}$ after the linear function $z$:
+
+$$
+P(y=1 \mid x) = \sigma(z) = \sigma(\bm w \cdot \bm x + \bm b)
+$$
+
+<p align="center">
+    <img src="./assets/seq-models/sigmoid.png" alt="drawing" width="600" height="300" style="center" />
+</p>
+
+For any $z$, $0<\sigma(z)<1$. The input to the sigmoid function, the score $z = \bm w \cdot \bm x + \bm b$ is often called the **logit**. This is because the logit function is the inverse of the sigmoid.
+
+$$
+\text{logit}(p) = \sigma^{-1} = \ln \frac{p}{1-p}
+$$
+
+Using the term logit for $z$ is a way of reminding us that by using the sigmoid to turn $z$ (which ranges from−∞ to ∞) into a probability, we are implicitly interpreting $z$ as not just any real-valued number, but as specifically a log odds. Sometimes $z$ is also called *unnormalized log probability*. 
+
+### Other classification tasks and features
+
+Logistic regression is applied to all sorts of NLP tasks, and any property of the input can be a feature. Consider the task of **period disambiguation**: deciding if a period is the end of a sentence or part of a word, by classifying each period into one of two classes, EOS (end-of-sentence) and not-EOS. We might use features like $x_1$ below expressing that the current word is lower case, perhaps with a positive weight. Or a feature expressing that the current word is in our abbreviations dictionary (“Prof.”), perhaps with a negative weight. A feature can also express a combination of properties. For example a period following an upper case word is likely to be an EOS, but if the word itself is `St.` and the previous word is capitalized then the period is likely part of a shortening of the word street following a street name.
+
+$$
+\begin{align*}
+x_1 &= 
+\begin{cases}
+1 & \text{if "Case($w_i$) = Lower"}\\
+0 & Otherwise
+\end{cases}\\
+x_2 &= 
+\begin{cases}
+1 & \text{if "$w_i \in$ AcronymDict"}\\
+0 & Otherwise
+\end{cases}\\
+x_3 &= 
+\begin{cases}
+1 & \text{if "$w_i$ = St. and Case($w_{i−1}$) = Upper"}\\
+0 & Otherwise
+\end{cases}
+\end{align*}
+$$
+
+### Designing versus learning features: 
+
+In classic models, features are designed by hand by examining the training set with an eye to linguistic intuitions and literature, supplemented by insights from error analysis on the training set of an early version of a system. We can also consider **feature interactions**, complex features that are combinations of more primitive features. We saw such a feature for period disambiguation above, where a period on the word St. was less likely to be the end of the sentence if the previous word was capitalized. Features can be created _automatically_ via **feature templates**, abstract specifications of features. For example a bigram template for period disambiguation might create a feature for every pair of words that occurs before a period in the training set. Thus the feature space is sparse, since we only have to create a feature if that $n$-gram exists in that position in the training set. The feature is generally created as a hash from the string descriptions. A user description of a feature as, “bigram(American breakfast)” is hashed into a unique integer $i$ that becomes the feature number $f_i$. 
+
+It should be clear from the prior paragraph that designing features by hand requires extensive human effort. For this reason, recent NLP systems avoid hand-designed features and instead focus on **representation learning**: ways to learn features automatically in an unsupervised way from the input.
+
+**Scaling input features**: When different input features have extremely different ranges of values, it’s common to rescale them so they have comparable ranges. We standardize input values by centering them to result in a zero mean and a standard deviation of one (this transformation is sometimes called the **z-score**):
+
+$$
+x'_i = \frac{x_i - \mu_i}{\sigma_i}
+$$
+
+where $\mu_i = \frac{1}{m}\sum_{j=1}^m x^j_i, \sigma_i=\sqrt{\frac{1}{m}\sum_{j=1}^m(x^j_i-\mu_i)}$
+
+
+Alternatively, we can *normalize* the input features values to lie between 0 and 1:
+
+$$
+x'_i = \frac{x_i−\min(x_i)}{\max(x_i)−\min(x_i) }
+$$
+
+Having input data with comparable range is useful when comparing values across features. Data scaling is especially important in large neural networks, since it helps speed up gradient descent.
+
+**Choosing a Classifier**: Logistic regression has a number of advantages over naive Bayes. Naive Bayes has overly strong conditional independence assumptions. Consider two features which are strongly correlated; in fact, imagine that we just add the same feature f1 twice. Naive Bayes will treat both copies of f1 as if they were separate, multiplying them both in, overestimating the evidence. By contrast, logistic regression is much more robust to correlated features; if two features f1 and f2 are perfectly correlated, regression will simply assign part of the weight to w1 and part to w2. Thus when there are many correlated features, logistic regression will assign a more accurate probability than naive Bayes. So logistic regression generally works better on larger documents or datasets and is a common default. Despite the less accurate probabilities, naive Bayes still often makes the correct classification decision. Furthermore, naive Bayes can work extremely well (sometimes even better than logistic regression) on very small datasets or short documents.
+
+### Multinomial Logistic Regression
+
+Sometimes we need more than two classes. Perhaps we might want to do 3-way sentiment classification (positive, negative, or neutral). In such cases we use **multinomial logistic regression**, also called **softmax regression**. In multinomial logistic regression, we want to label each observation with a class $k$ from a set of $K$ classes, under the stipulation that only one of these classes is the correct one (**hard classification**: an observation can not be in multiple classes). The output $\bm y$ for each input $\bm x$ will be a vector of length $K$. If class $c$ is the correct class, we’ll set $y_c = 1$, and set all the other elements of $y$ to be 0 (*one-hot vector*). The job of the classifier is to produce an estimate vector $\hat {\bm y}$. For each class $k$, the value $\hat y_k$ will be the classifier’s estimate of the probability $p(y_k = 1 \mid x)$.
+
+One can think of multinomial model with $K$ possible outcomes, as running $K$ independent *binary logistic regression* models. As we mentioned the linear finction extimates the log probability of input $\bm x$ belongs to class $i$. So we can write:
+
+$$
+\ln p(y_i = 1 \mid \bm x) = \bm w_i \cdot \bm x - \ln Z
+$$
+
+As in the binary case, we need an extra term $-\ln Z$ to ensure that the whole set of probabilities forms a probability distribution, i.e. so that they all sum to one: $\sum_{i=1}^K p(y_i=1 \mid \bm x) = 1$. The reason why we need to add a term to ensure normalization, rather than multiply as is usual, is because we have taken the logarithm of the probabilities. Based on this, we obtain:
+
+$$
+p(y_i = 1 \mid \bm x) = \frac{1}{Z}e^{\bm w_i \cdot \bm x}
+$$
+
+So $Z = \sum_{i=1}^K e^{\bm w_i \cdot \bm x}$. That explains why softmax gives the probability $p(y_i = 1 \mid \bm x)$. 
+
+Based on this obeservation, let $\bm W$ have the shape $K \times f$, for $K$ the number of output classes and $f$, the number of input features. The bias vector $\bm b$ has one value for each of the $K$ output classes. Therefore: 
+
+$$
+\hat {\bm y}= \text{softmax}(\bm W\bm x + \bm b).
+$$
+
+
+### Learning in Multinomial Logistic Regression
+
+The loss function for multinomial logistic regression generalizes the loss function for binary logistic regression from 2 to K classes. Recall that that the cross-entropy loss for binary logistic regression:
+
+$$
+\begin{align*}
+p(y \mid \bm x) &= \hat y^y(1-\hat y)^{1-y}, \;\;\;  \text{Bernouli}(\hat y) \\
+L_{\text{cross-entropy}} &= - \log p(y \mid \bm x) \\ 
+&= - \Big ( y \log (1-\hat y) + (1-y)\log(1-\hat y)\Big)
+\end{align*}
+$$
+
+The loss function for multinomial logistic regression generalizes the binary loss equation above for $K$ classes:
+
+$$
+\begin{align*}
+L_{\text{cross-entropy}}(\bm {\hat y}, \bm y) &= - \sum_{k=1}^K y_k\log \hat y_k \\
+&= -\log \hat y_k \\
+&= -\log \frac{e^{\bm w_k \cdot\bm x}}{\sum_{j=1}^K e^{\bm w_j \cdot\bm x}}
+\end{align*}
+$$
+
+Hence the cross-entropy loss is simply the log of the output probability corresponding to the correct class, and we therefore negative log likelihood loss also call the **negative log likelihood loss**. For logistic regression, this loss function is conveniently convex. A convex function has at most one minimum; there are no local minima to get stuck in, so gradient descent starting from any point is guaranteed to find the minimum. (By contrast, the loss for multi-layer neural networks is non-convex, and gradient descent may get stuck in local minima for neural network training and never find the global optimum.)
+
+We learn the parametes $\bm w_i$ by apply **Stochastic Gradient Descent Algorithm**. Stochastic gradient descent is an online algorithm that minimizes the loss function by computing its gradient after each training example, and nudging parameter $\theta$ in the right direction. Stochastic gradient descent is called _stochastic_ because it chooses a single random example at a time, moving the weights so as to improve performance on that single example. That can result in very choppy movements, so it’s common to compute the gradient over batches of training instances rather than a single instance. For example in batch training we compute the gradient over the entire dataset. By seeing so many examples, batch training offers a superb estimate of which direction to move the weights, at the cost of spending a lot of time processing every single example in the training set to compute this perfect direction.
+
+A compromise is mini-batch training: we train on a group of $m$ examples (perhaps 512, or 1024) that is less than the whole dataset. (If $m$ is the size of the dataset, then we are doing batch gradient descent; if m = 1, we are back to doing stochastic gradient descent.) Mini-batch training also has the advantage of computational efficiency. The mini-batches can easily be vectorized, choosing the size of the mini-batch based on the computational resources. This allows us to process all the examples in one mini-batch _in parallel_ and then accumulate the loss, something that’s not possible with individual or batch training.
+
+
 
 # Vector Semantics and Word Embeddings
+
+Vector semantics is the standard way to represent word meaning in NLP, helping us model many of the aspects of word meaning we saw in the previous section. The idea of vector semantics is to represent a word as a point in a multidimensional semantic space that is derived (in ways we’ll see) from the distributions of embeddings word neighbors. Vectors for representing words are called embeddings.
+
+In the tf-idf model, an important baseline, the meaning of a word is defined by a simple function of the counts of nearby words. We will see that this method results in very long vectors that are sparse, i.e. mostly zeros (since most words simply never occur in the context of others). We’ll introduce the word2vec model family for constructing short, dense vectors that have useful semantic properties.
+
+## Word2Vec
+
+The mothod tf-idf represents a word as a sparse (mostly zeros), long vector with dimensions corresponding to words in the vocabulary or documents in a collection. Plus it focuses mostly on frequency of words in document rather than which words might appear together or in which order, more similar to bag-of-words. A more powerful word representation is **embeddings** which are short and dense vectors with number of dimensions ranging from 50-1000, rather than the much larger vocabulary size or number of documents we’ve seen. And the vectors are dense: instead of vector entries being sparse, mostly-zero counts or functions of counts, the values will be real-valued numbers that can be negative. It turns out that dense vectors work better in every NLP task than sparse vectors.
+
+
+Synonym: One important component of word meaning is the relationship between word senses. For example when one word has a sense whose meaning is identical to a sense of another word, or nearly identical, we say the two senses of those two words are synonyms. Synonyms include such pairs as "couch/sofa, vomit/throw up, filbert/hazelnut, car/automobile". Two words are synonymous if they are substitutable for one another in any sentence without changing the truth conditions of the sentence, the situations in which the sentence would be true.
+
+While words don’t have many synonyms, most words do have lots of similar words. Cat is not a synonym of dog, but cats and dogs are certainly similar words. In moving from synonymy to similarity, it will be useful to shift from talking about relations between word senses (like synonymy) to relations between words (like similarity). Dealing with words avoids having to commit to a particular representation of word senses, which will turn out to simplify our task. The notion of word similarity is very useful in larger semantic tasks. Knowing how similar two words are can help in computing how similar the meaning of two phrases or sentences are, a very important component of tasks like question answering, paraphrasing, and summarization. One way of getting values for word similarity is to ask humans to judge how similar one word is to another. A number of datasets have resulted from such experiments. 
+
+### Vector Semantics
+
+Vector semantics is the standard way to represent word meaning in NLP. The proposal by linguists like Joos (1950), Harris (1954), and Firth (1957) to define the meaning of a word by its distribution in language use, meaning its neighboring words or grammatical environments. _Their idea was that two words that occur in very similar distributions (whose neighboring words are similar) have similar meanings_.
+
+The idea of vector semantics is to represent a word as a point in a multidimensional semantic space that is derived from the distributions of embeddings word neighbors. Vectors for representing words are called **embeddings** although the term is sometimes more strictly applied only to dense vectors like word2vec, rather than sparse tf-idf. 
+
+Raw frequency is very skewed and not very discriminative. If we want to know what kinds of contexts are shared by cherry and strawberry but not by digital and information, we’re not going to get good discrimination from words like `the`, `it`, or `they`, which occur frequently with all sorts of words and aren’t informative about any particular word. It’s a bit of a paradox. Words that occur nearby frequently (maybe pie nearby cherry) are more important than words that only appear once or twice. Yet words that are too frequent—ubiquitous, like `the` or `good`— are unimportant. How can we balance these two conflicting constraints?
+
+The **tf-idf weighting** is the product of two terms, each term capturing one of these two intuitions. The first is the **term frequency**: the frequency of the word $t$ in the document $d$. We can just use the raw count as the term frequency: count($t$,$d$) or even better: 
+
+$$
+tf_{t,d} = 
+\begin{cases}
+1 + \log(\text{count}(t, d)) & \text{if \text{count}($t$, $d$) > 0} \\
+0 & \text{otherwise}
+\end{cases}
+$$
+
+The intuition is that a word appearing 100 times in a document doesn’t make that word 100 times more likely to be relevant to the meaning of the document. The second factor in tf-idf is used to give a higher weight to words that occur only in a few documents and less weight to the one that repeat in many documents. Terms that are limited to a few documents are useful for discriminating those documents from the rest of the collection; terms that occur frequently across the entire collection aren’t as helpful. The **document frequency** df$_t$ of a term $t$ is the number of documents it occurs in. We emphasize discriminative words via the inverse document frequency or idf term weight: idf$_t$ = $\log(\frac{N}{df_t})$ where $N$ is the total number of documents in the collection, and $df_t$ is the number of documents in which term t occurs. The tf-idf weighted value $w_{t,d}$ for word t in document d thus combines term frequency tf with idf: $w_{t,d} = tf_{t,d} \times idf_t$.
+
+### Word Embeddings
 
 Neural language models share statistical strength between one word (and its context) and other similar words and contexts. For example, if the word `dog` and the word `cat` map to representations that share many attributes, then sentences that contain the word cat can inform the predictions that will be made by the model for sentences that contain the word `dog`, and vice-versa. Because there are many such attributes, there are many ways in which generalization can happen, transferring information from each training sentence to an exponentially large number of semantically related sentences. The curse of dimensionality requires the model to generalize to a number of sentences that is exponential in the sentence length. We sometimes call these word representations **word embeddings**.
 
@@ -418,14 +973,15 @@ course | seven
 
 For every target word as input, the model predicts the corresponding target. The architecture of the model could be similar to the one for CBOW. This could be as simple as one-hot vector of target ($c$) --> affine transformation --> softmax ($\theta$) --> $\hat{y}$. By this model, 
 
-$$\hat y_i = P(c|t) = \frac{e^{\theta_t^Tc}}{\sum_{c \in V} e^{\theta_{t}^Tc}},$$
+$$
+\hat y_i = P(c|t) = \frac{e^{\theta_t^Tc}}{\sum_{c \in V} e^{\theta_{t}^Tc}},
+$$
 
 where $\theta_t$ output of softmax when model input is one-hot vector $t$ for target $t$, and $c$ is the one-hot vector for context word. The loss is cross-entropy the same as mentioned before. Only one probability vector $\hat y$ is computed. Skip-gram treats each context word equally : the models computes the probability for each word of appearing in the context independently of its distance to the center word. 
 
 Loss functions for CBOW and SkipGram are expensive to compute because of the softmax normalization, where we sum over all $|V|$ scores! Computing the denominator of this formulation involves performing a full softmax over the entire vocabulary words, which are often large terms. See [notes](https://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes01-wordvecs1.pdf) for more details.
 
-
-## High-Dimensional Outputs
+### High-Dimensional Outputs
 
 In many applications, vocabulary $V$ contains hundreds of thousands of words. The naive approach to representing such a distribution is to apply an aﬃne transformation from a hidden representation to the output space, then apply the softmax function. Suppose we have a vocabulary $V$ with size $|V|$. The weight matrix describing the linear component of this aﬃne transformation is very large, because its output dimension is $|V|$. This imposes a high memory cost to represent the matrix, and a high computational cost to multiply by it. Because the softmax is normalized across all $|V|$ outputs, it is necessary to perform the full matrix multiplication at training time as well as test time—we cannot calculate only the dot product with the weight vector for the correct output. The high computational costs of the output layer thus arise both at training time (to compute the likelihood and its gradient) and at test time (to compute probabilities for all or selected words). More clearly, the aﬃne-softmax output layer performs the following computations:
 
@@ -443,10 +999,22 @@ If $\bm h$ contains $n_h$ elements then the above operation is $O(|V|n_h)$. With
 - Hierarchical Softmax
 - Importance Sampling (or Negative Sampling)
 
-### Negative Sampling
+#### Negative Sampling
 A simple idea is we could instead just approximate the loss function. For every training step, instead of looping over the entire vocabulary, we can just sample several negative examples! We "sample" from a noise distribution (Pn(w)) whose probabilities match the ordering of the frequency of the vocabulary. To augment our formulation of the problem to incorporate Negative Sampling, all we need to do is update the objective function, then gradient and the update rule. See [notes](https://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes01-wordvecs1.pdf) for more details. Using this technique, the computational complexity of gradient estimation for the output layer is reduced to be proportional to the number of negative samples rather than proportional to the size of the output vector.
 
-### Some application of word embedding?
+
+## Visualizing Embeddings
+
+The simplest way to visualize the meaning of a word $w$ embedded in a space is to list the most similar words to $w$ by sorting the vectors for all words in the vocabulary by their _cosine_ with the vector for $w$. For example the 7 closest words to frog using a particular embeddings computed with the GloVe algorithm are: _frogs_, _toad_, _litoria_, _leptodactylidae_, _rana_, _lizard_, and _eleutherodactylus_.
+
+ 
+Yet another visualization method is to use a clustering algorithm to show a hierarchical representation of which words are similar to others in the embedding space. The uncaptioned figure on the left uses hierarchical clustering of some embedding vectors for nouns as a visualization methods. Probably the most common visualization method, however, is to project the 100 dimensions of a word down into 2 dimensions using a projection method called **t-SNE**.
+
+
+Recent research focuses on ways to try to remove these kinds of biases, for example by developing a transformation of the embedding space that removes gender stereotypes but preserves definitional gender or changing the training procedure. However, although these sorts of debiasing may reduce bias in embeddings, they do not eliminate it, and this remains an open problem.
+
+
+## Some application of word embedding?
 - **Sentiment Analysis**: use well-know word embeddings to train RNNs for sentiment analysis - many-to-one RNNs... takes a sentence which is a sequence of word embeddings and outputs a a fix number of class prediction (positive/negative) 
 - **Debiasing Word Embeddings**: Modify word embedding so they are less bias
 
@@ -634,7 +1202,7 @@ Some examples of important design patterns for recurrent neural networks include
 
 
 
-## Language models and Text Generation
+## Language Models and Text Generation
 
 Recall that we saw how to generate text from an n-gram language model by adapting a sampling technique. We first randomly sample a word to begin a sequence based on its suitability as the start of a sequence. We then continue to sample words conditioned on our previous choices until we reach a pre-determined length, or an end of sequence token is generated.
 
@@ -1973,7 +2541,7 @@ Last but not least, T5 uses the encoder and the decoder transformer architecture
 
 ## Evaluation of LLMs
 
-We will now discuss the train/val/test splits and perplexity.
+We will now discuss the train/val/test splits.
 
 ### Train/Val/Test splits
 Smaller Corpora: 
@@ -1989,29 +2557,6 @@ Larger Corpora:
 There are two main methods for splitting the data: 
 - Continous Text
 - Random Short Sequences
-
-### Perplexity
-Perplexity is used to tell us whether a set of sentences look like they were written by humans rather than by a simple program choosing words at random. A text that is written by humans is more likely to have lower perplexity, where a text generated by random word choice would have a higher perplexity.
-
-Perplexity is defined as the exponentiated average negative log-likelihood of a sequence. If we have a tokenized sequence $\bm X = (\bm x^{(1)}, ..., X^{(t)})$, then the perplexitiy of $\bm X$ is
-
-$$
-PPL(\bm X) = \sqrt[t]{\prod_{i=1}^t \frac{1}{P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})}}
-$$
-
-Use log for more computationally stable formula:
-
-$$
-PPL(\bm X) = \exp(-\frac{1}{t}{\sum_{i=1}^t \log P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})})
-$$
-
-Another version of this uses $P(x^{(i)}|x^{(i-1)})$ instead of $P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})$ in th eabove formula. If there are $m$ sentences $(s_1,..., s_m)$ in the text, the formula becomes:
-
-$$
-PPL(\bm X) = \sqrt[m]{\prod_{i=1}^m \prod_{j=1}^{|s_i|} \frac{1}{P(x_i^{(j)}|x_i^{(j-1)})}}
-$$
-
-_Probabilities are given according to our model_. Intuitively, perplexitiy can be thought of as an evaluation of the model’s ability to predict uniformly among the set of specified tokens in a corpus. Importantly, this means that the tokenization procedure has a direct impact on a model’s perplexity which should always be taken into consideration when comparing different models.  This is also equivalent to the exponentiation of the cross-entropy between the data and model predictions. 
 
 
 Transformer based models have various applications:
