@@ -125,7 +125,7 @@ which is governed by two parameters: $\mu$, called the mean, and $\sigma^2$, cal
 Gaussian distribution defined over a D-dimensional vector $x$ of continuous variables, which is given by
 
 $$
-\mathcal{N}(\bm x\mid \bm \mu,\bm \Sigma) = \frac{1}{{(2\pi)}^{D/2}} \frac{1}{|\Sigma|^{1/2}}\exp\{-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)\}
+\mathcal N(\bm x\mid \bm \mu,\bm \Sigma) = \frac{1}{(2π)^{D/2}} \frac{1}{|\Sigma|^{1/2}}\exp\Big(-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)\Big)
 $$
 
 where the $D$-dimensional vector $\mu$ is called the mean, the $D × D$ matrix Σ is called the covariance, and $|Σ|$ denotes the determinant of $Σ$. The log likelihood function is:
