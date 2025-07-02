@@ -663,11 +663,13 @@ $$
 P(f_1,f_2,...,f_n \mid c) = \prod_{i=1}^n P(f_i\mid c)
 $$
 
+    Note that this doesn’t mean they’re independent.
+
 To apply the naive Bayes classifier to text, we will use each word in the documents as a feature, as suggested above, and we consider each of the words in the document by walking an index through every word position in the document. Naive Bayes calculations, like calculations for language modeling, are done in log space, to avoid underflow and increase speed.
 
 ### Training Naive Bayes Classifiers
 
-How can we learn the probabilities $P(c)$ and $P( f_i\mid c)$? Let’s first consider the maximum likelihood estimate. We’ll simply use the frequencies in the data. For the class prior $P(c)$, we ask what percentage of the documents in our training set are in each class $c$. Let $N_c$ be the number of documents in our training data with class $c$ and N_{doc} be the total number of documents. Then: $\hat P(c) = \frac{N_c}{N_{doc}}$
+How can we learn the probabilities $P(c)$ and $P( f_i\mid c)$? Let’s first consider the maximum likelihood estimate. We’ll simply use the frequencies in the data. For the class prior $P(c)$, we ask what percentage of the documents in our training set are in each class $c$. Let $N_c$ be the number of documents in our training data with class $c$ and $N_{\text{doc}}$ be the total number of documents. Then: $\hat P(c) = \frac{N_c}{N_{\text{doc}}}$
 
 To learn the probability $P( f_i\mid c)$, we’ll assume a feature is just the existence of a word in the document’s bag of words, and so we’ll want $P( w_i\mid c)$, which we compute as the fraction of times the word $w_i$ appears among all words in all documents of class c:
 
