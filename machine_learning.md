@@ -40,8 +40,8 @@
   - [Tree-Based Methods](#tree-based-methods)
     - [Regression Trees](#regression-trees)
     - [Classification Trees](#classification-trees)
-          - [Advantages of decision trees over KNN](#advantages-of-decision-trees-over-knn)
-          - [Advantages of KNN over decision trees](#advantages-of-knn-over-decision-trees)
+        - [Advantages of decision trees over KNN](#advantages-of-decision-trees-over-knn)
+        - [Advantages of KNN over decision trees](#advantages-of-knn-over-decision-trees)
   - [Ensemble](#ensemble)
     - [Bagging](#bagging)
       - [Random Forest](#random-forest)
@@ -113,6 +113,9 @@
   - [Workspace Setup](#workspace-setup)
     - [Pyhton Environment](#pyhton-environment)
   - [Data Mining Tools](#data-mining-tools)
+        - [When to Use Dask](#when-to-use-dask)
+      - [Spark:](#spark)
+        - [When to Use Apache Spark](#when-to-use-apache-spark)
     - [Cloud-by-Cloud Breakdown](#cloud-by-cloud-breakdown)
   - [Data Pipeline Setup](#data-pipeline-setup)
   - [EDA and Feature Selection](#eda-and-feature-selection)
@@ -1148,11 +1151,7 @@ w_0 & =  -\frac{1}{2} \bm \mu_k^T \Sigma^{-1} \bm \mu_k  + \ln p(C_k).
 \end{align*}
 $$
 
-The resulting decision boundaries, corresponding to the minimum misclassification rate, will occur when two of the posterior probabilities (the two largest) are equal, and so will be defined by linear functions of $\bm x$, and so again we have a generalized linear model called **linear** discriminant (LDA). The K centroids in p-dimensional input space lie in an aﬃne subspace of dimension ≤ K−1, and if n is much larger than K, this will be a considerable drop in dimension. Moreover, in locating the closest centroid, we can ignore distances orthogonal to this subspace, since they will contribute equally to each class. Thus we might just as well project the $X^∗$ onto this centroid-spanning subspace $H_{K−1}$, and make distance comparisons there. Thus there is a fundamental dimension reduction in LDA, namely, that we need only consider the data in a subspace of dimension at most $K−1$. If K = 3, for instance, this could allow us to view the data in a two-dimensional plot, color-coding the classes.
-
-If we relax the assumption of a shared covariance matrix and allow each class-conditional density $p(\bm x \mid C_k)$ to have its own covariance matrix $Σ_k$, then the earlier cancellations will no longer occur, and we will obtain quadratic functions of $\bm x$, giving rise to a _**quadratic** discriminant_.
-
-If we make the futher assumption of independence of features conditioned on classes, we get **Naive Bayes**:
+The resulting decision boundaries, corresponding to the minimum misclassification rate, will occur when two of the posterior probabilities (the two largest) are equal, and so will be defined by linear functions of $\bm x$, and so again we have a generalized linear model called **linear** discriminant (LDA). The K centroids in p-dimensional input space lie in an aﬃne subspace of dimension ≤ K−1, and if n is much larger than K, this will be a considerable drop in dimension. Moreover, in locating the closest centroid, we can ignore distances orthogonal to this subspace, since they will contribute equally to each class. Thus we might just as well project the $X^∗$ onto this centroid-spanning subspace $H_{K−1}$, and make distance comparisons there. Thus there is a fundamental dimension reduction in LDA, namely, that we need only consider the data in a subspace of dimension at most $K−1$. If K = 3, for instance, this could allow us to view the data in a two-dimensional plot, color-coding the classes. If we relax the assumption of a shared covariance matrix and allow each class-conditional density $p(\bm x \mid C_k)$ to have its own covariance matrix $Σ_k$, then the earlier cancellations will no longer occur, and we will obtain quadratic functions of $\bm x$, giving rise to a _**quadratic** discriminant_. If we make the futher assumption of independence of features conditioned on classes, we get **Naive Bayes**:
 
 $$
 p(\bm x \mid C_k) = \prod_{j=1}^D p(x_j \mid C_k)
@@ -1330,7 +1329,7 @@ For any new input $\bm x$, we determine which region it falls into by starting a
 If left unconstrained, the tree structure will adapt itself to the training data, fitting it very closely, and most likely overfitting it. Such a model is often called a **nonparametric model**, not because it does not have any parameters (it often has a lot) but because the number of parameters is not determined prior to training, so the model structure is free to stick closely to the data.  To avoid overfitting the training data, you need to restrict the Decision Tree’s freedom during training. As you know by now, this is called regularization. Reducing `max_depth` will regularize the model and thus reduce the risk of overfitting. Other parameters include `min_samples_split` (the minimum number of samples a node must have before it can be split), `min_samples_leaf` (the minimum number of samples a leaf node must have), min_weight_fraction_leaf (same as `min_samples_leaf` but expressed as a fraction of the total number of weighted instances), `max_leaf_nodes` (maximum number of leaf nodes), and `max_features` (maximum number of features that are evaluated for splitting at each node). Increasing `min_*`  hyperparameters or reducing `max_*` hyperparameters will regularize the model.
 
 
-Decision tree follows a **greedy algorithm**: it greedily searches for an optimum split at the top level, then repeats the process at each level. It does not check whether or not the split will lead to the lowest possible impurity several levels down. A greedy algorithm often produces a reasonably good solution, but it is not guaranteed to be the global optimal solution. Unfortunately, finding the optimal tree is known to be an NP-Complete problem: it requires $\mathcal O(exp(m))$ time, making the problem intractable even for fairly small training sets. This is why we must settle for a “reasonably good” solution. 
+Decision tree follows a **greedy algorithm**: it greedily searches for an optimum split at the top level, then repeats the process at each level. It does not check whether or not the split will lead to the lowest possible impurity several levels down. A greedy algorithm often produces a reasonably good solution, but it is not guaranteed to be the global optimal solution. Unfortunately, finding the optimal tree is known to be an NP-Complete problem: it requires $\mathcal O(\exp(m))$ time, making the problem intractable even for fairly small training sets. This is why we must settle for a “reasonably good” solution. 
 
 > Note: P is the set of problems that can be solved in polynomial time. NP is the set of problems whose solutions can be verified in polynomial time. An NP-Hard problem is a problem to which any NP problem can be reduced in polynomial time. An NP-Complete problem is both NP and NP-Hard. A major open mathematical question is whether or not P = NP. If P ≠ NP (which seems likely), then no polynomial algorithm will ever be found for any NP-Complete problem (except perhaps on a quantum computer).
 
@@ -1383,7 +1382,7 @@ $$
 
 All three are similar, but cross-entropy and the Gini index are diﬀerentiable, and hence more amenable to numerical optimization. 
 
-###### Advantages of decision trees over KNN
+##### Advantages of decision trees over KNN
 - Good when there are lots of attributes, but only a few are important
 - Good with categorical variables
 - Easily deals with missing values (just treat as another value)
@@ -1391,7 +1390,7 @@ All three are similar, but cross-entropy and the Gini index are diﬀerentiable,
 - Fast at test time
 - More interpretable
   
-###### Advantages of KNN over decision trees
+##### Advantages of KNN over decision trees
 - Few hyperparameters
 - Able to handle attributes/features that interact in complex ways (e.g. pixels)
 - Can incorporate interesting distance measures (e.g. shape contexts)
@@ -1703,8 +1702,7 @@ $$
 \max_{\alpha} \sum_{i=1}^n \alpha_i - \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i\alpha_j t^{(i)} t^{(j)}   \bm {x^{(i)}}^T  \bm {x^{(j)}} 
 $$
 
-In addition to (1)–(3), the Karush–Kuhn–Tucker conditions include
-the constraints
+In addition to (1)–(3), the Karush–Kuhn–Tucker conditions include the constraints
 
 $$
 \begin{align}
@@ -1715,6 +1713,7 @@ t^{(i)}(\bm w^T\bm x^{(i)}+b) - (1-\xi_i) & \ge 0
 $$
 
 From equation (1), we see that the solution for $\bm w$ has the form
+
 $$
 \begin{align}
 \bm {\hat w}  = \sum_i \hat \alpha_it^{(i)} \bm x^{(i)} 
@@ -2138,10 +2137,13 @@ $$
 The first argument `x` to the convolution is often referred to as the **input** and the second `w` argument as the **filter** (or **kernel**). The output is sometimes referred to as the **feature map**. In machine learning applications, the input is usually a multidimensional array of data and the kernel is usually a multidimensional array of parameters that are adapted by the learning algorithm. We will refer to these multidimensional arrays as **tensors**. Because each element of the input and kernel must be explicitly stored separately, we usually assume that these functions are zero everywhere but the finite set of points for which we store the values. 
 
 We often use convolutions over more than one axis at a time. For example, if we use a two-dimensional image I as our input, we probably also want to use a two-dimensional kernel:
+
 $$
 (I*K)(i,j) = \sum_m\sum_n I(m,n) K(i+m, j+n).
 $$
+
 Also, 
+
 $$
 I*K = K*I.
 $$ 
@@ -2702,9 +2704,7 @@ $$
 \frac{b \; – \; a}{\max(a, b)}
 $$ 
 
-where $a$ is the mean distance to the other instances in the same cluster (it is the mean intra-cluster distance), and $b$ is the mean nearest-cluster distance, that is the mean distance to the instances of the next closest cluster (defined as the one that minimizes $b$, excluding the instance’s own cluster). The silhouette coefficient can vary between -1 and +1: $a$ coefficient close to +1 means that the instance is well inside its own cluster and far from other clusters, while a coefficient close to 0 means that it is close to a cluster boundary, and finally a coefficient close to -1 means that the instance may have been assigned to the wrong cluster.
- 
-An even more informative visualization is obtained when you plot every instance’s silhouette coefficient, sorted by the cluster they are assigned to and by the value of the coefficient. This is called a *silhouette diagram*:
+where $a$ is the mean distance to the other instances in the same cluster (it is the mean intra-cluster distance), and $b$ is the mean nearest-cluster distance, that is the mean distance to the instances of the next closest cluster (defined as the one that minimizes $b$, excluding the instance’s own cluster). The silhouette coefficient can vary between -1 and +1: $a$ coefficient close to +1 means that the instance is well inside its own cluster and far from other clusters, while a coefficient close to 0 means that it is close to a cluster boundary, and finally a coefficient close to -1 means that the instance may have been assigned to the wrong cluster. An even more informative visualization is obtained when you plot every instance’s silhouette coefficient, sorted by the cluster they are assigned to and by the value of the coefficient. This is called a *silhouette diagram*:
 
 <p align="center">
     <img src="./assets/machine-learning/k-means2.png" alt="drawing" width="500" height="300" style="center" />
@@ -2774,11 +2774,7 @@ $$
 \mathcal N (x_n \mid \bm x_n, σ^2_j\bm I) = \frac{1}{(2π)^{1/2}\sigma_j}
 $$
 
-If $\sigma_j \rightarrow 0$, then we see that this term goes to infinity and so the log likelihood function will also go to infinity. Thus the maximization of the log likelihood function is not a well posed problem because such singularities will always be present. Recall that this problem did not arise in the case of a single Gaussian distribution. However if a single Gaussian collapses onto a data point it will contribute multiplicative factors to the likelihood function arising from the other data points and these factors will go to zero exponentially fast, giving an overall likelihood that goes to zero rather than infinity. However, once we have (at least) two components in the mixture, one of the components can have a finite variance and therefore assign  finite probability to all of the data points while the other component can shrink onto one specific data point and thereby contribute an ever increasing additive value to the log likelihood.
-
-
-
-By data-complete we mean that for each observation in $X$, we were told the corresponding value of the latent variable $Z$. We shall call $\{X, Z\}$ the complete dataset, and we shall refer to the actual observed data $X$ as incomplete. Now consider the problem of maximizing the likelihood for the complete dataset $\{X, Z\}$. This likelihood function takes the form 
+If $\sigma_j \rightarrow 0$, then we see that this term goes to infinity and so the log likelihood function will also go to infinity. Thus the maximization of the log likelihood function is not a well posed problem because such singularities will always be present. Recall that this problem did not arise in the case of a single Gaussian distribution. However if a single Gaussian collapses onto a data point it will contribute multiplicative factors to the likelihood function arising from the other data points and these factors will go to zero exponentially fast, giving an overall likelihood that goes to zero rather than infinity. However, once we have (at least) two components in the mixture, one of the components can have a finite variance and therefore assign  finite probability to all of the data points while the other component can shrink onto one specific data point and thereby contribute an ever increasing additive value to the log likelihood. By data-complete we mean that for each observation in $X$, we were told the corresponding value of the latent variable $Z$. We shall call $\{X, Z\}$ the complete dataset, and we shall refer to the actual observed data $X$ as incomplete. Now consider the problem of maximizing the likelihood for the complete dataset $\{X, Z\}$. This likelihood function takes the form 
 
 $$
 p(X, Z \mid \mu, Σ, π) = p(X\mid Z, \mu, Σ, π) p(Z)  = \prod_{n=1}^N \prod_{k=1}^K π_k^{z_{nk}} \mathcal N(\bm x_n \mid \bm \mu_k, \Sigma_k)^{z_{nk}}
@@ -2861,9 +2857,7 @@ Unfortunately, just like K-Means, EM can end up converging to poor solutions, so
 
 The computational complexity of training a GaussianMixture model depends on the number of instances $m$, the number of dimensions $n$, the number of clusters $k$, and the constraints on the covariance matrices. If covariance_type is "spherical or "diag", it is $\mathcal O(kmn)$, assuming the data has a clustering structure. If covariance_type is "tied" or "full", it is $\mathcal O(kmn^2 + kn^3)$, so it will not scale to large numbers of features.
  
-Using a Gaussian mixture model for anomaly detection is quite simple: any instance located in a low-density region can be considered an anomaly. You must define what density threshold you want to use.
-
-Gaussian mixture models try to fit all the data, including the outliers, so if you have too many of them, this will bias the model’s view of “normality”: some outliers may wrongly be considered as normal. If this happens, you can try to fit the model once, use it to detect and remove the most extreme outliers, then fit the model again on the cleaned up dataset. Another approach is to use robust covariance estimation methods.
+Using a Gaussian mixture model for anomaly detection is quite simple: any instance located in a low-density region can be considered an anomaly. You must define what density threshold you want to use. Gaussian mixture models try to fit all the data, including the outliers, so if you have too many of them, this will bias the model’s view of “normality”: some outliers may wrongly be considered as normal. If this happens, you can try to fit the model once, use it to detect and remove the most extreme outliers, then fit the model again on the cleaned up dataset. Another approach is to use robust covariance estimation methods.
 
 
 #### The General EM Algorithm
@@ -2991,9 +2985,7 @@ $$
 \end{align*}
 $$
 
-where $n$ is the number of times $X_s = x_s$. 
-
-Due to the limits of human perception, the size of the set of input features of interest must be small (usually, one or two) thus the input features of interest are usually chosen among the most important features.
+where $n$ is the number of times $X_s = x_s$.  Due to the limits of human perception, the size of the set of input features of interest must be small (usually, one or two) thus the input features of interest are usually chosen among the most important features.
 
 ### Permutation importance
 
@@ -3143,7 +3135,7 @@ source venv/bin/activate  # or venv\Scripts\activate on Windows
 ## Data Mining Tools
 - Pandas: is still the default and most widely used data manipulation library in both industry and academia.
   
-  | Use Case                        | Is Pandas Ideal?             |
+| Use Case                        | Is Pandas Ideal?             |
 | ------------------------------- | ---------------------------- |
 | Exploratory Data Analysis (EDA) | ✅ Best choice                |
 | Clean, tabular data in memory   | ✅ Excellent                  |
@@ -3163,7 +3155,7 @@ df = dd.read_csv("big_file.csv")
 df.groupby("col").mean().compute()
 ```
 
-When to Use Dask
+##### When to Use Dask
 - You’re working with large datasets that don't fit in memory.
 - You want parallel processing on a cluster or multi-core machine.
 - You’re already in the Python ecosystem
@@ -3173,9 +3165,9 @@ When to Use Dask
 - You're working in Jupyter notebooks or ML dev environments
 🧠 Best for data scientists, small/medium-scale ML pipelines, and exploratory workflows.
 
-- Spark:
+#### Spark:
 
-When to Use Apache Spark
+##### When to Use Apache Spark
 - You're processing TB–PB-scale data on a cluster
 - You need enterprise-grade fault tolerance, streaming, or data lake integrations
 - Your org already uses big data infrastructure (EMR, Databricks, Hadoop, etc.)
@@ -3185,8 +3177,7 @@ When to Use Apache Spark
 Many companies prototype in Dask, then move pipelines to Spark (or Databricks) for production-scale processing — especially if streaming or tight integration with data lakes is needed.
 
 
-The moment your data is stored in the cloud, you usually want to move away from Dask/Spark clusters you manage directly and use cloud-native, serverless or managed alternatives.
-Here's a breakdown of cloud-native tools that replace Dask, Spark, and even Pandas workflows depending on the cloud provider:
+The moment your data is stored in the cloud, you usually want to move away from Dask/Spark clusters you manage directly and use cloud-native, serverless or managed alternatives.Here's a breakdown of cloud-native tools that replace Dask, Spark, and even Pandas workflows depending on the cloud provider:
 
 | Workflow Type                     | Dask/Spark Equivalent in Cloud     | Cloud Tools (per provider)                                                                                       |
 | --------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
