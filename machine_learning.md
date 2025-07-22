@@ -1,6 +1,46 @@
 <h1 class='title'>Machine Learning</h1>
 
+### Table of Content
 - [Introduction](#introduction)
+- [Probability and Statistics](#probability-and-statistics)
+  - [Descriptive Statistics](#descriptive-statistics)
+  - [Probability](#probability)
+    - [Independent Events](#independent-events)
+    - [Conditional Probability](#conditional-probability)
+    - [Random Variable](#random-variable)
+    - [Distribution Functions and Probability Functions](#distribution-functions-and-probability-functions)
+      - [Some Important Discrete Random Variables](#some-important-discrete-random-variables)
+      - [Some Important Continuous Random Variables](#some-important-continuous-random-variables)
+    - [Bivariate Distributions](#bivariate-distributions)
+    - [Marginal Distributions](#marginal-distributions)
+    - [Independent Random Variables](#independent-random-variables)
+    - [Conditional Distributions](#conditional-distributions)
+  - [Random Sample](#random-sample)
+  - [Expectation of a Random Variable](#expectation-of-a-random-variable)
+    - [Properties of Expectations](#properties-of-expectations)
+    - [Variance and Covariance](#variance-and-covariance)
+    - [Conditional Expectation](#conditional-expectation)
+    - [Inequalities For Expectations](#inequalities-for-expectations)
+  - [Statistical Inference](#statistical-inference)
+    - [Confidence Intervals](#confidence-intervals)
+      - [Normal-based Confidence Interval](#normal-based-confidence-interval)
+    - [Estimating the cdf and Statistical Functionals](#estimating-the-cdf-and-statistical-functionals)
+      - [The Empirical Distribution Function](#the-empirical-distribution-function)
+      - [Plug-in Estimators](#plug-in-estimators)
+    - [Bootstrap](#bootstrap)
+    - [Parametric Inference](#parametric-inference)
+      - [Maximum Likelihood](#maximum-likelihood)
+      - [Properties of Maximum Likelihood Estimators](#properties-of-maximum-likelihood-estimators)
+    - [Hypothesis Testing and p-values](#hypothesis-testing-and-p-values)
+      - [p-value](#p-value)
+      - [How to calculate p-value](#how-to-calculate-p-value)
+      - [Choosing $α$:](#choosing-α)
+      - [$t$\_distribution:](#t_distribution)
+    - [Examples](#examples)
+    - [The $χ^2$ Distribution](#the-χ2-distribution)
+      - [Independence Testing](#independence-testing)
+    - [ANOVA (Analysis of Variance):](#anova-analysis-of-variance)
+    - [Bootstrapping for hypothesis testing](#bootstrapping-for-hypothesis-testing)
   - [Bayesian Probabilities](#bayesian-probabilities)
   - [Gaussian Distribution](#gaussian-distribution)
   - [Curve Fitting](#curve-fitting)
@@ -141,6 +181,1262 @@ fix the errors manually. If some instances are *missing a few features* (e.g., 5
   
 In a machine learning project, we start with **framing the problem**. This is important because it will determine how you frame the problem, what algorithms you will select, what performance measure you will use to evaluate your model, and how much effort you should spend tweaking it. Then **select a performance measure**  (RMSE, MSE, MAE, MAPE, log-prob, cross-entropy, etc.)
 
+The mathematical tools for machine learning is statistics. So we quickly review some prerequisites from statistics here.
+
+# Probability and Statistics
+
+
+## Descriptive Statistics
+
+Descriptive Statistics
+| Concept                | Description                               |
+| ---------------------- | ----------------------------------------- |
+| **Mean**               | Average: $\bar{x} = \frac{1}{n} \sum x_i$ |
+| **Median**             | Middle value (robust to outliers)         |
+| **Mode**               | Most frequent value                       |
+| **Variance**           | Average squared deviation from mean       |
+| **Standard Deviation** | Square root of variance                   |
+| **IQR**                | Q3 - Q1 (middle 50% range)                |
+| **Skewness**           | Measures asymmetry                        |
+| **Kurtosis**           | Measures "tailedness" or peak heaviness   |
+
+**When to use what**:
+- Mean: Normal-like data
+- Median: Skewed or outlier-heavy data
+- Variance/Std Dev: Spread/uncertainty
+- Skewness/Kurtosis: Shape and anomaly insight
+
+**Data Visualization (EDA)**
+- Histograms: A histogram is a bar plot showing the **distribution of a single numerical variable** by dividing the data range into intervals (bins) and counting how many values fall into each bin. It helps to
+    - Visualize shape of distribution (e.g., normal, skewed, heavy tails)
+    - Detect modes, outliers, spread
+    - Good for large samples
+  
+- Boxplot (Box-and-Whisker Plot)
+What it is: A boxplot summarizes five-number summary:
+    - Min
+    - Q1 (25th percentile)
+    - Median (Q2)
+    - Q3 (75th percentile)
+    - Max (excluding outliers)
+    
+    Box = interquartile range (IQR = Q3 - Q1)
+Whiskers = extend to data within 1.5×IQR from Q1 and Q3
+Dots = outliers (beyond whiskers)
+
+    Purpose:
+    - Compare distributions across categories
+    - Detect skew, spread, and outliers
+    - Much cleaner than histograms for comparative plots
+- Empirical Cumulative Distribution Function (CDF)
+   Empirical CDF is a step function that shows, for each value $x$  the proportion of data less than or equal to $x$.
+   \[
+    ECDF(x) = \frac{\#\{ x_i \le x\}}{n}
+   \]
+   Purpose:
+    - Show full distribution without binning (unlike histogram)
+    - Allows for direct comparison of two distributions, visual test of normality, - The steepness of steps shows density
+    - Makes it easy to read quantiles visually
+  
+- QQ Plot 
+  A Q-Q plot compares the quantiles of your empirical data with the quantiles of a theoretical distribution (often Normal).
+    - X-axis: Theoretical quantiles (e.g., from a standard normal distribution)
+    - Y-axis: Sample quantiles (from your data)
+    
+    If your data comes from the specified theoretical distribution, the points will fall approximately along the 45-degree line (y = x).
+
+    Purpose:
+    - Check normality (most common use case)
+    - Compare two distributions
+    - Spot heavy tails, skew, outliers, or departures from assumptions
+  
+  Let’s say you're comparing your data to a Normal distribution:
+
+    | Q-Q Plot Feature            | What It Tells You                                        |
+    | --------------------------- | -------------------------------------------------------- |
+    | Points lie on 45° line      | Data is **normally distributed**                         |
+    | Curve is **S-shaped**       | Data is **skewed** (right or left depending on curve)    |
+    | Tails are above line        | **Heavy right tail** (data has more extreme high values) |
+    | Tails below line            | **Heavy left tail** (extreme low values)                 |
+    | Points deviate at ends only | **Tail issues** (e.g., not enough kurtosis)              |
+    | Random scatter              | Not matching theoretical distribution                    |
+
+    Use Cases in ML/Data Science
+    - Verifying residuals are normally distributed in regression
+    - Checking feature distribution assumptions (before applying models like LDA)
+    - Validating synthetic or bootstrapped data quality
+  
+  There are non-normal Q-Q plots for exponential or t-distribution as well.
+
+
+Core Distributions
+
+| Distribution                              | Use Case                                    |
+| ----------------------------------------- | ------------------------------------------- |
+| **Normal** ($\mathcal{N}(\mu, \sigma^2)$) | Natural data, CLT, errors                   |
+| **Bernoulli/Binomial**                    | Yes/No events, coin flips                   |
+| **Poisson**                               | Count of events in fixed time (λ rate)      |
+| **Exponential**                           | Time until next event (e.g., arrival times) |
+| **Uniform**                               | Equal likelihood over interval              |
+| **Multivariate Normal**                   | Joint distribution over multiple features   |
+
+
+Important Properties:
+- Normal: symmetric, defined by mean/variance
+- Poisson & Exponential are related (arrival vs wait)
+- Binomial becomes Normal with large n (via CLT)
+
+| Concept             | Why It Matters in ML                     |
+| ------------------- | ---------------------------------------- |
+| Mean, Std           | Feature normalization, loss functions    |
+| Skewness, Outliers  | Scaling, robust modeling                 |
+| Normal Distribution | Linear models assume normality of errors |
+| Poisson, Binomial   | Modeling counts and probabilities        |
+| Boxplots/Histograms | Feature exploration & preprocessing      |
+
+
+
+
+## Probability
+
+A function $p$ that assigns a real number $p(A)$ to each event $A$ is a **probability distribution** or a **probability measure** if it satisfies the following three axioms:
+- Axiom 1: $p(A) ≥ 0$ for every $A$
+- Axiom 2: $p(Ω) = 1$
+- Axiom 3: If $A_1, A_2, . . . $ are disjoint then
+
+\[
+p(\bigcup_{i=1}^\infty A_i ) = \sum_{i=1}^\infty p(A_i)
+\]
+
+If $Ω$ is finite and if each outcome $A$ is equally likely, then $p(A) =\frac{|A|}{|Ω|}$, which is called the _uniform probability distribution_.  To compute probabilities, we need to count the number of points in an event $A$. Generally, it is not feasible to assign probabilities to all subsets of a sample space $Ω$. Instead, one restricts attention to a set of events called a **σ-algebra** or a **σ-field** which is a class $\mathcal A$ that satisfies:
+- (i) $\phi ∈ \mathcal A$,
+- (ii) if $A_1, A_2, . . . , ∈ \mathcal A$ then $\bigcup_{i}^\infty A_i \in \mathcal A$,
+- (iii) $A ∈ \mathcal A$ implies that $A^c ∈ \mathcal A$.
+
+The sets in $\mathcal A$ are said to be measurable. We call $(Ω, \mathcal A)$ a **measurable space**. If $p$ is a probability measure defined on $\mathcal A$, then $(Ω, \mathcal A, p)$ is called a **probability space**. When $Ω$ is the real line, we take $\mathcal A$ to be the smallest σ-field that contains all the open subsets, which is called the **Borel σ-field**.
+
+### Independent Events
+
+If we flip a fair coin twice, then the probability of two heads is 1/2 × 1/2. We multiply the probabilities because we regard the two tosses as independent. Two events $A$ and $B$ are independent if $p(AB) = p(A)p(B)$. A set of events $\{A_i : i ∈ I\}$ is independent if 
+
+\[
+p(\bigcap_{i\in J} A_i) = \prod_{i\in J} p(A_i)
+\]
+
+for every finite subset $J$ of $I$.
+
+For example, in tossing a fair die, let $A= \{2, 4, 6\}$ and let $B= \{1, 2, 3, 4\}$. Then, $A B= \{2, 4\}$, $P(AB) = 2/6 = P(A)P(B) = (1/2) × (2/3)$ and so $A$ and $B$ are independent. Suppose that $A$ and $B$ are disjoint events, each with positive probability. Can they be independent? No. This follows since $p(A)p(B) > 0$ yet $p(AB) = p(\phi) = 0$. Except in this special case, there is no way to judge independence by looking at the sets in a Venn diagram.
+
+
+### Conditional Probability
+
+If $p(B) > 0$ then the conditional probability of $A$ given $B$ is defined by 
+
+\[
+p(A\mid B) = \frac{p(AB)}{p(B)}
+\]
+
+As a consequence of this definition, $A$ and $B$ are independent events if and only if
+
+\[
+     p(A \mid B) = p(A).
+\]
+
+Also, for any pair of events $A$ and $B$, 
+\[
+p(AB) = p(A\mid B)p(B) = p(B\mid A)p(A).
+\]
+
+For any fixed $B$ such that $p(B) > 0$, $P(· \mid B)$ is a probability (i.e., it satisfies the three axioms of probability). In particular, 
+- $p(A \mid B) ≥ 0$, 
+- $p(Ω \mid B) = 1$ and, 
+- if $A_1, A_2, . . .$ are disjoint then 
+
+\[
+p(\bigcup_{i=1}^\infty A_i \mid B) = \sum_{i=1}^\infty p(A_i \mid B)
+\]
+
+But it is in general not true that $p(A\mid B\cup C) = p(A\mid B) + p(A\mid C)$. The rules of probability apply to events on the left of the bar.
+
+<!-- ### Bayes’ Theorem
+
+Bayes’ theorem is the basis of **expert systems** and **Bayes’ nets**.  Let $A_1, . . . , A_k$ be a partition of $Ω$ such that $p(A_i) > 0$ for each $i$. If $p(B) > 0$ then,
+
+\[
+p(A_i \mid B) = \frac{p(B \mid A_i) p(A_i)}{ \sum_{i=1}^n p(B \mid A_i) p(A_i)}
+\]
+
+for every $i=1,\dots,n$. -->
+
+
+### Random Variable
+
+A random variable is a mapping $X : Ω → \mathbb R$ that assigns a real number $X(ω)$ to each outcome $ω$.
+
+### Distribution Functions and Probability Functions
+
+Given a random variable X, we define the cumulative distribution function (or distribution function) as follows:
+
+The **cumulative distribution function**, or cdf, is the function $F_X : \mathbb R → [0, 1]$ defined by $F_X (x) = p(X ≤ x)$.  It can be shown that if $X$ have cdf $F$ and let $Y$ have cdf $G$ and $F (x) = G(x)$ for all $x$, then $p(X ∈ A) = p(Y ∈ A)$ for all $A$. 
+
+We define the **probability function** or **probability mass function** for a discrete $X$ (takes countably many values) by $f_X (x) = p(X= x)$. Thus, $f_X (x) ≥ 0$ for all $x ∈ \mathbb R$ and $\sum_i f_X (x_i) = 1$. The cdf of $X$ is related to $f_X$ by
+
+\[
+F_X (x) = p(X ≤ x) = \sum_{x_i \le x} f_X (x_i).
+\]
+
+For a continuous random variable $X$,  $f_X$ is called the probability density function (pdf) if $f_X (x) ≥ 0$ for all $x$ and 
+
+\[
+\int_{-\infty}^\infty f_X(x)dx = 1
+\]
+
+and for every $a ≤ b$,
+
+\[
+p(a < X < b) = \int_a^b f_X(x)dx
+\]
+
+Also, $f_X (x) = F'_X (x)$ at all points $x$ at which $F_X$ is diﬀerentiable. Note that if $X$ is continuous then $p(X= x) = 0$ for every $x$. We get probabilities from a pdf by integrating. A pdf can be bigger than 1 (unlike a mass function). In fact, a pdf can be unbounded.  We call $F^{−1}(1/4)$ the **first quartile**, $F^{−1}(1/2)$ the **median** (or **second quartile**), and $F^{−1}(3/4)$ the **third quartile**. 
+
+#### Some Important Discrete Random Variables
+
+- **The Discrete Uniform Distribution**. 
+  Let $k > 1$ be a given integer. Suppose that $X$ has probability mass function given by 
+  \[
+  f (x) =
+  \begin{cases}
+  \frac{1}{k} & \text{for}  \; x = 1, . . . , k,\\  
+  0 & \text{otherwise} 
+  \end{cases}
+  \]
+  
+  We say that $X$ has a uniform distribution on $\{1, . . . , k\}$.
+
+- **The Bernoulli Distribution**. 
+  Let $X$ represent a binary coin flip. Then $p(X= 1) = p$ and $p(X= 0) = 1− p$ for some $p ∈ [0, 1]$. We say that $X$ has a Bernoulli distribution written $X∼ \text{Bernoulli}(p)$. The probability function is 
+  \[
+  f (x) = p^x(1− p)^{1−x} \;\; \text{for} \;\; x ∈ \{0, 1\}.
+  \]
+
+- **The Binomial Distribution**. 
+  Suppose we have a coin which falls heads up with probability $p$ for some $0 ≤ p ≤ 1$. Flip the coin $n$ times and let $X$ be the number of heads. Assume that the tosses are independent. Let $f(x) = P(X= x)$ be the mass function. It can be shown that
+ \[
+  f (x) =
+  \begin{cases}
+  {n\choose x } p^x  (1-p)^{n-x}& \text{for}  \; x = 0, . . . , n\\  
+  0 & \text{otherwise} 
+  \end{cases}
+  \]
+
+  A random variable with this mass function is called a Binomial random variable and we write $X∼ \text{Binomial}(n, p)$. If $X_1 ∼ \text{Binomial}(n_1, p)$ and $X_2 ∼ \text{Binomial}(n_2, p)$ then $X_1 +   X_2 ∼ \text{Binomial}(n_1+n_2, p) $.
+
+ - **The Poisson Distribution**. 
+   $X$ has a Poisson distribution with parameter $λ$, written $X∼ \text{Poisson}(λ)$ if 
+   \[
+    f(x) = e^{-\lambda} \frac{\lambda^x}{x!}, \;\; x \ge 0.
+   \]
+The Poisson is often used as a model for counts of rare events like radioactive decay and traﬃc accidents. If $X_1 ∼ \text{Poisson}(λ_1)$ and $X_2 ∼ \text{Poisson}(λ_2)$ then $X_1 + X_2 ∼ \text{Poisson}(λ_1 + λ_2)$.
+
+ Note that $X$ is a random variable in all the cases; $x$ denotes a particular value of the random variable; $n$, $p$ or $\lambda$ are parameters, that is, fixed real numbers. The parameters such as $p, \lambda$ are usually unknown and must be estimated from data; that’s what statistical inference is all about.
+
+#### Some Important Continuous Random Variables
+
+- **The Uniform Distribution.** 
+  $X$ has a $\text{Uniform}(a, b)$ distribution, written $X∼ \text{Uniform}(a, b)$, if 
+    \[
+  f (x) =
+  \begin{cases}
+  \frac{1}{b-a} & \text{for}  \; x \in [a,b]\\  
+  0 & \text{otherwise} 
+  \end{cases}
+  \]
+
+- **Normal (Gaussian)**. 
+  $X$ has a Normal (or Gaussian) distribution with
+parameters $\mu$ and $\sigma$, denoted by $X∼ \mathcal N (\mu, \sigma^2)$, if
+\[
+f (x) = \frac{1}{σ\sqrt{2π}} \exp\{ -\frac{1}{2\sigma^2} (x-\mu)^2\}
+\]
+
+    for all $x ∈ \mathbb R$ where $\mu ∈ \mathbb R$ and $σ > 0$. The parameter $\mu$ is the “center” (or mean) of the distribution and $σ$ is the “spread” (or standard deviation) of the distribution. The Normal plays an important role in probability and statistics. Many phenomena in nature have approximately Normal distributions. Later, we shall study the Central Limit Theorem which says that the distribution of a sum of random variables can be approximated by a Normal distribution. We say that $X$ has a **standard Normal distribution** if $\mu = 0$ and $σ = 1$.  Tradition dictates that a standard Normal random variable is denoted by Z.  The pdf and cdf of a standard Normal are denoted by $\phi(z)$ and $\phi(z)$. There is no closed-form expression for $\phi$.
+
+    -  If $X∼ \mathcal N (\mu, \sigma^2)$, then $Z= (X− µ)/σ ∼ \mathcal N (0, 1)$.
+    -  If $X∼ \mathcal N (0, 1)$ then $X= \mu + \sigma Z ∼ \mathcal N (\mu, \sigma^2)$.
+    -  If $X_i ∼ \mathcal N (\mu_i, \sigma^2_i)$,  $i= 1, . . . , n$ are _independent_, then 
+        \[
+            \sum_{i=1}^n X_i  ∼ \mathcal N \Big( \sum_{i=1}^n \mu_i, \sum_{i=1}^n \sigma_i^2\Big) 
+        \]
+    - If  $X∼ \mathcal N (\mu, \sigma^2)$, then
+        \[
+            \begin{align*}
+            p(a<X<b) &= p\Big(\frac{a-\mu}{\sigma} < Z < \frac{b-\mu}{\sigma}\Big)\\
+            &= \phi \Big(\frac{b-\mu}{\sigma}\Big) - \phi \Big(\frac{a-\mu}{\sigma}\Big)
+            \end{align*}
+        \]
+
+        Thus we can compute any probabilities we want as long as we can compute
+the cdf $\phi(z)$ of a standard Normal. For example, 
+\[
+    \begin{align*}
+    p(X > 1) &= 1− p(X < 1) \\
+    &=1−  p(Z < \frac{1-3}{\sqrt 5}) \\
+    &= 1− \phi(−0.8944) = 0.81
+    \end{align*}
+\]
+
+- **Exponential Distribution**. 
+  $X$ has an Exponential distribution with parameter $β$, denoted by $X∼ \text{Exp}(β)$, if
+  \[
+    f(x) = \frac{1}{\beta} e^{-x/\beta}, \; x>0
+  \]
+
+  where $β > 0$. The exponential distribution is used to model the lifetimes of electronic components and the waiting times between rare events.
+
+- **Gamma Distribution**. 
+  For $α > 0$, the Gamma function is defined by
+    \[
+    Γ(α) = \int_0^\infty y^{\alpha -1} e^{-y} dy. 
+    \]
+
+    $X$ has a Gamma distribution with parameters $α$ and $β$, denoted by $X∼ \text{Gamma}(α, β)$, if
+    \[
+        f(x) = \frac{1}{\beta^\alpha \Gamma(\alpha)} x^{\alpha -1} e^{-\frac{x}{\beta}} 
+    \]
+
+    for $x>0$ and $\alpha, \beta > 0$.  The exponential distribution is just a $\text{Gamma}(1, β)$ distribution. If $X_i ∼ \text{Gamma}(α_i, β)$ are _independent_, then  $\sum_{i=1}^n X_i ∼ \text{Gamma}(\sum_{i=1}^n \alpha_i, β)$.
+
+-  **The Beta Distribution**. $X$ has a Beta distribution with parameters $α > 0$ and $β > 0$, denoted by $X∼ \text{Beta}(α, β)$, if
+  
+    \[
+    f(x) = \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha) \Gamma(\beta)} x^{\alpha -1} (1-x)^{\beta -1}
+    \]
+
+    for $0<x<1$. 
+
+- **$t$ and Cauchy Distribution**.
+$X$ has a $t$ distribution with $\nu$ degrees of freedom 
+
+    \[
+        f(x) = \frac{\Gamma \Big( \frac{\nu +1}{2}\Big)}{\Gamma \Big( \frac{\nu }{2}\Big)} \frac{1}{ \Big(1 + \frac{x^2}{\nu} \Big)^{(\nu +1)/2} }
+    \]
+
+    The $t$ distribution is similar to a Normal but it has thicker tails. In fact, the Normal corresponds to a $t$ with $\nu = ∞$. The Cauchy distribution is a special case of the $t$ distribution corresponding to $\nu = 1$. The density is
+     
+     \[
+        f(x) = \frac{1}{\pi (1+x^2)}
+     \]
+
+- **The $χ^2$ distribution**. 
+  $X$ has a $\chi^2$ distribution with $p$ degrees of freedom  if
+
+  \[
+    f(x) = \frac{1}{\Gamma(p/2) 2^{p/2}} x^{p/2-1}  e^{-x/2} 
+  \]
+ 
+    If $Z_1,\dots, Z_p$  are independent standard Normal random variables then $\sum_{i=1}^p Z^2_i ∼ \chi^2_p$.
+
+
+
+### Bivariate Distributions
+
+Given a pair of discrete random variables $X$ and $Y$ , define the **joint mass** function by $f (x, y) = P(X= x, Y= y)$. We write $f$ as $f_{X,Y}$ when we want to be more explicit. In the continuous case, we call a function $f (x, y)$ a pdf for the random variables $(X, Y )$ if
+-  $f (x, y) ≥ 0$ for all $(x, y)$,
+- $\int_{-\infty}^\infty \int_{-\infty}^\infty f (x, y)dxdy= 1$ and,
+- For any set $A ⊂ \mathbb R × \mathbb R$, $p((X, Y ) ∈ A) = \iint_A f (x, y)dxdy$.
+
+
+### Marginal Distributions
+If $f(X, Y )$ have joint distribution with mass function $f_{X,Y}$ , then the marginal mass function for $X$ is defined by
+\[
+f_X (x) = p(X= x) = p(X= x, Y= y) = \sum_y f(x, y)
+\]
+
+It is similar for $Y$.  For continuous random variables, the marginal densities are 
+\[
+    f_X(x) = \int f (x, y)dy, \; \text{and} \;  f_Y (y) = \int f (x, y)dx.
+\]
+
+The corresponding marginal distribution functions are denoted by $F_X$ and $F_Y$.
+
+
+### Independent Random Variables
+
+Two random variables $X$ and $Y$ are independent if, for every $A$ and $B$,
+
+\[
+p(X\in A, Y\in B) = p(X\in A) p(Y\in B) 
+\]
+
+Otherwise we say that $X$ and $Y$ are **dependent**. Suppose that the range of $X$ and $Y$ is a (possibly infinite) rectangle. If $f (x, y) = g(x)h(y)$ for some functions $g$ and $h$ (not necessarily probability density functions) then $X$ and $Y$ are independent.
+
+### Conditional Distributions
+
+If $X$ and $Y$ are discrete, then we can compute the conditional distribution of $X$ given that we have observed $Y= y$. Specifically, 
+\[
+    p(X= x \mid Y= y) = \frac{P(X=x, Y= y)}{P(Y= y)}.
+\]
+
+This leads us to define the conditional probability mass function as follows. For continuous random variables, the conditional probability density function is
+\[
+f_{X\mid Y} (x \mid y) = \frac{f_{X,Y}(x,y)}{f_Y(y)}
+\]
+
+assuming that $f_Y (y) > 0$. Then,
+\[
+p(X ∈ A\mid Y= y) = \int_A  f_{X\mid Y} (x\mid y)dx.
+\]
+
+We are treading in deep water here. When we compute $p(X ∈ A\mid Y= y)$ in the continuous case we are conditioning on the event $\{Y= y\}$ which has probability 0. We avoid this problem by defining things in terms of the pdf. The fact that this leads to a well-defined theory is proved in more advanced courses. Here, we simply take it as a definition.
+
+
+## Random Sample
+
+If $X_1, . . . , X_n$ are independent and each has the same marginal distribution with cdf F , we say that $X_1, . . . , X_n$ are iid (independent and identically distributed) and we write $X_1, . . . X_n ∼ F$. If $F$ has density $f$ we also write $X_1, . . . X_n ∼ f$. We also call $X_1, . . . , X_n$ a **random sample** of size $n$ from $F$.
+
+
+## Expectation of a Random Variable
+
+The **expected value**, or **mean** of $X$ is defined to be
+\[
+\mathbb E(X) = \int x dF (x) = 
+\begin{cases}
+\sum_x xf (x) & \text{if $X$ is discrete} \\
+\int xf (x)dx & \text{if $X$ is continuous}
+\end{cases}
+\]
+
+assuming that the sum (or integral) is well defined. We use the following notation to denote the expected value of $X$:
+\[
+\mathbb E(X) = \mathbb EX= \int x dF (x) = \mu= \mu_X.
+\]
+
+If $\int_x |x| dF_X (x) < ∞$. Otherwise we say that the expectation does not exist.  The mean, or expectation, of a random variable $X$ is the average value of $X$.  If $Y = r(X)$ then
+
+\[
+\mathbb E(Y) = \int r(x) dF (x).
+\]
+
+### Properties of Expectations
+If $X_1, . . . , X_n$ are random variables and $a_1, . . . , a_n$ are constants, then
+
+\[
+\mathbb E \Big( \sum_i a_i X_i \Big) = \sum_i a_i \mathbb E(X_i).
+\]
+
+If $X_1, . . . , X_n$ are independent random variables. Then
+
+\[
+\mathbb E \Big( \prod_{i=1}^n X_i \Big) = \prod_i \mathbb E(X_i)
+\]
+
+
+### Variance and Covariance
+The variance measures the “spread” of a distribution. Let $X$ be a random variable with mean $\mu$. The **variance** of $X$,  $σ^2$ or $σ^2_X$ or $\mathbb V(X)$ is defined by
+\[
+σ^2 = \mathbb E(X− µ)^2 = \int (x− µ)^2dF (x)
+\]
+
+assuming this expectation exists. The **standard deviation** is $s(X) = \sqrt{\mathbb V(X)}$ and is also denoted by $σ$ and $σ_X$.  Assuming the variance is well defined, it has the following properties:
+-  $\mathbb V(X) = \mathbb E(X^2)− µ^2$
+- If $a$ and $b$ are constants then $\mathbb V(aX + b) = a^2 \mathbb V(X)$.
+- If $X_1, . . . , X_n$ are _independent_ and $a_1, . . . , a_n$ are constants, then
+
+\[
+\mathbb V \Big(\sum_{i=1}^n a_i X_i \Big) = \sum_{i=1}^n a^2_i \mathbb V(X_i)
+\]
+
+If $X_1, . . . , X_n$ are random variables then we define the **sample mean** to be
+
+\[
+\bar X_n = \frac{1}{n} \sum_{i=1}^n X_i
+\]
+
+and the **sample variance** to be
+
+\[
+S^2_n = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar X_n)^2.
+\]
+
+Let $X_1, . . . , X_n$  be iid and let $\mu= \mathbb E(X_i)$, $σ2 = \mathbb V(X_i)$. Then
+
+\[
+\mathbb E (\bar X_n) = \mu, \;\; \mathbb V(\bar X_n) = \frac{\sigma^2}{n}, \;\; \mathbb E(S^2_n) = \sigma^2 
+\]
+
+If $X$ and $Y$ are random variables, then the covariance and correlation between $X$ and $Y$ measure how strong the linear relationship is between $X$ and $Y$. Let $X$ and $Y$ be random variables with means $\mu_X$ and $\mu_Y$ and standard deviations $σ_X$ and $σ_Y$. Define the covariance between $X$ and $Y$ by
+
+\[
+Cov(X, Y ) = \mathbb E \Big((X− \mu_X )(Y− \mu_Y ) \Big),
+\]
+
+and the **correlation** by
+
+\[
+ρ= ρ_{X,Y} = ρ(X, Y ) = \frac{Cov(X, Y )}{σ_X σ_Y}.
+\]
+
+The covariance satisfies:
+\[
+Cov(X, Y ) = \mathbb E(XY )− \mathbb E(X) \mathbb E(Y ).
+\]
+
+The correlation satisfies: $−1 ≤ ρ(X, Y ) ≤ 1$. If $Y= aX + b$ for some constants $a$ and $b$ then $ρ(X, Y ) = 1$ if $a > 0$ and $ρ(X, Y ) =−1$ if $a < 0$. If $X$ and $Y$ are independent, then $Cov(X, Y ) = ρ= 0$. The converse is not true in general.
+
+In general, $\mathbb V(X + Y ) = \mathbb V(X) + \mathbb V(Y ) + 2Cov(X, Y )$ and $\mathbb V(X− Y ) = \mathbb V(X)+ \mathbb V(Y )−2Cov(X, Y )$. More generally, for random variables $X_1, . . . , X_n$,
+\[
+\mathbb V\Big( \sum_i a_i X_i \Big) = \sum_i a^2_i \mathbb V(X_i)  + 2 \sum \sum_{i<j} a_i a_j Cov(X_i, X_j)
+\]
+
+Random vector $X$ of the form
+\[
+X = \begin{pmatrix}
+X_1\\
+\vdots\\
+X_n
+\end{pmatrix}
+\]
+
+Then the mean of $X$ is
+
+\[
+\mu = \begin{pmatrix}
+\mathbb E(X_1)\\
+\vdots\\
+\mathbb E(X_n)
+\end{pmatrix}
+\]
+
+The **variance-covariance matrix** $\Sigma$ is defined to be
+
+\[
+\mathbb V(X)= \begin{pmatrix}
+\mathbb V(X_1) & Cov(X_1, X_2) & \dots & Cov(X_1, X_n)\\
+Cov(X_1, X_2) & \mathbb V(X_2) & \dots & Cov(X_2, X_n)\\
+\vdots& \vdots & \vdots & \vdots \\\
+Cov(X_n, X_1) & \dots & Cov(X_n, X_{n-1}) & \mathbb V(X_n)
+\end{pmatrix}
+\]
+
+If $a$ is a vector and $X$ is a random vector with mean $\mu$ and variance $Σ$, then $\mathbb E(a^T X) = a^T \mu$ and $\mathbb V(a^T X) = a^T Σa$. If $A$ is a matrix then $\mathbb E(AX) = A\mu$ and $\mathbb V(AX) = AΣA^T$.
+
+
+### Conditional Expectation
+
+Suppose that $X$ and $Y$ are random variables. What is the mean of $X$ among those times when $Y= y$? The answer is that we compute the mean of $X$ as before but we substitute $f_{X \mid Y} (x\mid y)$ for $f_X (x)$ in the definition of expectation. The conditional expectation of $X$ given $Y= y$ is
+
+\[
+E(X|Y= y) = \begin{cases}
+\sum_x x f_{X\mid Y} (x\mid y)  \;\; \text{discrete case} \\
+\int x f_{X\mid Y} (x\mid y) dx \;\; \text{continuous case}.
+\end{cases}
+\]
+
+If $r(x, y)$ is a function of $x$ and $y$ then
+
+\[
+E(r(X,Y)|Y= y) = \begin{cases}
+\sum_x r(x,y) f_{X\mid Y} (x\mid y)  \;\; \text{discrete case} \\
+\int r(x,y) f_{X\mid Y} (x\mid y) dx \;\; \text{continuous case}.
+\end{cases}
+\]
+
+Note that whereas $\mathbb E(X)$ is a number, $\mathbb E(X|Y= y)$ is a function of $y$. Before we observe $Y$ , we don’t know the value of $\mathbb E(X|Y= y)$ so it is a random variable which we denote $\mathbb E(X|Y)$. 
+
+(The Rule of Iterated Expectations). For random variables $X$ and $Y$ , assuming the expectations exist, we have that
+
+\[
+\mathbb E [\mathbb E(Y |X)] = \mathbb E(Y ) \\ \mathbb E [\mathbb E(X|Y )] = \mathbb E(X).
+\]
+
+More generally, for any function $r(x, y)$ we have
+\[
+\mathbb E [\mathbb E(r(X, Y )|X)] = \mathbb E(r(X, Y )). 
+\]
+
+The **conditional variance** is defined as
+\[
+\mathbb V(Y |X= x) = \int (y− µ(x))^2 f (y|x)dy
+\]
+
+where $\mu(x) = \mathbb E(Y |X= x)$.  For random variables $X$ and $Y$,
+\[
+\mathbb V(Y ) = \mathbb E\mathbb V(Y |X) + \mathbb V\mathbb E(Y |X).
+\]
+
+### Inequalities For Expectations 
+
+- (Cauchy-Schwartz inequality). If $X$ and $Y$ have finite variances then
+\[
+\mathbb E |XY | ≤ \sqrt{E(X^2)E(Y^2)}.
+\]
+
+- (Jensen’s inequality). If $g$ is convex, then
+\[
+\mathbb Eg(X) ≥ g(\mathbb EX)
+\]
+
+    If $g$ is concave, then
+    \[
+    \mathbb Eg(X) \le g(\mathbb EX)
+    \]
+
+
+## Statistical Inference
+
+The main tools of inference: **confidence intervals** and **tests of hypotheses**. In a typical statistical problem, we have a random variable $X$ of interest, but its pdf $f(x)$ or is not known. In fact either
+-  $f(x)$ is completely unknown.
+- The form of $f(x)$ is known down up to a parameter $θ$, where $θ$ may be a vector. Because $θ$ is unknown, we want to estimate it.
+  
+Our information about the unknown distribution of $X$ or the unknown parameters of the distribution of $X$ comes from a **sample** on $X$. A function $T = T(X_1,\dots, X_n)$ of the sample  is called a **statistic**.
+
+A typical statistical inference question is:
+
+>Given a sample $X_1, . . . , X_n ∼ F$ , how do we infer $F$ ?
+
+<br>
+
+There are many approaches to statistical inference. The two dominant approaches are called **frequentist inference** and **Bayesian inference**. A **statistical model** $\mathfrak F$ is a set of distributions (or densities or regression functions). A **parametric model** is a set of statistical model $\mathfrak F$ that can be parameterized by a finite number of parameters.  In general, a parametric model takes the form
+\[
+\mathfrak F= \{ f (x; θ) : θ ∈ Θ \}
+\]
+
+where $θ$ is an unknown parameter (or vector of parameters) that can take values in the parameter space $Θ$.  A **nonparametric model** is a set $\mathfrak F$ that cannot be parameterized by a finite number of parameters. For example, $\mathfrak F_{\text{ALL}} = \{\text{all cdf 's}\}$ is nonparametric. 
+
+For example, Suppose we observe pairs of data $(X_1, Y_1), . . ., (X_n, Y_n)$. Perhaps $X_i$ is the blood pressure of subject $i$ and $Y_i$ is how long they live. $X$ is called a **predictor** or **regressor** or **feature** or **independent variable**. $Y$ is called the **outcome** or the **response variable** or the **dependent variable**. We call $r(x) = \mathbb E(Y |X= x)$ the regression function. If we assume that $r ∈ \mathfrak F$ where $\mathfrak F$ is finite dimensional — the set of straight lines for example — then we have a  parametric regression model. If we assume that $r ∈ \mathfrak F$ where $\mathfrak F$ is not finite dimensional then we have a nonparametric regression model. The goal of predicting $Y$ for a new patient based on their $X$ value is called prediction. If $Y$ is discrete (for example, live or die) then prediction is instead called classification. If our goal is to estimate the function $r$, then we call this regression or curve estimation. Regression models are sometimes written as
+
+\[
+Y = r(X) + \epsilon
+\]
+
+where $\mathbb E(\epsilon) = 0$. 
+
+Many inferential problems can be identified as being one of three types: 
+- Estimation 
+- Confidence Intervals
+- Hypothesis Testing
+
+**Point estimation** refers to providing a single “best guess” of some quantity of interest (like mean, proportion, or variance) from sample data. The quantity of interest could be a parameter in a parametric model, a cdf $F$, a probability density function $f$, a regression function $r$, or a prediction for a future value $Y$ of some random variable. By convention, we denote a point estimate of $θ$ by $\hat θ$ or $\hat θ_n$. Remember that $θ$ is a _fixed_, _unknown_ quantity. The estimate $\hat θ$ depends on the data so $\hat θ$ is a random variable. 
+
+More formally, let $X_1, . . . , X_n$ be $n$ iid data points from some distribution $F$. A **point estimator **$\hat θ_n$ of a parameter $θ$ is some function of $X_1, . . . , X_n$:
+\[
+\hat θ_n = g(X_1, . . . , X_n).
+\]
+
+The **bias** of an estimator is defined by $\text{bias}(\hat θ_n) = \mathbb E_θ (\hat θ_n)− θ$. We say that $\hat θ_n$ is **unbiased** if $\mathbb E(\hat θ_n) = θ$. Many of the estimators we will use are biased. A reasonable requirement for an estimator is that it should converge to the true parameter value as we collect more and more data. This requirement is quantified by the following definition:
+
+A point estimator $\hat θ_n$ of a parameter $θ$ is consistent if $\hat \theta_n \xrightarrow[]{\; p \;}\theta$, which means  $\hat \theta_n$ converges to $\theta$ in probability. Equivalently, for every $\epsilon >0 $, 
+
+\[
+p(|X_n - X| > \epsilon) \rightarrow 0
+\]
+
+as $n \rightarrow \infty$. 
+
+The distribution of $\hat θ_n$ is called the **sampling distribution**. Statistic $\hat \theta_n$ varies from sample to sample. This variability is captured by its sampling distribution. The standard deviation of $\hat \theta_n$ is called the **standard error**: $s = \sqrt{\mathbb V(\hat \theta_n)}$. Often, the standard error depends on the unknown $F$. In those cases, $s$ is an unknown quantity but we usually can estimate it. The estimated standard error is denoted by $\hat s$. 
+
+For example if $X_1, . . . , X_n ∼ \text{Bernoulli}(p)$ and let $\hat p_n = n^{−1} \sum_i X_i$. Then $\mathbb E (\hat p_n) = p$ so $p_n$ is unbiased. The standard error is $s = \sqrt{\mathbb V(\hat p_n)} = \sqrt{p(1− p)/n}$ . The estimated standard error is $\hat s = \sqrt{\hat p(1− \hat p)/n}$ . 
+
+
+The quality of a point estimate is sometimes assessed by the **mean squared error**:
+
+\[
+MSE(\hat \theta) = \mathbb E(\hat \theta_n - \theta)^2
+\]
+
+This expectation is calculated with respect to the distribution 
+\[
+    f(x_1,\dots,x_n; \theta) = \prod_{i=1}^n f(x_i;\theta)
+\]
+
+More specifically:
+
+\[
+\mathbb E(\hat \theta_n - \theta)^2 = \int_{-\infty}^\infty \big(\hat\theta_n(x_1,\dots,x_n) - \theta \big)^2 f(x_1,\dots,x_n; \theta) \; dx_1\dots dx_n
+\]
+
+It is easy to see that 
+
+\[
+\begin{align*}
+\mathbb E(\hat \theta_n - \theta)^2 & = (\mathbb E(\hat \theta_n) - \theta)^2 + \mathbb E(\hat \theta_n - \theta)^2 \\
+& = \text{bias}^2(\hat\theta_n) + \mathbb V(\hat\theta_n)
+\end{align*}
+\]
+
+That is,
+\[
+\color{green}\boxed{MSE(\hat \theta) = \text{bias}^2(\hat\theta_n) + \mathbb V(\hat\theta_n)}
+\]
+
+Many of the estimators we will encounter will turn out to have, approximately, a Normal distribution. An estimator is **asymptotically Normal** if
+
+\[
+\frac{\hat\theta_n - \theta}{s} \rightsquigarrow \mathcal N(0,1)
+\]
+
+which $\rightsquigarrow$ represents convergence in distribution. We say $X_n \rightsquigarrow X$ if  $\lim_{n \rightarrow \infty} F_n(t) = F(t)$ at all $t$ for which $F$ is continuous. 
+
+### Confidence Intervals
+
+
+A $1− α$ **confidence interval** for a parameter $θ$ is an interval $(a_n, b_n)$ where $a_n = a_n(X_1, . . . , X_n)$ and $b_n= b_n(X_1, . . . , X_n)$ are functions of the data such that
+\[
+p \big(θ ∈ (a_n,b_n)\big) ≥ 1− α.
+\]
+
+In words, $(a_n, b_n)$ traps $θ$ with probability $1− α$. We call $1− α$ the coverage of the confidence interval. Note that $(a_n, b_n)$  is random and $θ$ is fixed. Commonly, people use 95 percent confidence intervals, which corresponds to choosing $α = 0.05$. Interpretation of confidence interval can be stated as follows: “If we repeated the study 100 times, ~95 of the intervals would contain $\theta$.” If $θ$ is a vector then we use a confidence set (such as a sphere or an ellipse) instead of an interval.  
+
+
+In Bayesian methods we treat $θ$ as if it were a random variable and we do make probability statements about $θ$. In particular, we will make statements like “the probability that $θ$ is in $(a_n, b_n)$, given the data, is 95 percent.” However, these Bayesian intervals refer to degree- of-belief probabilities. These Bayesian intervals will not, in general, trap the parameter 95 percent of the time. As mentioned earlier, point estimators often have a limiting Normal distribution, that is, $\hat θ_n ≈ \mathcal N (θ, \hat s^2)$. In this case, we can construct (approximate) confidence intervals as follows.
+
+
+#### Normal-based Confidence Interval
+Suppose that $\hat θ_n ≈ \mathcal N (θ, \hat s^2)$. Let $\phi$ be the cdf of a standard Normal and let 
+\[
+    z_{α/2} = \phi^{−1}(1− α/2),
+\]
+
+that is, $p(Z > z_{α/2}) = α/2$ and $p(−z_{α/2} < Z < z_{α/2}) = 1− α$ where $Z∼ \mathcal N (0, 1)$. Then
+
+\[
+p ( \hat\theta_n - z_{\alpha/2}\hat s <  \theta < \hat\theta_n + z_{\alpha/2}\hat s) \rightarrow 1-\alpha
+\]
+
+because if we assume $(\hat\theta_n -\theta)/\hat s \rightsquigarrow Z ∼  \mathcal N(0,1)$, then 
+
+\[
+\begin{align*}
+p ( \hat\theta_n - z_{\alpha/2}\hat s <  \theta < \hat\theta_n + z_{\alpha/2}\hat s)  & = p( -z_{\alpha/2} < \frac{\hat\theta_n -\theta}{\hat s} < z_{\alpha/2})  \\
+& \rightarrow p(−z_{α/2} < Z < z_{α/2}) \\
+& = 1 - \alpha
+\end{align*}
+\]
+
+For 95 percent confidence intervals, $α = 0.05$ and $z_{α/2} = 1.96 ≈ 2$ leading to the approximate 95 percent confidence interval $\hat θ_n ± 2 s$.  
+
+
+<!-- ## Hypothesis Testing
+
+In **hypothesis testing**, we start with some default theory called a **null hypothesis** and we ask if the data provide suﬃcient evidence to reject the theory. If not we retain the null hypothesis. For example, suppose we are testing if a coin is fair. Let $X_1, . . . , X_n ∼ \text{Bernoulli}(p)$ be $n$ independent coin flips. Suppose we want to test if the coin is fair. Let $H_0$ denote the hypothesis that the coin is fair $p=1/2$ and let $H_1$ denote the hypothesis that the coin is not fair $p \ne 1/2$. $H_0$ is called the null hypothesis and $H_1$ is called the **alternative hypothesis**. We can write the hypotheses as -->
+
+### Estimating the cdf and Statistical Functionals
+
+Let $X_1, . . ., X_n$ be a random sample on a random variable $X$ with cdf $F(x)$. A **histogram** of the sample is an estimate of the pdf, $f(x)$, of $X$ depending on whether $X$ is discrete or continuous. Here we make no assumptions on the form of the distribution of $X$. In particular, we do not assume a parametric form of the distribution as we did for maximum likelihood estimates; hence, the histogram is often
+called a **nonparametric estimator**. Similarly, we can consider a nonparametric estimation of the cdf $F$ followed by functions of cdf, such as the mean, the variance, and the correlation.
+
+
+#### The Empirical Distribution Function
+Let $X_1, . . . , X_n ∼ F$ be an iid sample where $F$ is a distribution function on the real line. We will estimate $F$ with the empirical distribution function, which is defined as follows.
+
+\[
+\hat F_n(x) = \frac{\# \{ X_i \le x\}}{n}.
+\]
+
+The following results are from a mathematical theorem:
+
+- $\mathbb E(\hat F_n(x)) = F(x)$
+- $\mathbb V(\hat F_n(x)) = \frac{F(x)(1-F(x))}{n}$
+- $MSE = \frac{F(x)(1-F(x))}{n} \rightarrow 0$
+- $\hat F_n(x) \xrightarrow[]{\; p \;} F(x)$
+
+#### Plug-in Estimators
+
+Many statistics are functions of $F$ such as 
+- mean: $\mu = \int x dF(x)$
+- variance: $\sigma^2 = \int (x - \mu)^2 dF(x)$
+- median: $F^{-1}(1/2)$
+
+A **plug-in estimator** of a statistic $\theta = T(F)$ is defined by $\hat \theta_n = T(\hat F_n)$. In other words, just plug-in $\hat F_n$ for the unknown $F$. 
+
+Assuming that somehow we can find an estimate for $\hat s$.  In many cases, it turns out that $T (F_n) ≈ N (T (F), \hat s^2)$. An approximate $1− α$ confidence interval for $T (F)$ is then $T (F_n) ± z_{α/2} s$. We will call this the Normal-based interval. For a 95 percent confidence interval, $z_{α/2} = z_{.05/2} = 1.96 ≈ 2$ so the interval is $T (F_n) ± 2 s$.
+
+Example (The Mean):  Let $\mu = T(F) = \int x dF(x)$.  The plug-in estimator is 
+- $\hat \mu = \int x d\hat F_n(x) = \sum_i x_i (\hat F_n(x_i) - \hat F_N(x_{i-1})) = \frac{1}{n} \sum_i x_i = \bar X_n$. 
+- The standard error is $s = \sqrt{\mathbb V(\bar X_n)} = \frac{\sigma}{\sqrt n}$. If $\hat \sigma$ denotes an estimate of $\sigma$, then the estimated standard error is $\frac{\hat \sigma}{\sqrt n}$. A normal based confidence interval for $\mu$ is $\bar X_n \pm z_{\alpha/2}\hat s$. 
+
+Example (The Variance): Let $σ^2 = T (F ) = \mathbb V(X) = \int x^2dF (x)− (\int xdF (x) )^2$. The plug-in estimator is:
+
+\[
+\begin{align*}
+\hat \sigma^2 & = \int x^2 d\hat F(x) - \Big(\int xd\hat F_n(x) \Big)^2 \\
+& = \frac{1}{n} \sum_i X_i^2 - \Big(\frac{1}{n} \sum_i X_i \Big)^2 \\
+& = \frac{1}{n} \sum_i \Big( X_i - \bar X_i\Big)^2.
+\end{align*}
+\]
+
+Another reasonable estimator of $\sigma^2$ is the sample variance
+\[
+    S^2_n = \frac{1}{n-1} \sum_i \Big( X_i - \bar X_i\Big)^2
+\]
+
+In practice, there is little diﬀerence between $σ^2$ and $S^2_n$ and you can use either one. Returning to the last example, we now see that the estimated standard error of the estimate of the mean is $\hat s = \hat \sigma/ \sqrt n$.
+
+Example (Correlation). Let $Z= (X, Y )$ and let 
+\[
+    ρ= T (F ) = \mathbb E(X−µ_X )(Y− µ_Y )/(σ_xσ_y )
+\] 
+
+denote the correlation between $X$ and $Y$, where $F (x, y)$ is bivariate. We can write
+
+\[
+\rho = a(T_1(F ), T_2(F ), T_3(F ), T_4(F ), T_5(F ))
+\]
+
+where
+\[
+\begin{align*}
+&T_1(F) = \int x dF(z), \;\;\; T_2(F) = \int y dF(z), \;\;\; T_3(F) = \int xy dF(z), \\
+&T_4(F) = \int x^2 dF(z),  \;\;\; T_5(F) = \int y^2 dF(z),
+\end{align*}
+\]
+
+and 
+
+\[
+a(t_1,\dots,t_5) = \frac{t_3 - t_1t_2}{\sqrt{(t_4 - t_1^2)(t_5 - t_2^2)}}
+\]
+
+Replace $F$ with $\hat F_n$ in $T_1(F), \dots, T_5(F)$ and take
+
+\[
+\rho = a(T_1(\hat F_n ), T_2(\hat F_n ), T_3(\hat F_n ), T_4(\hat F_n ), T_5(\hat F_n ))
+\]
+
+We get
+\[
+\hat ρ= \frac{\sum_i(X_i− \bar X_n)(Y_i− \bar Y_n)}{\sqrt{\sum_i(X_i - \bar X_n)^2}\sqrt{\sum_i (Y_i - \bar Y_n)^2}}
+\]
+
+which is called the **sample correlation**.
+
+Example (Quantiles). Let $F$ be strictly increasing with density $f$. For $0 < p < 1$, the $p$th **quantile** is defined by $T (F ) = F^{−1}(p)$. The estimate if $T (F )$ is $F^{−1}_n (p)$. We have to be a bit careful since $F_n$ is not invertible. To avoid ambiguity we define
+\[
+F^{−1}_n (p) = inf \{x : \hat F_n(x) ≥ p\}
+\]
+
+We call $T(\hat F_n) = \hat F^{-1}_n (p)$ the $p$th **sample quantile**.
+
+
+
+### Bootstrap 
+
+**Bootstrap** is a resampling technique used to estimate the distribution of a statistic (e.g., mean, median, variance, model accuracy) when the true sampling distribution is unknown or hard to derive analytically. It allows us to:
+
+- Estimate standard errors
+- Build confidence intervals
+- Assess model stability
+
+without strong parametric assumptions. 
+
+Let $T_n = g(X_1, . . . , X_n)$ be a statistic, that is, $T_n$ is any function of the data. Suppose we want to know $\mathbb V_F (T_n)$, the variance of $T_n$. We have written $\mathbb V_F$ to emphasize that the variance usually depends on the unknown distribution function $F$. For example, if $T_n = \bar X_n$ then $\mathbb V_F (T_n) = σ^2/n$ where $σ^2 = \int (x− µ)^2dF (x)$ and $\mu= \int xdF (x)$. Thus the variance of $T_n$ is a function of $F$. The bootstrap idea has two steps:
+- Step 1: Estimate $\mathbb V_F (T_n)$ with $\mathbb V_{\hat F_n} (T_n)$
+- Step 2: Approximate $\mathbb V_{\hat F_n} (T_n)$ using simulation
+
+For $T_n = \bar X_n$, we have for Step 1 that $\mathbb V_{\hat F_n} (T_n)= \hat σ^2/n$ where 
+\[
+\hat σ^2 = \frac{1}{n} \sum_i \Big( X_i - \bar X_i\Big)^2
+\]
+
+In this case, Step 1 is enough. However, in more complicated cases we cannot write down a simple formula for $\mathbb V_{\hat F_n} (T_n)$ which is why step 2 is needed. This is step is the bootstrap step which simply says to sample $X_1^*, \dots, X_n^*$ from $\hat F_n$ and then compute $T_n^* = g(X_1^*, \dots, X_n^*)$. This constitutes one draw from the distribution of $T_n$.  Then we repeat these two steps $m$ times to get $T_{n,1}^*, \dots, T_{n,m}^*$.  Now you have a empirical distribution of these  $T_{n,1}^*$ to estimate variance, standard error, confidence interval etc. For example, you can use bootstrap to find the standard error for the median:
+
+```python
+import numpy as np
+from sklearn.utils import resample
+
+data = np.array([3, 5, 7, 8, 12, 13, 14, 18, 21])
+boot_medians = [np.median(resample(data)) for _ in range(10000)]
+ci_lower, ci_upper = np.percentile(boot_medians, [2.5, 97.5])
+print(f"95% CI for the median: ({ci_lower:.2f}, {ci_upper:.2f})")
+```
+
+In the context of data science or ML engineer, we can describe the bootstrap as follows: 
+
+Suppose you have a dataset  $D = \{ x_1, x_2, \dots, x_n \}$.
+
+1.  Resample with replacement:
+Generate $m$ new datasets $D_1, \dots, D_m$ each of size $n$, drawn with replacement from $D$
+1. Compute the statistic $\hat\theta^*_i$ on each $D_i$
+2.  Use the empirical distribution of these $\hat \theta^*_i$ values to 
+    - Estimate the standard error
+    - Build confidence intervals
+    - Estimate bias or other metrics 
+
+Bootstrap  works well when:
+- The sample size is moderate to large
+- The statistic is smooth (e.g., mean, not max)
+
+
+### Parametric Inference
+
+We now turn our attention to parametric models, that is, models of the form
+\[
+\mathfrak F= \{ f (x; θ) : θ ∈ Θ \} 
+\]
+where the $Θ ⊂ R^k$ is the parameter space and $θ= (θ_1, . . . , θ_k )$ is the parameter. The problem of inference then reduces to the problem of estimating the parameter $θ$. You might ask: how would we ever know that the disribution that generated the data is in some parametric model? This is an excellent question. Indeed, we would rarely have such knowledge which is why nonparametric methods are preferable. Still, studying methods for parametric models is useful for two reasons. First, there are some cases where background knowledge suggests that a parametric model provides a reasonable approximation.
+
+#### Maximum Likelihood
+The most common method for estimating parameters in a parametric model is the maximum likelihood method. Let $X_1,. . ., X_n$ be iid with pdf $f (x; θ)$. The **likelihood function** is defined by
+\[
+\mathcal L_n(θ) =  \prod_{i=1}^nf (Xi; θ)
+\]
+
+The log-likelihood function is defined by $ℓ_n(θ) = \log \mathcal L_n(θ)$.  The likelihood function is just the joint density of the data, except that we treat it is a function of the parameter $θ$. Thus, $\mathcal L_n : Θ → [0, ∞)$. The likelihood function is not a density function: in general, it is not true that $\mathcal L_n(θ)$ integrates to 1 (with respect to $θ$). 
+
+The **maximum likelihood estimator (MLE)**, denoted by $\hat θ_n$, is the value of $θ$ that maximizes $\mathcal L_n(θ)$. The maximum of $ℓ_n(θ)$ occurs at the same place as the maximum of $\mathcal L_n(θ)$, so maximizing the log-likelihood leads to the same answer as maximizing the likelihood. Often, it is easier to work with the log-likelihood. 
+
+In some cases we can find the MLE $θ$ analytically in which frequently $\hat θ$ solves the equation $\frac{\partial \ell_n (\theta)}{\partial \theta} = 0$. If $θ$ is a vector of parameters, this results in a system of equations to be solved
+simultaneously. More often, we need to find the MLE by numerical methods. We will briefly discuss two commoused methods: 
+-  Newton-Raphson 
+-  The EM algorithm 
+  
+Both are iterative methods that produce a sequence of values $θ_0, θ_1, . . .$ that, under ideal conditions, converge to the MLE $θ$.
+
+#### Properties of Maximum Likelihood Estimators
+
+Under certain conditions on the model, the maximum likelihood estimator $θ_n$ possesses many properties that make it an appealing choice of estimator. The main properties of the MLE are:
+
+- The MLE is **consistent**: $θ_n \xrightarrow[]{\; p \;} θ$ 
+- The MLE is **invariant**: if $\hat θ_n$ is the MLE of $θ$ then $g(\hat θ_n)$ is the MLE of $g(θ)$
+- The MLE is **asymptotically Normal**: $(\hat θ_n− θ)/\hat s \rightsquigarrow \mathcal N (0, 1)$; also, the estimated standard error $\hat s$ can often be computed analytically
+- The mle is **asymptotically optimal** or **eﬃcient**: roughly, this means that among all well-behaved estimators, the mle has the smallest variance, at least for large samples
+- The mle is approximately the Bayes estimator. (This point will be explained later.)
+
+
+### Hypothesis Testing and p-values
+
+Primary focus of inference is to learn about characteristics of the population given samples of that population. Probability theory is used as a basis for accepting/rejecting some hypotheses about the parameters of a population.
+
+Suppose that we partition the parameter space $Θ$ into two disjoint sets $Θ_0$ and $Θ_1$ and that we wish to test
+\[
+H_0 : θ ∈ Θ_0 \;\; \text{versus}\;\; H_1 : θ ∈ Θ_1. 
+\]
+
+We call $H_0$ the null hypothesis and $H_1$ the alternative hypothesis. Given a random variable $X$ whose range is $\mathcal X$. We test a hypothesis about a test statistic related to variable $X$ by finding an appropriate subset of outcomes $R ⊂ \mathcal X$ called the **rejection region**. If $X ∈ R$ we reject the null hypothesis, otherwise, we do not reject the null hypothesis.
+
+|   | Retain Null | Reject Null |
+|--  |--------------  | -------------- |
+| $H_0$ true | ✅  | Type I Error |
+| $H_1$ true | Type II Error | ✅  |
+
+Usually, the rejection region R is of the form
+\[
+R = \{x: T(x) > c \}
+\]
+
+where $T$ is a **test statistic** and $c$ is a **critical value**. The problem in hypothesis testing is to find an appropriate test statistic $T$ and an appropriate critical value $c$. 
+
+**Null hypothesis** is always states some expectation regarding a population parameter, such as population mean, median, standard deviation or variance. It is never stated in terms of  expectations of a sample. In fact, sample statistics is rarely identical even if selected from the same population. For example, ten tosses of a single coin rarely results in 5 heads and 5 tails. The discipline of statistics sets rules for making an inductive leap from sample statistics to population parameters. 
+
+**Alternative hypothesis** denies the null hypothesis. Note that null and alternative hypothesis are mutually exclusive and exhaustive; no other possibility exists. In fact, they state the opposite of each other. The null hypothesis can never be proven to be true by sampling. If you flipped a coin 1,000,000 times and obtained exactly 500,000 heads, wouldn’t that be a proof for fairness of the coin? No! It would merely indicates that, if a bias does exists, it must be exceptionally small. 
+
+Although we can not prove the null hypothesis, we can set up some conditions that permit us to reject it. For example, if we get 950,000 heads, would anyone seriously doubt the bias of the coin? Yes, we would reject the nut hypothesis that the coin is fair. The frame of reference for statistical decision making is provided by **sampling distribution of a statistic**. 
+
+A sampling distribution is a theoretical probability distribution of the possible values of some sample statistic the would occur if we were to draw all possible samples of a fixed size from a given population. There is a sampling distribution for every statistic.
+
+The **level of significance**  $\alpha$ set by the investigator for rejecting  is known as the **alpha level**. For example, if $\alpha=0.05$ and **test statistic** is 1.43 where null hypothesis assumes chance model is normal distribution, then we fail to reject $H_0$ because test statistic does not achieve the critical value (1.96). But if $\alpha=0.01$ and test statistic is 2.83, then we reject  because test statistic is in the region of rejection (exceeds 2.58). Thus if $\alpha=0.05$, about 5 times out of 100 we will falsely reject a true null hypothesis (Type I error). 
+
+**Power of a test**:
+Probability of Type I error is $\alpha$ . Probability of Type II error is $\beta$. The power of a test is the probability of correctly rejecting $H_0$, which is $1-\beta$. So, high power means a low chance of missing a real effect. In order to achieve the desired power, we need to choose the right sample size for our testing. 
+
+Factors That Influence Power
+
+| Factor                             | Effect on Power                                                |
+| ---------------------------------- | -------------------------------------------------------------- |
+| **Sample Size (n)**                | ↑ Power increases with larger n                                |
+| **Effect Size (Δ)**                | ↑ Bigger difference = easier to detect = ↑ Power               |
+| **Significance Level (α)**         | ↑ Loosening α (e.g. from 0.01 to 0.05) ↑ Power                 |
+| **Standard Deviation (σ)**         | ↓ Less variability → ↑ Power                                   |
+| **Test Type** (1-sided vs 2-sided) | 1-sided test has more power (but only if direction is correct) |
+
+Power increases with sample size, meaning you're more likely to detect real effects. Researchers often aim for: Power ≥ 0.80, meaning, 80% chance of detecting a true effect if it exists.
+
+
+#### p-value
+**p_value** (1st definition): the smallest Type I error you have to be willing to tolerate if you want to reject the null hypothesis. If p describes an error rate you find intolerable, you must retain the null. In other words, for those tests in which p <=  p_value, you reject the null otherwise you retain the null. 
+
+For each $α$ we can ask: does our test reject $H_0$
+at level α? The p-value is the smallest $α$ at which we do reject $H_0$. If the evidence against $H_0$ is strong, the p-value will be small.
+
+
+|p-value | evidence |
+ | -| --------  |
+< .01 | very strong evidence against $H_0$
+.01 – .05 | strong evidence against $H_0$
+.05 – .10 | weak evidence against $H_0$
+|> .1 | little or no evidence against $H_0$|
+
+Note that a large p-value is not strong evidence in favor of $H_0$. A large p-value can occur for two reasons: 
+- $H_0$ is true or 
+- $H_0$ is false but the test has low power.
+
+Also Do not confuse the p-value with P(H0|Data). The p-value is not the probability that the null hypothesis is true. This is wrong in two ways: 
+- Null hypothesis testing is a frequentist tool and the frequentist approach doesn’t allow you to assign probability to null hypothesis; null hypothesis is either true or false; it can not have the chance of 5% to be true!
+- Even within the bayesian approach which allows you to assign probability to null, the p value would not correspond to the probability that null is true.
+
+Equivalently, p-value can be defined as: **The p-value is the probability (under $H_0$) of observing a value of the test statistic the same as or more extreme than what was actually observed**. Informally, the p-value is a measure of the evidence against $H_0$: the smaller the p-value, the stronger the evidence against $H_0$.
+
+ If the p_value is low (lower than the significance level) we say that it would be very unlikely to observe the data if the null hypothesis were true, and hence reject. Otherwise we would not reject . In this case the result of sampling is perhaps due to chance or sampling variability only.
+
+#### How to calculate p-value
+
+
+Hypothesis Testing often contains these steps:
+1) Set the hypothesis:  
+1) Calculate the point estimate from a sample 
+2) Check the conditions (CLT conditions) if using CLT based tests
+3) Draw sampling distribution, shade p_value, calculate test statistic (ex., for mean, $W = \frac{\bar X -\mu}{\bar s/\sqrt n}$), 
+4) Make decision: based on p_value calculated and chosen , either reject or retain the null.
+
+#### Choosing $α$:
+- If Type I Error is dangerous or costly, choose a small significance level (e.g. 0.01). This is because we want to require very strong evidence against  in favour of .
+- If Type II Error is relatively more dangerous  or much more costly, choose a higher significance level (e.g. 0.1). The goal is to be cautious about failing to reject  when the null is actually false.
+
+Level of Confidence for two-sided test is $1-\alpha$ but it is $1-2\alpha$ for one sided test.
+
+#### $t$_distribution: 
+When the sample size is large or the data is not too skewed, the sampling distribution is near normal and standard error $\frac{s}{\sqrt n}$ is more accurate. If not, we address the uncertainty of standard error estimate by using $t$_distribution. Specially when $s$ is not known, it better to use $t$_distribution. For $t$_distribution, observations are slightly more likely to fall beyond 2 SDs from the mean because it has ticker tails compared to normal distribution. As degrees of freedom increases, $t$_distribution becomes more like normal.
+
+For example, for estimating the mean using $t$_distribution, we use 
+\[
+\bar X \pm t^*_{df} \frac{s}{\sqrt n}
+\]
+
+where $df = n-1$ for one sample mean test. For inference for the comparison of two independent means, we use
+
+\[
+\bar X_1 - \bar X_2 \pm t^*_{df} \sqrt{\frac{s^2_1}{n_1} + \frac{s^2_2}{n_2}}
+\]
+
+where $df = \min(n_1-1, n_2-1)$.
+
+### Examples 
+
+We use test statistic to calculate the p_value. For example, suppose you have two samples obtained in different ways with sample means $\bar X=216.2$ and $\bar Y= 195.3$. The null hypothesis is the default case which claims they are from the same populations so they should be the same. To test if the means are diﬀerent, we compute
+\[
+W= \frac{\hat δ− 0}{\hat s} = \frac{\bar X - \bar Y}{\sqrt{\frac{s_1^2}{m} + \frac{s_2^2}{n}}} = \frac{216.2− 195.3}{\sqrt{5^2 + 2.4^2}} = 3.78
+\]
+
+To compute the p-value, we consider $z$-test. Let $Z∼ \mathcal N (0, 1)$ and assume the conditions (CLT conditions) are met. Then, 
+
+\[
+\text{p-value} = p(|Z| > 3.78) = 2p(Z < - 3.78) = 2 \phi^{-1}(-3.78) = .0002
+\]
+
+which is very strong evidence against the null hypothesis. To test if the medians are diﬀerent, let $\nu_1$ and $\nu_2$ denote the sample medians. Then,
+
+\[
+W= \frac{\nu_1 - \nu_2}{\hat s} =  \frac{212.5− 194}{7.7} = 2.4
+\]
+
+where the standard error 7.7 was found using the bootstrap. The p-value is
+
+\[
+\text{p-value} = P(|Z| > 2.4) = 2P(Z <−2.4) =
+.02
+\]
+
+which is strong evidence against the null hypothesis.
+
+In the above examples, we have been relied on  CLT-based tests (e.g. $t$-test, Z-test) which is based on the Central Limit Theorem which implies the distribution of sample mean (or other suitable statistics) is nearly normal, centred at the population mean, and with a standard deviation equal to the population standard deviation divided by square root of the sample size. Distribution of sample statistic approaches a normal distribution as the sample size increases, regardless of the shape of the population distribution, provided some conditions are met:
+- **Independent and Identically Distributed (i.i.d.) Samples**
+    - Each sample ​should be drawn independently.
+    - Identically distributed means all samples come from the same distribution with the same parameters (mean, variance).
+    - Violations: Autocorrelated time series, clustered samples, or adaptive sampling.
+- **Finite Mean and Variance**
+    - Population must have:
+        - A finite mean $\mu$
+        - A finite variance $\sigma^2$
+    - If variance is infinite (e.g., heavy-tailed Cauchy distribution), CLT does not apply.
+- **Sufficiently Large Sample Size (n)**
+    - The more skewed or heavy-tailed the original distribution, the larger n must be.
+    - Rules of thumb:
+        - If population is normal, CLT not needed — small n (e.g., n ≥ 5) is fine.
+        - If not normal, then n ≥ 30 is often sufficient.
+        - In practice:
+            - n ≥ 30 → good for symmetric or mildly skewed distributions
+            - n ≥ 50–100 → better for skewed/heavy-tailed distributions
+- **No Strong Outliers or Heavy Tails**
+    - Extreme values inflate sample variance and bias the mean.
+    - CLT breaks down under Cauchy-like distributions.
+    - For heavy-tailed data, consider robust statistics or nonparametric methods.
+
+### The $χ^2$ Distribution
+
+Let $Z_1, . . . , Z_k$ be independent, standard Normals. Let 
+\[
+V=\sum_{i=1}^k Z^2
+\]
+
+Then we say that $V$ has a $χ^2$ distribution with $k$ degrees of freedom, written $V∼ χ_k^2$. It can be shown that $\mathbb E(V ) = k$ and $\mathbb V(V ) = 2k$.
+
+Pearson’s $χ^2$ test is used for multinomial data. Recall that if $X= (X_1, . . . , X_k )$ has a multinomial (n, p) distribution, then the mle of $p$ is $\hat p= (\hat p1, . . . , \hat pk) = (X_1/n, . . . , X_k /n)$. Let $p_0 = (p_{01}, . . . , p_{0k} )$ be some fixed vector and suppose we want to test
+\[
+H_0 : p= p_0 \;\; \text{versus}\;\; H_1 : p \ne p_0.
+\]
+
+Pearson’s χ2 statistic is
+\[
+T = \sum_{j=1}^k \frac{(X_j - np_{0j})^2}{np_{0j}} = \sum_{j=1}^k \frac{(X_j - E_j)^2}{E_j}
+\]
+
+where $\mathbb E(X_j) = E_j = np_{0j}$ is the expected value of $X_j$ under $H_0$. It is shown that under $H_0$, $T\rightsquigarrow \chi^2_{k-1}$ (given, k−1 of X^js and the mean, we can find the other one). Hence, the test: reject $H_0$ if $T > \chi^2_{k-1, \alpha}$ has level $\alpha$ (means its probability should be $\alpha$ under $H_0$). The p-value is $p(\chi^2_{k-1} > t)$ where $t$ is the observed value of the test statistic. 
+
+Example (Mendel’s peas). Mendel bred peas with round yellow seeds and wrinkled green seeds. There are four types of progeny: round yellow, wrinkled yellow, round green, and wrinkled green. The number of each type is multinomial with probability $p= (p1, p2, p3, p4)$. His theory of inheritance predicts that $p$ is equal to
+
+\[
+    p_0 ≡ \Big( \frac{9}{16},  \frac{3}{16},  \frac{3}{16},  \frac{1}{16}\Big)
+\]
+
+In $n = 556$ trials he observed $X= (315, 101, 108, 32)$. We will test $H_0 : p= p_0$ versus $H_1 : p \ne p_0$. Since, $np_{01} = 312.75$, $np_{02} = np_{03} = 104.25$, and $np_{04} =
+34.75$, the test statistic is
+
+\[
+    \begin{align*}
+\chi^2 = \frac{(315 - 312.75)^2}{312.75} &+ \frac{(110 - 104.25)^2}{104.25} \\ &+ \frac{(108 - 104.25)^2}{104.25} \\& + \frac{(32 - 34.75)^2}{34.75} = 0.47
+\end{align*}
+\]
+
+The $\alpha = .05$ value for a $\chi^2_3$ is 7.815. Since 0.47 is not larger than 7.815 we do not reject the null. The p-value is
+\[
+\text{p-value} = P(χ^2_3 > .47) = .93
+\]
+
+which is not evidence against H0. Hence, the data do not contradict Mendel’s theory. This is how we use The Chi-Squared ($χ^2$) test as non-parametric statistical test to evaluate whether observed categorical data differs significantly from what we would expect under some assumption. This is called **goodness-of-fit** test. A simple example of this is we throw a dice 60 times and we expect to have 10 of each 1,...,6. Now we look at a sample to test if our assumption was supported by data.
+
+#### Independence Testing
+Another use of $\chi^2$ testing is the independence testing: Test whether two categorical variables are statistically independent (no relationship).
+
+Example:
+You survey 100 people about their gender and preferred pet, and organize it into a contingency table:
+|        | Cat | Dog | Total |
+| ------ | --- | --- | ----- |
+| Male   | 20  | 30  | 50    |
+| Female | 10  | 40  | 50    |
+| Total  | 30  | 70  | 100   |
+
+You can use a chi-squared test to see if pet preference is independent of gender.
+
+Our test statistic is 
+
+\[
+\sum_{i,j} \frac{(O_{ij} - E_{ij})^2}{E_{ij}}
+\]
+
+with degrees of freedom  $df = (r-1)(c-1)$ where $r$ is #rows and $c$ is #cols. Calculate $E_{ij}$s:
+
+|        | Cat                      | Dog                      | Total |
+| ------ | ------------------------ | ------------------------ | ----- |
+| Male   | $\frac{50×30}{100} = 15$ | $\frac{50×70}{100} = 35$ | 50    |
+| Female | $\frac{50×30}{100} = 15$ | $\frac{50×70}{100} = 35$ | 50    |
+| Total  | 30                       | 70                       | 100   |
+
+and find the test statistic:
+
+| Cell       | O  | E  | (O-E)² / E                                     |
+| ---------- | -- | -- | ---------------------------------------------- |
+| Male–Cat   | 20 | 15 | $\frac{(20-15)^2}{15} = \frac{25}{15} = 1.67$  |
+| Male–Dog   | 30 | 35 | $\frac{(30-35)^2}{35} = \frac{25}{35} = 0.714$ |
+| Female–Cat | 10 | 15 | $\frac{(10-15)^2}{15} = \frac{25}{15} = 1.67$  |
+| Female–Dog | 40 | 35 | $\frac{(40-35)^2}{35} = \frac{25}{35} = 0.714$ |
+
+So
+
+$$\chi^2 = 1.67+0.714+1.67+0.714= 4.768$$
+
+Using a $χ^2$ table or calculator:
+At α = 0.05 and df = 1, the critical value is 3.84. Since 4.768 > 3.84, we reject the null hypothesis at the 5% level. There is evidence that gender and pet preference are not independent.
+
+### ANOVA (Analysis of Variance): 
+
+ANOVA is a statistical method used to compare means across multiple groups. It tells you whether at least one group mean is different — but not which one. Think of it as a generalization of the t-test, which only compares two groups.
+
+ANOVA can be used when:
+- You have 3+ groups
+- You're testing whether the group means differ significantly
+- Your data is:
+    - Approximately normally distributed
+    - Independent observations
+    - Homogeneity of variances (equal variances)
+
+For example, suppose you’re testing if three fertilizers (A, B, C) lead to different average plant growths. You measure growth in cm for each group:
+
+- Group A: [20, 22, 19]
+- Group B: [30, 28, 32]
+- Group C: [25, 27, 29]
+
+You want to test:
+\[
+\begin{align*}
+H_0&:  μ_A = μ_B = μ_C \\
+H_1&: \text{At least one $\mu_i$ differs}
+\end{align*}
+\]
+
+ANOVA splits the total variability in the data into two parts:
+- Between-group variability — differences between group means
+- Within-group variability — variability inside each group
+
+If the between-group variance is large compared to the within-group variance, the group means likely differ.
+			
+ANOVA test statistic is the $F$ ratio:
+
+\[
+F = \frac{\text{Variability between groups}}{\text{Variability within groups}} = \frac{MSG}{MSW}
+\]
+
+where 
+\[
+\begin{align*}
+MSG &= \frac{SSG}{df_G} \\ 
+MSW &=  \frac{SSW}{df_W}\\
+SSG &= \sum_{i=1}^k n_i(\bar y_i - \bar y)^2\\
+SSW &= \sum_{i=1}^k\sum_{j=1}^{n_i} (y_{ij} - \bar y_i)^2 \\
+df_G & = k-1 \\
+df_W &= N-k
+\end{align*}
+\]
+
+Compare F to critical value from F-distribution with $(k−1,N−k)$ degrees of freedom. Or use p-value: If $p < α$ (e.g., 0.05) → Reject $H_0$.
+​	
+ 
+This analysis is assuming non-paired groups, i.e., groups are independent, approximately normal with roughly equal variance. 
+
+### Bootstrapping for hypothesis testing
+
+Bootstrapping is a powerful, non-parametric statistical technique used for:
+- estimating the sampling distribution of a statistic (e.g., mean, median, correlation),
+- constructing confidence intervals, and
+- performing hypothesis testing,
+when theoretical distributions (like normal or t-distribution) may not apply.
+
+The very powerful method as a substitution for CLT-base tests is bootstrapping. For example, finding confidence interval for median!. We bootstrap data to the size of the original data. This means sampling with replacement. This way we can obtain many sample of median and have an idea of its distribution (as histogram, for instance).  For an approximate  90% confidence interval, we find 5% and 95% percentile. The desired interval is between this two numbers.  This is called percentile method.
+
+Using bootstrapping for hypothesis testing is similar. Suppose you have two groups. You want to test whether the means are significantly different.
+- H₀: μ₁ = μ₂ (no difference in means)
+- H₁: μ₁ ≠ μ₂ (means are different)
+
+Follow the steps:
+
+- Compute the observed difference in means: $$\delta_{obs} = \bar x_1 - \bar x_2$$
+- If $H_0$ is true, both samples come from the same population. So:
+    - Pool all data into a single combined dataset.
+- Generate Bootstrap Samples: Repeat the following B times (e.g., B = 10,000):
+    - Resample two groups with replacement from the pooled dataset. Each sample is the same size as the original group.
+    - Compute the difference in means for this pair of samples: $$\delta^b = \bar x_1^b - \bar x_2^b$$
+    - Store each $\delta^b$
+- Compute the p-value: compare your observed difference to the bootstrap distribution:
+    - For two-sided test: $$p = \frac{\# \;of\; |\delta^b|\ge |\delta_{obs}|}{B}$$
+
+    This estimates the probability of observing a difference at least as extreme as $\delta_{obs}$ under the null hypothesis.
+
+- If $p < \alpha$ (e.g. 0.05), reject the null hypothesis. Otherwise, fail to reject — the observed difference could be due to chance.
+
+Key Advantages of Bootstrapping
+- No normality assumption.
+- Works even with small sample sizes.
+- Can be used for any statistic (median, correlation, etc.).
+- Easy to implement with code (e.g., in NumPy or pandas).
 
 ## Bayesian Probabilities
 
