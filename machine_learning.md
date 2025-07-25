@@ -2,9 +2,7 @@
 
 ### Table of Content
 - [Introduction](#introduction)
-- [Probability and Statistics](#probability-and-statistics)
-  - [Descriptive Statistics](#descriptive-statistics)
-  - [Probability](#probability)
+- [Probability](#probability)
     - [Independent Events](#independent-events)
     - [Conditional Probability](#conditional-probability)
     - [Random Variable](#random-variable)
@@ -15,12 +13,18 @@
     - [Marginal Distributions](#marginal-distributions)
     - [Independent Random Variables](#independent-random-variables)
     - [Conditional Distributions](#conditional-distributions)
+  - [Bayesian Probabilities](#bayesian-probabilities)
+  - [Gaussian Distribution](#gaussian-distribution)
   - [Random Sample](#random-sample)
   - [Expectation of a Random Variable](#expectation-of-a-random-variable)
     - [Properties of Expectations](#properties-of-expectations)
     - [Variance and Covariance](#variance-and-covariance)
     - [Conditional Expectation](#conditional-expectation)
     - [Inequalities For Expectations](#inequalities-for-expectations)
+- [Some Statistics](#some-statistics)
+  - [Descriptive Statistics](#descriptive-statistics)
+      - [Data Visualization (EDA)](#data-visualization-eda)
+      - [Core Distributions](#core-distributions)
   - [Statistical Inference](#statistical-inference)
     - [Confidence Intervals](#confidence-intervals)
       - [Normal-based Confidence Interval](#normal-based-confidence-interval)
@@ -32,6 +36,7 @@
       - [Maximum Likelihood](#maximum-likelihood)
       - [Properties of Maximum Likelihood Estimators](#properties-of-maximum-likelihood-estimators)
     - [Hypothesis Testing and p-values](#hypothesis-testing-and-p-values)
+      - [Power of a test:](#power-of-a-test)
       - [p-value](#p-value)
       - [How to calculate p-value](#how-to-calculate-p-value)
       - [Choosing $α$:](#choosing-α)
@@ -41,41 +46,37 @@
       - [Independence Testing](#independence-testing)
     - [ANOVA (Analysis of Variance):](#anova-analysis-of-variance)
     - [Bootstrapping for hypothesis testing](#bootstrapping-for-hypothesis-testing)
-  - [Bayesian Probabilities](#bayesian-probabilities)
-  - [Gaussian Distribution](#gaussian-distribution)
-  - [Curve Fitting](#curve-fitting)
-  - [Model Selection: Testing and Validating](#model-selection-testing-and-validating)
-  - [Curse of Dimensionality](#curse-of-dimensionality)
-  - [Minimizing the expected loss](#minimizing-the-expected-loss)
-  - [Rejection Option](#rejection-option)
-  - [Loss functions for regression](#loss-functions-for-regression)
+- [Decision Theory](#decision-theory)
+  - [Minimizing the Expected Loss for Classification](#minimizing-the-expected-loss-for-classification)
+    - [Rejection Option](#rejection-option)
+  - [Minimizing the Expected Loss for Regression](#minimizing-the-expected-loss-for-regression)
   - [Entropy](#entropy)
 - [Linear Models for Regression](#linear-models-for-regression)
-  - [Maximum likelihood and least squares](#maximum-likelihood-and-least-squares)
+  - [Maximum Likelihood and Least Squares](#maximum-likelihood-and-least-squares)
+    - [Hypothesis Testing](#hypothesis-testing)
   - [Training Models](#training-models)
     - [Gradient Descent](#gradient-descent)
-      - [Early Stopping](#early-stopping)
-      - [Batch and Online Learning](#batch-and-online-learning)
-    - [Hypothesis Testing](#hypothesis-testing)
-    - [Regularized least squares](#regularized-least-squares)
-    - [Bias-Variance decomposition](#bias-variance-decomposition)
+    - [Early Stopping](#early-stopping)
+    - [Batch and Online Learning](#batch-and-online-learning)
+  - [Regularized Least Squares](#regularized-least-squares)
+  - [Bias-Variance Decomposition](#bias-variance-decomposition)
     - [The Bias/Variance Tradeoff](#the-biasvariance-tradeoff)
   - [Bayesian Linear Regression](#bayesian-linear-regression)
-    - [Parameter distribution](#parameter-distribution)
-    - [Predictive distribution](#predictive-distribution)
+    - [Parameter Distribution](#parameter-distribution)
+    - [Predictive Distribution](#predictive-distribution)
+  - [Model Selection: Testing and Validating](#model-selection-testing-and-validating)
 - [Linear Models for Classifications](#linear-models-for-classifications)
   - [Discriminant Functions](#discriminant-functions)
     - [Multiclass Classification](#multiclass-classification)
-      - [Performance Measures for Classification](#performance-measures-for-classification)
+    - [Performance Measures for Classification](#performance-measures-for-classification)
     - [Least Squares for Classification](#least-squares-for-classification)
   - [Probabilistic Generative Models](#probabilistic-generative-models)
-    - [Continuous inputs](#continuous-inputs)
-      - [Maximum likelihood solution](#maximum-likelihood-solution)
-      - [Regularized Discriminant Analysis](#regularized-discriminant-analysis)
-    - [Discrete features](#discrete-features)
+    - [Continuous Inputs](#continuous-inputs)
+    - [Maximum Likelihood Solution for LDA](#maximum-likelihood-solution-for-lda)
+    - [Regularized Discriminant Analysis (RDA)](#regularized-discriminant-analysis-rda)
+    - [Discrete Features](#discrete-features)
   - [Probabilistic Discriminative Models](#probabilistic-discriminative-models)
-    - [Logistic regression](#logistic-regression)
-        - [Summary](#summary)
+    - [Logistic Regression](#logistic-regression)
 - [Combining Models](#combining-models)
   - [Tree-Based Methods](#tree-based-methods)
     - [Regression Trees](#regression-trees)
@@ -97,8 +98,8 @@
       - [Dual Form \& Kernel Trick](#dual-form--kernel-trick)
     - [Support Vector Machines and Kernels](#support-vector-machines-and-kernels)
 - [Neural Networks](#neural-networks)
-      - [Regression MLPs](#regression-mlps)
-      - [Classification MLPs](#classification-mlps)
+    - [Regression MLPs](#regression-mlps)
+    - [Classification MLPs](#classification-mlps)
     - [Fitting Neural Networks](#fitting-neural-networks)
       - [Backpropogation](#backpropogation)
       - [Neural Nets: Non-convex Optimization](#neural-nets-non-convex-optimization)
@@ -116,7 +117,7 @@
       - [Reusing Pretrained Layers](#reusing-pretrained-layers)
     - [Mixture Density Networks](#mixture-density-networks)
 - [Convolutional Neural Networks](#convolutional-neural-networks)
-      - [Eﬃciency of Edge Detection](#eﬃciency-of-edge-detection)
+    - [Eﬃciency of Edge Detection](#eﬃciency-of-edge-detection)
     - [Pooling](#pooling)
     - [Hyperparameters](#hyperparameters)
     - [Backpropagation](#backpropagation)
@@ -130,6 +131,8 @@
   - [Transfer Learning](#transfer-learning)
     - [Practical Advice](#practical-advice)
 - [Unsupervised Learning: PCA, K-Means, GMM](#unsupervised-learning-pca-k-means-gmm)
+  - [Curse of Dimensionality](#curse-of-dimensionality)
+  - [Why Reducing Dimensionality?](#why-reducing-dimensionality)
   - [Main Approaches for Dimensionality Reduction](#main-approaches-for-dimensionality-reduction)
   - [Linear dimensionality reduction (PCA)](#linear-dimensionality-reduction-pca)
         - [Spectral Decomposition:](#spectral-decomposition)
@@ -167,137 +170,29 @@
 
 
 # Introduction 
-Machine Learning is about making machines get better at some task by learning from data, instead of having to explicitly code rules. There are many different types of ML systems: supervised or not, batch or online, instance-based or model-based, and so on.
-
-Some common problems we encounter in machine learning include 
+Machine Learning is about making machines get better at some task by learning from data, instead of having to explicitly code rules. There are many different types of ML systems: supervised or not, batch or online, instance-based or model-based, and so on. Some common problems we encounter in machine learning include:
 - **Nonrepresentative Training Data**: your training data is not representative of the new cases you want to generalize to. If the sample is too small, you will have sampling noise, but even very large samples can be nonrepresentative if the sampling method is flawed. This is called **sampling bias**.
 
-- **Poor-Quality Data**: If some instances are clearly *outliers*, it may help to simply discard them or try to
-fix the errors manually. If some instances are *missing a few features* (e.g., 5% of your customers did not specify their age), you must decide whether you want to ignore this attribute altogether, ignore these instances, fill in the missing values (e.g., with the median age), or train one model with the feature and one model without it, and so on.
+- **Poor-Quality Data**: If some instances are clearly *outliers*, it may help to simply discard them or try to fix the errors manually. If some instances are *missing a few features* (e.g., 5% of your customers did not specify their age), you must decide whether you want to ignore this attribute altogether, ignore these instances, fill in the missing values (e.g., with the median age), or train one model with the feature and one model without it, and so on.
 
 - **Irrelevant Features**: it is important to select the most useful features to train on among existing features or even extraction features by combining existing features to produce a more useful one. Nowadays, neural networks create and extract important features automatically due to deep sequential hidden layers.
 
 - **Overfitting/Underfitting the Training Data**: the model performs well on the training data, but it does not generalize well. The amount of regularization to apply during learning can be controlled by a hyperparameter. Underfitting occurs when your model is too simple to learn the underlying structure of the data.
   
-In a machine learning project, we start with **framing the problem**. This is important because it will determine how you frame the problem, what algorithms you will select, what performance measure you will use to evaluate your model, and how much effort you should spend tweaking it. Then **select a performance measure**  (RMSE, MSE, MAE, MAPE, log-prob, cross-entropy, etc.)
+In a machine learning project, we start with **framing the problem**. This is important because it will determine 
+- how you frame the problem, 
+- what algorithms you will select, 
+- what performance measure you will use to evaluate your model, and
+-  how much effort you should spend tweaking it. 
+-  Then **select a performance measure**  (RMSE, MSE, MAE, MAPE, log-prob, cross-entropy, etc.)
 
-The mathematical tools for machine learning is statistics. So we quickly review some prerequisites from statistics here.
+We now quickly review some prerequisites from probability and statistics. The following sources was used to prepare this note:
+- [Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+- [The Elements of Statistical Learning](https://www.sas.upenn.edu/~fdiebold/NoHesitations/BookAdvanced.pdf)
+-  [All of Statistics](https://www.stat.cmu.edu/~brian/valerie/617-2022/0%20-%20books/2004%20-%20wasserman%20-%20all%20of%20statistics.pdf)
+-  Machine Learning (CSC2515) - UoT - Graduate Course by R. Grosse 
 
-# Probability and Statistics
-
-
-## Descriptive Statistics
-
-Descriptive Statistics
-| Concept                | Description                               |
-| ---------------------- | ----------------------------------------- |
-| **Mean**               | Average: $\bar{x} = \frac{1}{n} \sum x_i$ |
-| **Median**             | Middle value (robust to outliers)         |
-| **Mode**               | Most frequent value                       |
-| **Variance**           | Average squared deviation from mean       |
-| **Standard Deviation** | Square root of variance                   |
-| **IQR**                | Q3 - Q1 (middle 50% range)                |
-| **Skewness**           | Measures asymmetry                        |
-| **Kurtosis**           | Measures "tailedness" or peak heaviness   |
-
-**When to use what**:
-- Mean: Normal-like data
-- Median: Skewed or outlier-heavy data
-- Variance/Std Dev: Spread/uncertainty
-- Skewness/Kurtosis: Shape and anomaly insight
-
-**Data Visualization (EDA)**
-- Histograms: A histogram is a bar plot showing the **distribution of a single numerical variable** by dividing the data range into intervals (bins) and counting how many values fall into each bin. It helps to
-    - Visualize shape of distribution (e.g., normal, skewed, heavy tails)
-    - Detect modes, outliers, spread
-    - Good for large samples
-  
-- Boxplot (Box-and-Whisker Plot)
-What it is: A boxplot summarizes five-number summary:
-    - Min
-    - Q1 (25th percentile)
-    - Median (Q2)
-    - Q3 (75th percentile)
-    - Max (excluding outliers)
-    
-    Box = interquartile range (IQR = Q3 - Q1)
-Whiskers = extend to data within 1.5×IQR from Q1 and Q3
-Dots = outliers (beyond whiskers)
-
-    Purpose:
-    - Compare distributions across categories
-    - Detect skew, spread, and outliers
-    - Much cleaner than histograms for comparative plots
-- Empirical Cumulative Distribution Function (CDF)
-   Empirical CDF is a step function that shows, for each value $x$  the proportion of data less than or equal to $x$.
-   \[
-    ECDF(x) = \frac{\#\{ x_i \le x\}}{n}
-   \]
-   Purpose:
-    - Show full distribution without binning (unlike histogram)
-    - Allows for direct comparison of two distributions, visual test of normality, - The steepness of steps shows density
-    - Makes it easy to read quantiles visually
-  
-- QQ Plot 
-  A Q-Q plot compares the quantiles of your empirical data with the quantiles of a theoretical distribution (often Normal).
-    - X-axis: Theoretical quantiles (e.g., from a standard normal distribution)
-    - Y-axis: Sample quantiles (from your data)
-    
-    If your data comes from the specified theoretical distribution, the points will fall approximately along the 45-degree line (y = x).
-
-    Purpose:
-    - Check normality (most common use case)
-    - Compare two distributions
-    - Spot heavy tails, skew, outliers, or departures from assumptions
-  
-  Let’s say you're comparing your data to a Normal distribution:
-
-    | Q-Q Plot Feature            | What It Tells You                                        |
-    | --------------------------- | -------------------------------------------------------- |
-    | Points lie on 45° line      | Data is **normally distributed**                         |
-    | Curve is **S-shaped**       | Data is **skewed** (right or left depending on curve)    |
-    | Tails are above line        | **Heavy right tail** (data has more extreme high values) |
-    | Tails below line            | **Heavy left tail** (extreme low values)                 |
-    | Points deviate at ends only | **Tail issues** (e.g., not enough kurtosis)              |
-    | Random scatter              | Not matching theoretical distribution                    |
-
-    Use Cases in ML/Data Science
-    - Verifying residuals are normally distributed in regression
-    - Checking feature distribution assumptions (before applying models like LDA)
-    - Validating synthetic or bootstrapped data quality
-  
-  There are non-normal Q-Q plots for exponential or t-distribution as well.
-
-
-Core Distributions
-
-| Distribution                              | Use Case                                    |
-| ----------------------------------------- | ------------------------------------------- |
-| **Normal** ($\mathcal{N}(\mu, \sigma^2)$) | Natural data, CLT, errors                   |
-| **Bernoulli/Binomial**                    | Yes/No events, coin flips                   |
-| **Poisson**                               | Count of events in fixed time (λ rate)      |
-| **Exponential**                           | Time until next event (e.g., arrival times) |
-| **Uniform**                               | Equal likelihood over interval              |
-| **Multivariate Normal**                   | Joint distribution over multiple features   |
-
-
-Important Properties:
-- Normal: symmetric, defined by mean/variance
-- Poisson & Exponential are related (arrival vs wait)
-- Binomial becomes Normal with large n (via CLT)
-
-| Concept             | Why It Matters in ML                     |
-| ------------------- | ---------------------------------------- |
-| Mean, Std           | Feature normalization, loss functions    |
-| Skewness, Outliers  | Scaling, robust modeling                 |
-| Normal Distribution | Linear models assume normality of errors |
-| Poisson, Binomial   | Modeling counts and probabilities        |
-| Boxplots/Histograms | Feature exploration & preprocessing      |
-
-
-
-
-## Probability
+# Probability
 
 A function $p$ that assigns a real number $p(A)$ to each event $A$ is a **probability distribution** or a **probability measure** if it satisfies the following three axioms:
 - Axiom 1: $p(A) ≥ 0$ for every $A$
@@ -438,7 +333,7 @@ Also, $f_X (x) = F'_X (x)$ at all points $x$ at which $F_X$ is diﬀerentiable. 
    \]
 The Poisson is often used as a model for counts of rare events like radioactive decay and traﬃc accidents. If $X_1 ∼ \text{Poisson}(λ_1)$ and $X_2 ∼ \text{Poisson}(λ_2)$ then $X_1 + X_2 ∼ \text{Poisson}(λ_1 + λ_2)$.
 
- Note that $X$ is a random variable in all the cases; $x$ denotes a particular value of the random variable; $n$, $p$ or $\lambda$ are parameters, that is, fixed real numbers. The parameters such as $p, \lambda$ are usually unknown and must be estimated from data; that’s what statistical inference is all about.
+ Note that $X$ is a random variable in all the cases; $x$ denotes a particular value of the random variable; $n$, $p$ or $\lambda$ are **parameters**, that is, fixed real numbers. The parameters such as $p, \lambda$ are usually unknown and must be estimated from data; that’s what statistical inference is all about.
 
 #### Some Important Continuous Random Variables
 
@@ -562,7 +457,7 @@ The corresponding marginal distribution functions are denoted by $F_X$ and $F_Y$
 
 ### Independent Random Variables
 
-Two random variables $X$ and $Y$ are independent if, for every $A$ and $B$,
+Two random variables $X$ and $Y$ are **independent** if, for every $A$ and $B$,
 
 \[
 p(X\in A, Y\in B) = p(X\in A) p(Y\in B) 
@@ -590,6 +485,88 @@ p(X ∈ A\mid Y= y) = \int_A  f_{X\mid Y} (x\mid y)dx.
 We are treading in deep water here. When we compute $p(X ∈ A\mid Y= y)$ in the continuous case we are conditioning on the event $\{Y= y\}$ which has probability 0. We avoid this problem by defining things in terms of the pdf. The fact that this leads to a well-defined theory is proved in more advanced courses. Here, we simply take it as a definition.
 
 
+## Bayesian Probabilities
+
+Bayes’ theorem is used to convert a prior probability $p(\bm w)$ into a posterior probability $p(\bm w\mid \mathcal{D})$ by incorporating the evidence $p(\mathcal{D}\mid \bm w)$ provided by the observed data. We capture our assumptions about $\bm w$, before observing the data, in the form of a prior probability distribution $p(\bm w)$. The effect of the observed data $\mathcal{D}= {t_1, . . . , t_N }$ is expressed through the conditional probability $p(\mathcal{D}\mid \bm w)$. Bayes’ theorem, which takes the form
+
+$$
+p(\bm w\mid \mathcal{D}) = \frac{p(\mathcal{D}\mid \bm w)p(\bm w)}{p(\mathcal{D})}
+$$
+
+then allows us to evaluate the uncertainty in $\bm w$ after we have observed $\mathcal{D}$ in the form of the posterior probability $p(\bm w|\mathcal{D})$. The quantity $p(\mathcal{D}\mid \bm w)$ on the right-hand side of Bayes’ theorem is evaluated for the observed dataset $\mathcal D$ and can be viewed as a function of the parameter vector $\bm w$, in which case it is called the **likelihood** function. It expresses how probable the observed dataset is for different settings of the parameter vector $\bm w$. Note that the likelihood is not a probability distribution over $\bm w$, and its integral with respect to $\bm w$ does not (necessarily) equal 1.
+
+Given this definition of likelihood, we can state Bayes’ theorem in words `posterior ∝ likelihood × prior` where all of these quantities are viewed as functions of $\bm w$. The denominator in the equation above is the normalization constant, which ensures that the posterior distribution on the left-hand side is a valid probability density and integrates to 1. Indeed, integrating both sides of that equation with respect to $\bm w$, we can express the denominator in Bayes’ theorem in terms of the prior distribution and the likelihood function
+
+$$
+p(\mathcal{D}) = \int p(\mathcal{D}|\bm w)p(\bm w) d\bm w.
+$$
+
+In both the Bayesian and frequentist paradigms, the likelihood function $p(\mathcal{D}\mid \bm w)$ plays a central role. However, the manner in which it is used is fundamentally different in the two approaches:
+- In a frequentist setting, $\bm w$ is considered to be a fixed parameter, whose value is determined by some form of ‘estimator’, and error bars on this estimate are obtained by considering the distribution of possible datasets $\mathcal{D}$. 
+- By contrast, from the Bayesian viewpoint there is only a single dataset $\mathcal{D}$ (namely the one that is actually observed), and the uncertainty in the parameters is expressed through a probability distribution over $\bm w$.
+
+A widely used frequentist estimator is **maximum likelihood**, in which $\bm w$ is set to the value that maximizes the likelihood function $p(\mathcal{D}\mid \bm w)$. This corresponds to choosing the value of $\bm w$ for which the probability of the observed dataset is maximized. In the machine learning literature, the negative log of the likelihood function is called an **error function**. Because the negative logarithm is a monotonically decreasing function, maximizing the likelihood is equivalent to minimizing the error.
+
+One approach to determining frequentist error bars is the **bootstrap** (Efron, 1979; Hastie et al., 2001), in which multiple datasets are created as follows: Suppose our original data set consists of N data points $X= {x_1, \dots,  x_N }$. We can create a new data set $X_B$ by drawing $N$ points at random from $X$, with replacement, so that some points in $X$ may be replicated in $X_B$, whereas other points in $X$ may be absent from $X_B$. This process can be repeated $L$ times to generate $L$ datasets each of size $N$ and each obtained by sampling from the original data set $X$. The statistical accuracy of parameter estimates can then be evaluated by looking at the variability of predictions between the different bootstrap datasets.
+
+One advantage of the Bayesian viewpoint is that the inclusion of prior knowledge arises naturally. Suppose, for instance, that a fair-looking coin is tossed three times and lands heads each time. A classical maximum likelihood estimate of the probability of landing heads would give 1 implying that all future tosses will land heads! By contrast, a Bayesian approach with any reasonable prior will lead to a much less extreme conclusion.
+
+<!-- There has been much controversy and debate associated with the relative merits of the frequentist and Bayesian paradigms, which have not been helped by the fact that there is no unique frequentist, or even Bayesian, viewpoint. For instance, one common criticism of the Bayesian approach is that the prior distribution is often selected on the basis of mathematical convenience rather than as a reflection of any prior beliefs. Even the subjective nature of the conclusions through their dependence on the choice of prior is seen by some as a source of difficulty. Reducing the dependence on the prior is one motivation for so-called **noninformative priors**. However, these lead to difficulties when comparing different models, and indeed Bayesian methods based on poor choices of prior can give poor results with high confidence. Frequentist evaluation methods offer some protection from such problems, and techniques such as **cross-validation** remain useful in areas such as model comparison. -->
+
+## Gaussian Distribution
+
+It is convenient, however, to introduce here one of the most important probability distributions for continuous variables, called the normal or Gaussian distribution. For the case of a single real-valued variable x, the Gaussian distribution is defined by
+
+$$
+\mathcal{N}(x\mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi}\sigma} \exp\Bigg(-\frac{1}{2}\Big(\frac{x-\mu}{\sigma}\Big)^2\Bigg)
+$$
+
+which is governed by two parameters: $\mu$, called the **mean**, and $\sigma^2$, called the **variance**. The square root of the variance, given by $\sigma$, is called the **standard deviation**, and the reciprocal of the variance, written as β = 1/$\sigma^2$, is called the _precision_. Gaussian distribution defined over a D-dimensional vector $\bm x$ of continuous variables, which is given by
+
+$$
+\mathcal N(\bm x\mid \bm \mu,\bm \Sigma) = \frac{1}{(2π)^{D/2}} \frac{1}{|\Sigma|^{1/2}}\exp\Big(-\frac{1}{2}(\bm x-\bm \mu)^T\Sigma^{-1}(\bm x-\bm \mu)\Big)
+$$
+
+where the $D$-dimensional vector $\bm \mu$ is called the **mean**, the $D × D$ matrix $Σ$ is called the **covariance**, and $|Σ|$ denotes the determinant of $Σ$. The log likelihood function is:
+
+$$
+\ln p(\bm x \mid \mu, \sigma^2) = − \frac{1}{2\sigma^2}\sum_{n=1}^N\big(x_n-  \mu) ^2 + \frac{N}{2}\ln \sigma^2 − \frac{N}{2}\ln(2\pi)
+.
+$$
+
+The maximum likelihood solution with respect to $\mu$ given by:
+
+$$
+\mu_{ML} = \frac{1}{N}\sum_{n=1}^N x_n
+$$
+
+which is the _sample mean_, i.e., the mean of the observed values $\{x_n\}$. Similarly, maximizing likelihood with respect to $σ^2$, we obtain the maximum likelihood solution for the variance in the form
+
+$$
+\sigma^2_{ML} = \frac{1}{N}\sum_{n=1}^N (x_n-\mu_{ML})^2
+$$
+
+which is the _sample variance_ measured with respect to the sample mean $\mu_{ML}$. Note that the maximum likelihood solutions $µ_{ML}$ and $\sigma^2_{ML}$ are functions of the dataset values $x_1, . . . , x_N$ . Consider the expectations of these quantities with respect to the dataset values, which themselves come from a Gaussian distribution with parameters $µ_{ML}$ and $\sigma^2_{ML}$. It is straightforward to show that
+
+$$
+\begin{align*}
+\mathbb E[\mu_{ML}] &= \mu\\
+\mathbb E[\sigma^2_{ML}] &= \frac{N-1}{N}\sigma^2
+\end{align*}
+$$
+
+so that on average the maximum likelihood estimate will obtain the correct mean but will underestimate the true variance by a factor $(N− 1)/N$. It follows that the following estimate for the variance parameter is unbiased:
+
+$$
+\tilde\sigma^2 = \frac{N}{N-1}\sigma^2_{ML} = \frac{1}{N-1}\sum_{n=1}^N (x_n-\mu_{ML})^2
+$$
+
+<p align="center">
+    <img src="./assets/machine-learning/biased-variance.png" alt="drawing" width="400" height="300" style="center" />
+</p>
+
+The green curve shows the true Gaussian distribution from which data is generated, and the three red curves show the Gaussian distributions obtained by fitting to three datasets, each consisting of two data points shown in blue, using the maximum likelihood results. Averaged across the three datasets, the mean is correct, but the variance is systematically under-estimated because it is measured relative to the sample mean and not relative to the true mean.
+
 ## Random Sample
 
 If $X_1, . . . , X_n$ are independent and each has the same marginal distribution with cdf F , we say that $X_1, . . . , X_n$ are iid (independent and identically distributed) and we write $X_1, . . . X_n ∼ F$. If $F$ has density $f$ we also write $X_1, . . . X_n ∼ f$. We also call $X_1, . . . , X_n$ a **random sample** of size $n$ from $F$.
@@ -608,7 +585,7 @@ The **expected value**, or **mean** of $X$ is defined to be
 
 assuming that the sum (or integral) is well defined. We use the following notation to denote the expected value of $X$:
 \[
-\mathbb E(X) = \mathbb EX= \int x dF (x) = \mu= \mu_X.
+\mathbb E(X) = \int x dF (x) = \mu= \mu_X.
 \]
 
 If $\int_x |x| dF_X (x) < ∞$. Otherwise we say that the expectation does not exist.  The mean, or expectation, of a random variable $X$ is the average value of $X$.  If $Y = r(X)$ then
@@ -658,7 +635,7 @@ and the **sample variance** to be
 S^2_n = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar X_n)^2.
 \]
 
-Let $X_1, . . . , X_n$  be iid and let $\mu= \mathbb E(X_i)$, $σ2 = \mathbb V(X_i)$. Then
+Let $X_1, . . . , X_n$  be iid and let $\mu= \mathbb E(X_i)$, $σ^2 = \mathbb V(X_i)$. Then
 
 \[
 \mathbb E (\bar X_n) = \mu, \;\; \mathbb V(\bar X_n) = \frac{\sigma^2}{n}, \;\; \mathbb E(S^2_n) = \sigma^2 
@@ -667,7 +644,7 @@ Let $X_1, . . . , X_n$  be iid and let $\mu= \mathbb E(X_i)$, $σ2 = \mathbb V(X
 If $X$ and $Y$ are random variables, then the covariance and correlation between $X$ and $Y$ measure how strong the linear relationship is between $X$ and $Y$. Let $X$ and $Y$ be random variables with means $\mu_X$ and $\mu_Y$ and standard deviations $σ_X$ and $σ_Y$. Define the covariance between $X$ and $Y$ by
 
 \[
-Cov(X, Y ) = \mathbb E \Big((X− \mu_X )(Y− \mu_Y ) \Big),
+\text{Cov}(X, Y ) = \mathbb E \Big((X− \mu_X )(Y− \mu_Y ) \Big),
 \]
 
 and the **correlation** by
@@ -681,14 +658,12 @@ The covariance satisfies:
 Cov(X, Y ) = \mathbb E(XY )− \mathbb E(X) \mathbb E(Y ).
 \]
 
-The correlation satisfies: $−1 ≤ ρ(X, Y ) ≤ 1$. If $Y= aX + b$ for some constants $a$ and $b$ then $ρ(X, Y ) = 1$ if $a > 0$ and $ρ(X, Y ) =−1$ if $a < 0$. If $X$ and $Y$ are independent, then $Cov(X, Y ) = ρ= 0$. The converse is not true in general.
-
-In general, $\mathbb V(X + Y ) = \mathbb V(X) + \mathbb V(Y ) + 2Cov(X, Y )$ and $\mathbb V(X− Y ) = \mathbb V(X)+ \mathbb V(Y )−2Cov(X, Y )$. More generally, for random variables $X_1, . . . , X_n$,
+The correlation satisfies: $−1 ≤ ρ(X, Y ) ≤ 1$. If $Y= aX + b$ for some constants $a$ and $b$ then $ρ(X, Y ) = 1$ if $a > 0$ and $ρ(X, Y ) =−1$ if $a < 0$. _If $X$ and $Y$ are independent, then $Cov(X, Y ) = ρ= 0$. The converse is not true in general_. In general, $\mathbb V(X + Y ) = \mathbb V(X) + \mathbb V(Y ) + 2Cov(X, Y )$ and $\mathbb V(X− Y ) = \mathbb V(X)+ \mathbb V(Y )−2Cov(X, Y )$. More generally, for random variables $X_1, . . . , X_n$,
 \[
 \mathbb V\Big( \sum_i a_i X_i \Big) = \sum_i a^2_i \mathbb V(X_i)  + 2 \sum \sum_{i<j} a_i a_j Cov(X_i, X_j)
 \]
 
-Random vector $X$ of the form
+Consider a random vector $X$ of the form
 \[
 X = \begin{pmatrix}
 X_1\\
@@ -741,17 +716,17 @@ E(r(X,Y)|Y= y) = \begin{cases}
 \end{cases}
 \]
 
-Note that whereas $\mathbb E(X)$ is a number, $\mathbb E(X|Y= y)$ is a function of $y$. Before we observe $Y$ , we don’t know the value of $\mathbb E(X|Y= y)$ so it is a random variable which we denote $\mathbb E(X|Y)$. 
+Note that whereas $\mathbb E(X)$ is a number, $\mathbb E(X|Y= y)$ is a function of $y$. Before we observe $Y$, we don’t know the value of $\mathbb E(X|Y= y)$ so it is a random variable which we denote $\mathbb E(X|Y)$. 
 
-(The Rule of Iterated Expectations). For random variables $X$ and $Y$ , assuming the expectations exist, we have that
+(**The Rule of Iterated Expectations**). For random variables $X$ and $Y$, assuming the expectations exist, we have that
 
 \[
-\mathbb E [\mathbb E(Y |X)] = \mathbb E(Y ) \\ \mathbb E [\mathbb E(X|Y )] = \mathbb E(X).
+\mathbb E (\mathbb E(Y |X)) = \mathbb E(Y ) \\ \mathbb E (\mathbb E(X|Y )) = \mathbb E(X).
 \]
 
 More generally, for any function $r(x, y)$ we have
 \[
-\mathbb E [\mathbb E(r(X, Y )|X)] = \mathbb E(r(X, Y )). 
+\mathbb E (\mathbb E(r(X, Y )|X)) = \mathbb E(r(X, Y )). 
 \]
 
 The **conditional variance** is defined as
@@ -766,20 +741,130 @@ where $\mu(x) = \mathbb E(Y |X= x)$.  For random variables $X$ and $Y$,
 
 ### Inequalities For Expectations 
 
-- (Cauchy-Schwartz inequality). If $X$ and $Y$ have finite variances then
+- (**Cauchy-Schwartz inequality**). If $X$ and $Y$ have finite variances then
 \[
-\mathbb E |XY | ≤ \sqrt{E(X^2)E(Y^2)}.
+\mathbb E (|XY |) ≤ \sqrt{E(X^2)E(Y^2)}.
 \]
 
-- (Jensen’s inequality). If $g$ is convex, then
+- (**Jensen’s inequality**). If $g$ is convex, then
 \[
-\mathbb Eg(X) ≥ g(\mathbb EX)
+\mathbb E(g(X)) ≥ g(\mathbb E(X))
 \]
 
     If $g$ is concave, then
     \[
-    \mathbb Eg(X) \le g(\mathbb EX)
+    \mathbb E(g(X)) \le g(\mathbb E(X))
     \]
+
+
+# Some Statistics
+In this part, we discuss basic of statistical inference.
+
+## Descriptive Statistics
+
+Descriptive Statistics
+| Concept                | Description                               |
+| ---------------------- | ----------------------------------------- |
+| **Mean**               | Average: $\bar{x} = \frac{1}{n} \sum x_i$ |
+| **Median**             | Middle value (robust to outliers)         |
+| **Mode**               | Most frequent value                       |
+| **Variance**           | Average squared deviation from mean       |
+| **Standard Deviation** | Square root of variance                   |
+| **IQR**                | Q3 - Q1 (middle 50% range)                |
+| **Skewness**           | Measures asymmetry                        |
+| **Kurtosis**           | Measures "tailedness" or peak heaviness   |
+
+**When to use what**:
+- Mean: Normal-like data
+- Median: Skewed or outlier-heavy data
+- Variance/Std Dev: Spread/uncertainty
+- Skewness/Kurtosis: Shape and anomaly insight
+
+#### Data Visualization (EDA)
+- **Histograms**: A histogram is a bar plot showing the **distribution of a single numerical variable** by dividing the data range into intervals (bins) and counting how many values fall into each bin. It helps to
+    - Visualize shape of distribution (e.g., normal, skewed, heavy tails)
+    - Detect modes, outliers, spread
+    - Good for large samples
+  
+- **Boxplot** (Box-and-Whisker Plot): summarizes five-number summary
+    - Min
+    - Q1 (25th percentile)
+    - Median (Q2)
+    - Q3 (75th percentile)
+    - Max (excluding outliers)
+    
+    Box = interquartile range (IQR = Q3 - Q1)
+Whiskers = extend to data within 1.5×IQR from Q1 and Q3
+Dots = outliers (beyond whiskers)
+
+    Purpose:
+    - Compare distributions across categories
+    - Detect skew, spread, and outliers
+    - Much cleaner than histograms for comparative plots
+- **Empirical Cumulative Distribution Function (ECDF)**: is a step function that shows, for each value $x$ the proportion of data less than or equal to $x$.
+   \[
+    ECDF(x) = \frac{\#\{ x_i \le x\}}{n}
+   \]
+   Purpose:
+    - Show full distribution without binning (unlike histogram)
+    - Allows for direct comparison of two distributions, visual test of normality, 
+    -  The steepness of steps shows density
+    - Makes it easy to read quantiles visually
+  
+- **QQ Plot**: compares the quantiles of your empirical data with the quantiles of a theoretical distribution (often Normal).
+    - X-axis: Theoretical quantiles (e.g., from a standard normal distribution)
+    - Y-axis: Sample quantiles (from your data)
+    
+    If your data comes from the specified theoretical distribution, the points will fall approximately along the 45-degree line (y = x).
+
+    Purpose:
+    - Check normality (most common use case)
+    - Compare two distributions
+    - Spot heavy tails, skew, outliers, or departures from assumptions
+  
+  Let’s say you're comparing your data to a Normal distribution:
+
+    | Q-Q Plot Feature            | What It Tells You                                        |
+    | --------------------------- | -------------------------------------------------------- |
+    | Points lie on 45° line      | Data is **normally distributed**                         |
+    | Curve is **S-shaped**       | Data is **skewed** (right or left depending on curve)    |
+    | Tails are above line        | **Heavy right tail** (data has more extreme high values) |
+    | Tails below line            | **Heavy left tail** (extreme low values)                 |
+    | Points deviate at ends only | **Tail issues** (e.g., not enough kurtosis)              |
+    | Random scatter              | Not matching theoretical distribution                    |
+
+    Use Cases in ML/Data Science
+    - Verifying residuals are normally distributed in regression
+    - Checking feature distribution assumptions (before applying models like LDA)
+    - Validating synthetic or bootstrapped data quality
+  
+  There are non-normal Q-Q plots for exponential or t-distribution as well.
+
+
+#### Core Distributions
+
+| Distribution                              | Use Case                                    |
+| ----------------------------------------- | ------------------------------------------- |
+| **Normal** ($\mathcal{N}(\mu, \sigma^2)$) | Natural data, CLT, errors                   |
+| **Bernoulli/Binomial**                    | Yes/No events, coin flips                   |
+| **Poisson**                               | Count of events in fixed time (λ rate)      |
+| **Exponential**                           | Time until next event (e.g., arrival times) |
+| **Uniform**                               | Equal likelihood over interval              |
+| **Multivariate Normal**                   | Joint distribution over multiple features   |
+
+
+Important Properties:
+- Normal: symmetric, defined by mean/variance
+- Poisson & Exponential are related (arrival vs wait)
+- Binomial becomes Normal with large n (via CLT)
+
+| Concept             | Why It Matters in ML                     |
+| ------------------- | ---------------------------------------- |
+| Mean, Std           | Feature normalization, loss functions    |
+| Skewness, Outliers  | Scaling, robust modeling                 |
+| Normal Distribution | Linear models assume normality of errors |
+| Poisson, Binomial   | Modeling counts and probabilities        |
+| Boxplots/Histograms | Feature exploration & preprocessing      |
 
 
 ## Statistical Inference
@@ -809,23 +894,21 @@ For example, Suppose we observe pairs of data $(X_1, Y_1), . . ., (X_n, Y_n)$. P
 Y = r(X) + \epsilon
 \]
 
-where $\mathbb E(\epsilon) = 0$. 
-
-Many inferential problems can be identified as being one of three types: 
+where $\mathbb E(\epsilon) = 0$. Many inferential problems can be identified as being one of three types: 
 - Estimation 
 - Confidence Intervals
 - Hypothesis Testing
 
-**Point estimation** refers to providing a single “best guess” of some quantity of interest (like mean, proportion, or variance) from sample data. The quantity of interest could be a parameter in a parametric model, a cdf $F$, a probability density function $f$, a regression function $r$, or a prediction for a future value $Y$ of some random variable. By convention, we denote a point estimate of $θ$ by $\hat θ$ or $\hat θ_n$. Remember that $θ$ is a _fixed_, _unknown_ quantity. The estimate $\hat θ$ depends on the data so $\hat θ$ is a random variable. 
+**Point estimation** refers to providing a single “best guess” of some quantity of interest (like mean, proportion, or variance) from sample data. The quantity of interest could be a parameter in a parametric model, a cdf $F$, a probability density function $f$, a regression function $r$, or a prediction for a future value $Y$ of some random variable. By convention, we denote a point estimate of $θ$ by $\hat θ$ or $\hat θ_n$. Remember that $θ$ is a _fixed_, _unknown_ quantity. The estimate $\hat θ$ depends on the data so _$\hat θ$ is a random variable_. 
 
-More formally, let $X_1, . . . , X_n$ be $n$ iid data points from some distribution $F$. A **point estimator **$\hat θ_n$ of a parameter $θ$ is some function of $X_1, . . . , X_n$:
+More formally, let $X_1, . . . , X_n$ be $n$ iid data points from some distribution $F$. A **point estimator** $\hat θ_n$ of a parameter $θ$ is some function of $X_1, . . . , X_n$:
 \[
 \hat θ_n = g(X_1, . . . , X_n).
 \]
 
-The **bias** of an estimator is defined by $\text{bias}(\hat θ_n) = \mathbb E_θ (\hat θ_n)− θ$. We say that $\hat θ_n$ is **unbiased** if $\mathbb E(\hat θ_n) = θ$. Many of the estimators we will use are biased. A reasonable requirement for an estimator is that it should converge to the true parameter value as we collect more and more data. This requirement is quantified by the following definition:
+The **bias** of an estimator is defined by $\text{bias}(\hat θ_n) = \mathbb E (\hat θ_n)− θ$. We say that $\hat θ_n$ is **unbiased** if $\mathbb E(\hat θ_n) = θ$. Many of the estimators we will use are biased. A reasonable requirement for an estimator is that it should converge to the true parameter value as we collect more and more data. This requirement is quantified by the following definition:
 
-A point estimator $\hat θ_n$ of a parameter $θ$ is consistent if $\hat \theta_n \xrightarrow[]{\; p \;}\theta$, which means  $\hat \theta_n$ converges to $\theta$ in probability. Equivalently, for every $\epsilon >0 $, 
+A point estimator $\hat θ_n$ of a parameter $θ$ is **consistent** if $\hat \theta_n \xrightarrow[]{\; p \;}\theta$, which means  $\hat \theta_n$ converges to $\theta$ in probability. Equivalently, for every $\epsilon >0 $, 
 
 \[
 p(|X_n - X| > \epsilon) \rightarrow 0
@@ -833,9 +916,9 @@ p(|X_n - X| > \epsilon) \rightarrow 0
 
 as $n \rightarrow \infty$. 
 
-The distribution of $\hat θ_n$ is called the **sampling distribution**. Statistic $\hat \theta_n$ varies from sample to sample. This variability is captured by its sampling distribution. The standard deviation of $\hat \theta_n$ is called the **standard error**: $s = \sqrt{\mathbb V(\hat \theta_n)}$. Often, the standard error depends on the unknown $F$. In those cases, $s$ is an unknown quantity but we usually can estimate it. The estimated standard error is denoted by $\hat s$. 
+The distribution of $\hat θ_n$ is called the **sampling distribution**. Statistic $\hat \theta_n$ varies from sample to sample. This variability is captured by its sampling distribution. The standard deviation of $\hat \theta_n$ is called the **standard error**: $se = \sqrt{\mathbb V(\hat \theta_n)}$. Often, the standard error depends on the unknown $F$. In those cases, $se$ is an unknown quantity but we usually can estimate it. The estimated standard error is denoted by $\widehat {se}$. 
 
-For example if $X_1, . . . , X_n ∼ \text{Bernoulli}(p)$ and let $\hat p_n = n^{−1} \sum_i X_i$. Then $\mathbb E (\hat p_n) = p$ so $p_n$ is unbiased. The standard error is $s = \sqrt{\mathbb V(\hat p_n)} = \sqrt{p(1− p)/n}$ . The estimated standard error is $\hat s = \sqrt{\hat p(1− \hat p)/n}$ . 
+For example if $X_1, . . . , X_n ∼ \text{Bernoulli}(p)$ and let $\hat p_n = n^{−1} \sum_i X_i$. Then $\mathbb E (\hat p_n) = p$ so $\hat p_n$ is unbiased. The standard error is $se = \sqrt{\mathbb V(\hat p_n)} = \sqrt{p(1− p)/n}$ . The estimated standard error is $\hat s = \sqrt{\hat p_n(1− \hat p_n)/n}$ . 
 
 
 The quality of a point estimate is sometimes assessed by the **mean squared error**:
@@ -844,15 +927,18 @@ The quality of a point estimate is sometimes assessed by the **mean squared erro
 MSE(\hat \theta) = \mathbb E(\hat \theta_n - \theta)^2
 \]
 
-This expectation is calculated with respect to the distribution 
+<!-- This expectation is calculated with respect to the distribution 
 \[
     f(x_1,\dots,x_n; \theta) = \prod_{i=1}^n f(x_i;\theta)
-\]
+\] -->
 
 More specifically:
 
 \[
-\mathbb E(\hat \theta_n - \theta)^2 = \int_{-\infty}^\infty \big(\hat\theta_n(x_1,\dots,x_n) - \theta \big)^2 f(x_1,\dots,x_n; \theta) \; dx_1\dots dx_n
+    \begin{align*}
+\mathbb E(\hat \theta_n - \theta)^2 & = \int_{-\infty}^\infty \big(\hat\theta_n(x_1,\dots,x_n) - \theta \big)^2 f(x_1,\dots,x_n; \theta) \; dx_1\dots dx_n\\
+& = \int_{-\infty}^\infty \big(\hat\theta_n(x_1,\dots,x_n) - \theta \big)^2 \prod_{i=1}^n f(x_i;\theta) \; dx_1\dots dx_n
+\end{align*}
 \]
 
 It is easy to see that 
@@ -872,7 +958,7 @@ That is,
 Many of the estimators we will encounter will turn out to have, approximately, a Normal distribution. An estimator is **asymptotically Normal** if
 
 \[
-\frac{\hat\theta_n - \theta}{s} \rightsquigarrow \mathcal N(0,1)
+\frac{\hat\theta_n - \theta}{se} \rightsquigarrow \mathcal N(0,1)
 \]
 
 which $\rightsquigarrow$ represents convergence in distribution. We say $X_n \rightsquigarrow X$ if  $\lim_{n \rightarrow \infty} F_n(t) = F(t)$ at all $t$ for which $F$ is continuous. 
@@ -882,10 +968,10 @@ which $\rightsquigarrow$ represents convergence in distribution. We say $X_n \ri
 
 A $1− α$ **confidence interval** for a parameter $θ$ is an interval $(a_n, b_n)$ where $a_n = a_n(X_1, . . . , X_n)$ and $b_n= b_n(X_1, . . . , X_n)$ are functions of the data such that
 \[
-p \big(θ ∈ (a_n,b_n)\big) ≥ 1− α.
+p \big(a_n < θ< b_n \big) ≥ 1− α.
 \]
 
-In words, $(a_n, b_n)$ traps $θ$ with probability $1− α$. We call $1− α$ the coverage of the confidence interval. Note that $(a_n, b_n)$  is random and $θ$ is fixed. Commonly, people use 95 percent confidence intervals, which corresponds to choosing $α = 0.05$. Interpretation of confidence interval can be stated as follows: “If we repeated the study 100 times, ~95 of the intervals would contain $\theta$.” If $θ$ is a vector then we use a confidence set (such as a sphere or an ellipse) instead of an interval.  
+In words, $(a_n, b_n)$ traps $θ$ with probability $1− α$. We call $1− α$ the **coverage** of the confidence interval. Note that *$(a_n, b_n)$  is random* and $θ$ is fixed. Commonly, people use 95% confidence intervals, which corresponds to choosing $α = 0.05$. Interpretation of confidence interval can be stated as follows: “If we repeated the study 100 times, ~95 of the intervals would contain $\theta$.” If $θ$ is a vector then we use a confidence set (such as a sphere or an ellipse) instead of an interval.  
 
 
 In Bayesian methods we treat $θ$ as if it were a random variable and we do make probability statements about $θ$. In particular, we will make statements like “the probability that $θ$ is in $(a_n, b_n)$, given the data, is 95 percent.” However, these Bayesian intervals refer to degree- of-belief probabilities. These Bayesian intervals will not, in general, trap the parameter 95 percent of the time. As mentioned earlier, point estimators often have a limiting Normal distribution, that is, $\hat θ_n ≈ \mathcal N (θ, \hat s^2)$. In this case, we can construct (approximate) confidence intervals as follows.
@@ -900,20 +986,20 @@ Suppose that $\hat θ_n ≈ \mathcal N (θ, \hat s^2)$. Let $\phi$ be the cdf of
 that is, $p(Z > z_{α/2}) = α/2$ and $p(−z_{α/2} < Z < z_{α/2}) = 1− α$ where $Z∼ \mathcal N (0, 1)$. Then
 
 \[
-p ( \hat\theta_n - z_{\alpha/2}\hat s <  \theta < \hat\theta_n + z_{\alpha/2}\hat s) \rightarrow 1-\alpha
+p ( \hat\theta_n - z_{\alpha/2}\widehat {se} <  \theta < \hat\theta_n + z_{\alpha/2}\widehat {se}) \rightarrow 1-\alpha.
 \]
 
-because if we assume $(\hat\theta_n -\theta)/\hat s \rightsquigarrow Z ∼  \mathcal N(0,1)$, then 
+This is because if we assume $(\hat\theta_n -\theta)/\widehat {se} \rightsquigarrow Z ∼  \mathcal N(0,1)$, then 
 
 \[
 \begin{align*}
-p ( \hat\theta_n - z_{\alpha/2}\hat s <  \theta < \hat\theta_n + z_{\alpha/2}\hat s)  & = p( -z_{\alpha/2} < \frac{\hat\theta_n -\theta}{\hat s} < z_{\alpha/2})  \\
+p ( \hat\theta_n - z_{\alpha/2}\widehat {se} <  \theta < \hat\theta_n + z_{\alpha/2}\widehat {se})  & = p( -z_{\alpha/2} < \frac{\hat\theta_n -\theta}{\widehat {se}} < z_{\alpha/2})  \\
 & \rightarrow p(−z_{α/2} < Z < z_{α/2}) \\
 & = 1 - \alpha
 \end{align*}
 \]
 
-For 95 percent confidence intervals, $α = 0.05$ and $z_{α/2} = 1.96 ≈ 2$ leading to the approximate 95 percent confidence interval $\hat θ_n ± 2 s$.  
+For 95% confidence intervals, $α = 0.05$ and $z_{α/2} = 1.96 ≈ 2$ leading to the approximate 95% confidence interval $\hat θ_n ± 2 \widehat {se}$.  
 
 
 <!-- ## Hypothesis Testing
@@ -922,8 +1008,7 @@ In **hypothesis testing**, we start with some default theory called a **null hyp
 
 ### Estimating the cdf and Statistical Functionals
 
-Let $X_1, . . ., X_n$ be a random sample on a random variable $X$ with cdf $F(x)$. A **histogram** of the sample is an estimate of the pdf, $f(x)$, of $X$ depending on whether $X$ is discrete or continuous. Here we make no assumptions on the form of the distribution of $X$. In particular, we do not assume a parametric form of the distribution as we did for maximum likelihood estimates; hence, the histogram is often
-called a **nonparametric estimator**. Similarly, we can consider a nonparametric estimation of the cdf $F$ followed by functions of cdf, such as the mean, the variance, and the correlation.
+Let $X_1, . . ., X_n$ be a random sample on a random variable $X$ with cdf $F(x)$. A **histogram** of the sample is an estimate of the pdf, $f(x)$, of $X$ depending on whether $X$ is discrete or continuous. Here we make no assumptions on the form of the distribution of $X$. In particular, we do not assume a parametric form of the distribution as we did for maximum likelihood estimates; hence, *the histogram is often called a **nonparametric estimator***. Similarly, we can consider a nonparametric estimation of the cdf $F$ as well as the functions of cdf such as the mean, the variance, and the correlation.
 
 
 #### The Empirical Distribution Function
@@ -947,13 +1032,11 @@ Many statistics are functions of $F$ such as
 - variance: $\sigma^2 = \int (x - \mu)^2 dF(x)$
 - median: $F^{-1}(1/2)$
 
-A **plug-in estimator** of a statistic $\theta = T(F)$ is defined by $\hat \theta_n = T(\hat F_n)$. In other words, just plug-in $\hat F_n$ for the unknown $F$. 
-
-Assuming that somehow we can find an estimate for $\hat s$.  In many cases, it turns out that $T (F_n) ≈ N (T (F), \hat s^2)$. An approximate $1− α$ confidence interval for $T (F)$ is then $T (F_n) ± z_{α/2} s$. We will call this the Normal-based interval. For a 95 percent confidence interval, $z_{α/2} = z_{.05/2} = 1.96 ≈ 2$ so the interval is $T (F_n) ± 2 s$.
+A **plug-in estimator** of a statistic $\theta = T(F)$ is defined by $\hat \theta_n = T(\hat F_n)$. In other words, just plug-in $\hat F_n$ for the unknown $F$. Assume that somehow we can find an estimate $\widehat {se}$.  In many cases, it turns out that $T (F_n) ≈ N (T (F), \widehat {se}^2)$. An approximate $1− α$ confidence interval for $T (F)$ is then $T (F_n) ± z_{α/2} \widehat {se}$. We will call this the Normal-based interval. For a 95% confidence interval, $z_{α/2} = z_{.05/2} = 1.96 ≈ 2$ so the interval is $T (F_n) ± 2 \widehat {se}$.
 
 Example (The Mean):  Let $\mu = T(F) = \int x dF(x)$.  The plug-in estimator is 
-- $\hat \mu = \int x d\hat F_n(x) = \sum_i x_i (\hat F_n(x_i) - \hat F_N(x_{i-1})) = \frac{1}{n} \sum_i x_i = \bar X_n$. 
-- The standard error is $s = \sqrt{\mathbb V(\bar X_n)} = \frac{\sigma}{\sqrt n}$. If $\hat \sigma$ denotes an estimate of $\sigma$, then the estimated standard error is $\frac{\hat \sigma}{\sqrt n}$. A normal based confidence interval for $\mu$ is $\bar X_n \pm z_{\alpha/2}\hat s$. 
+- $\hat \mu = \int x d\hat F_n(x) = \sum_i x_i (\hat F_n(x_i) - \hat F_n(x_{i-1})) = \frac{1}{n} \sum_i x_i = \bar X_n$. 
+- The standard error is $se = \sqrt{\mathbb V(\bar X_n)} = \frac{\sigma}{\sqrt n}$. If $\hat \sigma$ denotes an estimate of $\sigma$, then the estimated standard error is $\frac{\hat \sigma}{\sqrt n}$. A normal based confidence interval for $\mu$ is $\bar X_n \pm z_{\alpha/2}\widehat {se}$. 
 
 Example (The Variance): Let $σ^2 = T (F ) = \mathbb V(X) = \int x^2dF (x)− (\int xdF (x) )^2$. The plug-in estimator is:
 
@@ -970,7 +1053,7 @@ Another reasonable estimator of $\sigma^2$ is the sample variance
     S^2_n = \frac{1}{n-1} \sum_i \Big( X_i - \bar X_i\Big)^2
 \]
 
-In practice, there is little diﬀerence between $σ^2$ and $S^2_n$ and you can use either one. Returning to the last example, we now see that the estimated standard error of the estimate of the mean is $\hat s = \hat \sigma/ \sqrt n$.
+In practice, there is little diﬀerence between $σ^2$ and $S^2_n$ and you can use either one. Returning to the last example, we now see that the estimated standard error of the estimate of the mean is $\widehat {se} = \hat \sigma/ \sqrt n$.
 
 Example (Correlation). Let $Z= (X, Y )$ and let 
 \[
@@ -1038,7 +1121,11 @@ For $T_n = \bar X_n$, we have for Step 1 that $\mathbb V_{\hat F_n} (T_n)= \hat 
 \hat σ^2 = \frac{1}{n} \sum_i \Big( X_i - \bar X_i\Big)^2
 \]
 
-In this case, Step 1 is enough. However, in more complicated cases we cannot write down a simple formula for $\mathbb V_{\hat F_n} (T_n)$ which is why step 2 is needed. This is step is the bootstrap step which simply says to sample $X_1^*, \dots, X_n^*$ from $\hat F_n$ and then compute $T_n^* = g(X_1^*, \dots, X_n^*)$. This constitutes one draw from the distribution of $T_n$.  Then we repeat these two steps $m$ times to get $T_{n,1}^*, \dots, T_{n,m}^*$.  Now you have a empirical distribution of these  $T_{n,1}^*$ to estimate variance, standard error, confidence interval etc. For example, you can use bootstrap to find the standard error for the median:
+In this case, Step 1 is enough. However, in more complicated cases we cannot write down a simple formula for $\mathbb V_{\hat F_n} (T_n)$ which is why step 2 is needed. This is step is the bootstrap step which simply says to 
+- sample $X_1^*, \dots, X_n^*$ from $\hat F_n$ and 
+- then compute $T_n^* = g(X_1^*, \dots, X_n^*)$. 
+  
+This constitutes one draw from the distribution of $T_n$.  We repeat these two steps $m$ times to get $T_{n,1}^*, \dots, T_{n,m}^*$.  Now you have a empirical distribution of these  $T_{n,i}^*$s to estimate variance, standard error, confidence interval etc. For example, here is an example of using bootstrap to find the standard error for the median:
 
 ```python
 import numpy as np
@@ -1050,12 +1137,10 @@ ci_lower, ci_upper = np.percentile(boot_medians, [2.5, 97.5])
 print(f"95% CI for the median: ({ci_lower:.2f}, {ci_upper:.2f})")
 ```
 
-In the context of data science or ML engineer, we can describe the bootstrap as follows: 
-
-Suppose you have a dataset  $D = \{ x_1, x_2, \dots, x_n \}$.
+In the context of data science or ML engineer, we can describe the bootstrap as follows: suppose you have a dataset  $D = \{ x_1, x_2, \dots, x_n \}$.
 
 1.  Resample with replacement:
-Generate $m$ new datasets $D_1, \dots, D_m$ each of size $n$, drawn with replacement from $D$
+Generate $m$ new datasets $D_1, \dots, D_m$, each of size $n$, drawn with replacement from $D$
 1. Compute the statistic $\hat\theta^*_i$ on each $D_i$
 2.  Use the empirical distribution of these $\hat \theta^*_i$ values to 
     - Estimate the standard error
@@ -1085,10 +1170,9 @@ The log-likelihood function is defined by $ℓ_n(θ) = \log \mathcal L_n(θ)$.  
 
 The **maximum likelihood estimator (MLE)**, denoted by $\hat θ_n$, is the value of $θ$ that maximizes $\mathcal L_n(θ)$. The maximum of $ℓ_n(θ)$ occurs at the same place as the maximum of $\mathcal L_n(θ)$, so maximizing the log-likelihood leads to the same answer as maximizing the likelihood. Often, it is easier to work with the log-likelihood. 
 
-In some cases we can find the MLE $θ$ analytically in which frequently $\hat θ$ solves the equation $\frac{\partial \ell_n (\theta)}{\partial \theta} = 0$. If $θ$ is a vector of parameters, this results in a system of equations to be solved
-simultaneously. More often, we need to find the MLE by numerical methods. We will briefly discuss two commoused methods: 
--  Newton-Raphson 
--  The EM algorithm 
+In some cases we can find the MLE $θ$ analytically in which frequently $\hat θ_n$ solves the equation $\frac{\partial \ell_n (\theta)}{\partial \theta} = 0$. If $θ$ is a vector of parameters, this results in a system of equations to be solved simultaneously. More often, we need to find the MLE by numerical methods. We will briefly discuss two commoused methods: 
+-  **Newton-Raphson**
+-  **The EM algorithm**
   
 Both are iterative methods that produce a sequence of values $θ_0, θ_1, . . .$ that, under ideal conditions, converge to the MLE $θ$.
 
@@ -1099,45 +1183,39 @@ Under certain conditions on the model, the maximum likelihood estimator $θ_n$ p
 - The MLE is **consistent**: $θ_n \xrightarrow[]{\; p \;} θ$ 
 - The MLE is **invariant**: if $\hat θ_n$ is the MLE of $θ$ then $g(\hat θ_n)$ is the MLE of $g(θ)$
 - The MLE is **asymptotically Normal**: $(\hat θ_n− θ)/\hat s \rightsquigarrow \mathcal N (0, 1)$; also, the estimated standard error $\hat s$ can often be computed analytically
-- The mle is **asymptotically optimal** or **eﬃcient**: roughly, this means that among all well-behaved estimators, the mle has the smallest variance, at least for large samples
-- The mle is approximately the Bayes estimator. (This point will be explained later.)
+- The MLE is **asymptotically optimal** or **eﬃcient**: roughly, this means that among all well-behaved estimators, the MLE has the smallest variance, at least for large samples
+- The MLE is approximately the Bayes estimator. (This point will be explained later.)
 
 
 ### Hypothesis Testing and p-values
 
-Primary focus of inference is to learn about characteristics of the population given samples of that population. Probability theory is used as a basis for accepting/rejecting some hypotheses about the parameters of a population.
-
-Suppose that we partition the parameter space $Θ$ into two disjoint sets $Θ_0$ and $Θ_1$ and that we wish to test
+Primary focus of inference is to learn about characteristics of the population given samples of that population. Probability theory is used as a basis for accepting/rejecting some hypotheses about the parameters of a population. Suppose that we partition the parameter space $Θ$ into two disjoint sets $Θ_0$ and $Θ_1$ and that we wish to test
 \[
 H_0 : θ ∈ Θ_0 \;\; \text{versus}\;\; H_1 : θ ∈ Θ_1. 
 \]
 
-We call $H_0$ the null hypothesis and $H_1$ the alternative hypothesis. Given a random variable $X$ whose range is $\mathcal X$. We test a hypothesis about a test statistic related to variable $X$ by finding an appropriate subset of outcomes $R ⊂ \mathcal X$ called the **rejection region**. If $X ∈ R$ we reject the null hypothesis, otherwise, we do not reject the null hypothesis.
+We call $H_0$ the **null hypothesis** and $H_1$ the **alternative hypothesis**. *Given a random variable $X$ whose range is $\mathcal X$, we test a hypothesis about a **test statistic** $T$ related to variable $X$ by finding an appropriate subset of outcomes $R ⊂ \mathcal X$ called the **rejection region***. If $X ∈ R$ we reject the null hypothesis, otherwise, we do not reject the null hypothesis.
 
 |   | Retain Null | Reject Null |
 |--  |--------------  | -------------- |
 | $H_0$ true | ✅  | Type I Error |
 | $H_1$ true | Type II Error | ✅  |
 
-Usually, the rejection region R is of the form
+Usually, the rejection region $R$ is of the form
 \[
 R = \{x: T(x) > c \}
 \]
 
-where $T$ is a **test statistic** and $c$ is a **critical value**. The problem in hypothesis testing is to find an appropriate test statistic $T$ and an appropriate critical value $c$. 
+where $T$ is a test statistic and $c$ is a **critical value**. The problem in hypothesis testing is to find an appropriate test statistic $T$ and an appropriate critical value $c$. 
 
-**Null hypothesis** is always states some expectation regarding a population parameter, such as population mean, median, standard deviation or variance. It is never stated in terms of  expectations of a sample. In fact, sample statistics is rarely identical even if selected from the same population. For example, ten tosses of a single coin rarely results in 5 heads and 5 tails. The discipline of statistics sets rules for making an inductive leap from sample statistics to population parameters. 
+Null hypothesis always states some expectation regarding a population parameter, such as population mean, median, standard deviation or variance. It is never stated in terms of  expectations of a sample. In fact, sample statistics is rarely identical even if selected from the same population. For example, ten tosses of a single coin rarely results in 5 heads and 5 tails. The discipline of statistics sets rules for making an inductive leap from sample statistics to population parameters. Alternative hypothesis denies the null hypothesis. Note that *null and alternative hypothesis are mutually exclusive and exhaustive*; no other possibility exists. In fact, they state the opposite of each other. The null hypothesis can never be proven to be true by sampling. If you flipped a coin 1,000,000 times and obtained exactly 500,000 heads, wouldn’t that be a proof for fairness of the coin? No! It would merely indicates that, if a bias does exists, it must be exceptionally small. 
 
-**Alternative hypothesis** denies the null hypothesis. Note that null and alternative hypothesis are mutually exclusive and exhaustive; no other possibility exists. In fact, they state the opposite of each other. The null hypothesis can never be proven to be true by sampling. If you flipped a coin 1,000,000 times and obtained exactly 500,000 heads, wouldn’t that be a proof for fairness of the coin? No! It would merely indicates that, if a bias does exists, it must be exceptionally small. 
+Although we can not prove the null hypothesis, we can set up some conditions that permit us to reject it. For example, if we get 950,000 heads, would anyone seriously doubt the bias of the coin? Yes, we would reject the nut hypothesis that the coin is fair. The frame of reference for statistical decision making is provided by **sampling distribution of a statistic**.  A sampling distribution is a theoretical probability distribution of the possible values of some sample statistic that would occur if we were to draw all possible samples of a fixed size from a given population. There is a sampling distribution for every statistic.
 
-Although we can not prove the null hypothesis, we can set up some conditions that permit us to reject it. For example, if we get 950,000 heads, would anyone seriously doubt the bias of the coin? Yes, we would reject the nut hypothesis that the coin is fair. The frame of reference for statistical decision making is provided by **sampling distribution of a statistic**. 
+The **level of significance**  $\alpha$ set by the investigator for rejecting  is known as the **alpha level**. For example, if $\alpha=0.05$ and test statistic is 1.43 where null hypothesis assumes chance model is normal distribution, then we fail to reject $H_0$ because test statistic does not achieve the critical value (1.96). But if $\alpha=0.01$ and test statistic is 2.83, then we reject  because test statistic is in the region of rejection (exceeds 2.58). Thus if $\alpha=0.05$, about 5 times out of 100 we will falsely reject a true null hypothesis (Type I error). 
 
-A sampling distribution is a theoretical probability distribution of the possible values of some sample statistic the would occur if we were to draw all possible samples of a fixed size from a given population. There is a sampling distribution for every statistic.
-
-The **level of significance**  $\alpha$ set by the investigator for rejecting  is known as the **alpha level**. For example, if $\alpha=0.05$ and **test statistic** is 1.43 where null hypothesis assumes chance model is normal distribution, then we fail to reject $H_0$ because test statistic does not achieve the critical value (1.96). But if $\alpha=0.01$ and test statistic is 2.83, then we reject  because test statistic is in the region of rejection (exceeds 2.58). Thus if $\alpha=0.05$, about 5 times out of 100 we will falsely reject a true null hypothesis (Type I error). 
-
-**Power of a test**:
-Probability of Type I error is $\alpha$ . Probability of Type II error is $\beta$. The power of a test is the probability of correctly rejecting $H_0$, which is $1-\beta$. So, high power means a low chance of missing a real effect. In order to achieve the desired power, we need to choose the right sample size for our testing. 
+#### Power of a test:
+Probability of Type I error is $\alpha$ . Probability of Type II error is $\beta$. *The power of a test is the probability of correctly rejecting $H_0$, which is $1-\beta$*. So, high power means a low chance of missing a real effect. In order to achieve the desired power, we need to choose the right sample size for our testing. 
 
 Factors That Influence Power
 
@@ -1155,8 +1233,7 @@ Power increases with sample size, meaning you're more likely to detect real effe
 #### p-value
 **p_value** (1st definition): the smallest Type I error you have to be willing to tolerate if you want to reject the null hypothesis. If p describes an error rate you find intolerable, you must retain the null. In other words, for those tests in which p <=  p_value, you reject the null otherwise you retain the null. 
 
-For each $α$ we can ask: does our test reject $H_0$
-at level α? The p-value is the smallest $α$ at which we do reject $H_0$. If the evidence against $H_0$ is strong, the p-value will be small.
+For each $α$ we can ask: does our test reject $H_0$ at level $α$? The p-value is the smallest $α$ at which we do reject $H_0$. If the evidence against $H_0$ is strong, the p-value will be small.
 
 
 |p-value | evidence |
@@ -1170,23 +1247,20 @@ Note that a large p-value is not strong evidence in favor of $H_0$. A large p-va
 - $H_0$ is true or 
 - $H_0$ is false but the test has low power.
 
-Also Do not confuse the p-value with P(H0|Data). The p-value is not the probability that the null hypothesis is true. This is wrong in two ways: 
+Also do not confuse the p-value with $p(H_0|\text{Data})$. The p-value is not the probability that the null hypothesis is true. This is wrong in two ways: 
 - Null hypothesis testing is a frequentist tool and the frequentist approach doesn’t allow you to assign probability to null hypothesis; null hypothesis is either true or false; it can not have the chance of 5% to be true!
-- Even within the bayesian approach which allows you to assign probability to null, the p value would not correspond to the probability that null is true.
+- Even within the bayesian approach which allows you to assign probability to null, the p-value would not correspond to the probability that null is true.
 
-Equivalently, p-value can be defined as: **The p-value is the probability (under $H_0$) of observing a value of the test statistic the same as or more extreme than what was actually observed**. Informally, the p-value is a measure of the evidence against $H_0$: the smaller the p-value, the stronger the evidence against $H_0$.
-
- If the p_value is low (lower than the significance level) we say that it would be very unlikely to observe the data if the null hypothesis were true, and hence reject. Otherwise we would not reject . In this case the result of sampling is perhaps due to chance or sampling variability only.
+Equivalently, p-value can be defined as: **The p-value is the probability (under $H_0$) of observing a value of the test statistic the same as or more extreme than what was actually observed**. Informally, the p-value is a measure of the evidence against $H_0$: the smaller the p-value, the stronger the evidence against $H_0$. If the p_value is low (lower than the significance level) we say that it would be very unlikely to observe the data if the null hypothesis were true, and hence reject. Otherwise we would not reject . In this case the result of sampling is perhaps due to chance or sampling variability only.
 
 #### How to calculate p-value
 
-
 Hypothesis Testing often contains these steps:
-1) Set the hypothesis:  
+1) Set the hypothesis 
 1) Calculate the point estimate from a sample 
 2) Check the conditions (CLT conditions) if using CLT based tests
-3) Draw sampling distribution, shade p_value, calculate test statistic (ex., for mean, $W = \frac{\bar X -\mu}{\bar s/\sqrt n}$), 
-4) Make decision: based on p_value calculated and chosen , either reject or retain the null.
+3) Draw sampling distribution, shade p_value, calculate test statistic (ex., for mean, $W = \frac{\bar X -\mu}{\hat s/\sqrt n}$), 
+4) Make decision: based on p_value calculated, either reject or retain the null.
 
 #### Choosing $α$:
 - If Type I Error is dangerous or costly, choose a small significance level (e.g. 0.01). This is because we want to require very strong evidence against  in favour of .
@@ -1199,20 +1273,20 @@ When the sample size is large or the data is not too skewed, the sampling distri
 
 For example, for estimating the mean using $t$_distribution, we use 
 \[
-\bar X \pm t^*_{df} \frac{s}{\sqrt n}
+\bar X \pm t^*_{df} \frac{\hat s}{\sqrt n}
 \]
 
-where $df = n-1$ for one sample mean test. For inference for the comparison of two independent means, we use
+where $df = n-1$ for one sample mean test and $s$ is the sample variance. For inference for the comparison of two independent means, we use
 
 \[
 \bar X_1 - \bar X_2 \pm t^*_{df} \sqrt{\frac{s^2_1}{n_1} + \frac{s^2_2}{n_2}}
 \]
 
-where $df = \min(n_1-1, n_2-1)$.
+where $df = \min(n_1-1, n_2-1)$ and, $s_1^2$ and $s_2^2$ are sample variances.
 
 ### Examples 
 
-We use test statistic to calculate the p_value. For example, suppose you have two samples obtained in different ways with sample means $\bar X=216.2$ and $\bar Y= 195.3$. The null hypothesis is the default case which claims they are from the same populations so they should be the same. To test if the means are diﬀerent, we compute
+We use test statistic to calculate the p_value. For example, suppose you have two samples obtained in different ways with sample means $\bar X=216.2$ and $\bar Y= 195.3$ and $\widehat {se}(\hat \mu_1) = 5$, $\widehat {se}(\hat \mu_2) = 2.4$. The null hypothesis is the default case which claims they are from the same populations so they should be the same. To test if the means are diﬀerent, we compute
 \[
 W= \frac{\hat δ− 0}{\hat s} = \frac{\bar X - \bar Y}{\sqrt{\frac{s_1^2}{m} + \frac{s_2^2}{n}}} = \frac{216.2− 195.3}{\sqrt{5^2 + 2.4^2}} = 3.78
 \]
@@ -1226,19 +1300,17 @@ To compute the p-value, we consider $z$-test. Let $Z∼ \mathcal N (0, 1)$ and a
 which is very strong evidence against the null hypothesis. To test if the medians are diﬀerent, let $\nu_1$ and $\nu_2$ denote the sample medians. Then,
 
 \[
-W= \frac{\nu_1 - \nu_2}{\hat s} =  \frac{212.5− 194}{7.7} = 2.4
+W= \frac{\nu_1 - \nu_2}{\widehat {se}} =  \frac{212.5− 194}{7.7} = 2.4
 \]
 
-where the standard error 7.7 was found using the bootstrap. The p-value is
+where the standard error $\widehat {se} = 7.7$ of $\nu_1 - \nu_2$ was found using the bootstrap. The p-value is
 
 \[
 \text{p-value} = P(|Z| > 2.4) = 2P(Z <−2.4) =
 .02
 \]
 
-which is strong evidence against the null hypothesis.
-
-In the above examples, we have been relied on  CLT-based tests (e.g. $t$-test, Z-test) which is based on the Central Limit Theorem which implies the distribution of sample mean (or other suitable statistics) is nearly normal, centred at the population mean, and with a standard deviation equal to the population standard deviation divided by square root of the sample size. Distribution of sample statistic approaches a normal distribution as the sample size increases, regardless of the shape of the population distribution, provided some conditions are met:
+which is strong evidence against the null hypothesis. In the above examples, we have been relied on  CLT-based tests (e.g. $t$-test, Z-test) which is based on the Central Limit Theorem which implies the distribution of sample mean (or other suitable statistics) is nearly normal, centred at the population mean, and with a standard deviation equal to the population standard deviation divided by square root of the sample size. Distribution of sample statistic approaches a normal distribution as the sample size increases, regardless of the shape of the population distribution, provided some conditions are met:
 - **Independent and Identically Distributed (i.i.d.) Samples**
     - Each sample ​should be drawn independently.
     - Identically distributed means all samples come from the same distribution with the same parameters (mean, variance).
@@ -1268,14 +1340,12 @@ Let $Z_1, . . . , Z_k$ be independent, standard Normals. Let
 V=\sum_{i=1}^k Z^2
 \]
 
-Then we say that $V$ has a $χ^2$ distribution with $k$ degrees of freedom, written $V∼ χ_k^2$. It can be shown that $\mathbb E(V ) = k$ and $\mathbb V(V ) = 2k$.
-
-Pearson’s $χ^2$ test is used for multinomial data. Recall that if $X= (X_1, . . . , X_k )$ has a multinomial (n, p) distribution, then the mle of $p$ is $\hat p= (\hat p1, . . . , \hat pk) = (X_1/n, . . . , X_k /n)$. Let $p_0 = (p_{01}, . . . , p_{0k} )$ be some fixed vector and suppose we want to test
+Then we say that $V$ has a $χ^2$ distribution with $k$ degrees of freedom, written $V∼ χ_k^2$. It can be shown that $\mathbb E(V ) = k$ and $\mathbb V(V ) = 2k$. Pearson’s $χ^2$ test is used for multinomial data. Recall that if $X= (X_1, . . . , X_k )$ has a multinomial (n, p) distribution, then the mle of $p$ is $\hat p= (\hat p1, . . . , \hat pk) = (X_1/n, . . . , X_k /n)$. Let $p_0 = (p_{01}, . . . , p_{0k} )$ be some fixed vector and suppose we want to test
 \[
 H_0 : p= p_0 \;\; \text{versus}\;\; H_1 : p \ne p_0.
 \]
 
-Pearson’s χ2 statistic is
+Pearson’s $χ^2$ statistic is
 \[
 T = \sum_{j=1}^k \frac{(X_j - np_{0j})^2}{np_{0j}} = \sum_{j=1}^k \frac{(X_j - E_j)^2}{E_j}
 \]
@@ -1397,10 +1467,7 @@ df_W &= N-k
 \end{align*}
 \]
 
-Compare F to critical value from F-distribution with $(k−1,N−k)$ degrees of freedom. Or use p-value: If $p < α$ (e.g., 0.05) → Reject $H_0$.
-​	
- 
-This analysis is assuming non-paired groups, i.e., groups are independent, approximately normal with roughly equal variance. 
+Compare $F$ to critical value from $F$-distribution with $(k−1,N−k)$ degrees of freedom. Or use p-value: If $p < α$ (e.g., 0.05) → Reject $H_0$. Again, note that this analysis is assuming non-paired groups, i.e., groups are independent, approximately normal with roughly equal variance. 
 
 ### Bootstrapping for hypothesis testing
 
@@ -1438,239 +1505,14 @@ Key Advantages of Bootstrapping
 - Can be used for any statistic (median, correlation, etc.).
 - Easy to implement with code (e.g., in NumPy or pandas).
 
-## Bayesian Probabilities
 
-Bayes’ theorem is used to convert a prior probability into a posterior probability by incorporating the evidence provided by the observed data. We capture our assumptions about $\bm w$, before observing the data, in the form of a prior probability distribution $p(\bm w)$. The effect of the observed data $\mathcal{D}= {t_1, . . . , t_N }$ is expressed through the conditional probability $p(\mathcal{D}\mid \bm w)$. Bayes’ theorem, which takes the form
 
-$$
-p(\bm w\mid \mathcal{D}) = \frac{p(\mathcal{D}\mid \bm w)p(\bm w)}{p(\mathcal{D})}
-$$
 
-then allows us to evaluate the uncertainty in $\bm w$ after we have observed $\mathcal{D}$ in the form of the posterior probability $p(\bm w|\mathcal{D})$. The quantity $p(\mathcal{D}\mid \bm w)$ on the right-hand side of Bayes’ theorem is evaluated for the observed dataset $\mathcal D$ and can be viewed as a function of the parameter vector $\bm w$, in which case it is called the **likelihood** function. It expresses how probable the observed dataset is for different settings of the parameter vector $\bm w$. Note that the likelihood is not a probability distribution over $\bm w$, and its integral with respect to $\bm w$ does not (necessarily) equal 1.
 
-Given this definition of likelihood, we can state Bayes’ theorem in words `posterior ∝ likelihood × prior` where all of these quantities are viewed as functions of $\bm w$. The denominator in the equation above is the normalization constant, which ensures that the posterior distribution on the left-hand side is a valid probability density and integrates to 1. Indeed, integrating both sides of that equation with respect to $\bm w$, we can express the denominator in Bayes’ theorem in terms of the prior distribution and the likelihood function
 
-$$
-p(\mathcal{D}) = \int p(\mathcal{D}|\bm w)p(\bm w) d\bm w.
-$$
 
-In both the Bayesian and frequentist paradigms, the likelihood function $p(\mathcal{D}\mid \bm w)$ plays a central role. However, the manner in which it is used is fundamentally different in the two approaches:
-- In a frequentist setting, $\bm w$ is considered to be a fixed parameter, whose value is determined by some form of ‘estimator’, and error bars on this estimate are obtained by considering the distribution of possible datasets $\mathcal{D}$. 
-- By contrast, from the Bayesian viewpoint there is only a single dataset $\mathcal{D}$ (namely the one that is actually observed), and the uncertainty in the parameters is expressed through a probability distribution over $\bm w$.
 
-A widely used frequentist estimator is **maximum likelihood**, in which $\bm w$ is set to the value that maximizes the likelihood function $p(\mathcal{D}\mid \bm w)$. This corresponds to choosing the value of $\bm w$ for which the probability of the observed dataset is maximized. In the machine learning literature, the negative log of the likelihood function is called an **error function**. Because the negative logarithm is a monotonically decreasing function, maximizing the likelihood is equivalent to minimizing the error.
 
-One approach to determining frequentist error bars is the **bootstrap** (Efron, 1979; Hastie et al., 2001), in which multiple datasets are created as follows. Suppose our original data set consists of N data points $X= {x_1, \dots,  x_N }$. We can create a new data set $X_B$ by drawing $N$ points at random from $X$, with replacement, so that some points in $X$ may be replicated in $X_B$, whereas other points in $X$ may be absent from $X_B$. This process can be repeated $L$ times to generate $L$ datasets each of size $N$ and each obtained by sampling from the original data set $X$. The statistical accuracy of parameter estimates can then be evaluated by looking at the variability of predictions between the different bootstrap datasets.
-
-One advantage of the Bayesian viewpoint is that the inclusion of prior knowledge arises naturally. Suppose, for instance, that a fair-looking coin is tossed three times and lands heads each time. A classical maximum likelihood estimate of the probability of landing heads would give 1 implying that all future tosses will land heads! By contrast, a Bayesian approach with any reasonable prior will lead to a much less extreme conclusion.
-
-<!-- There has been much controversy and debate associated with the relative merits of the frequentist and Bayesian paradigms, which have not been helped by the fact that there is no unique frequentist, or even Bayesian, viewpoint. For instance, one common criticism of the Bayesian approach is that the prior distribution is often selected on the basis of mathematical convenience rather than as a reflection of any prior beliefs. Even the subjective nature of the conclusions through their dependence on the choice of prior is seen by some as a source of difficulty. Reducing the dependence on the prior is one motivation for so-called **noninformative priors**. However, these lead to difficulties when comparing different models, and indeed Bayesian methods based on poor choices of prior can give poor results with high confidence. Frequentist evaluation methods offer some protection from such problems, and techniques such as **cross-validation** remain useful in areas such as model comparison. -->
-
-## Gaussian Distribution
-
-It is convenient, however, to introduce here one of the most important probability distributions for continuous variables, called the normal or Gaussian distribution. For the case of a single real-valued variable x, the Gaussian distribution is defined by
-
-$$
-\mathcal{N}(x\mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi}\sigma} \exp\Bigg(-\frac{1}{2}\Big(\frac{x-\mu}{\sigma}\Big)^2\Bigg)
-$$
-
-which is governed by two parameters: $\mu$, called the **mean**, and $\sigma^2$, called the **variance**. The square root of the variance, given by $\sigma$, is called the **standard deviation**, and the reciprocal of the variance, written as β = 1/$\sigma^2$, is called the _precision_. Gaussian distribution defined over a D-dimensional vector $\bm x$ of continuous variables, which is given by
-
-$$
-\mathcal N(\bm x\mid \bm \mu,\bm \Sigma) = \frac{1}{(2π)^{D/2}} \frac{1}{|\Sigma|^{1/2}}\exp\Big(-\frac{1}{2}(\bm x-\bm \mu)^T\Sigma^{-1}(\bm x-\bm \mu)\Big)
-$$
-
-where the $D$-dimensional vector $\bm \mu$ is called the **mean**, the $D × D$ matrix $Σ$ is called the **covariance**, and $|Σ|$ denotes the determinant of $Σ$. The log likelihood function is:
-
-$$
-\ln p(\bm x \mid \mu, \sigma^2) = − \frac{1}{2\sigma^2}\sum_{n=1}^N\big(x_n-  \mu) ^2 + \frac{N}{2}\ln \sigma^2 − \frac{N}{2}\ln(2\pi)
-.
-$$
-
-The maximum likelihood solution with respect to $\mu$ given by:
-
-$$
-\mu_{ML} = \frac{1}{N}\sum_{n=1}^N x_n
-$$
-
-which is the _sample mean_, i.e., the mean of the observed values $\{x_n\}$. Similarly, maximizing likelihood with respect to $σ^2$, we obtain the maximum likelihood solution for the variance in the form
-
-$$
-\sigma^2_{ML} = \frac{1}{N}\sum_{n=1}^N (x_n-\mu_{ML})^2
-$$
-
-which is the _sample variance_ measured with respect to the sample mean $\mu_{ML}$. Note that the maximum likelihood solutions $µ_{ML}$ and $\sigma^2_{ML}$ are functions of the dataset values $x_1, . . . , x_N$ . Consider the expectations of these quantities with respect to the dataset values, which themselves come from a Gaussian distribution with parameters $µ_{ML}$ and $\sigma^2_{ML}$. It is straightforward to show that
-
-$$
-\begin{align*}
-\mathbb E[\mu_{ML}] &= \mu\\
-\mathbb E[\sigma^2_{ML}] &= \frac{N-1}{N}\sigma^2
-\end{align*}
-$$
-
-so that on average the maximum likelihood estimate will obtain the correct mean but will underestimate the true variance by a factor $(N− 1)/N$. It follows that the following estimate for the variance parameter is unbiased:
-
-$$
-\tilde\sigma^2 = \frac{N}{N-1}\sigma^2_{ML} = \frac{1}{N-1}\sum_{n=1}^N (x_n-\mu_{ML})^2
-$$
-
-<p align="center">
-    <img src="./assets/machine-learning/biased-variance.png" alt="drawing" width="400" height="300" style="center" />
-</p>
-
-The green curve shows the true Gaussian distribution from which data is generated, and the three red curves show the Gaussian distributions obtained by fitting to three datasets, each consisting of two data points shown in blue, using the maximum likelihood results. Averaged across the three datasets, the mean is correct, but the variance is systematically under-estimated because it is measured relative to the sample mean and not relative to the true mean.
-
-
-## Curve Fitting
-
-Here we dicuss the curve fitting example and view it from a probabilistic perspective, thereby gaining some insights into error functions and regularization, as well as taking us towards a full Bayesian treatment. The goal in the curve fitting problem is to be able to make predictions for the target variable $t$ given some new value of the input variable $x$ on the basis of a set of training data comprising N input values $\bm x = (x_1, . . . , x_N )$ and their corresponding target values $\bm t = (t_1, . . . , t_N )$. We can express our uncertainty over the value of the target variable using a probability distribution. For this purpose, we shall assume that, given the value of $x$, the corresponding value of $t$ has a Gaussian distribution with a mean equal to the value $y(x,\bm w)$ of the polynomial curve given by
-
-$$
-y(x,\bm w) = w_0 + w_1x + w_2x^2 +. . . + w_M x^M
-= \sum_{j=0}^M w_jx^j.
-$$
-
-Thus we have
-
-$$
-p(t \mid x,\bm w, β) = \mathcal{N}(t|y(x,\bm w), β^{−1})
-$$
-
-Here we have defined a precision parameter β corresponding to the inverse variance of the distribution $\beta^{-1}=\sigma^2$.
-
-<p align="center">
-    <img src="./assets/machine-learning/curve-fitting.png" alt="drawing" width="400" height="300" style="center" />
-</p>
-
-We now use the training data $\{\bm x, \bm t\}$ to determine the values of the unknown parameters $\bm w$ and β by maximum likelihood. If the data are assumed to be drawn independently from the distribution $p(t|x,\bm w, β)$, then the likelihood function is given by
-
-$$
-p(\bm t \mid \bm x,\bm w, β) = \prod_{n=1}^N \mathcal{N}(t_n \mid y(x_n, \bm w), \beta^{-1})
-$$
-
-It is convenient to maximize the logarithm of the likelihood function:
-
-$$
-\ln p(\bm t \mid \bm x, \bm w, β) =− \frac{\beta}{2}\sum_{n=1}^N\big(y(x_n, \bm w)− t_n\big )^2 + \frac{N}{2}\ln β − \frac{N}{2}\ln(2\pi)
-.
-$$
-
-Note: the terms “probability” and “likelihood” have different meanings in statistics: given a statistical model with some parameters $θ$, the word “probability” is used to describe how plausible a future outcome $x$ is (knowing the parameter values $θ$), while the word “likelihood” is used to describe how plausible a particular set of parameter values $θ$ are, after the outcome $x$ is known.
-
-Consider first the determination of the maximum likelihood solution for the polynomial coefficients, which will be denoted by $\bm w_{ML}$ determined by maximizing w.r.t $\bm w$. For this purpose, we omit the last two terms on the right-hand side because they do not depend on $\bm w$. Also, we note that scaling the log likelihood by a positive constant coefficient does not alter the location of the maximum with respect to $\bm w$, and so we can replace the coefficient $β/2$ with $1/2$. We therefore see that maximizing likelihood is equivalent, so far as determining $\bm w$ is concerned, to minimizing the sum-of-squares error function defined by the above equation. Thus _the sum-of-squares error function has arisen as a consequence of maximizing likelihood under the assumption of a **Gaussian noise distribution**_.
-
-We can also use maximum likelihood to determine the precision parameter β of the Gaussian conditional distribution. Maximizing (1.62) with respect to β gives
-
-$$
-\frac{1}{\beta_{ML}} = \frac{1}{N}\sum_{n=1}^N \big( y(x_n, \bm w_{ML}) - t_n\big)^2
-$$
-
-Having determined the parameters $\bm w$ and β, we can now make predictions for new values of $x$:
-
-$$
-p( t \mid  x,\bm w_{ML}, \beta_{ML}) = \mathcal{N}(t \mid y(x, \bm w_{ML}), \beta^{-1}_{ML})
-$$
-
-Now let us take a step towards a more Bayesian approach and introduce a prior distribution over the polynomial coefficients $\bm w$. For simplicity, let us consider a Gaussian distribution of the form
-
-$$
-p(\bm w\mid α) = \mathcal{N}(\bm w\mid \bm 0, α^{−1}\bm I) = \Big(\frac{α}{2π}\Big)^{(M+1)/2}\exp\{−\frac{α}{2}\bm w^T \bm w\}
-$$
-
-where $α$ is the precision of the distribution, and $M+1$ is the total number of elements in the vector $\bm w$ for an $M$th order polynomial. Variables such as $α$, which control the distribution of model parameters, are called _hyperparameters_. Using Bayes’ theorem, the posterior distribution for $\bm w$ is proportional to the product of the prior distribution and the likelihood function
-
-$$
-p(\bm w\mid \bm x, \bm t, α, β) = \frac{p(\bm t\mid \bm x, \bm w, β)p(\bm w \mid α)}{\int p(\bm t\mid \bm x,\bm w)p(\bm w)d\bm w}
-$$
-
-Or,
-
-$$
-p(\bm w\mid \bm x, \bm t, α, β) ∝ p(\bm t\mid \bm x, \bm w, β)p(\bm w\mid α).
-$$
-
-We can now determine $\bm w$ by finding the most probable value of $w$ given the data, in other words by maximizing the posterior distribution. This technique is called **maximum posterior**, or simply **MAP**. Taking the negative logarithm of the above and combining with the equation before, we find that the maximum of the posterior is given by the minimum of
-
-$$
-\frac{\beta}{2}\sum_{n=1}^N \big(y(x_n, \bm w)− t_n\big)^2 +
-\frac{\alpha}{2}\bm w^T \bm w.
-$$
-
-Thus we see that *maximizing the posterior distribution is equivalent to minimizing the regularized sum-of-squares error function, with a regularization parameter given by $λ= α/β$*. 
-
-Now suppose we are given the training data $\bm x$ and $\bm t$, along with a new test point $x$, and our goal is to predict the value of $t$. We therefore wish to evaluate the predictive distribution $p(t|x,\bm x, \bm t)$. Here we shall assume that the parameters $α$ and $β$ are fixed and known in advance (in later chapters we shall discuss how such parameters can be inferred from data in a Bayesian setting). A Bayesian treatment simply corresponds to a consistent application of the sum and product rules of probability, which allow the predictive distribution to be written in the form
-
-$$
-p(t|x,\bm x, \bm t) = \int p(t|x, \bm w)p(\bm w|\bm x, \bm t) d\bm w.
-$$
-
-Here $p(t\mid x, \bm w)$ is given above, and we have omitted the dependence on $α$ and $β$ to simplify the notation. Here $p(\bm w|\bm x, \bm t)$ is the posterior distribution over parameters. We shall see this posterior distribution is a Gaussian and can be evaluated analytically. Similarly, the integration can also be performed analytically with the result that the predictive distribution is given by a Gaussian of the form
-
-$$
-p(t|x, \bm x, \bm t) = \mathcal{N}(t|m(x), s^2(x))
-$$
-
-where the mean and variance are given by:
-
-$$
-\begin{align*}
-m(x) = \beta \phi(x)^T \bm S \sum_{n=1}^N \phi(x_n) t_n\\
-s^2(x) = \beta^{-1} + \phi(x)^T \bm S \phi(x)
-\end{align*}
-$$
-
-Here the matrix $\bm S$ is given by:
-
-$$
-\bm S^{-1} = \alpha \bm I + \beta \sum_{n=1}^N \phi(x_n)\phi(x)^T
-$$
-
-where $\bm I$ is the unit matrix, and we have defined the vector $\phi(x)$ with elements $\phi_i(x) = x^i$ for $i = 0, \dots , M$. We see that the variance, as well as the mean, of the predictive distribution is dependent on $x$. The first term in represents the uncertainty in the predicted value of $t$ due to the noise on the target variables and was expressed already in the maximum likelihood predictive distribution through $β−1$ ML. However, the second term arises from the uncertainty in the parameters $w$ and is a consequence of the Bayesian treatment. The predictive distribution for the synthetic sinusoidal regression problem:
-
-<p align="center">
-    <img src="./assets/machine-learning/predictive-regression.png" alt="drawing" width="400" height="300" style="center" />
-</p>
-
-The predictive distribution resulting from a Bayesian treatment of polynomial curve fitting using an $M = 9$ polynomial, with the fixed parameters $α = 5 × 10−3$ and $β=11.1$ (corresponding to the known noise variance), in which the red curve denotes the mean of the predictive distribution and the red region corresponds to ±1 standard deviation around the mean.
-
-## Model Selection: Testing and Validating
-
-The only way to know how well a model will generalize to new cases is to actually try it out on new cases. Split your data into two sets: the training set and the test set. As these names imply, you train your model using the training set, and you test it using the test set. The error rate on new cases is called the generalization error. The problem is that you measured the generalization error multiple times on the test set, and you adapted the model and hyperparameters to produce the best model for that particular set. This means that the model is unlikely to perform as well on new data.
-
-<!-- With regularized least squares, the regularization coefficient $λ$ also controls the effective complexity of the model, whereas for more complex models, such as mixture distributions or neural networks there may be multiple parameters governing complexity.  -->
-
-Furthermore, as well as finding the appropriate values for complexity parameters within a given model, we may wish to consider a range of different types of model in order to find the best one for our particular application. If data is plentiful, then one approach is simply to use some of the available data to train a range of models, or a given model with a range of values for its complexity parameters, and then to compare them on independent data, sometimes called a _validation set_ or sometimes the development set, or dev set. More specifically, you train multiple models with various hyperparameters on the reduced training set (i.e., the full training set minus the validation set), and you select the model that performs best on the validation set. After this holdout validation process, you train the best model on the full training set (including the validation set), and this gives you the final model. Lastly, you evaluate this final model on the test set to get an estimate of the generalization error. If the model design is iterated many times using a limited size dataset, then some over-fitting to the validation data can occur and so it may be necessary to keep aside a third _test set_ on which the performance of the selected model is finally evaluated. Not that if the validation set is too small, then model evaluations will be imprecise. One way to solve this problem is to perform repeated cross-validation, using many small validation sets.
-
-In many applications, however, the supply of data for training and testing will be limited, and in order to build good models, we wish to use as much of the available data as possible for training. However, if the validation set is small, it will give a relatively noisy estimate of predictive performance. One solution to this dilemma is to use **cross-validation**.  This allows a proportion (S−1)/S of the available data to be used for training while making use of all of the data to assess performance. When data is particularly scarce, it may be appropriate to consider the case S = N, where N is the total number of data points, which gives the **leave-one-out** technique. In general, cross-validation works by taking the available data and partitioning it into S groups (in the simplest case these are of equal size). Then S− 1 of the groups are used to train a set of models that are then evaluated on the remaining group. This procedure is then repeated for all S possible choices for the held-out group, indicated here by the red blocks, and the performance scores from the S runs are then averaged.
-
-<p align="center">
-    <img src="./assets/machine-learning/cross-validation.png" alt="drawing" width="400" height="200" style="center" />
-</p>
-
-
-One major drawback of cross-validation is that the number of training runs that must be performed is increased by a factor of S, and this can prove problematic for models in which the training is itself *computationally expensive*. A further problem with techniques such as cross-validation that use separate data to assess performance is that we might have multiple complexity parameters for a single model (for instance, there might be several regularization parameters). Exploring combinations of settings for such parameters could, in the worst case, require a number of training runs that is exponential in the number of parameters.
-
-## Curse of Dimensionality
-
-It turns out that many things behave very differently in high-dimensional space. For example, if you pick a random point in a unit square (a 1 × 1 square), it will have only about a 0.4% chance of being located less than 0.001 from a border (in other words, it is very unlikely that a random point will be “extreme” along any dimension). But in a 10,000-dimensional unit hypercube (a 1 × 1 × ⋯ × 1 cube, with ten thousand 1s), this probability is greater than 99.999999%. Most points in a high-dimensional hypercube are very close to the border.3
- 
-In theory, one solution to the curse of dimensionality could be to increase the size of the training set to reach a sufficient density of training instances. Unfortunately, in practice, the number of training instances required to reach a given density grows exponentially with the number of dimensions.
-
- An increase in the dimensions means an increase in the number of features. To model such data, we need to increase complexity of the model by increasing the number of parameters. The complexity of functions of many variables can grow exponentially with the dimension, and if we wish to be able to estimate such functions with the same accuracy as function in low dimensions, then we need the size of our training set to grow exponentially as well.
-
-As another simple example, consider a sphere of radius $r = 1$ in a space of D dimensions, and ask what is the fraction of the volume of the sphere that lies between radius $r = 1−ϵ$ and $r = 1$. We can evaluate this fraction by noting that the volume of a sphere of radius $r$ in D dimensions must scale as $r$D, and so we write $V_D(r) = K_D r^D$ where K_D depends on D. Then 
-
-$$
-\frac{V_D(1)-V_D(1-\epsilon)}{V_D(1)} = 1 - (1-\epsilon)^D
-$$
-
-which tends to 1 ad D increases. Thus, in spaces of high dimensionality, most of the volume of a sphere is concentrated in a thin shell near the surface! Another similar example: in a high-dimensional space, most of the probability mass of a Gaussian is located within a thin shell at a specific radius. Simialrly, most of density for a multivariate unit uniform distribution is consentrated around the sides of the unit box. This leads to sparse sampling in high dimensions that means all sample points are close to an edge of the sample space.
-
-One more example, consider the nearest-neighbor procedure for inputs uniformly distributed in a $d$-dimensional unit hypercube. Suppose we send out a hypercubical neighborhood about a target point to capture a fraction $r$ of the observations. Since this corresponds to a fraction r of the unit volume, the expected edge length will be $e_d(r) = r^{1/d}$. In ten dimensions $e_{10}(0.01) = 0.63$ and $e_{10}(0.1) = 0.80$, while the entire range for each input is only 1.0. So to capture 1% or 10% of the data to form a local average, we must cover 63% or 80% of the range of each input variable. Such neighborhoods are no longer “local”. Reducing $r$ dramatically does not help much either, since the fewer observations we average, the higher is the variance of our fit. 
-
-Although the curse of dimensionality certainly raises important issues for pattern recognition applications, it does not prevent us from finding effective techniques applicable to high-dimensional spaces: 
-- First, real data will often be confined to a region of the space having *lower effective dimensionality*, and in particular the directions over which important variations in the target variables occur may be so confined. 
-- Second, real data will typically exhibit some smoothness properties (at least locally) so that for the most part small changes in the input variables will produce small changes in the target variables, and so we can exploit local interpolation-like techniques to allow us to make predictions of the target variables for new values of the input variables. For example, consider images captured of identical planar objects on a conveyor belt, in which the goal is to determine their orientation. Each image is a point in a high-dimensional space whose dimensionality is determined by the number of pixels. Because the objects can occur at different positions within the image and in different orientations, there are three degrees of freedom of variability between images, and a set of images will live on a three dimensional manifold embedded within the high-dimensional space.
 
 <!-- ## Inference and Decision
 
@@ -1694,7 +1536,10 @@ $$
 
 To minimize $p(\text{mistake}) $, we should arrange that each $\bm x$ is assigned to whichever class has the smaller value of the integrand in this equation. Thus, if $p(\bm x, C_1)  > p(\bm x, C_2)$ for a given value of $\bm x$, then we should assign that $\bm x$ to class $C_1$. From the product rule of probability we have $p(\bm x, C_k) = p(C_k \mid \bm x)p(\bm x)$. Because the factor $p(\bm x)$ is common to both terms, we can restate this result as saying that the minimum probability of making a mistake is obtained if each value of $\bm x$ is assigned to the class for which the posterior probability $p(C_k \mid \bm x)$ is largest. -->
 
-## Minimizing the expected loss
+# Decision Theory
+Suppose we have an input vector $x$ together with a corresponding vector $t$ of target variables, and our goal is to predict $t$ given a new value for $x$. For regression problems, $t$ will comprise continuous variables, whereas for classification problems $t$ will represent class labels. The joint probability distribution $p(x, t)$ provides a complete summary of the uncertainty associated with these variables. Determination of $p(x, t )$ from a set of training data is an example of inference and is typically a very difficult problem whose solution forms the subject of much of this book. In a practical application, however, we must often make a specific prediction for the value of $t$, or more generally take a specific action based on our understanding of the values $t$ is likely to take, and this aspect is the subject of decision theory.
+
+## Minimizing the Expected Loss for Classification
 
 For many applications, our objective will be more complex than simply minimizing the number of misclassifications. That is why we introduce a **loss function**, also called a _cost function_, which is a single, overall measure of loss incurred in taking any of the available decisions or actions. Our goal is then to minimize the total loss incurred. Suppose that, for a new value of $\bm x$, the true class is $C_k$ and that we assign $\bm x$ to class $C_j$ (where $j$ may or may not be equal to $k$). In so doing, we incur some level of loss that we denote by $L_{kj}$, which we can view as the $k, j$ element of a loss matrix. For a given input vector $\bm x$, our uncertainty in the true class is expressed through the joint probability distribution $p(\bm x, C_k)$ and so we seek instead to minimize the average loss, where the average is computed with respect to this distribution, which is given by
 
@@ -1712,15 +1557,15 @@ $$
 
 is a minimum. This is clearly trivial to do, once we know the posterior class probabilities $p(C_k\mid \bm x)$. 
 
-## Rejection Option
+### Rejection Option
 
-Classification errors arise from the regions of input space where the largest of the posterior probabilities $p(C_k\mid \bm x)$ is significantly less than unity, or equivalently where the joint distributions $p(\bm x, C_k)$ have comparable values. These are the regions where we are relatively uncertain about class membership. In some applications, it will be appropriate to avoid making decisions on the difficult cases in anticipation of a lower error rate on those examples for which a classification decision is made. This is known as the **reject option**. We can achieve this by introducing a threshold $θ$ and rejecting those inputs $\bm x$ for which the largest of the posterior probabilities $p(C_k\mid \bm x)$ is less than or equal to $θ$.  Note that setting $θ = 1$ will ensure that all examples are rejected, whereas if there are K classes then setting $θ < 1/K$ will ensure that no examples are rejected. Thus the fraction of examples that get rejected is controlled by the value of $θ$.
+Classification errors arise from the regions of input space where the largest of the posterior probabilities $p(C_k\mid \bm x)$ is significantly less than unity, or equivalently where the joint distributions $p(\bm x, C_k)$ have comparable values. These are the regions where we are relatively uncertain about class membership. In some applications, it will be appropriate to avoid making decisions on the difficult cases in anticipation of a lower error rate on those examples for which a classification decision is made. This is known as the **reject option**. We can achieve this by introducing a **threshold** $θ$ and rejecting those inputs $\bm x$ for which the largest of the posterior probabilities $p(C_k\mid \bm x)$ is less than or equal to $θ$.  Note that setting $θ = 1$ will ensure that all examples are rejected, whereas if there are $K$ classes then setting $θ < 1/K$ will ensure that no examples are rejected. Thus the fraction of examples that get rejected is controlled by the value of $θ$.
 
 <p align="center">
     <img src="./assets/machine-learning/class-threshold.png" alt="drawing" width="400" height="300" style="center" />
 </p>
 
-## Loss functions for regression
+## Minimizing the Expected Loss for Regression
 So far, we have discussed decision theory in the context of classification problems. We now turn to the case of regression problems, such as the curve fitting example discussed earlier. The decision stage consists of choosing a specific estimate $y(\bm x)$ of the value of $t$ for each input $\bm x$. Suppose that in doing so, we incur a loss $L(t, y(\bm x))$. The average, or expected, loss is then given by
 
 $$
@@ -1733,10 +1578,13 @@ $$
 \mathbb E[L] = \int\int \big(y(\bm x)− t)^2 p(\bm x, t\big) d\bm xdt
 $$
 
-Our goal is to choose $y(\bm x)$ so as to minimize $\mathbb E[L]$. If we assume a completely flexible function $y(\bm x)$:
+Our goal is to choose $y(\bm x)$ so as to minimize $\mathbb E[L]$. It turns out that the optimal answer to this problem is $y(\bm x)= \mathbb E[ t|\bm x]$. To see this, we can expand the square term as follows
+
+<!-- 
+If we assume a completely flexible function $y(\bm x)$:
 
 $$
-\frac{\partial \mathbb E[L] }{\partial y(\bm x)} = 2 \int \{y(\bm x)− t\} p(\bm x, t) dt = 0.
+\frac{\partial \mathbb E[L] }{\partial y(\bm x)} = 2 \int (y(\bm x)− t) p(\bm x, t) dt = 0.
 $$
 
 So:
@@ -1749,16 +1597,16 @@ This can readily be extended to multiple target variables represented by the vec
 
 <p align="center">
     <img src="./assets/machine-learning/regression-loss.png" alt="drawing" width="400" height="300" style="center" />
-</p>
+</p> -->
 
-We can also derive this result in a slightly different way, which will also shed light on the nature of the regression problem. Armed with the knowledge that the optimal solution is the conditional expectation, we can expand the square term as follows
+
 
 $$
 \begin{align*}
-\{y(\bm x)− t\}^2 &= \{y(\bm x)−  \mathbb E[ t\mid \bm x] +  \mathbb E[ t\mid \bm x] - t \}^2\\
+\{y(\bm x)− t\}^2 &= \{y(\bm x)−  \mathbb E[ t\mid \bm x] +  \mathbb E[ t\mid \bm x] - t \}^2 \\
 &= \{y(\bm x) −  \mathbb E[ t\mid \bm x] \}^2 \\
-&+  2 \{y(\bm x) - \mathbb E[ t\mid \bm x] \} \{\mathbb E[ t\mid \bm x] - t \} \\
-&+  \{\mathbb E[ t\mid \bm x] - t \}^2
+& \qquad +  2 \{y(\bm x) - \mathbb E[ t\mid \bm x] \} \{\mathbb E[ t\mid \bm x] - t \} \\
+& \qquad +  \{\mathbb E[ t\mid \bm x] - t \}^2
 \end{align*}
 $$
 
@@ -1766,15 +1614,13 @@ Substituting into the loss function and performing the integral over $t$, we see
 
 $$
 \begin{align*}
-\mathbb E[L] & = \int  \{y(\bm x) −  \mathbb E_t[ t|\bm x] \}^2 p(\bm x)d\bm x +  
+\mathbb E[L] & = \int  \{y(\bm x) −  \mathbb E[ t|\bm x] \}^2 p(\bm x)d\bm x +  
 \int \{\mathbb E[ t\mid \bm x] - t \}^2 p(\bm x, t)d\bm x dt  
 % \int \text{Var}(t \mid \bm x)  p(\bm x)d\bm x
 \end{align*}
 $$
 
-The function $y(\bm x)$ we seek to determine enters only in the first term, which will be minimized when $y(\bm x)= \mathbb E_t[ t|\bm x]$, in which case this term will vanish. rgets, and is called the Bayes error.
-
-$y(\bm x)= \mathbb E_t[ t|\bm x]$ is the best we can ever hope to do with any learning algorithm. This is simply the result that we derived previously and that shows that the optimal least squares predictor is given by the conditional mean. The second term (called Bayes error) is the variance of the distribution of $t$, averaged over $\bm x$:
+The function $y(\bm x)$ we seek to determine enters only in the first term, which will be minimized when $y(\bm x)= \mathbb E[ t|\bm x]$, in which case this term will vanish. rgets, and is called the Bayes error. The estimator $y(\bm x)= \mathbb E_t[ t|\bm x]$ is the best we can ever hope to do with any learning algorithm. This is simply the result that we derived previously and that shows that the optimal least squares predictor is given by the conditional mean. The second term (called Bayes error) is the variance of the distribution of $t$, averaged over $\bm x$:
 \[
 \int \text{Var}(t \mid \bm x)  p(\bm x)d\bm x
 \]
@@ -1796,7 +1642,7 @@ $$
 H[x] = -\int  p(x) \log p(x) dx.
 $$
 
-
+The **cross entropy** between two probability distributions $p$ and $q$ is defined as $H(p, q) = − \sum_x p(x) \log q(x)$.
 
 # Linear Models for Regression
 
@@ -1806,13 +1652,13 @@ The simplest form of linear regression models are also linear functions of the i
 y(\bm x,\bm w) = w_0 + w_1x_1 +. . . + w_Dx_D
 \]
 
-where $\bm x = (x_1, . . . , x_D)^T$. This is often simply known as _linear regression_. The key property of this model is that it is a linear function of the parameters $w_0, . . . , w_D$. It is also, however, a linear function of the input variables $x_i$, and this imposes significant limitations on the model. We therefore extend the class of models by considering linear combinations of fixed nonlinear functions of the input variables, of the form
+where $\bm x = (x_1, . . . , x_D)^T$. This is often simply known as **linear regression**. The key property of this model is that it is a linear function of the parameters $w_0, . . . , w_D$. It is also, however, a linear function of the input variables $x_i$, and this imposes significant limitations on the model. We therefore extend the class of models by considering linear combinations of fixed nonlinear functions of the input variables, of the form
 
 \[
     y(\bm x,\bm w) = w_0 +\sum_{j=1}^{M−1} w_j \phi_j(\bm x)
 \]
 
-where $\phi_j(\bm x): \mathbb R^n \rightarrow \mathbb R$ are known as basis functions. By denoting the maximum value of the index $j$ by $M− 1$, the total number of parameters in this model will be $M$. The parameter $w_0$ allows for any fixed offset in the data and is sometimes called a bias parameter (not to be confused with ‘bias’ in a statistical sense). It is often convenient to define an additional dummy ‘basis function’ $φ_0(x) = 1$ so that
+where $\phi_j(\bm x): \mathbb R^n \rightarrow \mathbb R$ are known as **basis functions**. By denoting the maximum value of the index $j$ by $M− 1$, the total number of parameters in this model will be $M$. The parameter $w_0$ allows for any fixed offset in the data and is sometimes called a bias parameter (not to be confused with ‘bias’ in a statistical sense). It is often convenient to define an additional dummy ‘basis function’ $φ_0(x) = 1$ so that
 
 \[
     y(\bm x,\bm w) = \sum_{j=0}^{M−1} w_j \phi_j(\bm x) = \bm w^T \bm \phi(\bm x)
@@ -1821,7 +1667,7 @@ where $\phi_j(\bm x): \mathbb R^n \rightarrow \mathbb R$ are known as basis func
 where $\bm w = (w_0, . . . , w_{M−1})^T$ and $\bm \phi = (\phi_0, . . . , \phi_{M−1})^T$. The example of polynomial regression mentioned before is a particular example of this model in which there is a single input variable $x$, and the basis functions take the form of powers of $x$ so that $\phi_j(x) = x^j$. One limitation of polynomial basis functions is that they are global functions of the input variable, so that changes in one region of input space affect all other regions. There are many other possible choices for the basis functions, for example
 
 \[
-\phi_j(\bm x) = e^{-\frac{||\bm x-\bm \mu_j||^2}{2s^2} }
+\phi_j(\bm x) = \exp\{-\frac{||\bm x-\bm \mu_j||^2}{2s^2} \}
 \]
 
 where the $\bm \mu_j$ govern the locations of the basis functions in input space, and the parameter $s$ governs their spatial scale. These are usually referred to as *Gaussian basis functions*, although it should be noted that they are not required to have a probabilistic interpretation, and in particular the normalization coefficient is unimportant because these basis functions will be multiplied by adaptive parameters $w_j$. Another possibility is the sigmoidal basis function of the form
@@ -1830,9 +1676,9 @@ where the $\bm \mu_j$ govern the locations of the basis functions in input space
 \phi_j(x) = \sigma \Big (\frac{x-\mu_j}{s} \Big)
 \]
  
- where $σ(a)$ is the sigmoid function. Yet another possible choice of basis function is the Fourier basis, which leads to an expansion in sinusoidal functions. Each basis function represents a specific frequency and has infinite spatial extent. Most of the discussion in this chapter, however, is independent of the particular choice of basis function set, and so for most of our discussion we shall not specify the particular form of the basis functions including the identity $\phi(\bm x) =\bm x$.
+ where $σ(a)$ is the *sigmoid function*. Yet another possible choice of basis function is the *Fourier basis*, which leads to an expansion in sinusoidal functions. Each basis function represents a specific frequency and has infinite spatial extent. Most of the discussion in this chapter, however, is independent of the particular choice of basis function set, and so for most of our discussion we shall not specify the particular form of the basis functions including the identity $\bm \phi(\bm x) =\bm x$.
 
- ## Maximum likelihood and least squares
+ ## Maximum Likelihood and Least Squares
 
  As before, we assume that the target variable $t$ is given by a deterministic function $y(\bm x,\bm w)$ with additive Gaussian noise so that
 
@@ -1846,13 +1692,19 @@ where $\epsilon$ is a zero mean Gaussian random variable with precision (inverse
 p(t\mid \bm x, \bm w, β) = \mathcal N (t\mid y(\bm x,\bm w), β^{−1}).
 \]
 
+Here we have defined a precision parameter β corresponding to the inverse variance of the distribution $\beta^{-1}=\sigma^2$.
+
+<p align="center">
+    <img src="./assets/machine-learning/curve-fitting.png" alt="drawing" width="400" height="300" style="center" />
+</p>
+
 Recall that, if we assume a squared loss function, then the optimal prediction, for a new value of $\bm x$, will be given by the conditional mean of the target variable. In the case of a Gaussian conditional distribution of the form, the conditional mean will be simply
 
 \[
 \mathbb E[t\mid \bm x] = \int tp(t\mid \bm x) dt= y(\bm x, \bm w).
 \]
 
-Note that the Gaussian noise assumption implies that the conditional distribution of $t$ given $\bm x$ is unimodal, which may be inappropriate for some applications. An extension to mixtures of conditional Gaussian distributions, which permit multimodal conditional distributions, will be discussed later.
+*Note that the Gaussian noise assumption implies that the conditional distribution of $t$ given $\bm x$ is unimodal*, which may be inappropriate for some applications. An extension to mixtures of conditional Gaussian distributions, which permit multimodal conditional distributions, will be discussed later.
 
 Now consider a dataset of inputs $\bm X= \{ \bm x_1, . . . ,\bm x_N \}$ with corresponding target values $\bm t = (t_1, . . . , t_N)$ .  Making the assumption that these data points are drawn independently from the distribution (equivalently, $ϵ_i$ are distributed IID), we obtain the following expression for the likelihood function, which is a function of the adjustable parameters $\bm w$ and $β$, in the form
 
@@ -1860,7 +1712,7 @@ Now consider a dataset of inputs $\bm X= \{ \bm x_1, . . . ,\bm x_N \}$ with cor
 p(\bm t \mid \bm X, \bm w, \beta) = \prod_{n=1}^N \mathcal N(t_n \mid \bm w^T \bm \phi(\bm x_n), \beta^{-1})
 \]
 
-Note that in supervised learning problems such as regression (and classification), we are not seeking to model the distribution of the input variables. Thus $\bm x$ will always appear in the set of conditioning variables, and so from now on we will drop the explicit $\bm x$ from expressions to keep the notation uncluttered. Taking the logarithm of the likelihood function, and making use of the standard form for the univariate Gaussian, we have
+Note that in supervised learning problems such as regression and classification, we are not seeking to model the distribution of the input variables. Thus $\bm x$ will always appear in the set of conditioning variables, and so from now on we will drop the explicit $\bm x$ from expressions to keep the notation uncluttered. Taking the logarithm of the likelihood function, and making use of the standard form for the univariate Gaussian, we have
 
 \[
 \begin{align*}
@@ -1875,7 +1727,9 @@ where
 E_D(\bm w) = \frac{1}{2} \sum_{n=1}^N \{ t_n - \bm w^T \bm \phi(\bm x_n)\}^2 = \frac{1}{2} (\bm t - \bm  \Phi \bm w)^T(\bm t - \bm \Phi \bm w)
 \]
 
-Having written down the likelihood function, we can use maximum likelihood to determine $\bm w$ and $β$. Consider first the maximization with respect to $\bm w$.  We see that *maximization of the likelihood function under a conditional Gaussian noise distribution for a linear model is equivalent to minimizing a sum-of-squares error function* given by $E_D(\bm w)$. The gradient of the log likelihood function takes the form
+Note: the terms “probability” and “likelihood” have different meanings in statistics: given a statistical model with some parameters $θ$, the word “probability” is used to describe how plausible a future outcome $x$ is (knowing the parameter values $θ$), while the word “likelihood” is used to describe how plausible a particular set of parameter values $θ$ are, after the outcome $x$ is known.
+
+Having written down the likelihood function, we can use maximum likelihood to determine $\bm w$ and $β$. Consider first the maximization with respect to $\bm w$.  We see that **maximization of the likelihood function under a conditional Gaussian noise distribution for a linear model is equivalent to minimizing a sum-of-squares error function** given by $E_D(\bm w)$. The gradient of the log likelihood function takes the form
 
 \[
 \begin{align*}
@@ -1904,20 +1758,26 @@ which are known as the Normal Equation for the least squares problem. Here $Φ$ 
 \end{pmatrix}
 \]
 
-The quantity $\bm \Phi^{\dagger} = (\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T$ is known as the Moore-Penrose pseudo-inverse of the matrix. It can be regarded as a generalization of the notion of matrix inverse to nonsquare matrices. We can also maximize the log likelihood function  with respect to the noise precision parameter β, giving
+The quantity $\bm \Phi^{\dagger} = (\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T$ is known as the Moore-Penrose pseudo-inverse of the matrix. It can be regarded as a generalization of the notion of matrix inverse to nonsquare matrices. We can also maximize the log likelihood function  with respect to the noise precision parameter $β$, giving
 
 \[
 \begin{align}
-\frac{1}{\beta_{ML}} = \frac{1}{N}\sum_{n=1}^N \{ t_n - \bm w^T_{ML} \bm \phi(\bm x_n)\}^2
+\frac{1}{\beta_{ML}} = \frac{1}{N}\sum_{n=1}^N \big( y(x_n, \bm w_{ML}) - t_n\big)^2 = \frac{1}{N}\sum_{n=1}^N \{ t_n - \bm w^T_{ML} \bm \phi(\bm x_n)\}^2
 \end{align}
 \]
 
-and so we see that the inverse of the noise precision is given by the residual variance of the target values around the regression function. Geometrical interpretation of the least-squares solution, in an N-dimensional space whose axes are the values of $t_1, . . . , t_N$ of the outputs in the training set. The least-squares regression function is obtained by finding the *orthogonal projection* of the data vector $\bm t=(t_1, . . . , t_N)$ onto the subspace spanned by the basis functions $\phi_j(\bm x)$ - feature vectors - in which each basis function is viewed as a vector $\bm φ_j$ of length N with elements $\phi_j(\bm x_n)$, i.e., $\bm φ_j = (\phi_j(\bm x_1),\dots, \phi_j(\bm x_N))$.
+and so we see that the inverse of the noise precision, that is $\frac{1}{N}\sum_{n=1}^N \{ t_n - \bm w^T_{ML} \bm \phi(\bm x_n)\}^2$ is given by the residual variance of the target values around the regression function and its being minimized. Geometrical interpretation of the least-squares solution is the following: **the least-squares regression function is obtained by finding the *orthogonal projection* $\bm y = \bm w^T_{ML} \bm \Phi$ of the data vector $\bm t=(t_1, . . . , t_N)$ onto the lower-dimensional subspace spanned by **feature vectors** $\bm φ_j = (\phi_j(\bm x_1),\dots, \phi_j(\bm x_N))$**. The reason for orthogonality is that this projection minimizes $||\bm t - \bm y || = || \bm t -  \bm w^T_{ML} \bm \Phi ||$.
 
 <p align="center">
     <img src="./assets/machine-learning/geometric-lsr.png" alt="drawing" width="300" height="200" style="center" />
 </p>
 
+
+Having determined the parameters $\bm w$ and $β$, we can now make predictions for new values of $x$:
+
+$$
+p( t \mid  x,\bm w_{ML}, \beta_{ML}) = \mathcal{N}(t \mid y(x, \bm w_{ML}), \beta^{-1}_{ML})
+$$
 
 So far, we have considered the case of a single target variable $t$. In some applications, we may wish to predict K > 1 target variables, which we denote collectively by the target vector $t$. This could be done by introducing a different set of basis functions for each component of $t$, leading to multiple, independent regression problems. However, a more interesting, and more common, approach is to use the same set of basis functions to model all of the components of the target vector so that $y(\bm x, \bm w) = \bm W^T \bm \phi(\bm x)$ where $\bm W$ is a matrix. Everything goes similar to single output $t$:
 
@@ -1928,6 +1788,35 @@ So far, we have considered the case of a single target variable $t$. In some app
 If we examine this result for each target variable $t_k$, we have $ \bm w_k = (\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T \bm t_k$. Thus the solution to the regression problem decouples between the different target variables, and we need only compute a single pseudo-inverse matrix $Φ^†$, which is shared by all of the vectors $\bm w_k$. 
 
 The extension to general Gaussian noise distributions having arbitrary covariance matrices is straightforward. This leads to a decoupling into K independent regression problems. This result is unsurprising because the parameters $\bm W$ define only the mean of the Gaussian noise distribution, and we know that the maximum likelihood solution for the mean of a multivariate Gaussian is independent of the covariance. From now on, we shall therefore consider a single target variable $t$ for simplicity.
+
+### Hypothesis Testing
+Up to now we have made minimal assumptions about the true distribution of the data. We now assume that the observations $t_i$ are uncorrelated and we chose them to have precision $\beta$, or constant variance $\frac{1}{\beta}$. Recal that $\bm w_{ML}$ was an unbiased estimator of $\bm w$ becuase its expectations (conditioned on $X$) is the true paramter $\bm w:
+
+\[
+\begin{align*}
+\mathbb E[\bm w_{ML}] = \mathbb E [(\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T \bm t] = (\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T \mathbb E [\bm t] = (\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T \bm \Phi \bm w = \bm w
+\end{align*}
+\]
+
+ The variance–covariance matrix of the least squares parameter estimates $\bm w_{ML}$ is easily derived from its defining equation:
+
+$$
+\text{Var}(\bm w_{ML}) = \Big((\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T \Big)  \text{Var}(\bm t)  \Big ((\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T\Big)^T = \frac{1}{\beta}(\bm \Phi^T \bm \Phi)^{-1}
+$$
+
+because $\text{Var}(\bm t)  = \frac{1}{\beta} \bm I$. Note that $\frac{1}{\beta} = \sigma^2$. We gave the maximum likelihood estimate of $ \beta$ before which was biased. Typically one estimates the variance $ \frac{1}{\beta}$ by
+
+$$
+ \hat \sigma^2 = \frac{1}{\hat \beta} = \frac{1}{N-M}\sum_{n=1}^N \{ t_n - \bm w^T_{ML} \bm \phi(\bm x_n)\}^2
+$$
+
+The $N−M$ rather than $N$ in the denominator makes $  \hat \sigma^2$ an unbiased estimate of $ \sigma^2$. Therfore, we can say: $\bm w_{ML} \sim \mathcal N(\bm w, \frac{1}{\beta}(\bm \Phi^T \bm \Phi)^{-1})$. Assuming $t_i$s are independent, then $\frac{N-M}{\hat \beta} \sim \frac{1}{\beta} \chi^2_{N-M}$, a chi-squared distribution with $N−M$ degrees of freedom. In addition $\bm w_{ML} $ and $\frac{1}{\beta}$ are statistically independent. We use these distributional properties to form tests of hypothesis and confidence intervals for the parameters $\bm w^j_{ML}$. For example, to test the hypothesis that a particular coeﬃcient $w_j = 0$, we form the standardized coeﬃcient or $z$-score:
+
+\[
+    z_j = \frac{w^j_{ML} - 0}{\hat \sigma \sqrt{v_j}}
+\]
+
+where $v_j$ is the $j$th diagonal element of $(\Phi^T \Phi)^{−1}$. Under the null hypothesis that $w_j = 0$, $z_j$ is distributed as $t_{N−M}$ (a $t$ distribution with $N−M$ degrees of freedom), and hence a large (absolute) value of $z_j$ will lead to rejection of this null hypothesis. If $\hat σ$ is replaced by a known value $σ$, then $z_j$ would have a standard normal distribution. The diﬀerence between the tail quantiles of a t-distribution and a standard normal become negligible as the sample size increases, and so we typically use the normal quantiles.
 
 ## Training Models
 
@@ -1947,21 +1836,21 @@ $$
 
 Learning rate typically with small values e.g. 0.01 or 0.0001. On the other hand, if the learning rate is too high, you might jump across the valley and end up on the other side, possibly even higher up than you were before.  When using Gradient Descent, you should ensure that all features have a similar scale (e.g., using Scikit-Learn’s StandardScaler class), or else it will take much longer to converge. With gradient descent, we never actually reach the optimum, but merely approach it gradually. Why, then, would we ever prefer gradient descent? Two reasons:
 
-1. We can only solve the system of equations in closed-form like Normal Equations for a handful of models. By contrast, we can apply gradient descent to any model for which we can compute the gradient. Importantly, this can usually be done automatically, so software packages like Theano and TensorFlow can save us from ever having to compute partial derivatives by hand.
+1. We can only solve the system of equations in closed-form like Normal Equations for a handful of models. By contrast, we can apply gradient descent to any model for which we can compute the gradient. Importantly, this can usually be done automatically, so software packages like `Theano` and `TensorFlow` can save us from ever having to compute partial derivatives by hand.
 
 2. Solving a large system of linear equations can be expensive (matrix inversion is an $\mathcal O(D^3)$ algorithm), possibly many orders of magnitude more expensive than a single gradient descent update. Therefore, gradient descent can sometimes find a reasonable solution much faster than solving the linear system. Therefore, gradient descent is often more practical than computing exact solutions, even for models where we are able to derive the latter.
 
-To implement algorithms in Python, we vectorize algorithms by expressing them in terms of vectors and matrices (using Numpy or deep learning libraries, for example). This way, the equations, and the code, will be simpler and more readable. Also we get rid of dummy variables/indices! Vectorized code is much faster. It cuts down on Python interpreter overhead. It uses highly optimized linear algebra libraries, fast matrix multiplication on a Graphics Processing Unit (GPU).
+To implement algorithms in Python, we vectorize algorithms by expressing them in terms of vectors and matrices (using `Numpy` or deep learning libraries, for example). This way, the equations, and the code, will be simpler and more readable. Also we get rid of dummy variables/indices! Vectorized code is much faster. It cuts down on Python interpreter overhead. It uses highly optimized linear algebra libraries, fast matrix multiplication on a Graphics Processing Unit (GPU).
 
 To implement Gradient Descent, compute the gradient of the cost function with regards to each model parameter. This could involve calculations over the full training set $X$, at each Gradient Descent step! This algorithm is called **Batch Gradient Descent**: it uses the whole batch of training data at every step. As a result it is terribly slow on very large training sets. However, Gradient Descent scales well with the number of features; training a Linear Regression model when there are hundreds of thousands of features is much faster using Gradient Descent than using the Normal Equation or SVD decomposition.
 
 **Stochastic Gradient Descent** just picks a random instance in the training set at every step and computes the gradients based only on that single instance. Obviously this makes the algorithm much faster since it has very little data to manipulate at every iteration. It also makes it possible to train on huge training sets, since only one instance needs to be in memory at each iteration. When the cost function is very irregular, this can actually help the algorithm jump out of local minima, so Stochastic Gradient Descent has a better chance of finding the global minimum than Batch Gradient Descent does. To help SGD converges despite all the flunctuation due to it stochastic nature, we gradually reduce the learning rate. The function that determines the learning rate at each iteration is called the **learning schedule**. If the learning rate is reduced too quickly, you may get stuck in a local minimum, or even end up frozen halfway to the minimum. If the learning rate is reduced too slowly, you may jump around the minimum for a long time and end up with a suboptimal solution if you halt training too early. 
 
-When using Stochastic Gradient Descent, the training instances must be independent and identically distributed (IID), to ensure that the parameters get pulled towards the global optimum, on average. A simple way to ensure this is to shuffle the instances during training (e.g., pick each instance randomly, or shuffle the training set at the beginning of each epoch). If you do not do this, for example if the instances are sorted by label, then SGD will start by optimizing for one label, then the next, and so on, and it will not settle close to the global minimum.
+_When using Stochastic Gradient Descent, the training instances must be independent and identically distributed (IID), to ensure that the parameters get pulled towards the global optimum, on average_. A simple way to ensure this is to shuffle the instances during training (e.g., pick each instance randomly, or shuffle the training set at the beginning of each epoch). If you do not do this, for example if the instances are sorted by label, then SGD will start by optimizing for one label, then the next, and so on, and it will not settle close to the global minimum.
 
-Another very common approach is  Mini-batch Gradient Descent: at each step, instead of computing the gradients based on the full training set (as in Batch GD) or based on just one instance (as in Stochastic GD)Mini-batch GD computes the gradients on small random sets of instances. The main advantage of Mini-batch GD over Stochastic GD is that you can get a performance boost from hardware optimization of matrix operations, especially when using GPUs.
+Another very common approach is  **Mini-batch Gradient Descent**: at each step, instead of computing the gradients based on the full training set (as in Batch GD) or based on just one instance (as in Stochastic GD), Mini-batch GD computes the gradients on small random sets of instances. The main advantage of Mini-batch GD over Stochastic GD is that you can get a performance boost from hardware optimization of matrix operations, especially when using GPUs.
 
-#### Early Stopping
+### Early Stopping
 
 As the epochs go by, the algorithm learns and its prediction error (RMSE) on the training set naturally goes down, and so does its prediction error on the validation set. However, after a while the validation error stops decreasing and actually starts to go back up. This indicates that the model has started to overfit the training data. With early stopping you just stop training as soon as the validation error reaches the minimum. It is such a simple and efficient regularization technique.
 
@@ -1969,52 +1858,16 @@ As the epochs go by, the algorithm learns and its prediction error (RMSE) on the
 <img src="./assets/machine-learning/early-stopping.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
-The cross entropy between two probability distributions p and q is defined as $H(p, q) = − \sum_x p(x) \log q(x)$.
 
-
-
-#### Batch and Online Learning
+### Batch and Online Learning
 
  Another criterion used to classify Machine Learning systems is whether or not the system can learn incrementally from a stream of incoming data. In **batch learning**, the system is incapable of learning incrementally; it must be trained using all the available data which generally takes a lot of time and computing resources, so it is typically done offline. First the system is trained, and then it is launched into production and runs without learning anymore (*offline learning* ). If you want a batch learning system to know about new data (such as a new type of spam), you need to train a new version of the system from scratch on the full dataset (not just the new data, but also the old data), then stop the old system and replace it with the new one. If your system needs to adapt to rapidly changing data (e.g., to predict stock prices), then you need a more reactive solution. Also, training on the full set of data requires a lot of computing resources (CPU, memory space, disk space, disk I/O, network I/O, etc.). If you have a lot of data and you automate your system to train from scratch every day, it will end up costing you a lot of money. If the amount of data is huge, it may even be impossible to use a batch learning algorithm.
 
 In **online learning**, you train the system incrementally by feeding it data instances sequentially, either *individually* or by small groups called *mini-batches*. Each learning step is fast and cheap, so the system can learn about new data on the fly, as it arrives. Online learning is great for systems that receive data as a continuous flow (e.g., stock prices) and need to adapt to change rapidly or autonomously. It is also a good option.  A big challenge with online learning is that if bad data is fed to the system, the system’s performance will gradually decline. If we are talking about a live system, your clients will notice.
 
+## Regularized Least Squares
 
-
-
-### Hypothesis Testing
-Up to now we have made minimal assumptions about the true distribution of the data. We now assume that the observations $t_i$ are uncorrelated and we chose them to have precision $\beta$, or constant variance $\frac{1}{\beta}$. Recal that $\bm w_{ML}$ was an unbias estimator of $\bm w$:
-
-\[
-\begin{align*}
-\mathbb E[\bm w_{ML}] = \mathbb E [(\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T \bm t] = (\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T \mathbb [\bm t] = (\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T \bm \Phi \bm w = \bm w
-\end{align*}
-\]
-
- The variance–covariance matrix of the least squares parameter estimates $\bm w_{ML}$ is easily derived from equation its definition and is given by
-
-$$
-\text{Var}(\bm w_{ML}) = \Big((\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T \Big)  \text{Var}(\bm t)  \Big ((\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T\Big)^T = \frac{1}{\beta}(\bm \Phi^T \bm \Phi)^{-1}
-$$
-
-because $\text{Var}(\bm t)  = \frac{1}{\beta} \bm I$. We gave the maximum likelihood estimate of $ \beta$ before which is bias. Typically one estimates the variance $ \frac{1}{\beta}$ by
-
-$$
- \hat \sigma^2 = \frac{1}{\hat \beta} = \frac{1}{N-M}\sum_{n=1}^N \{ t_n - \bm w^T_{ML} \bm \phi(\bm x_n)\}^2
-$$
-
-The $N−M$ rather than $N$ in the denominator makes $  \hat \sigma^2$ an unbiased estimate of $ \sigma^2$. Therfore, we can say: $\bm w_{ML} \sim \mathcal N(\bm w, \frac{1}{\beta}(\bm \Phi^T \bm \Phi)^{-1})$. Assuming $t_i$ are independent, every $\frac{N-M}{\hat \beta} \sim \frac{1}{\beta} \chi^2_{N-M}$, a chi-squared distribution with $N−M$ degrees of freedom. In addition $\bm w_{ML} $ and $\frac{1}{\beta}$ are statistically independent. We use these distributional properties to form tests of hypothesis and confidence intervals for the parameters $\bm w^j_{ML}$. For example, to test the hypothesis that a particular coeﬃcient $w_j = 0$, we form the standardized coeﬃcient or $Z$-score:
-
-\[
-    z_j = \frac{w^j_{ML} - 0}{\hat \sigma \sqrt{v_j}}
-\]
-
-where $v_j$ is the $j$th diagonal element of $(\Phi^T \Phi)^{−1}$. Under the null hypothesis that $β_j = 0$, $z_j$ is distributed as $t_{N−M}$ (a $t$ distribution with $N−M$ degrees of freedom), and hence a large (absolute) value of $z_j$ will lead to rejection of this null hypothesis. If $\hat σ$ is replaced by a known value $σ$, then $z_j$ would have a standard normal distribution. The diﬀerence between the tail quantiles of a t-distribution and a standard normal become negligible as the sample size increases, and so we typically use the normal quantiles.
-
-
-### Regularized least squares
-
-The idea of adding a regularization term to an error function in order to control over-fitting to improve generalization is common practice. So the total error to be minimized is $E_D(\bm w) + \lambda E_W(\bm w)$ where λ is the regularization coefficient that controls the relative importance of the data-dependent error $E_D(\bm w)$ and the regularization term $E_W (\bm w)$. One of the simplest forms of regularizer is given by the sum-of-squares of the weight vector elements $E_W(\bm w) = \frac{1}{2}\bm w^T \bm w$. So the total error function becomes:
+The idea of adding a regularization term to an error function in order to control over-fitting to improve generalization is common practice. So the total error to be minimized is $E_D(\bm w) + \lambda E_W(\bm w)$ where $λ$ is the regularization coefficient that controls the relative importance of the data-dependent error $E_D(\bm w)$ and the regularization term $E_W (\bm w)$. One of the simplest forms of regularizer is given by the sum-of-squares of the weight vector elements $E_W(\bm w) = \frac{1}{2}\bm w^T \bm w$. So the total error function becomes:
 
 \[
 \frac{1}{2} \sum_{n=1}^N \{  t_n - \bm w^T \bm \phi(\bm x_n)\}^2 + \frac{\lambda}{2}\bm w^T \bm w
@@ -2026,21 +1879,19 @@ This particular choice of regularizer encourages weight values to decay towards 
 \bm w = (λ\bm I + \bm Φ^T\bm Φ)^{−1} \bm Φ^T \bm t
 \]
 
-The solution adds a positive constant to the diagonal of $\bm Φ^T\bm Φ$ before inversion. This makes the problem nonsingular, even if $\bm Φ^T\bm Φ$ is not of full rank, and was the main motivation for **ridge regression** when it was first introduced in statistics (Hoerl and Kennard, 1970).
-
-A more general regularizer is sometimes used, for which the regularized error takes the form
+The solution adds a positive constant to the diagonal of $\bm Φ^T\bm Φ$ before inversion. This makes the problem nonsingular, even if $\bm Φ^T\bm Φ$ is not of full rank, and was the main motivation for **ridge regression** when it was first introduced in statistics (Hoerl and Kennard, 1970). A more general regularizer is sometimes used, for which the regularized error takes the form
 
 \[
 \frac{1}{2} \sum_{n=1}^N \{  t_n - \bm w^T \bm \phi(\bm x_n)\}^2 + \frac{\lambda}{2} \sum_{j=1}^M | w_j|^q
 \]
 
-where $q = 2$ corresponds to the quadratic regularizer. The case of $q = 1$ is known as the *lasso* in the statistics literature . This is L1-regularizetion that encourages some of the coefficients $w_j$ to be exactly zero if $λ$ is sufficiently large, leading to a *sparse* model in which the corresponding basis functions play no role. To see this, we first note that minimizing the above objective is equivalent to minimizing the unregularized sum-of-squares error  subject to the constraint
+where $q = 2$ corresponds to the quadratic regularizer. The case of $q = 1$ is known as the **lasso** in the statistics literature . This is L1-regularizetion that encourages some of the coefficients $w_j$ to be exactly zero if $λ$ is sufficiently large, leading to a *sparse* model in which the corresponding basis functions play no role. To see this, we first note that minimizing the above objective is equivalent to minimizing the unregularized sum-of-squares error subject to the constraint
 
 $$
 \sum_{j=1}^M | w_j|^q \le \eta
 $$
 
-for an appropriate value of the parameter $η$, where the two approaches can be related using Lagrange multipliers. L1-regularizetion is useful in situations where you have lots of features, but only a small fraction of them are likely to be relevant (e.g. genetics). The above cost function is a quadratic program, a more diﬃcult optimization problem than for L2 regularization. What would go wrong if you just apply gradient descent? Fast algorithms are implemented in frameworks like scikit-learn.
+for an appropriate value of the parameter $η$, where the two approaches can be related using **Lagrange multipliers**. L1-regularizetion is useful in situations where you have lots of features, but only a small fraction of them are likely to be relevant (e.g. genetics). The above cost function is a quadratic program, a more diﬃcult optimization problem than for L2 regularization. What would go wrong if you just apply gradient descent? Fast algorithms are implemented in frameworks like scikit-learn.
 
 <p align="center">
     <img src="./assets/machine-learning/reqularizer.png" alt="drawing" width="400" height="300" style="center" />
@@ -2057,7 +1908,7 @@ $$
 It is almost always preferable to have at least a little bit of regularization, so generally you should avoid plain Linear Regression. Ridge is a good default, but if you suspect that only a few features are actually useful, you should prefer Lasso or Elastic Net.
 
 
-### Bias-Variance decomposition
+## Bias-Variance Decomposition
 
 Let's consider a frequentist viewpoint of the model complexity issue, known as the _bias-variance trade-off_. When we discussed decision theory for regression problems, we considered various loss functions each of which leads to a corresponding optimal prediction once we are given the conditional distribution $p(t \mid \bm x)$. A popular choice is the squared loss function, for which the optimal prediction is given by the conditional expectation, which we denote by $h(x)$ and which is given by
 
@@ -2128,7 +1979,7 @@ $$
 \end{align*}
 $$
 
-where the integral over x weighted by the distribution p(x) is approximated by a finite sum over data points drawn from that distribution. We see that small values of λ allow the model to become finely tuned to the noise on each individual dataset leading to large variance. Conversely, a large value of λ pulls the weight parameters towards zero leading to large bias. 
+where the integral over $x$ weighted by the distribution $p(x)$ is approximated by a finite sum over data points drawn from that distribution. We see that small values of $λ$ allow the model to become finely tuned to the noise on each individual dataset leading to large variance. Conversely, a large value of $λ$ pulls the weight parameters towards zero leading to large bias. 
 
 
 ### The Bias/Variance Tradeoff
@@ -2150,14 +2001,14 @@ If you have an overly complex model (e.g. KNN with k = 1), it might have
 
 Increasing a model’s complexity will typically increase its variance and reduce its bias. Conversely, reducing a model’s complexity increases its bias and reduces its variance. This is why it is called a tradeoff.
 
-Although the bias-variance decomposition may provide some interesting insights into the model complexity issue from a frequentist perspective, it is of limited practical value because the bias-variance decomposition is based on averages with respect to ensembles of datasets, whereas in practice we have only the single observed dataset. If we had a large number of independent training sets of a given size, we would be better off combining them into a single large training set, which of course would reduce the level of over-fitting for a given model complexity.
+<!-- Although the bias-variance decomposition may provide some interesting insights into the model complexity issue from a frequentist perspective, it is of limited practical value because the bias-variance decomposition is based on averages with respect to ensembles of datasets, whereas in practice we have only the single observed dataset. If we had a large number of independent training sets of a given size, we would be better off combining them into a single large training set, which of course would reduce the level of over-fitting for a given model complexity. -->
 
 
 ## Bayesian Linear Regression
 
 We have seen that the effective model complexity, governed by the number of basis functions, needs to be controlled according to the size of the dataset. Adding a regularization term to the log likelihood function means the effective model complexity can then be controlled by the value of the regularization coefficient, although the choice of the number and form of the basis functions is of course still important in determining the overall behaviour of the model. This leaves the issue of deciding the appropriate model complexity for the particular problem, which cannot be decided simply by maximizing the likelihood function, because this always leads to excessively complex models and over-fitting. Independent hold-out data can be used to determine model complexity, but this can be both computationally expensive and wasteful of valuable data. We therefore turn to a Bayesian treatment of linear regression.
 
-### Parameter distribution
+### Parameter Distribution
 
 We begin our discussion of the Bayesian treatment of linear regression by introducing a prior probability distribution over the model parameters $\bm w$. For the moment, we shall treat the noise precision parameter $β$ as a known constant. First note that the likelihood function $p(\bm t \mid \bm w)$ (or $p(\bm t \mid \bm x, \bm w)$ - recall that we decided not to mention $\bm x$ because we are not modeling its distribution) is the exponential of a quadratic function of $\bm w$.  The corresponding conjugate prior is therefore given by a Gaussian distribution of the form 
 
@@ -2168,8 +2019,20 @@ $$
 having mean $\bm m_0$ and covariance $\bm S_0$. Next we compute the posterior distribution, which is proportional to the product of the likelihood function and the prior. For simplicity, we consider a zero-mean isotropic Gaussian governed by a single precision parameter $α$ so that
 
 $$
-p(\bm w\mid \alpha) = \mathcal N (\bm w \mid \bm 0, \alpha^{-1}\bm I)
-$$ 
+p(\bm w\mid \alpha) = \mathcal N (\bm w \mid \bm 0, \alpha^{-1}\bm I)  = \Big(\frac{α}{2π}\Big)^{(M+1)/2}\exp\{−\frac{α}{2}\bm w^T \bm w\}
+$$
+
+Variables such as $α$, which control the distribution of model parameters, are called _hyperparameters_. Using Bayes’ theorem, the posterior distribution for $\bm w$ is proportional to the product of the prior distribution and the likelihood function
+
+$$
+p(\bm w\mid \bm x, \bm t, α, β) = \frac{p(\bm t\mid \bm x, \bm w, β)p(\bm w \mid α)}{\int p(\bm t\mid \bm x,\bm w)p(\bm w)d\bm w}
+$$
+
+Or,
+
+$$
+p(\bm w\mid \bm x, \bm t, α, β) ∝ p(\bm t\mid \bm x, \bm w, β)p(\bm w\mid α).
+$$
 
 Due to the choice of a conjugate Gaussian prior distribution, the posterior distribution over $\bm w$ will also be Gaussian:
 
@@ -2186,29 +2049,30 @@ S^{−1}_N & = \alpha \bm I + βΦ^TΦ
 \end{align*}
 $$
 
-The log of the posterior distribution is given by the sum of the log likelihood and the log of the prior and, as a function of $\bm w$, takes the form
+We can now determine $\bm w$ by finding the most probable value of $w$ given the data, in other words by maximizing the posterior distribution. This technique is called **maximum posterior**, or simply **MAP**. The negative log of the posterior distribution is given by the sum of the log likelihood and the log of the prior and, as a function of $\bm w$, we find that the maximum of the posterior is given by the minimum of
+
 
 \[
 \begin{align*}
-\ln p( \bm w \mid \bm t) &= -\frac{\beta}{2}\sum_{n=1}^N \{ t_n - \bm w^T \bm \phi(\bm x_n)\}^2  - \frac{\alpha}{2}\bm w^T \bm w + \text{cont.}
+-\ln p( \bm w \mid \bm t) &= \frac{\beta}{2}\sum_{n=1}^N \{ t_n - \bm w^T \bm \phi(\bm x_n)\}^2  + \frac{\alpha}{2}\bm w^T \bm w  + \text{const.}
 \end{align*}
 \]
 
-*Maximization of this posterior distribution with respect to $\bm w$ is therefore equivalent to the minimization of the sum-of-squares error function with the addition of a quadratic regularization term $λ= α/β$*.
+**Maximization of this posterior distribution with respect to $\bm w$ is equivalent to the minimization of the sum-of-squares error function with the addition of a quadratic regularization term $λ= α/β$**.
 
-We can illustrate Bayesian learning in a linear basis function model, using a simple example involving straight-line fitting. Consider a single input variable $x$, a single target variable $t$ and a linear model of the form $y(x,\bm w) = w_0 + w_1x$.Because this has just two adaptive parameters, we can plot the prior and posterior distributions directly in parameter space. We generate synthetic data from the function $f(x,\bm a) = a_0 +a_1x$ with parameter values $a_0 =−0.3$ and $a_1 = 0.5$ by first choosing values of $x_n \sim  U(−1, 1)$ from the uniform distribution, then evaluating $f(x_n, \bm a)$, and finally adding Gaussian noise with standard deviation of 0.2 to obtain the target values $t_n$. 
+We can illustrate Bayesian learning in a linear basis function model, using a simple example involving straight-line fitting. Consider a single input variable $x$, a single target variable $t$ and a linear model of the form $y(x,\bm w) = w_0 + w_1x$. Because this has just two adaptive parameters, we can plot the prior and posterior distributions directly in parameter space. We generate synthetic data from the function $f(x,\bm a) = a_0 +a_1x$ with parameter values $a_0 =−0.3$ and $a_1 = 0.5$ by first choosing values of $x_n \sim  U(−1, 1)$ from the uniform distribution, then evaluating $f(x_n, \bm a)$, and finally adding Gaussian noise with standard deviation of 0.2 to obtain the target values $t_n$. 
 
-Our goal is to recover the values of $a_0$ and $a_1$ from such data, and we will explore the dependence on the size of the dataset. We assume here that the noise variance is known and hence we set the precision parameter to its true value β = (1/0.2)2 = 25. Similarly, we fix the parameter $α$ to 2.0.  The following Figure shows the results of Bayesian learning in this model as the size of the dataset increases and demonstrates the sequential nature of Bayesian learning in which the current posterior distribution forms the prior when a new data point is observed. 
+Our goal is to recover the values of $a_0$ and $a_1$ from such data, and we will explore the dependence on the size of the dataset. We assume here that the noise variance is known and hence we set the precision parameter to its true value $β = (1/0.2)^2 = 25$. Similarly, we fix the parameter $α$ to 2.0.  The following Figure shows the results of Bayesian learning in this model as the size of the dataset increases and demonstrates the sequential nature of Bayesian learning in which the current posterior distribution forms the prior when a new data point is observed. 
 
 <p align="center">
-    <img src="./assets/machine-learning/baysian-learning.png" alt="drawing" width="500" height="400" style="center" />
+    <img src="./assets/machine-learning/baysian-learning.png" alt="drawing" width="700" height="500" style="center" />
 </p>
 
 The first row of this figure corresponds to the situation before any data points are observed and shows a plot of the prior distribution in $\bm w$ space together with six samples of the function $y(\bm x,\bm w)$ in which the values of $\bm w$ are drawn from the prior. In the second row, we see the situation after observing a single data point. The location $(\bm x, t)$ of the data point is shown by a blue circle in the right-hand column. In the left-hand column is a plot of the likelihood function $p(t\mid \bm x, \bm w)$ for this data point as a function of $\bm w$. Note that the likelihood function provides a soft constraint that the line must pass close to the data point, where close is determined by the noise precision $β$. For comparison, the true parameter values $a_0 =−0.3$ and $a_1 = 0.5$ used to generate the dataset are shown by a white cross in the plots in the left column. When we multiply this likelihood function by the prior from the top row, and normalize, we obtain the posterior distribution shown in the middle plot on the second row. Samples of the regression function $y(\bm x,\bm w)$ obtained by drawing samples of $\bm w$ from this posterior distribution are shown in the right-hand plot. Note that these sample lines all pass close to the data point. The third row of this figure shows the effect of observing a second data point, again shown by a blue circle in the plot in the right-hand column. The corresponding likelihood function for this second data point alone is shown in the left plot. When we multiply this likelihood function by the posterior distribution from the second row, we obtain the posterior distribution shown in the middle plot of the third row. Note that this is exactly the same posterior distribution as would be obtained by combining the original prior with the likelihood function for the two data points. This posterior has now been influenced by two data points, and because two points are sufficient to define a line this already gives a relatively compact posterior distribution. Samples from this posterior distribution give rise to the functions shown in red in the third column, and we see that these functions pass close to both of the data points. The fourth row shows the effect of observing a total of 20 data points. The left-hand plot shows the likelihood function for the 20th data point alone, and the middle plot shows the resulting posterior distribution that has now absorbed information from all 20 observations. Note how the posterior is much sharper than in the third row. In the limit of an infinite number of data points, the posterior distribution would become a delta function centred on the true parameter values, shown by the white cross.
 
-### Predictive distribution
+### Predictive Distribution
 
-In practice, we are not usually interested in the value of w itself but rather in making predictions of $t$ for new values of $x$. This requires that we evaluate the predictive distribution defined by
+In practice, we are not usually interested in the value of $\bm w$ itself but rather in making predictions of $t$ for new values of $x$. This requires that we evaluate the predictive distribution defined by
 
 $$
 p(t|\bm t, α, β) = \int p(t|\bm w, β)p(\bm w|\bm t, α, β) d\bm w
@@ -2232,33 +2096,47 @@ The first term in the above equation represents the noise on the data whereas th
     <img src="./assets/machine-learning/bayesian-prediction.png" alt="drawing" width="500" height="400" style="center" />
 </p>
 
-We fit a model comprising a linear combination of Gaussian basis functions to datasets of various sizes and then look at the corresponding posterior distributions. Here the green curves correspond to the function $\sin(2πx)$ from which the data points were generated (with the addition of Gaussian noise). Datasets of size N = 1, N = 2, N = 4, and N = 25 are shown in the four plots by the blue circles. For each plot, the red curve shows the mean of the corresponding Gaussian predictive distribution, and the red shaded region spans one standard deviation either side of the mean. Note that the predictive uncertainty depends on x and is smallest in the neighbourhood of the data points. Also note that the level of uncertainty decreases as more data points are observed.
+We fit a model comprising a linear combination of Gaussian basis functions to datasets of various sizes and then look at the corresponding posterior distributions. Here the green curves correspond to the function $\sin(2πx)$ from which the data points were generated (with the addition of Gaussian noise). Datasets of size N = 1, N = 2, N = 4, and N = 25 are shown in the four plots by the blue circles. For each plot, the red curve shows the mean of the corresponding Gaussian predictive distribution, and the red shaded region spans one standard deviation either side of the mean. Note that the predictive uncertainty depends on $x$ and is smallest in the neighbourhood of the data points. Also note that the level of uncertainty decreases as more data points are observed.
 
+## Model Selection: Testing and Validating
+
+The only way to know how well a model will generalize to new cases is to actually try it out on new cases. Split your data into two sets: the training set and the test set. As these names imply, you train your model using the training set, and you test it using the test set. The error rate on new cases is called the generalization error. The problem is that you measured the generalization error multiple times on the test set, and you adapted the model and hyperparameters to produce the best model for that particular set. This means that the model is unlikely to perform as well on new data.
+
+<!-- With regularized least squares, the regularization coefficient $λ$ also controls the effective complexity of the model, whereas for more complex models, such as mixture distributions or neural networks there may be multiple parameters governing complexity.  -->
+
+Furthermore, as well as finding the appropriate values for complexity parameters within a given model, we may wish to consider a range of different types of model in order to find the best one for our particular application. If data is plentiful, then one approach is simply to use some of the available data to train a range of models, or a given model with a range of values for its complexity parameters, and then to compare them on independent data, sometimes called a  **validation set** or sometimes the development set, or dev set. More specifically, you train multiple models with various hyperparameters on the reduced training set (i.e., the full training set minus the validation set), and you select the model that performs best on the validation set. After this holdout validation process, you train the best model on the full training set (including the validation set), and this gives you the final model. Lastly, you evaluate this final model on the test set to get an estimate of the generalization error. If the model design is iterated many times using a limited size dataset, then some over-fitting to the validation data can occur and so it may be necessary to keep aside a third _test set_ on which the performance of the selected model is finally evaluated. Not that if the validation set is too small, then model evaluations will be imprecise. One way to solve this problem is to perform repeated cross-validation, using many small validation sets.
+
+In many applications, however, the supply of data for training and testing will be limited, and in order to build good models, we wish to use as much of the available data as possible for training. However, if the validation set is small, it will give a relatively noisy estimate of predictive performance. One solution to this dilemma is to use **cross-validation**.  This allows a proportion (S−1)/S of the available data to be used for training while making use of all of the data to assess performance. When data is particularly scarce, it may be appropriate to consider the case S = N, where N is the total number of data points, which gives the **leave-one-out** technique. In general, cross-validation works by taking the available data and partitioning it into S groups (in the simplest case these are of equal size). Then S− 1 of the groups are used to train a set of models that are then evaluated on the remaining group. This procedure is then repeated for all S possible choices for the held-out group, indicated here by the red blocks, and the performance scores from the S runs are then averaged.
+
+<p align="center">
+    <img src="./assets/machine-learning/cross-validation.png" alt="drawing" width="400" height="200" style="center" />
+</p>
+
+
+One major drawback of cross-validation is that the number of training runs that must be performed is increased by a factor of S, and this can prove problematic for models in which the training is *computationally expensive*. A further problem with techniques such as cross-validation that use separate data to assess performance is that we might have multiple complexity parameters for a single model (for instance, there might be several regularization parameters). Exploring combinations of settings for such parameters could, in the worst case, require a number of training runs that is exponential in the number of parameters.
 
 # Linear Models for Classifications
 
-The goal in classification is to take an input vector $x$ and to assign it to one of K discrete classes $C_k$ where $k = 1, . . . , K$. In the most common scenario, the classes are taken to be disjoint, so that each input is assigned to one and only one class. The input space is thereby divided into decision regions whose boundaries are called **decision boundaries** or _decision surfaces_. Here we consider linear models for classification, by which we mean that the decision surfaces are linear functions of the input vector $x$ and hence are defined by (D−1)-dimensional hyperplanes within the D-dimensional input space. Datasets whose classes can be separated exactly by linear decision surfaces are said to be _linearly separable_.
-
-For regression problems, the target variable t was simply the vector of real numbers. In the case of classification, there are various ways of using target values to represent class labels. In the case of two-class problems, is the binary representation in which there is a single target variable $t ∈ \{0, 1 \}$ such that $t = 1$ represents class $C_1$ and $t = 0$ represents class $C_2$. Also we can interpret the value of $t$ as the probability that the class is $C_1$, with the values of probability taking only the extreme values of 0 and 1. For K > 2 classes, it is convenient to use a one-hot vector in which $t$ is a vector of length K such that if the class is $C_j$, then all elements $t_k$ of $t$ are zero except element $t_j$, which takes the value 1. For instance, if we have K = 5 classes, then a pattern from class 2 would be given the target vector $t = (0, 1, 0, 0, 0)^T$.
+The goal in classification is to take an input vector $x$ and to assign it to one of $K$ discrete classes $C_k$ where $k = 1, . . . , K$. In the most common scenario, the classes are taken to be disjoint, so that each input is assigned to one and only one class. The input space is thereby divided into decision regions whose boundaries are called **decision boundaries** or **decision surfaces**. Here we consider linear models for classification, by which we mean that the decision surfaces are linear functions of the input vector $\bm x$ and hence are defined by (D−1)-dimensional hyperplanes within the D-dimensional input space. Datasets whose classes can be separated exactly by linear decision surfaces are said to be **linearly separable**. For regression problems, the target variable t was simply the vector of real numbers. In the case of classification, there are various ways of using target values to represent class labels. In the case of two-class problems, is the binary representation in which there is a single target variable $t ∈ \{0, 1 \}$ such that $t = 1$ represents class $C_1$ and $t = 0$ represents class $C_2$. Also we can interpret the value of $t$ as the probability that the class is $C_1$, with the values of probability taking only the extreme values of 0 and 1. For $K > 2$ classes, it is convenient to use a **one-hot vector** in which $t$ is a vector of length $K$ such that if the class is $C_j$, then all elements $t_k$ of $t$ are zero except element $t_j$, which takes the value 1. For instance, if we have $K = 5$ classes, then a pattern from class 2 would be given the target vector $t = (0, 1, 0, 0, 0)^T$.
 
 In general, there are two approaches to classification: 
 
 - **Discriminative**: directly learn to predict $t$ as a function of $x$.
-    - Sometimes this means modeling $p(t |x)$ (e.g. logistic regression).
+    - Sometimes this means modeling $p(t \mid x)$ (e.g. logistic regression).
     - Sometimes this means learning a decision rule without a probabilistic interpretation (e.g. KNN, SVM).
 - **Generative**: model the data distribution for each class separately, and make predictions using posterior inference.
-    - Fit models of $p(t)$ and $p(x |t)$.
-    - Infer the posterior $p(t |x)$ using Bayes’ Rule.
+    - Fit models of $p(t)$ and $p(x \mid t)$.
+    - Infer the posterior $p(t \mid x)$ using Bayes’ Rule.
 
 ## Discriminant Functions
 
-The simplest representation of a linear discriminant function is obtained by taking a linear function of the input vector so that $y(\bm x) = \bm w^T\bm x + w_0$ where $\bm w$ is called a weight vector, and $w_0$ is a bias (not in the statistical sense). The negative of the bias is sometimes called a _threshold_. An input vector $x$ is assigned to class $C_1$ if $y(\bm x) \geq 0$ and to class $C_2$ otherwise. The corresponding decision boundary is therefore defined by the relation $y(\bm x) = 0$. It is more convenient to expres it as $y(\bm x) = \tilde {\bm w}^T\tilde {\bm  x}$ when $\tilde {\bm w} = (w_0, \bm w)$ and $\tilde x = (1, \bm x)$.
+The simplest representation of a linear discriminant function is obtained by taking a linear function of the input vector so that $y(\bm x) = \bm w^T\bm x + w_0$ where $\bm w$ is called a _weight vector_, and $w_0$ is a _bias_ (not in the statistical sense). The negative of the bias is sometimes called a _threshold_. An input vector $\bm x$ is assigned to class $C_1$ if $y(\bm x) \geq 0$ and to class $C_2$ otherwise. The corresponding decision boundary is therefore defined by the relation $y(\bm x) = 0$. It is more convenient to expres it as $y(\bm x) = \tilde {\bm w}^T\tilde {\bm  x}$ when $\tilde {\bm w} = (w_0, \bm w)$ and $\tilde x = (1, \bm x)$.
 
 ### Multiclass Classification
 
-Some algorithms (such as Random Forest classifiers or naive Bayes classifiers) are capable of handling multiple classes directly. Others (such as Support Vector Machine classifiers or Linear classifiers in general) are strictly binary classifiers. However, there are various strategies that you can use to perform multiclass classification using multiple binary classifiers. After training K binary classifiers for K classes, then when you want to classify a test example, you get the decision score from each classifier for that example and you select the class whose classifier outputs the highest score. This is called the **one-versus-all (OvA)** strategy (also called one-versus-the-rest). Another strategy is to train a binary classifier for every pair of classes, K(K-1)/2 classifiers. This is called the _one-versus-one (OvO)_ strategy. Some algorithms (such as Support Vector Machine classifiers) scale poorly with the size of the training set, so for these algorithms OvO is preferred since it is faster to train many classifiers on small training sets than training few classifiers on large training sets. For most binary classification algorithms, however, OvA is preferred.
+Some algorithms (such as Random Forest classifiers or Naive Bayes classifiers) are capable of handling multiple classes directly. Others (such as Support Vector Machine classifiers or Linear classifiers in general) are strictly binary classifiers. However, there are various strategies that you can use to perform multiclass classification using multiple binary classifiers. After training $K$ binary classifiers for $K$ classes, then when you want to classify a test example, you get the **decision score** from each classifier for that example and you select the class whose classifier outputs the highest score. This is called the **one-versus-all (OvA)** strategy (also called **one-versus-the-rest**). Another strategy is to train a binary classifier for every pair of classes, $K(K-1)/2$ classifiers. This is called the **one-versus-one (OvO)** strategy. Some algorithms (such as Support Vector Machine classifiers) scale poorly with the size of the training set, so for these algorithms OvO is preferred since it is faster to train many classifiers on small training sets than training few classifiers on large training sets. For most binary classification algorithms, however, OvA is preferred.
 
-Now consider the extension of linear discriminants to K > 2 classes. We might be tempted be to build a K-class discriminant by combining a number of two-class discriminant functions. However, this leads to some serious difficulties.  Consider K(K− 1)/2 binary discriminant functions, one for every possible pair of classes (OVO). Each point is then classified according to a majority vote amongst the discriminant functions. However, this too runs into the problem of ambiguous regions, as illustrated in the right-hand follwing diagram.
+Now consider the extension of linear discriminants to $K > 2$ classes. We might be tempted be to build a $K$-class discriminant by combining a number of two-class discriminant functions. However, this leads to some serious difficulties.  Consider K(K− 1)/2 binary discriminant functions, one for every possible pair of classes (OVO). Each point is then classified according to a majority vote amongst the discriminant functions. However, this too runs into the problem of ambiguous regions, as illustrated in the right-hand follwing diagram.
 
 <p align="center">
     <img src="./assets/machine-learning/multiclass.png" alt="drawing" width="500" height="300" style="center" />
@@ -2270,13 +2148,13 @@ $$
 y_k(\bm x) = \bm w^T_k \bm x + w_{k0}
 $$
 
-and then assigning a point $x$ to class $C_k$ if $y_k(\bm x) > y_j(\bm x)$ for all $j \neq k$. The decision boundary between class $C_k$ and class $C_j$ is therefore given by $y_k(\bm x) = y_j(\bm x)$ and hence corresponds to a (D− 1)-dimensional hyperplane defined by
+and then assigning a point $\bm x$ to class $C_k$ if $y_k(\bm x) > y_j(\bm x)$ for all $j \neq k$. The decision boundary between class $C_k$ and class $C_j$ is therefore given by $y_k(\bm x) = y_j(\bm x)$ and hence corresponds to a (D−1)-dimensional hyperplane defined by
 
 $$
 (\bm w_k− \bm w_j)^T \bm x + (w_{k0}− w_{j0}) = 0,
 $$
 
-which has the same form as the decision boundary for the two-class. For two lines as the discriminants, the angle bisector of them becomes the decision boundry. The decision regions of such a discriminant are always simply connected and convex. To see this, consider two points $x_A$ and $x_B$ both of which lie inside decision region $\mathcal R_k$.  Any point $\hat x$ that lies on the line connecting $x_A$ and $x_B$ can be expressed in the form $\hat x = λx_A + (1− λ)x_B, 0 \leq \lambda \leq 1$. So $y_k(\hat x) = λy_k(x_A) + (1− λ)y_k(x_B)$. So  $y_k(\hat {\bm x}) > y_j(\hat {\bm x})$ for all $j\neq k$ . 
+which has the same form as the decision boundary for the two-class. For two lines as the discriminants, an angle bisector of them becomes the decision boundry. The decision regions of such a discriminant are always **simply connected** and **convex**. To see this, consider two points $x_A$ and $x_B$ both of which lie inside decision region $\mathcal R_k$.  Any point $\hat x$ that lies on the line connecting $x_A$ and $x_B$ can be expressed in the form $\hat x = λx_A + (1− λ)x_B, 0 \leq \lambda \leq 1$. So $y_k(\hat x) = λy_k(x_A) + (1− λ)y_k(x_B)$. So  $y_k(\hat {\bm x}) > y_j(\hat {\bm x})$ for all $j\neq k$ . 
 
 <p align="center">
     <img src="./assets/machine-learning/multiclass2.png" alt="drawing" width="300" height="200" style="center" />
@@ -2284,7 +2162,7 @@ which has the same form as the decision boundary for the two-class. For two line
 
 Scikit-Learn detects when you try to use a binary classification algorithm for a multiclass classification task, and it automatically runs OvA (except for SVM classifiers for which it uses OvO). If you want to force ScikitLearn to use one-versus-one or one-versus-all, you can use the `OneVsOneClassifier` or `OneVsRestClassifier` classes.
 
-Multilabel classification is a classification system that outputs multiple binary tags. one approach evaluate multilabel classifiers is to measure the $F_1$ score for each individual label (or any other binary classifier metric discussed earlier), then simply compute the average score. This code computes the average $F_1$ score across all labels. 
+Multilabel classification is a classification system that outputs multiple binary tags. One approach evaluate multilabel classifiers is to measure the $F_1$ score for each individual label (or any other binary classifier metric discussed earlier), then simply compute the average score. This code computes the average $F_1$ score across all labels. 
 
 ```python
 f1_score(y_multilabel, y_train_knn_pred, average="macro")
@@ -2292,40 +2170,40 @@ f1_score(y_multilabel, y_train_knn_pred, average="macro")
 
 This assumes that all labels are equally important, which may not be the case. One simple option is to give each label a weight equal to its support (i.e., the number of instances with that target label). To do this, simply set `average="weighted"` in the preceding code.
 
-#### Performance Measures for Classification
+### Performance Measures for Classification
 Evaluating a classifier is often significantly trickier than evaluating a regressor. 
-1. **Accuracy**: is generally not the preferred performance measure for classifiers, especially when you are dealing with imbalanced dataset.
-2. **Confusion Matrix**:  count the number of times instances of class A are classified as class B. Each row in a confusion matrix represents an actual class, while each column represents a predicted class. The confusion matrix  for a perfect classifier would have nonzero values only on its main diagonal! Confusion matrix is descriptive and does not provide a metric by its own. Analyzing the confusion matrix can often give you insights on ways to improve your classifier by analyzing the types of errors your model makes.
+- **Accuracy**: Generally not the preferred performance measure for classifiers, especially when you are dealing with imbalanced dataset.
+- **Confusion Matrix**:  Counts the number of times instances of class A are classified as class B. Each row in a confusion matrix represents an actual class, while each column represents a predicted class. The confusion matrix  for a perfect classifier would have nonzero values only on its main diagonal! Confusion matrix is descriptive and does not provide a metric by its own. Analyzing the confusion matrix can often give you insights on ways to improve your classifier by analyzing the types of errors your model makes. (Diagnosis Tool)
    
     ```python
     conf_mx = confusion_matrix(y_train, y_train_pred)
     ```
-3. **Precision**: $\frac{TP}{TP + FP}$. A trivial way to have 100% precision is to make one single positive prediction and ensure it is correct. So precision is typically used along with another metric:
-4. **Recall**: sensitivity or true positive rate, $\frac{TP}{TP + FN}$.  A trivial way to have 100% recall is to predict everything positive. 
-5. **$F_1$ score**: The $F_1$ score is the harmonic mean of precision and recall. Whereas the regular mean, treats all values equally, the harmonic mean gives much more weight to low values. The F1 score favors classifiers that have similar high precision and recall which is not always what you want: in some contexts you mostly care about precision, and in other contexts you really care about recall. For example: cancer detection classifier (high recall - we do not want to have any FN while we do not mind some FP) or detecting safe videos for kids (high precision - we do not want FP while we do not mind FN).
+- **Precision**: $\frac{TP}{TP + FP}$. A trivial way to have 100% precision is to make one single positive prediction and ensure it is correct. So precision is typically used along with recall.
+- **Recall**: _sensitivity_ or _true positive rate_, $\frac{TP}{TP + FN}$.  A trivial way to have 100% recall is to predict everything positive. 
+- **$F_1$ score**: The $F_1$ score is the harmonic mean of precision and recall. Whereas the regular mean, treats all values equally, the harmonic mean gives much more weight to low values. The F1 score favors classifiers that have similar high precision and recall which is not always what you want: in some contexts you mostly care about precision, and in other contexts you really care about recall. For example: cancer detection classifier (high recall - we do not want to have any FN while we do not mind some FP) or detecting safe videos for kids (high precision - we do not want FP while we do not mind FN).
 
-Unfortunately, you can’t have it both ways: increasing precision reduces recall, and vice versa. This is called the *precision/recall tradeoff*. Classifiers makes decisions based on a score computed by a decision function, and if that score is greater than a threshold, it assigns the instance to the positive class, or else it assigns it to the negative class. Lowering the threshold increases true positive rates (Recall) and increasing the threshold, increases the precision (reducing FP).
+Unfortunately, you can’t have it both ways: *increasing precision reduces recall, and vice versa*. This is called the **precision/recall tradeoff**. *Classifiers makes decisions based on a score computed by a decision function, and if that score is greater than a threshold, it assigns the instance to the positive class, or else it assigns it to the negative class*. Lowering the threshold increases true positive rates (Recall) and increasing the threshold, increases the precision (reducing FP).
 
 
 <p align="center">
 <img src="./assets/machine-learning/precision-recall.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
-6. **PR Curve**: Another way to select a good precision/recall tradeoff is to plot precision directly against recall. 
+1. **PR Curve**: A way to select a good precision/recall tradeoff is to plot _precision directly against recall_. 
 
-7. **The ROC Curve**: It is very similar to the precision/recall curve, but instead of plotting precision versus recall, _the ROC curve plots the true positive rate (recall) against the false positive rate_.
+2. **The ROC Curve**: Very similar to the precision/recall curve, but instead of plotting precision versus recall, the ROC curve plots _the true positive rate (recall) against the false positive rate_.
 
 <p align="center">
 <img src="./assets/machine-learning/roc-curve.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
-The dotted line represents the ROC curve of a purely random classifier; a good classifier stays as far away from that line as possible (toward the top-left corner). One way to compare classifiers is to measure the area under the curve (AUC). A perfect classifier will have a ROC AUC equal to 1, whereas a purely random classifier will have a ROC AUC equal to 0.5. As a rule of thumb, you should prefer the PR curve whenever the positive class is rare or when you care more about the false positives than the false negatives, and the ROC curve otherwise.
+The dotted line represents the ROC curve of a purely random classifier; a good classifier stays as far away from that line as possible (toward the top-left corner). One way to compare classifiers is to measure the **area under the curve (AUC)**. A perfect classifier will have a ROC AUC equal to 1, whereas a purely random classifier will have a ROC AUC equal to 0.5. As a rule of thumb, you should prefer the PR curve whenever the positive class is rare or when you care more about the false positives than the false negatives, and the ROC curve otherwise. You can think about ROC as more of recall-based metric vs PR as more felxibale towards precision-based metric.
 
 
 
 ### Least Squares for Classification
 
-Consider a general classification problem with K classes, with a one-hot vector for the target vector $\bm t$ . One justification for using least squares in such a context is that it approximates the conditional expectation $\mathbb E[\bm t \mid \bm x]$ of the target values given the input vector. Each class $C_k$ is described by its own linear model so that
+Consider a general classification problem with $K$ classes, with a one-hot vector for the target vector $\bm t$ . One justification for using least squares in such a context is that it approximates the conditional expectation $\mathbb E[\bm t \mid \bm x]$ of the target values given the input vector. Each class $C_k$ is described by its own linear model so that
 
 $$
 y_k(\bm x) = \bm w^T_k \bm x +w_{k0}
@@ -2337,7 +2215,7 @@ $$
 y(\bm x) = \tilde {\bm W}^T\bm {\tilde x}
 $$
 
-where $\tilde {\bm W}^T$ is a matrix whose $k$-th column comprises the D + 1-dimensional vector $\bm {\tilde w_k}$ and $\bm {\tilde x}$ is the corresponding augmented input vector $(1,\bm x)^T$ with a dummy input $x_0 = 1$. We now determine the parameter matrix $\tilde {\bm W}^T$ by minimizing a sum-of-squares error function, as we did for regression. Consider a training dataset $\{x_n, t_n \}$ where $n = 1, . . . , N$, and define a matrix $\bm T$ whose $n$-th row is the vector $\bm t_n^T$ together with a matrix X whose $n$th row. The sum-of-squares error function can then be written as
+where $\tilde {\bm W}$ is a matrix whose $k$-th column comprises the (D+1)-dimensional vector $\bm {\tilde w_k}$ and $\bm {\tilde x}$ is the corresponding augmented input vector $(1,\bm x)^T$ with a dummy input $x_0 = 1$. We now determine the parameter matrix $\tilde {\bm W}$ by minimizing a sum-of-squares error function, as we did for regression. Consider a training dataset $\{x_n, t_n \}$ where $n = 1, . . . , N$, and define a matrix $\bm T$ whose $n$-th row is the vector $\bm t_n^T$ together with a matrix X whose $n$th row. The sum-of-squares error function can then be written as
 
 $$
 E_D(\tilde {\bm W}) = \frac{1}{2} Tr \{ (\tilde {\bm X}\tilde {\bm W}− \bm T)^T(\tilde {\bm X}\tilde {\bm W}− \bm T) \}.
@@ -2352,24 +2230,31 @@ $$
 We then obtain the discriminant function in the form
 
 $$
-y(\bm x) = \tilde {\bm W}^T_{LE}\tilde {\bm x} = (\tilde {\bm X}^T\tilde {\bm X})^{-1}\tilde {\bm X}^T \bm T\tilde {\bm x}
+y(\bm x) = \tilde {\bm W}^T_{LE}\tilde {\bm x} = {\bm T}^T \tilde {\bm X}({\bm X}^T\tilde {\bm X})^{-1} \tilde {\bm x}
 $$
 
 An interesting property of least-squares solutions with multiple target variables is that if every target vector in the training set satisfies some linear constraint  $\bm a^T\bm t_n + b = 0$,  for some constants $a$ and $b$, then the model prediction for any value of $\bm x$ will satisfy the same constraint so that $\bm a^Ty(\bm x) + b = 0$. Thus if we use one-hot vector for K classes, then the predictions made by the model will have the property that the elements of $y(\bm x)$ will sum to 1 for any value of $\bm x$. 
 
-The least-squares approach gives an exact closed-form solution for the discriminant function parameters. However, even as a discriminant function (where we use it to make decisions directly and dispense with any probabilistic interpretation) it suffers from some severe problems. We have already seen that least-squares solutions lack robustness to outliers, and this applies equally to the classification application. Here we see that the additional data points in the right-hand figure produce a significant change in the location of the decision boundary, even though these points would be correctly classified by the original decision boundary. The sum-of-squares error function penalizes predictions that are ‘too correct’ in that they lie a long way on the correct side of the decision. 
-
-However, problems with least squares can be more severe than simply lack of robustness. This shows a synthetic dataset drawn from three classes in a two-dimensional input space (x1, x2), having the property that linear decision boundaries can give excellent separation between the classes. The follwoing figure hsows the decision boundary found by least squares (magenta curve) and also by the logistic regression model (green curve). Indeed, the technique of logistic regression, described later, gives a satisfactory solution as seen in the right-hand plot. However, the least-squares solution gives poor results when extra data points are added at the bottom left of the diagram, showing that least squares is highly sensitive to outliers, unlike logistic regression.
+The least-squares approach gives an exact closed-form solution for the discriminant function parameters. However, even as a discriminant function (where we use it to make decisions directly and dispense with any probabilistic interpretation) it suffers from some severe problems. We have already seen that least-squares solutions lack robustness to outliers, and this applies equally to the classification application. The following figure shows  that the additional data points far from the cluster produce a significant change in the location of the decision boundary, even though these points would be correctly classified by the original decision boundary. *The sum-of-squares error function penalizes predictions that are ‘too correct’ in that they lie a long way on the correct side of the decision*. 
 
 <p align="center">
     <img src="./assets/machine-learning/ls-multiclass.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
-The failure of least squares should not surprise us when we recall that it corresponds to maximum likelihood under the assumption of a Gaussian conditional distribution, whereas binary target vectors clearly have a distribution that is far from Gaussian. By adopting more appropriate probabilistic models, we shall obtain classification techniques with much better properties than least squares. From historical point of view, there is another linear discriminant model called  **perceptron algorithm**. See p.192 in parttern recognision .. book for more inof about it. 
+
+However, problems with least squares can be more severe than simply lack of robustness. This shows a synthetic dataset drawn from three classes in a two-dimensional input space $(x_1, x_2)$, having the property that linear decision boundaries can give excellent separation between the classes. The follwoing figure shows the decision boundary found by least squares (magenta curve) and also by the logistic regression model (green curve). Indeed, the technique of logistic regression, described later, gives a satisfactory solution as seen in the right-hand plot. However, the least-squares solution gives poor results when extra data points are added at the bottom left of the diagram, showing that least squares is highly sensitive to outliers, unlike logistic regression.
+
+<p align="center">
+    <img src="./assets/machine-learning/ls-lr-classification.png" alt="drawing" width="500" height="300" style="center" />
+</p>
+
+The failure of least squares should not surprise us when we recall that it corresponds to maximum likelihood under the assumption of a Gaussian conditional distribution, whereas binary or one-hot target vectors clearly have a distribution that is far from Gaussian. By adopting more appropriate probabilistic models, we shall obtain classification techniques with much better properties than least squares. From historical point of view, there is another linear discriminant model called  **perceptron algorithm**. See p.192 in [Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf) for more. 
 
 ## Probabilistic Generative Models
 
-Here we shall adopt a generative approach in which we model the class-conditional densities $p(\bm x\mid C_k)$, as well as the class priors $p(C_k)$, and then use these to compute posterior probabilities $p(C_k \mid \bm x)$ through Bayes’ theorem. Consider first of all the case of two classes. The posterior probability for class $C_1$ can be written as
+Here we shall adopt a generative approach in which we model the **class-conditional densities** $p(\bm x\mid C_k)$, as well as the class priors $p(C_k)$, and then use these to compute posterior probabilities $p(C_k \mid \bm x)$ through Bayes’ theorem. 
+
+First consider the case of two classes. The posterior probability for class $C_1$ can be written as
 
 $$
 \begin{align*}
@@ -2378,7 +2263,7 @@ p(C_1\mid x) & = \frac{p(\bm x\mid C_1) p(C_1)}{p(\bm x\mid C_1) p(C_1) + p(\bm 
 \end{align*}
 $$
 
-where $σ(a)$ is the _logistic sigmoid_  function and 
+where $σ(a)$ is the **logistic sigmoid**  function (the term ‘sigmoid’ means S-shaped) and 
 
 $$
 \begin{align*}
@@ -2387,7 +2272,7 @@ a & = \ln \frac{p(\bm x\mid C_1) p(C_1)}{p(\bm x \mid C_2) p(C_2)}\\
 \end{align*}
 $$
 
-represents the log of the ratio of probabilities for the two classes, also known as the _log odds_.  We shall shortly consider situations in which $a(\bm x)$ is a linear function of $\bm x$, in which case the posterior probability is governed by a generalized linear model. For the case of K > 2 classes, we have
+represents the log of the ratio of probabilities for the two classes, also known as the **log odds**.  We shall shortly consider situations in which $a(\bm x)$ is a linear function of $\bm x$, in which case the posterior probability is governed by a generalized linear model. For the case of $K > 2$ classes, we have
 
 $$
 \begin{align*}
@@ -2396,9 +2281,13 @@ p(C_k \mid \bm x) & =  \frac{p(\bm x\mid C_k) p(C_k)}{\sum_j p(\bm x \mid C_j) p
 \end{align*}
 $$
 
-which is known as the normalized exponential and can be regarded as a multiclass generalization of the logistic sigmoid. Here the quantities $a_k$ are defined by $a_k = \ln p(\bm x \mid C_k)p(C_k)$. The normalized exponential is also known as the softmax function, as it represents a smoothed version of the ‘max’ function because, if $a_k ≫ a_j$ for all $j \neq k$, then $p(C_k\mid \bm x) \approx 1$, and $p(C_j \mid \bm x) \approx 0$.  We now investigate the consequences of choosing specific forms for the class-conditional densities, looking first at continuous input variables $\bm x$ and then discussing briefly the case of discrete inputs.
+which is known as the normalized exponential and can be regarded as a multiclass generalization of the logistic sigmoid called the **softmax function** as it represents a smoothed version of the ‘max’ function because, if $a_k ≫ a_j$ for all $j \neq k$, then $p(C_k\mid \bm x) \approx 1$, and $p(C_j \mid \bm x) \approx 0$. Here the quantities $a_k$ are defined by 
 
-### Continuous inputs
+$$a_k = \ln p(\bm x \mid C_k)p(C_k)$$ 
+
+which are the unnormalized log probabilities called **logits**. To extract posterior probabilites from logits, we find their exponential followed by normalizationg which is what softmax does. We now investigate the consequences of choosing specific forms for the class-conditional densities, looking first at continuous input variables $\bm x$ and then discussing briefly the case of discrete inputs.
+
+### Continuous Inputs
 
 Let us assume that the class-conditional densities are Gaussian and then explore the resulting form for the posterior probabilities. To start with, we shall _assume that all classes share the same covariance matrix_. Thus the density for class $C_k$ is given by
 
@@ -2418,7 +2307,7 @@ $$
 \ln \frac{ p(C_1\mid \bm x)}{p(C_2\mid \bm x)} = \ln \frac{p(\bm x\mid C_1) p(C_1)}{p(\bm x \mid C_2) p(C_2)} = \bm w^T \bm x + w_0
 $$
 
-Due to the assumption of common covariance matrices, simplifying this last equation implies:
+Due to the assumption of common covariance matrices, this last equation implies:
 
 $$
 \begin{align*}
@@ -2427,13 +2316,13 @@ w_0 & =  -\frac{1}{2} \bm \mu_1^T \Sigma^{-1} \bm \mu_1 + \frac{1}{2} \bm \mu_2^
 \end{align*}
 $$
 
-This result is illustrated for the case of a two-dimensional input space x in the following figure. The left-hand plot shows the class-conditional densities for two classes, denoted red and blue. On the right is the corresponding posterior probability $p(C_1\mid \bm x)$, which is given by a logistic sigmoid of a linear function of $\bm x$. The surface in the right-hand plot is coloured using a proportion of red ink given by $p(C_1 \mid \bm x)$ and a proportion of blue ink given by $p(C_2\mid \bm x) = 1 − p(C_1 \mid \bm x)$.
+This result is illustrated for the case of a two-dimensional input space $x$ in the following figure. The left-hand plot shows the class-conditional densities for two classes, denoted red and blue. On the right is the corresponding posterior probability $p(C_1\mid \bm x)$, which is given by a logistic sigmoid of a linear function of $\bm x$. The surface in the right-hand plot is coloured using a proportion of red ink given by $p(C_1 \mid \bm x)$ and a proportion of blue ink given by $p(C_2\mid \bm x) = 1 − p(C_1 \mid \bm x)$.
 
 <p align="center">
     <img src="./assets/machine-learning/generative-models-linear.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
-The decision boundaries correspond to surfaces along which the posterior probabilities $p(C_k \mid \bm x)$ are constant and so will be given by linear functions of x, and therefore the decision boundaries are _linear_ in input space. The prior probabilities $p(C_k)$ enter only through the bias parameter $w_0$ so that changes in the priors have the effect of making parallel shifts of the decision boundary and more generally of the parallel contours of constant posterior probability. For the general case of K classes we have:
+The decision boundaries correspond to surfaces along which the posterior probabilities $p(C_k \mid \bm x)$ are constant and so will be given by linear functions of $\bm x$, and therefore the decision boundaries are _linear_ in input space. In the case of 2 classes, the decision boundry is $\bm w^T \bm x + w_0 = 0$. The prior probabilities $p(C_k)$ enter only through the bias parameter $w_0$ so that changes in the priors have the effect of making parallel shifts of the decision boundary and more generally of the parallel contours of constant posterior probability. For the general case of K classes we have:
 $$
 a_k(\bm x) = \bm w^T_k \bm x + w_{k0} = \ln p(\bm x \mid C_k)p(C_k)
 $$
@@ -2447,7 +2336,9 @@ w_0 & =  -\frac{1}{2} \bm \mu_k^T \Sigma^{-1} \bm \mu_k  + \ln p(C_k).
 \end{align*}
 $$
 
-The resulting decision boundaries, corresponding to the minimum misclassification rate, will occur when two of the posterior probabilities (the two largest) are equal, and so will be defined by linear functions of $\bm x$, and so again we have a generalized linear model called **linear** discriminant (LDA). The K centroids in p-dimensional input space lie in an aﬃne subspace of dimension ≤ K−1, and if n is much larger than K, this will be a considerable drop in dimension. Moreover, in locating the closest centroid, we can ignore distances orthogonal to this subspace, since they will contribute equally to each class. Thus we might just as well project the $X^∗$ onto this centroid-spanning subspace $H_{K−1}$, and make distance comparisons there. Thus there is a fundamental dimension reduction in LDA, namely, that we need only consider the data in a subspace of dimension at most $K−1$. If K = 3, for instance, this could allow us to view the data in a two-dimensional plot, color-coding the classes. If we relax the assumption of a shared covariance matrix and allow each class-conditional density $p(\bm x \mid C_k)$ to have its own covariance matrix $Σ_k$, then the earlier cancellations will no longer occur, and we will obtain quadratic functions of $\bm x$, giving rise to a _**quadratic** discriminant_. If we make the futher assumption of independence of features conditioned on classes, we get **Naive Bayes**:
+The resulting decision boundaries, corresponding to the minimum misclassification rate, will occur when two of the posterior probabilities (the two largest) are equal $a_k(\bm x) = a_j(\bm x) $, and so will be defined by linear functions of $\bm x$, and so again we have a generalized linear model called **linear discriminant (LDA)**. The $K$ centroids in $p$-dimensional input space lie in an aﬃne subspace of dimension ≤ K−1, and if $p$ is much larger than $K$, this will be a considerable drop in dimension if we projects input space into this subspace. Moreover, in locating the closest centroid for a given $\bm x$, we can ignore orthogonal distance to this subspace, since they will contribute equally to each class. Thus we might just as well project the $\bm x$ onto this centroid-spanning subspace $H_{K−1}$, and make distance comparisons there. Thus there is a fundamental dimension reduction in LDA, namely, that we need only consider the data in a subspace of dimension at most $K−1$. If $K = 3$, for instance, this could allow us to view the data in a two-dimensional plot, color-coding the classes. 
+
+If we relax the assumption of a shared covariance matrix and allow each class-conditional density $p(\bm x \mid C_k)$ to have its own covariance matrix $Σ_k$, then the earlier cancellations will no longer occur, and we will obtain quadratic functions of $\bm x$, giving rise to a **quadratic discriminant**. If we make the futher assumption of independence of features conditioned on classes, we get **Naive Bayes**:
 
 $$
 p(\bm x \mid C_k) = \prod_{j=1}^D p(x_j \mid C_k)
@@ -2461,7 +2352,7 @@ The probabilities $p(x_j \mid C_k)$ could be modeled as
     $$p(x_j \mid C_k) = \theta_{jk}^{x_j}(1-\theta_{jk})^{1-x_j}$$
 
 - Multinomial for count features (e.g., word frequencies in text classification)
-    $$p(x \mid C_k) = \prod_j \frac{\theta_{jk}^{x_j}}{x_j!}$$
+    $$p(x_j \mid C_k) = \prod_j \frac{\theta_{jk}^{x_j}}{x_j!}$$
 
 Maximum likelighod estimation of Naive Bayes parameters can be easily computed from empirical data:
 
@@ -2470,7 +2361,7 @@ $$
 $$
 
 From training data, estimate: 
-- $p(C_k)$ class prior which tisthe frequency of class k
+- $p(C_k)$ class prior which is the frequency of class $C_k$
 -  $p(x_j\mid C_k)$ conditional feature likelihood 
 
 If a feature never appears in training for a class: use Laplace smoothing. We predict the category by performing inference in the model using Bayes’ Rule:
@@ -2482,9 +2373,9 @@ p(C_k\mid \bm x)  & = \frac{p(\bm x\mid C_k)p(C_k)}{\sum_k p(\bm x\mid C_k)p(C_k
 \end{align*}
 $$
 
-We need not compute the denominator if we’re simply trying to determine the mostly likely class. Naive Bayes Works surprisingly well	but can perform poorly when features are correlated. It scales to very high-dimensional data and decision boundaries are linear in log-space. It is used Text classification (spam detection, sentiment) or as a quick baseline model for many tasks.
+We need not compute the denominator if we’re simply trying to determine the mostly likely class. Naive Bayes works surprisingly well but *can perform poorly when features are correlated*. It scales to very high-dimensional data and decision boundaries are linear in log-space. It is used for Text Classification (spam detection, sentiment) or as a quick baseline model for many tasks.
 
-#### Maximum likelihood solution
+### Maximum Likelihood Solution for LDA
 
 Once we have specified a parametric functional form for the class-conditional densities $p(\bm x \mid C_k)$, we can then determine the values of the parameters, together with the prior class probabilities $p(C_k)$, using maximum likelihood. This requires a dataset comprising observations of $\bm x$ along with their corresponding class labels.
 
@@ -2497,7 +2388,7 @@ $$
 Thus the likelihood function is given by:
 
 $$
-p(t \mid π, µ_1, µ_2, \Sigma) =  \prod_{n=1}^N [π \mathcal N (\bm x_n \mid \bm µ_1, Σ)]^{t_n} [(1− π)\mathcal N (\bm x_n \mid \bm µ_2, Σ)]^{1−t_n}
+p(t \mid π, \mu_1, \mu_2, \Sigma) =  \prod_{n=1}^N [π \mathcal N (\bm x_n \mid \bm \mu_1, Σ)]^{t_n} [(1− π)\mathcal N (\bm x_n \mid \bm \mu_2, Σ)]^{1−t_n}
 $$
 
 where $\bm t = (t_1, \dots, t_N)^T$. Setting the derivative with respect to $π$ equal to zero and rearranging, we obtain:
@@ -2506,13 +2397,13 @@ $$
 π = \frac{1}{N}\sum_{n=1}^N t_n = \frac{N_1}{N} = \frac{N_1}{N_1+N_2}
 $$
 
-Thus the maximum likelihood estimate for $π$ is simply the fraction of points in class $C_1$ as expected. This result is easily generalized to the multiclass case where again the maximum likelihood estimate of the prior probability associated. Setting the derivative with respect to $µ_1$ to zero and rearranging, we obtain
+Thus the maximum likelihood estimate for $π$ is simply the fraction of points in class $C_1$ as expected. This result is easily generalized to the multiclass case where again the maximum likelihood estimate of the prior probability associated. Setting the derivative with respect to $\mu_1$ to zero and rearranging, we obtain
 
 $$
-µ_1 = \frac{1}{N_1}\sum_{n=1}^N t_n \bm x_n
+\mu_1 = \frac{1}{N_1}\sum_{n=1}^N t_n \bm x_n
 $$
 
-which is simply the mean of all the input vectors xn assigned to class $C_1$. It is similar for $µ_2$. The maximum likelihood solution for the shared covariance matrix $Σ$ is 
+which is simply the mean of all the input vectors xn assigned to class $C_1$. It is similar for $\mu_2$. The maximum likelihood solution for the shared covariance matrix $\bm \Sigma$ is 
 
 $$
 \begin{align*}
@@ -2522,19 +2413,19 @@ $$
 \end{align*}
 $$
 
-which represents a weighted average of the covariance matrices associated with each of the two classes separately. This result is easily extended to the K class problem to obtain the corresponding maximum likelihood solutions for the parameters in which each class-conditional density is Gaussian with a shared covariance matrix. _Note that the approach of fitting Gaussian distributions to the classes is not robust to outliers, because the maximum likelihood estimation of a Gaussian is not robust_.
+which represents a weighted average of the covariance matrices associated with each of the two classes separately. This result is easily extended to the $K$ class problem to obtain the corresponding maximum likelihood solutions for the parameters in which each class-conditional density is Gaussian with a shared covariance matrix. **Note that the approach of fitting Gaussian distributions to the classes is not robust to outliers, because the maximum likelihood estimation of a Gaussian is not robust as it was equivalent to minimizing least squares errors**.
 
-#### Regularized Discriminant Analysis
+### Regularized Discriminant Analysis (RDA)
 Friedman (1989) proposed a compromise between LDA and QDA, which allows one to shrink the separate covariances of QDA toward a common covariance as in LDA. These methods are very similar in flavor to ridge regression. The regularized covariance matrices have the form
 $$
-\hat \Sigma_k (\alpha) = \hat \Sigma_k (\alpha) + (1-\alpha) \hat \Sigma_k 
+\hat \Sigma_k^{(\text{RDA})}  = \alpha \hat \Sigma_k+ (1-\alpha) \hat \Sigma  + \gamma \bm I
 $$
 
-where $Σ$ is the pooled covariance matrix as used in LDA. Here $α ∈[0,1]$ allows a continuum of models between LDA and QDA, and needs to be specified. In practice $α$ can be chosen based on the performance of the model on validation data, or by cross-validation.
+where $\hat \Sigma$ is the pooled covariance matrix as used in LDA and $\hat \Sigma_k$ are the class specific covariance matrix defined above like $S_1$. Here $α ∈[0,1]$ allows a continuum of models between LDA and QDA, and needs to be specified. Hyperparameter $γ ≥ 0$ adds a scaled identity matrix (ridge regularization) to stabilize covariance estimates and helps especially when the number of features is large compared to samples. In practice $α, \gamma$ can be chosen based on the performance of the model on validation data, or by cross-validation.
 
 
-### Discrete features
-Let us now consider the case of discrete feature values $x_i$. For simplicity, we begin by looking at binary feature values $x_i \in \{0, 1 \}$ and discuss the extension to more general discrete features shortly. If there are D inputs, then a general distribution would correspond to a table of $2^D$ numbers for each class, containing $2^D− 1$ independent variables (due to the summation constraint). Because this grows exponentially with the number of features, we might seek a more restricted representation. Here we will make the naive Bayes assumption in which _the feature values are treated as independent, conditioned on the class $C_k$_. Thus we have class-conditional distributions of the form
+### Discrete Features
+Let us now consider the case of discrete feature values $x_i$. For simplicity, we begin by looking at binary feature values $x_i \in \{0, 1 \}$ and discuss the extension to more general discrete features shortly. If there are D features, then a general distribution would correspond to a table of $2^D$ numbers for each class, containing $2^D− 1$ independent variables (due to the summation constraint). Because this grows exponentially with the number of features, we might seek a more restricted representation. Here we will make the Naive Bayes assumption in which _the feature values are treated as independent, conditioned on the class $C_k$_. Thus we have class-conditional distributions of the form
 
 $$
 p(\bm x \mid C_k) = \prod_{i=1}^D \mu^{x_i}_{ki} (1- \mu^{x_i}_{ki})^{1-x_i}
@@ -2546,27 +2437,27 @@ $$
 a_k(\bm x) = \ln p(C_k) + \sum_{i=1}^D (x_i\ln \mu_{ki} + (1-x_i) \ln(1-\mu_{ki})) 
 $$
 
-which again are linear functions of the input values $x_i$. Analogous results are obtained for discrete variables each of which can take M > 2 states. For both Gaussian distributed and discrete inputs, the posterior class probabilities are given by generalized linear models with logistic sigmoid (K=2 classes) or softmax (K 2 classes) activation functions. These are particular cases of a more general result obtained by assuming that the class-conditional densities $p(\bm x|C_k)$ are members of the exponential family of distributions. Many techniques are based on models for the class densities:
+which again are linear functions of the input features $x_i$. Analogous results are obtained for discrete variables each of which can take M > 2 states. For both Gaussian distributed and discrete inputs, the posterior class probabilities are given by generalized linear models with logistic sigmoid (K=2 classes) or softmax (K 2 classes) activation functions. These are particular cases of a more general result obtained by assuming that the class-conditional densities $p(\bm x|C_k)$ are members of the exponential family of distributions. Many techniques are based on models for the class densities:
 - linear and quadratic discriminant analysis use Gaussian densities;
 - more flexible mixtures of Gaussians allow for nonlinear decision boundaries
 - general nonparametric density estimates for each class density allow the most flexibility 
-- Naive Bayes models are a variant of the previous case, and assume that each of the class densities are products of marginal densities; that is, they assume that the inputs are conditionally independent in each class
+- Naive Bayes models are a variant of the previous case, and assume that each of the class densities are products of marginal densities; that is, they assume that the features are conditionally independent in each class
 
 ## Probabilistic Discriminative Models
 
 For the two-class classification problem, we have seen that the posterior probability of class $C_1$ can be written as a logistic sigmoid acting on a linear function of $x$, for a wide choice of class-conditional distributions $p(\bm x \mid C_k)$. Similarly, for the multiclass case, the posterior probability of class $C_k$ is given by a softmax transformation of a linear function of $\bm x$. For specific choices of the class-conditional densities $p(\bm x\mid C_k)$, we have used maximum likelihood to determine the parameters of the densities as well as the class priors $p(C_k)$ and then used Bayes’ theorem to find the posterior class probabilities.
 
-However, an alternative approach is to use the functional form of the generalized linear model explicitly and to determine its parameters directly by using maximum likelihood. The indirect approach to finding the parameters of a generalized linear model, by fitting class-conditional densities and class priors separately and then applying Bayes’ theorem, represents an example of **generative modeling**, because we could take such a model and generate synthetic data by drawing values of $\bm x$ from the marginal distribution $p(\bm x)$. In the direct approach, we are maximizing a likelihood function defined through the conditional distribution $p(C_k \mid \bm x)$, which represents a form of discriminative training. One advantage of the discriminative approach is that there will typically be fewer adaptive parameters to be determined.
+However, an alternative approach is to use the functional form of the generalized linear model explicitly and to determine its parameters directly by using maximum likelihood. The indirect approach to finding the parameters of a generalized linear model, by fitting class-conditional densities and class priors separately and then applying Bayes’ theorem, represents an example of **generative modeling**, because we could take such a model and generate synthetic data by drawing values of $\bm x$ from the marginal distribution $p(\bm x)$. In the direct approach, we are maximizing a likelihood function defined through the conditional distribution $p(C_k \mid \bm x)$, which represents a form of **discriminative training**. One advantage of the discriminative approach is that there will typically be fewer adaptive parameters to be determined.
 
-### Logistic regression
+### Logistic Regression
 
-The posterior probability of class $C_1$ can be written as a logistic sigmoid acting on a linear function of the feature vector φ so that
+The posterior probability of class $C_1$ can be written as a logistic sigmoid acting on a linear function of the feature vector $\phi$ so that
 
 $$
-p(C_1 \mid \phi) = y(\phi) = \sigma(\bm w^T \phi)
+p(C_1 \mid \phi(\bm x)) = y(\phi(\bm x)) = \sigma(\bm w^T \phi(\bm x))
 $$
 
-For an M-dimensional feature space $φ$, this model has M adjustable parameters. By contrast, if we had fitted Gaussian class conditional densities using maximum likelihood, we would have used 2M parameters for the means and M(M + 1)/2 parameters for the (shared) covariance matrix. For a dataset $\{φ_n, t_n\}$, where $t_n ∈ \{0, 1\}$ and $φ_n= φ(x_n)$ with $n=1, . . . , N$, the likelihood function can be written:
+For an M-dimensional feature space $\phi$, this model has M adjustable parameters. By contrast, if we had fitted Gaussian class conditional densities using maximum likelihood, we would have used 2M parameters for the means and $M(M + 1)/2$ parameters for the (shared) covariance matrix. For a dataset $\{\phi_n, t_n\}$, where $t_n ∈ \{0, 1\}$ and $\phi_n= \phi(x_n)$ with $n=1, . . . , N$, the likelihood function can be written:
 
 $$
 p(\bm t \mid \bm w) = \prod_{n=1}^N  y_n^{t_n} (1-y_n )^{1-t_n}
@@ -2575,18 +2466,22 @@ $$
 where $\bm t = (t_1, . . . , t_N )^T$ and $y_n = p(C_1 \mid φ_n) = \sigma(\bm w^T \phi_n)$. As usual, we can define an error function by taking the negative logarithm of the likelihood, which gives the **cross-entropy** error function in the form
 
 $$
-E(\bm w) =− \ln p(\bm t\mid w) =− \sum_{n=1}^N (t_n \ln y_n + (1− t_n) \ln(1− y_n) )
+E(\bm w) =− \ln p(\bm t\mid \bm w) =− \sum_{n=1}^N (t_n \ln y_n + (1− t_n) \ln(1− y_n) )
 $$
 
 Taking the gradient of the error function with respect to $\bm w$, we obtain
 
 $$
-∇_wE(\bm w) = \sum_{n=1}^N (y_n− t_n)φ_n
+∇_wE(\bm w) = \sum_{n=1}^N (y_n− t_n)\phi_n
 $$
 
-It is worth noting that maximum likelihood can exhibit severe overfitting for datasets that are linearly separable. This arises because the maximum likelihood solution occurs when the hyperplane corresponding to σ = 0.5, equivalent to $\bm w^T \phi=0$, separates the two classes and the magnitude of $\bm w$ goes to infinity.
+It is worth noting that maximum likelihood can exhibit severe overfitting for datasets that are linearly separable. This arises because the maximum likelihood solution occurs when the hyperplane corresponding to $σ = 0.5$, equivalent to $\bm w^T \phi=0$, separates the two classes and the magnitude of $\bm w$ goes to infinity to maximize the likelihood. In this case, the logistic sigmoid function becomes infinitely steep in feature space, corresponding to a Heaviside step function, so that every training point from each class $k$ is assigned a posterior probability $p(C_k|\bm x) = 1$ which is unstable and overfitting effect (not good generalizable). Note that the problem will arise even if the number of data points is large compared with the number of parameters in the model, so long as the training data set is linearly separable. The singularity can be avoided by inclusion of a prior and finding a MAP solution for $\bm w$, or equivalently by adding a regularization term to the error function. In general, MLE will try to maximize the likelihood at all costs, even if:
+- It memorizes training data patterns
+- It leads to large weight magnitudes (sharp decision boundary)
+- Generalization to unseen data suffers
 
-##### Summary
+In logistic regression, MLE can overfit because it has no mechanism to limit model complexity. In high dimensions or noisy data, it may assign extreme weights to maximize likelihood, leading to poor generalization. Regularization (e.g., L2) helps prevent this by penalizing large weights.
+
 | Question              | Naive Bayes           | Logistic Regression    |
 | --------------------- | --------------------- | ---------------------- |
 | Probabilistic?        | ✅ Yes                 | ✅ Yes                  |
@@ -2600,9 +2495,7 @@ It is worth noting that maximum likelihood can exhibit severe overfitting for da
 
 # Combining Models
 
-Model combination is to select one of the models to make the prediction depending on the input variables. Thus different models become responsible for making predictions in different regions of input space. One widely used framework of this kind is known as a **decision tree** in which the selection process can be described as a sequence of binary selections corresponding to the traversal of a tree structure. In this case, the individual models are generally chosen to be very simple, and the overall flexibility of the model arises from the input-dependent selection process. Decision trees can be applied to both classification and regression problems. 
-
-One limitation of decision trees is that the division of input space is based on hard splits in which only one model is responsible for making predictions for any given value of the input variables. The decision process can be softened by moving to a probabilistic framework for combining models like Gaussian Mixture Models. Such models can be viewed as mixture distributions in which the component densities, as well as the mixing coefficients, are conditioned on the input variables and are known as mixtures of experts.
+Model combination is to select one of the models to make the prediction depending on the input variables. Thus different models become responsible for making predictions in different regions of input space. One widely used framework of this kind is known as a **decision tree** in which the selection process can be described as a sequence of binary selections corresponding to the traversal of a tree structure. In this case, the individual models are generally chosen to be very simple, and the overall flexibility of the model arises from the input-dependent selection process. Decision trees can be applied to both classification and regression problems. One limitation of decision trees is that the division of input space is based on hard splits in which only one model is responsible for making predictions for any given value of the input variables. The decision process can be softened by moving to a probabilistic framework for combining models like **Gaussian Mixture Models**. Such models can be viewed as mixture distributions in which the component densities, as well as the mixing coefficients, are conditioned on the input variables and are known as **mixtures of experts**.
 
 ##  Tree-Based Methods
 
@@ -3109,13 +3002,13 @@ The choice of activation function is determined by the nature of the data and th
 
 If the activation functions of all the hidden units in a network are taken to be linear (or removed), then the entire model collapses to a linear model in the inputs. This follows from the fact that the composition of successive linear transformations is itself a linear transformation. In fact, networks of only linear units give rise to principal component analysis.  Hence a neural network can be thought of as a nonlinear generalization of the linear model, both for regression and classification. 
 
-#### Regression MLPs
+### Regression MLPs
 
 First, MLPs can be used for regression tasks. In genral, for standard regression problems, the activation function is the identity so that $\bm y_k =\bm  a_k$, regressing $K$ targets. If you want to predict a single value (e.g., the price of a house given many of its features), then you just need a single output neuron: its output is the predicted value.  For multivariate regression (i.e., to predict multiple values at once), you need one output neuron per output dimension. In general, when building an MLP for regression, you do not want to use any activation function for the output neurons, so they are free to output any range of values. However, if you want to guarantee that the output will always be positive, then you can use the ReLU activation function, or the softplus activation function in the output layer. Finally, if you want to guarantee that the predictions will fall within a given range of values, then you can use the logistic function or the hyperbolic tangent, and scale the labels to the appropriate range: 0 to 1 for the logistic function, or –1 to 1 for the hyperbolic tangent.
 
 The loss function to use during training is typically the mean squared error, but if you have a lot of outliers in the training set, you may prefer to use the mean absolute error instead. Alternatively, you can use the Huber loss, which is a combination of both. The Huber loss is quadratic when the error is smaller than a threshold $δ$ (typically 1), but linear when the error is larger than $δ$. This makes it less sensitive to outliers than the mean squared error, and it is often more precise and converges faster than the mean absolute error.
 
-#### Classification MLPs 
+### Classification MLPs 
 
 MLPs can also be used for classification tasks. For a binary classification problem, you just need a single output neuron using the logistic activation function: the output will be a number between 0 and 1, which you can interpret as the estimated probability of the positive class. Obviously, the estimated probability of the negative class is equal to one minus that number. MLPs can also easily handle multilabel binary classification tasks
  
@@ -3480,7 +3373,7 @@ Convolution leverages three important ideas that can help improve a machine lear
 
 - **Equivariant**: The particular form of parameter sharing causes the layer to have a property called equivariance to translation. With images, convolution creates a 2-D map of where certain features appear in the input. If we move the object in the input, its representation will move the same amount in the output. When processing images, it is useful to detect edges in the first layer of a convolutional network. The same edges appear more or less everywhere in the image, so it is practical to share parameters across the entire image. In some cases, we may not wish to share parameters across the entire image. For example, if we are processing images that are cropped to be centered on an individual’s face, we probably want to extract diﬀerent features at diﬀerent locations—the part of the network processing the top of the face needs to look for eyebrows, while the part of the network processing the bottom of the face needs to look for a chin.
 
-#### Eﬃciency of Edge Detection
+### Eﬃciency of Edge Detection
 The image below on the right was formed by taking each pixel in the original image and subtracting the value of its neighboring pixel on the left.
 
 <p align="center">
@@ -3815,7 +3708,34 @@ References:
 
 # Unsupervised Learning: PCA, K-Means, GMM
 
-Many Machine Learning problems involve thousands or even millions of features for each training instance. Not only does this make training extremely slow, it can also make it much harder to find a good solution, as we will see. This problem is often referred to as the curse of dimensionality. Fortunately, in real-world problems, it is often possible to reduce the number of features considerably, turning an intractable problem into a tractable one. For example in image data, two neighboring pixels are often highly correlated: if you merge them into a single pixel (e.g., by taking the mean of the two pixel intensities), you will not lose much information!
+Many Machine Learning problems involve thousands or even millions of features for each training instance. Not only does this make training extremely slow, it can also make it much harder to find a good solution, as we will see. This problem is often referred to as the curse of dimensionality. 
+
+
+## Curse of Dimensionality
+
+It turns out that many things behave very differently in high-dimensional space. For example, if you pick a random point in a unit square (a 1 × 1 square), it will have only about a 0.4% chance of being located less than 0.001 from a border (in other words, it is very unlikely that a random point will be “extreme” along any dimension). But in a 10,000-dimensional unit hypercube (a 1 × 1 × ⋯ × 1 cube, with ten thousand 1s), this probability is greater than 99.999999%. Most points in a high-dimensional hypercube are very close to the border.3
+ 
+In theory, one solution to the curse of dimensionality could be to increase the size of the training set to reach a sufficient density of training instances. Unfortunately, in practice, the number of training instances required to reach a given density grows exponentially with the number of dimensions.
+
+ An increase in the dimensions means an increase in the number of features. To model such data, we need to increase complexity of the model by increasing the number of parameters. The complexity of functions of many variables can grow exponentially with the dimension, and if we wish to be able to estimate such functions with the same accuracy as function in low dimensions, then we need the size of our training set to grow exponentially as well.
+
+As another simple example, consider a sphere of radius $r = 1$ in a space of D dimensions, and ask what is the fraction of the volume of the sphere that lies between radius $r = 1−ϵ$ and $r = 1$. We can evaluate this fraction by noting that the volume of a sphere of radius $r$ in D dimensions must scale as $r$D, and so we write $V_D(r) = K_D r^D$ where K_D depends on D. Then 
+
+$$
+\frac{V_D(1)-V_D(1-\epsilon)}{V_D(1)} = 1 - (1-\epsilon)^D
+$$
+
+which tends to 1 ad D increases. Thus, in spaces of high dimensionality, most of the volume of a sphere is concentrated in a thin shell near the surface! Another similar example: in a high-dimensional space, most of the probability mass of a Gaussian is located within a thin shell at a specific radius. Simialrly, most of density for a multivariate unit uniform distribution is consentrated around the sides of the unit box. This leads to sparse sampling in high dimensions that means all sample points are close to an edge of the sample space.
+
+One more example, consider the nearest-neighbor procedure for inputs uniformly distributed in a $d$-dimensional unit hypercube. Suppose we send out a hypercubical neighborhood about a target point to capture a fraction $r$ of the observations. Since this corresponds to a fraction r of the unit volume, the expected edge length will be $e_d(r) = r^{1/d}$. In ten dimensions $e_{10}(0.01) = 0.63$ and $e_{10}(0.1) = 0.80$, while the entire range for each input is only 1.0. So to capture 1% or 10% of the data to form a local average, we must cover 63% or 80% of the range of each input variable. Such neighborhoods are no longer “local”. Reducing $r$ dramatically does not help much either, since the fewer observations we average, the higher is the variance of our fit. 
+
+Although the curse of dimensionality certainly raises important issues for pattern recognition applications, it does not prevent us from finding effective techniques applicable to high-dimensional spaces: 
+- First, real data will often be confined to a region of the space having *lower effective dimensionality*, and in particular the directions over which important variations in the target variables occur may be so confined. 
+- Second, real data will typically exhibit some smoothness properties (at least locally) so that for the most part small changes in the input variables will produce small changes in the target variables, and so we can exploit local interpolation-like techniques to allow us to make predictions of the target variables for new values of the input variables. For example, consider images captured of identical planar objects on a conveyor belt, in which the goal is to determine their orientation. Each image is a point in a high-dimensional space whose dimensionality is determined by the number of pixels. Because the objects can occur at different positions within the image and in different orientations, there are three degrees of freedom of variability between images, and a set of images will live on a three dimensional manifold embedded within the high-dimensional space.
+
+## Why Reducing Dimensionality?
+
+Fortunately, in real-world problems, it is often possible to reduce the number of features considerably, turning an intractable problem into a tractable one. For example in image data, two neighboring pixels are often highly correlated: if you merge them into a single pixel (e.g., by taking the mean of the two pixel intensities), you will not lose much information!
 
 Reducing dimensionality does lose some information (just like compressing an image to JPEG can degrade its quality), so even though it will speed up training, it may also make your system perform slightly worse. It also makes your pipelines a bit more complex and thus harder to maintain. So you should first try to train your system with the original data before considering using dimensionality reduction if training is too slow. In some cases, however, reducing the dimensionality of the training data may filter out some noise and unnecessary details and thus result in higher performance (but in general it won’t; it will just speed up training).
 
