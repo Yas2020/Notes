@@ -83,14 +83,12 @@
     - [Classification Trees](#classification-trees)
         - [Advantages of decision trees over KNN](#advantages-of-decision-trees-over-knn)
         - [Advantages of KNN over decision trees](#advantages-of-knn-over-decision-trees)
-  - [Ensemble](#ensemble)
-    - [Bagging](#bagging)
-      - [Random Forest](#random-forest)
-        - [Feature Importance](#feature-importance)
-    - [Boosting](#boosting)
-      - [Gradient Boosting Trees (XGBoost)](#gradient-boosting-trees-xgboost)
-        - [Hyperparameter Tuning in XGBoost](#hyperparameter-tuning-in-xgboost)
-    - [Stacking](#stacking)
+  - [Bagging](#bagging)
+    - [Random Forest](#random-forest)
+      - [Feature Importance](#feature-importance)
+  - [Boosting](#boosting)
+    - [Gradient Boosting Trees (XGBoost)](#gradient-boosting-trees-xgboost)
+  - [Stacking](#stacking)
     - [Voting Ensemble](#voting-ensemble)
 - [Support Vector Machine](#support-vector-machine)
     - [Hard Margin SVM (Linearly Separable)](#hard-margin-svm-linearly-separable)
@@ -98,24 +96,22 @@
       - [Dual Form \& Kernel Trick](#dual-form--kernel-trick)
     - [Support Vector Machines and Kernels](#support-vector-machines-and-kernels)
 - [Neural Networks](#neural-networks)
-    - [Regression MLPs](#regression-mlps)
-    - [Classification MLPs](#classification-mlps)
-    - [Fitting Neural Networks](#fitting-neural-networks)
-      - [Backpropogation](#backpropogation)
-      - [Neural Nets: Non-convex Optimization](#neural-nets-non-convex-optimization)
-      - [Training Neural Networks](#training-neural-networks)
-        - [Random Initialization](#random-initialization)
-        - [Vanishing/Exploding Gradients](#vanishingexploding-gradients)
-        - [Batch Normalization](#batch-normalization)
-        - [Clipping Gradients](#clipping-gradients)
-        - [Number of Hidden Units and Layers](#number-of-hidden-units-and-layers)
-        - [Regularization in Neural Networks](#regularization-in-neural-networks)
-        - [Dropout](#dropout)
+  - [Fitting Neural Networks](#fitting-neural-networks)
+    - [Backpropogation](#backpropogation)
+    - [Neural Nets: Non-convex Optimization](#neural-nets-non-convex-optimization)
+    - [Training Neural Networks](#training-neural-networks)
+      - [Random Initialization](#random-initialization)
+      - [Vanishing/Exploding Gradients](#vanishingexploding-gradients)
+      - [Batch Normalization](#batch-normalization)
+      - [Clipping Gradients](#clipping-gradients)
+      - [Number of Hidden Units and Layers](#number-of-hidden-units-and-layers)
+      - [Regularization in Neural Networks](#regularization-in-neural-networks)
+      - [Dropout](#dropout)
       - [Early stopping](#early-stopping-1)
       - [Faster Optimizers](#faster-optimizers)
-        - [Learning Rate, Batch Size and Other Hyperparameters](#learning-rate-batch-size-and-other-hyperparameters)
+      - [Learning Rate, Batch Size and other Hyperparameters](#learning-rate-batch-size-and-other-hyperparameters)
       - [Reusing Pretrained Layers](#reusing-pretrained-layers)
-    - [Mixture Density Networks](#mixture-density-networks)
+  - [Mixture Density Networks (Optional)](#mixture-density-networks-optional)
 - [Convolutional Neural Networks](#convolutional-neural-networks)
     - [Eﬃciency of Edge Detection](#eﬃciency-of-edge-detection)
     - [Pooling](#pooling)
@@ -134,27 +130,25 @@
   - [Curse of Dimensionality](#curse-of-dimensionality)
   - [Why Reducing Dimensionality?](#why-reducing-dimensionality)
   - [Main Approaches for Dimensionality Reduction](#main-approaches-for-dimensionality-reduction)
-  - [Linear dimensionality reduction (PCA)](#linear-dimensionality-reduction-pca)
-        - [Spectral Decomposition:](#spectral-decomposition)
-      - [Singular value decomposition](#singular-value-decomposition)
+  - [Linear Dimensionality Reduction (PCA)](#linear-dimensionality-reduction-pca)
+    - [Spectral Decomposition:](#spectral-decomposition)
+    - [Singular Value Decomposition](#singular-value-decomposition)
       - [Limitation of PCA](#limitation-of-pca)
   - [Autoencoders (Advanced PCA) and Nonlinear Dimensionality Reduction](#autoencoders-advanced-pca-and-nonlinear-dimensionality-reduction)
   - [Unsupervised Learning Techniques: Clustering](#unsupervised-learning-techniques-clustering)
     - [K-Means](#k-means)
     - [Mixtures of Gaussians](#mixtures-of-gaussians)
-      - [The General EM Algorithm](#the-general-em-algorithm)
-      - [Relation to K-means](#relation-to-k-means)
+    - [The General EM Algorithm](#the-general-em-algorithm)
+    - [Relation to K-means](#relation-to-k-means)
     - [Bayesian Gaussian Mixture Models](#bayesian-gaussian-mixture-models)
     - [The EM Algorithm: Why it Works](#the-em-algorithm-why-it-works)
 - [Interpreting ML](#interpreting-ml)
-    - [partial dependence plot](#partial-dependence-plot)
-    - [Permutation importance](#permutation-importance)
     - [SHAPLEY Values](#shapley-values)
   - [SHAP](#shap)
-        - [Force plot](#force-plot)
+      - [Force plot](#force-plot)
 - [MLOps](#mlops)
   - [Workspace Setup](#workspace-setup)
-    - [Pyhton Environment](#pyhton-environment)
+    - [Python Environment](#python-environment)
   - [Data Mining Tools](#data-mining-tools)
         - [When to Use Dask](#when-to-use-dask)
       - [Spark:](#spark)
@@ -1761,9 +1755,9 @@ which are known as the Normal Equation for the least squares problem. Here $Φ$ 
 The quantity $\bm \Phi^{\dagger} = (\bm \Phi^T \bm \Phi)^{-1} \bm \Phi^T$ is known as the Moore-Penrose pseudo-inverse of the matrix. It can be regarded as a generalization of the notion of matrix inverse to nonsquare matrices. We can also maximize the log likelihood function  with respect to the noise precision parameter $β$, giving
 
 \[
-\begin{align}
+\begin{align*}
 \frac{1}{\beta_{ML}} = \frac{1}{N}\sum_{n=1}^N \big( y(x_n, \bm w_{ML}) - t_n\big)^2 = \frac{1}{N}\sum_{n=1}^N \{ t_n - \bm w^T_{ML} \bm \phi(\bm x_n)\}^2
-\end{align}
+\end{align*}
 \]
 
 and so we see that the inverse of the noise precision, that is $\frac{1}{N}\sum_{n=1}^N \{ t_n - \bm w^T_{ML} \bm \phi(\bm x_n)\}^2$ is given by the residual variance of the target values around the regression function and its being minimized. Geometrical interpretation of the least-squares solution is the following: **the least-squares regression function is obtained by finding the *orthogonal projection* $\bm y = \bm w^T_{ML} \bm \Phi$ of the data vector $\bm t=(t_1, . . . , t_N)$ onto the lower-dimensional subspace spanned by **feature vectors** $\bm φ_j = (\phi_j(\bm x_1),\dots, \phi_j(\bm x_N))$**. The reason for orthogonality is that this projection minimizes $||\bm t - \bm y || = || \bm t -  \bm w^T_{ML} \bm \Phi ||$.
@@ -1919,9 +1913,9 @@ h(\bm x) = \mathbb E[t\mid \bm x] = \int t p(t\mid x)dt
 We showed that the expected squared loss can be written in the form
 
 $$
-\begin{align}
+\begin{align*}
 \mathbb E[L] = \int  \Big(y(\bm x) −  h(\bm x) \Big)^2 p(\bm x)d\bm x  + \int \Big(h(\bm x) - t \Big)^2 p(\bm x, t)d\bm x dt
-\end{align}
+\end{align*}
 $$
 
 Recall that the second term, which is independent of $y(\bm x)$, arises from the intrinsic noise on the data and represents the minimum achievable value of the expected loss. The first term depends on our choice for the function $y(\bm x)$, and we will seek a solution for $y(\bm x)$ which makes this term a minimum. Because it is nonnegative, the smallest that we can hope to make this term is zero.  However, in practice we have a dataset $\mathcal D$ containing only a finite number N of data points not unlimited amount of data, and consequently we try to estimate the regression function $h(\bm x)$. If we model the $h(\bm x)$ using a parametric function $y(\bm x, \bm w)$ governed by a parameter vector $\bm w$, then from a Bayesian perspective the uncertainty in our model is expressed through a posterior distribution over $\bm w$. 
@@ -2497,11 +2491,17 @@ In logistic regression, MLE can overfit because it has no mechanism to limit mod
 
 Model combination is to select one of the models to make the prediction depending on the input variables. Thus different models become responsible for making predictions in different regions of input space. One widely used framework of this kind is known as a **decision tree** in which the selection process can be described as a sequence of binary selections corresponding to the traversal of a tree structure. In this case, the individual models are generally chosen to be very simple, and the overall flexibility of the model arises from the input-dependent selection process. Decision trees can be applied to both classification and regression problems. One limitation of decision trees is that the division of input space is based on hard splits in which only one model is responsible for making predictions for any given value of the input variables. The decision process can be softened by moving to a probabilistic framework for combining models like **Gaussian Mixture Models**. Such models can be viewed as mixture distributions in which the component densities, as well as the mixing coefficients, are conditioned on the input variables and are known as **mixtures of experts**.
 
+An **ensemble** of models is a set of models whose individual decisions are combined in some way to to create a new model. For this to be nontrivial, the models must diﬀer somehow, e.g.
+- diﬀerent algorithms
+- diﬀerent choice of hyperparameters of the same model
+- trained on diﬀerent samples of data
+- trained with diﬀerent weighting of the training examples
+
+In fact, ensemble methods work best when the submodels are *as independent from one another as possible*. One way to get diverse models is to train them using very different algorithms. This increases the chance that they will make very different types of errors, improving the ensemble’s accuracy. 
+
 ##  Tree-Based Methods
 
-Tree-based methods partition the feature space into a set of rectangles whose edges are aligned with the axes, and then assigning a simple model (for example, a constant) to each region. This process repeats recursively until the desired performance is reached. 
-
-A well-known tree algorithm is the **Decision Tree**. Decision Trees make very few assumptions about the training data (as opposed to linear models, which obviously assume that the data is linear, for example). They can be viewed as a model combination method in which only one model is responsible for making predictions at any given point in input space. The process of selecting a specific model, given a new input $\bm x$, can be described by a sequential decision making process corresponding to the traversal of a binary tree (one that splits into two branches at each node). At internal nodes, spliting variable and its threshold is calculated, branching is determined by threshold value and  leaf nodes are outputs (predictions). Each path from root to a leaf defines a region $R_m$ of input space. The following figure illustration of a recursive binary partitioning of the input space, along with the corresponding tree structure.
+Tree-based methods partition the feature space into a set of rectangles whose edges are aligned with the axes, and then assigning a simple model (for example, a constant) to each region. This process repeats recursively until the desired performance is reached. A well-known tree algorithm is the **Decision Tree**. Decision Trees make very few assumptions about the training data (as opposed to linear models, which obviously assume that the data is linear, for example). They can be viewed as a model combination method in which only one model is responsible for making predictions at any given point in input space. The process of selecting a specific model, given a new input $\bm x$, can be described by a sequential decision making process corresponding to the traversal of a _binary tree_ (one that splits into two branches at each node). At internal nodes, _spliting variable_ and _its threshold_ is calculated, branching is determined by threshold value and leaf nodes are outputs (predictions). Each path from root to a leaf defines a region $R_m$ of input space. The following figure illustration of a recursive binary partitioning of the input space, along with the corresponding tree structure.
 
 <p align="center">
     <img src="./assets/machine-learning/trees2.png" alt="drawing" width="400" height="300" style="center" />
@@ -2513,18 +2513,16 @@ The first step divides the whole of the input space into two regions according t
     <img src="./assets/machine-learning/trees1.png" alt="drawing" width="400" height="300" style="center" />
 </p>
 
-For any new input $\bm x$, we determine which region it falls into by starting at the top of the tree at the root node and following a path down to a specific leaf node according to the decision criteria at each node. 
-
-If left unconstrained, the tree structure will adapt itself to the training data, fitting it very closely, and most likely overfitting it. Such a model is often called a **nonparametric model**, not because it does not have any parameters (it often has a lot) but because the number of parameters is not determined prior to training, so the model structure is free to stick closely to the data.  To avoid overfitting the training data, you need to restrict the Decision Tree’s freedom during training. As you know by now, this is called regularization. Reducing `max_depth` will regularize the model and thus reduce the risk of overfitting. Other parameters include `min_samples_split` (the minimum number of samples a node must have before it can be split), `min_samples_leaf` (the minimum number of samples a leaf node must have), min_weight_fraction_leaf (same as `min_samples_leaf` but expressed as a fraction of the total number of weighted instances), `max_leaf_nodes` (maximum number of leaf nodes), and `max_features` (maximum number of features that are evaluated for splitting at each node). Increasing `min_*`  hyperparameters or reducing `max_*` hyperparameters will regularize the model.
+For any new input $\bm x$, we determine which region it falls into by starting at the top of the tree at the root node and following a path down to a specific leaf node according to the decision criteria at each node. If left unconstrained, the tree structure will adapt itself to the training data, fitting it very closely, and most likely overfitting it. Such a model is often called a **nonparametric model**, not because it does not have any parameters (it often has a lot) but because the number of parameters is not determined prior to training, so the model structure is free to stick closely to the data.  To avoid overfitting the training data, you need to restrict the Decision Tree’s freedom during training. As you know by now, this is called regularization. Reducing `max_depth` will regularize the model and thus reduce the risk of overfitting. Other parameters include `min_samples_split` (the minimum number of samples a node must have before it can be split), `min_samples_leaf` (the minimum number of samples a leaf node must have), min_weight_fraction_leaf (same as `min_samples_leaf` but expressed as a fraction of the total number of weighted instances), `max_leaf_nodes` (maximum number of leaf nodes), and `max_features` (maximum number of features that are evaluated for splitting at each node). Increasing `min_*`  hyperparameters or reducing `max_*` hyperparameters will regularize the model.
 
 
-Decision tree follows a **greedy algorithm**: it greedily searches for an optimum split at the top level, then repeats the process at each level. It does not check whether or not the split will lead to the lowest possible impurity several levels down. A greedy algorithm often produces a reasonably good solution, but it is not guaranteed to be the global optimal solution. Unfortunately, finding the optimal tree is known to be an NP-Complete problem: it requires $\mathcal O(\exp(m))$ time, making the problem intractable even for fairly small training sets. This is why we must settle for a “reasonably good” solution. 
+Decision tree follows a **greedy algorithm**: it greedily searches for an optimum split at the top level, then repeats the process at each level. It does not check whether or not the split will lead to the lowest possible impurity several levels down. A greedy algorithm often produces a reasonably good solution, but it is not guaranteed to be the global optimal solution. Unfortunately, finding the optimal tree is known to be an **NP-Complete** problem: it requires $\mathcal O(\exp(m))$ time, making the problem intractable even for fairly small training sets. This is why we must settle for a “reasonably good” solution. 
 
 > Note: P is the set of problems that can be solved in polynomial time. NP is the set of problems whose solutions can be verified in polynomial time. An NP-Hard problem is a problem to which any NP problem can be reduced in polynomial time. An NP-Complete problem is both NP and NP-Hard. A major open mathematical question is whether or not P = NP. If P ≠ NP (which seems likely), then no polynomial algorithm will ever be found for any NP-Complete problem (except perhaps on a quantum computer).
 
 <br>
 
-A Decision Tree can also estimate the probability that an instance belongs to a particular class k: first it traverses the tree to find the leaf node for this instance, and then it returns the ratio of training instances of class k in this node. Note that decision trees are not probabilistic graphical models.
+A Decision Tree can also estimate the probability that an instance belongs to a particular class $k$: first it traverses the tree to find the leaf node for this instance, and then it returns the ratio of training instances of class $k$ in this node. Decision trees are not probabilistic graphical models.
 
 ### Regression Trees
 
@@ -2585,60 +2583,55 @@ All three are similar, but cross-entropy and the Gini index are diﬀerentiable,
 - Can incorporate interesting distance measures (e.g. shape contexts)
 - Typically make better predictions in practice
 
-One major problem with trees is their high variance. Often a small change in the data can result in a very diﬀerent series of splits, making interpretation somewhat precarious. The major reason for this instability is the hierarchical nature of the process: the eﬀect of an error in the top split is propagated down to all of the splits below it. **Bagging** averages many trees to reduce this variance. As we’ll see next lecture, ensembles of decision trees are much stronger. But they lose some of the advantages listed above.
+One major problem with trees is their high variance. Often a small change in the data can result in a very diﬀerent series of splits, making interpretation somewhat precarious. The major reason for this instability is the hierarchical nature of the process: the eﬀect of an error in the top split is propagated down to all of the splits below it. As we’ll see next lecture, ensembles of decision trees are much stronger at the cost of losing interpretability.
 
-## Ensemble
 
-An ensemble of predictors is a set of predictors whose individual decisions are combined in some way to classify new examples. For this to be nontrivial, the classifiers must diﬀer somehow, e.g.
-- Diﬀerent algorithm
-- Diﬀerent choice of hyperparameters
-- Trained on diﬀerent data
-- Trained with diﬀerent weighting of the training examples
+## Bagging
 
-In fact, ensemble methods work best when the predictors are as _independent _ from one another as possible. One way to get diverse classifiers is to train them using very different algorithms. This increases the chance that they will make very different types of errors, improving the ensemble’s accuracy. 
-
-### Bagging
-
-The simplest way to construct a ensemble is to average the predictions of a set of individual independent models. A common approach is to use the same training algorithm for every predictor, but to train them on different random subsets of the training set. Given we have only a single dataset, this allows us to introduce variability between the different models within the committee. One approach is to use **bootstrap datasets**. Consider a regression problem in which we are trying to predict the value of a single continuous variable, and suppose we generate $M$ bootstrap datasets and then use each to train a separate copy $y_m(\bm x)$ of a predictive model where $m = 1, . . . , M$. The committee prediction is given by
+The simplest way to construct a ensemble is to average the predictions of a set of individual independent models. A common approach is to use the same training algorithm for every model, but to *train them on different random subsets of the training set*. Given we have only a single dataset, this allows us to introduce variability between the different models within the committee. One approach is to use *bootstrap datasets*. Consider a regression problem in which we are trying to predict the value of a single continuous variable, and suppose we generate $M$ bootstrap datasets and then use each to train a separate copy $y_m(\bm x)$ of a model where $m = 1, . . . , M$. The committee prediction is given by
 
 $$
 y_{\text{COM}} = \frac{1}{M}\sum_{m=1}^M y_m(\bm x)
 $$
 
-This procedure is known as **bootstrap aggregation** or **bagging**. Suppose the true regression function that we are trying to predict is given by $h(x)$, so that the output of each of the models can be written as the true value plus an error in the form $y_m(\bm x) = h(\bm x) + ϵ_m(\bm x)$ so that $\mathbb E_{\bm x} [ϵ_m(\bm x)] = 0$. How does this aﬀect the three terms of the expected loss in the bias-variance equation?
+This procedure is known as **bootstrap aggregation** or **bagging**. Suppose the true regression function that we are trying to predict is given by $h(x)$, so that the output of each of the models can be written as the true value plus an error in the form $y_m(\bm x) = h(\bm x) + ϵ_m(\bm x)$ so that $\mathbb E [ϵ_m(\bm x)] = 0$. How does this aﬀect the three terms of the expected loss in the bias-variance equation?
 - Bayes error: unchanged because we have no control over it
 - Bias: unchanged, since the averaged prediction has the same expectation 
   $$ 
-  \mathbb E_{\bm x}[y_{\text{COM}}] = \mathbb E_{\bm x}[\frac{1}{M}\sum_{n=1}^M y_m(\bm x)] = \mathbb E_{\bm x}[y_m(\bm x)]
+  \mathbb E[y_{\text{COM}}] = \mathbb E[\frac{1}{M}\sum_{n=1}^M y_m(\bm x)] = \mathbb E[y_m(\bm x)]
   $$
 - Variance: reduced, assuming errors are independent (independent samples and independent predictions):
   $$
     \text{Var} [y_{\text{COM}}] =  \text{Var} \Big( \frac{1}{M}\sum_{m=1}^M y_m(\bm x) \Big) = \frac{1}{M^2}\sum_{m=1}^M \text{Var} [y_m(\bm x)] = \frac{1}{M}\ \text{Var} [y_m(\bm x)]
   $$
 
-This apparently dramatic result suggests that the average error of a model can be reduced by a factor of M simply by averaging M versions of the model. Unfortunately, it depends on the key assumption that the errors due to the individual models are uncorrelated. In practice, the errors are typically highly correlated, and the reduction in overall error is generally small. It can, however, be shown that the expected committee error will not exceed the expected error of the constituent models, so that $\text{Var} [y_{\text{COM}}] \leq \text{Var} [y_m(\bm x)]$. Ironically, it can be advantageous to introduce additional variability into your algorithm, as long as it reduces the correlation between sampled predictions. It can help to use average over multiple algorithms, or multiple configurations of the same algorithm. That is why **random forests** exists. 
+This apparently dramatic result suggests that the average error of a model can be reduced by a factor of $M$ simply by averaging $M$ versions of the model. Unfortunately, it depends on the key assumption that the errors due to the individual models are uncorrelated. In practice, the errors are typically highly correlated, and the reduction in overall error is generally small. It can, however, be shown that the expected committee error will not exceed the expected error of the constituent models, so that $\text{Var} [y_{\text{COM}}] \leq \text{Var} [y_m(\bm x)]$. Ironically, it can be advantageous to introduce additional variability into your algorithm, as long as it reduces the correlation between sampled predictions. It can help to use average over multiple algorithms, or multiple configurations of the same algorithm. That is why *random forests* exists. 
 
-#### Random Forest
+### Random Forest
 
-If all classifiers are able to estimate class probabilities (i.e., they have a pre `dict_proba()` method in Scikit-Learn) then you can predict the class with the highest class probability, averaged over all the individual classifiers. This is called *soft voting*. It often achieves higher performance than *hard voting *because it gives more weight to highly confident votes. Once all predictors are trained, the ensemble can make a prediction for a new instance by simply aggregating the predictions of all predictors. The aggregation function is typically the statistical mode (i.e., the most frequent prediction, just like a hard voting classifier) for classification, or the average for regression.
+If all classifiers are able to estimate class probabilities (i.e., they have a pre `dict_proba()` method in Scikit-Learn) then you can predict the class with the highest class probability, averaged over all the individual classifiers. This is called *soft voting*. It often achieves higher performance than *hard voting* because it gives more weight to highly confident votes. Once all predictors are trained, the ensemble can make a prediction for a new instance by simply aggregating the predictions of all predictors. The aggregation function is typically the statistical mode (i.e., the most frequent prediction, just like a hard voting classifier) for classification, or the average for regression.
 
-The Random Forest algorithm introduces extra randomness when growing trees; instead of searching for the very best feature when splitting a node, it searches for the best feature among a random subset of features. This results in a greater tree diversity, which (once again) trades a higher bias for a lower variance, generally yielding an overall better model. In other words, RF is a bagging algorithm of decision trees, with one extra trick to decorrelate the predictions: _when choosing each node of the decision tree, choose a random subset of d input features, and only consider splits on those features_. Random forests often work well with no tuning whatsoever. In short, 
+**The Random Forest (RF) algorithm is a bagging algorithm of decision trees, with one extra trick to decorrelate the predictions: when choosing the best feature to split each node of the decision tree, choose it from a random subset of $d$ input features, and only consider splits on those features**. This results in a greater tree diversity, which (once again) trades a higher bias for a lower variance, generally yielding an overall better model. Random forests often work well with no tuning whatsoever. In short, 
 - bagging reduces overfitting by averaging predictions
 - does not reduce bias
 - random forest add more randomness to remove correlation between classifiers
 
-##### Feature Importance
+#### Feature Importance
 
-Yet another great quality of Random Forests is that they make it easy to measure the relative importance of each feature. Scikit-Learn measures a feature’s importance by looking at how much the tree nodes that use that feature reduce impurity on average (across all trees in the forest). More precisely, it is a weighted average, where each node’s weight is equal to the number of training samples that are associated with it. Random Forests are very handy to get a quick understanding of what features actually matter, in particular if you need to perform feature selection.
+Yet another great quality of Random Forests is that they make it easy to measure the relative importance of each feature. Scikit-Learn measures a feature’s importance by looking at how much the tree nodes that use that feature reduce impurity on average across all trees in the forest. More precisely, it is a weighted average, where each node’s weight is equal to the number of training samples that are associated with it. Random Forests are very handy to get a quick understanding of what features actually matter, in particular if you need to perform feature selection.
 
 
-### Boosting 
+## Boosting 
 
-**Boosting** (originally called hypothesis boosting) refers to any Ensemble method that can combine several weak learners into a strong learner. The general idea of most boosting methods is to train predictors sequentially, each trying to correct its predecessor. AdaBoost (short for Adaptive Boosting) and Gradient Boosting are popular ones. Boosting can achieve low bias but sensitive to overfitting without regularization. AdaBoost, short for ‘adaptive boosting’, developed by Freund and Schapire (1996) is a common boosting algorithm. Boosting can give good results even if the base models have a performance that is only slightly better than random, and hence sometimes the base models are known as _weak learners_. Weak learner is a learning algorithm that outputs a hypothesis (e.g., a classifier) that performs slightly better than chance, e.g., it predicts the correct label with probability 0.6. We are interested in weak learners that are computationally eﬃcient.
+**Boosting** (originally called hypothesis boosting) refers to any ensemble method that can combine several weak learners into a strong learner. The general idea of most boosting methods is to train models sequentially, each trying to correct its predecessor. **AdaBoost** (short for Adaptive Boosting) and **Gradient Boosting** are popular ones. Boosting can achieve low bias but sensitive to overfitting without regularization. Boosting can give good results even if the base models have a performance that is only slightly better than random, and hence sometimes the base models are known as _weak learners_. Weak learner is a learning algorithm that outputs a hypothesis (e.g., a classifier) that performs slightly better than chance, e.g., it predicts the correct label with probability 0.6. We are interested in weak learners that are computationally eﬃcient.
 - Decision trees
 - Even simpler: Decision Stump: A decision tree with only a single split (i.e. a single node)
 
-Given a vector of predictor variables $X$, a classifier $G(X)$ produces a prediction taking one of the two values $\{−1,1\}$. The error rate on the training sample is $\text{err}_m = \frac{\sum_{i=1}^N w_i I(y_i \neq G(x_i))}{\sum_i w_i}$. The purpose of boosting is to sequentially apply the weak classification algorithm to repeatedly modified versions of the data, thereby producing a sequence of weak classifiers $G_m(x)$, $m = 1,2,...,M$. The data modifications at each boosting step consist of applying weights $w_1,w_2,\dots,w_N$ to each of the training observations $(x_i,y_i)$, $i= 1,2,...,N$. Initially all of the weights are set to $w_i = 1/N$, so that the first step simply trains the classifier on the data in the usual manner. For each successive iteration $m = 2,3,...,M$ the observation weights are individually modified and the classification algorithm is reapplied to the weighted observations:
+AdaBoost improves models sequentially by increasing the weight of examples misclassified by the previous model implying higher cost for the loss function which the model needs to reduce. Given a vector of predictor variables $X$, a classifier $G(X)$ produces a prediction taking one of the two values $\{−1,1\}$. The error rate on the training sample is 
+
+$$\text{err}_m = \frac{\sum_{i=1}^N w_i I(y_i \neq G(x_i))}{\sum_i w_i}.$$
+
+The purpose of boosting is to sequentially apply the weak classification algorithm to repeatedly modified versions of the data, thereby producing a sequence of weak classifiers $G_m(x)$, $m = 1,2,...,M$. The data modifications at each boosting step consist of applying weights $w_1,w_2,\dots,w_N$ to each of the training observations $(x_i,y_i)$, $i= 1,2,...,N$. Initially all of the weights are set to $w_i = 1/N$, so that the first step simply trains the classifier on the data in the usual manner. For each successive iteration $m = 2,3,...,M$ the observation weights are individually modified and the classification algorithm is reapplied to the weighted observations:
 
 $$
 \begin{align*}
@@ -2647,7 +2640,7 @@ w_i^{(m+1)} & \leftarrow w_i^{(m)} e^{\alpha_m I(y_i \neq G_m(x_i))}
 \end{align*}
 $$
 
-At step $m$, those observations that were misclassified by the previous classifier $G_{m−1}(x)$ have their weights increased, whereas the weights are decreased for those that were classified correctly. Thus as iterations proceed, observations that are diﬃcult to classify correctly receive ever-increasing influence. Each weak learner is thereby forced to concentrate on those training observations that are missed by previous ones in the sequence to reduce the weighted error because misclassifying a high-weight example hurts more than misclassifying a low-weight one. In AdaBoost, input weights tell the new learner which samples to focus on — they affect the loss function during training. The learner is trained to do well on the weighted data distribution, not uniformly across the dataset. Make predictions using the final model, which is given by
+At step $m$, those observations that were misclassified by the previous classifier $G_{m−1}(x)$ have their weights increased, whereas the weights are decreased for those that were classified correctly. Thus as iterations proceed, observations that are diﬃcult to classify correctly receive ever-increasing influence. Each weak learner is thereby forced to concentrate on those training observations that are missed by previous ones in the sequence to reduce the weighted error because misclassifying a high-weight example hurts more than misclassifying a low-weight one. In AdaBoost, input weights tell the new learner which samples to focus on — they affect the loss function during training. *The learner is trained to do well on the weighted data distribution, not uniformly across the dataset*. Make predictions using the final model, which is given by
 
 $$
 Y_M (\bm x) = \text{sign} \Big( \sum_{m=1}^M \alpha_m y_m(\bm x) \Big)
@@ -2659,9 +2652,9 @@ Key steps of AdaBoost:
 -  We add this weak classifier to the ensemble of classifiers. This is our new classifier.
 -  We repeat the process many times.
 
-AdaBoost reduces bias by making each classifier focus on previous mistakes. Friedman et al. (2000) gave a different and very simple interpretation of boosting in terms of the sequential minimization of an exponential error function. See p659.
+AdaBoost reduces bias by making each classifier focus on previous mistakes. Friedman et al. (2000) gave a different and very simple interpretation of boosting in terms of the sequential minimization of an exponential error function. See page 659 of [The Elements of Statistical Learning](https://www.sas.upenn.edu/~fdiebold/NoHesitations/BookAdvanced.pdf).
 
-#### Gradient Boosting Trees (XGBoost)
+### Gradient Boosting Trees (XGBoost)
 
 **Gradient Boosting** works by sequentially adding predictors to an ensemble, each one correcting its predecessor. However, instead of tweaking the instance weights at every iteration like AdaBoost does, this method tries to _fit the new predictor to the residual errors made by the previous predictor_. Boosting trees also have extra parameters to induce more variability in predictors. Parameters like `subsample` hyperparameter, which specifies the fraction of training instances to be used for training each tree. For example, if `subsample=0.25`, then each tree is trained on 25% of the training instances, selected randomly. As you can probably guess by now, this trades a higher bias for a lower variance. An optimized implementation of Gradient Boosting is available in the popular python library **XGBoost**, which stands for _Extreme Gradient Boosting_. XGBoost aims at being extremely fast, scalable and portable. 
 
@@ -2670,7 +2663,7 @@ $$
 \hat y_i = \sum_{k=1}^K f_k(x_i)
 $$
 
-where functions $f_k$  each containing the structure of the tree and the leaf scores. It is intractable to learn all the trees at once. Instead, an **additive strategy** is used: fix what has been learned, and add one new tree at a time. Which tree do we want at each step? Add the one that optimizes our objective!
+where functions $f_k$  each containing the structure of the tree and the leaf scores. It is intractable to learn all the trees at once. Instead, use an **additive strategy: fix what has been learned, and add one new tree at a time**. Which tree do we want at each step? Add the one that optimizes our objective!
 
 $$
 \begin{align*}
@@ -2681,7 +2674,7 @@ $$
 \end{align*}
 $$
 
-where 
+where $l$ is our loss function and
 
 $$
 \begin{align*}
@@ -2690,13 +2683,17 @@ h_i & = \frac{\partial^2}{\partial y^2} l(y_i,y) |_{y=\hat y_i^{(t-1)}},
 \end{align*}
 $$
 
-The third line is _Taylor expansion of the loss function $l$ up to the second order_ used by XGBoost. After removing constants, the objective approximately becomes: $$\sum_{i=1}^n \Big(  g_i f_t(x_i) + \frac{1}{2}h_i f_t(x_i)^2 \Big) + \omega(f_t) $$ which should be minimized for the new tree. One important advantage of this definition is that the value of the objective function only depends on  and . This is how XGBoost supports custom loss functions. We can optimize every loss function, including logistic regression and pairwise ranking, using exactly the same solver that takes  and  as input!  The value $f_t(x)$ is the score of the leaf where input $x$ belongs to in the tree $t$. Let $w \in \mathbb R^T$ be the vector of scores on the leaves of tree $t$ where $T$ is the number of leaves. In XGBoost, we define:
+and where $\omega(f_k)$ is the complexity of the tree $f_k$, defined in detail later. The third line is _Taylor expansion of the loss function $l$ up to the second order_ used by XGBoost. After removing constants, the objective approximately becomes: 
+
+$$\sum_{i=1}^n \Big(  g_i f_t(x_i) + \frac{1}{2}h_i f_t(x_i)^2 \Big) + \omega(f_t) $$ 
+
+which should be minimized for the new tree. One important advantage of this definition is that as long as loss function concerned, the value of the objective function only depends on $g_i$ and $h_i$. This is how XGBoost supports custom loss functions. We can optimize every loss function, including logistic regression and pairwise ranking, using exactly the same solver that takes $g_i$ and $h_i$  as input!  The value $f_t(x)$ is the score of the leaf where input $x$ belongs to in the tree $t$. Let $\bm w \in \mathbb R^T$ be the vector of scores on the leaves of tree $t$ where $T$ is the number of leaves. In XGBoost, we define:
 
 $$
 \omega(f) = \gamma T + \frac{1}{2}\lambda \sum_{j=1}^T w_j^2
 $$
 
-Which is the regularization part of the objective define before. Now the objective is rewritten as 
+which is the regularization part of the objective define above. Now the objective is rewritten as 
 
 $$
 \begin{align*}
@@ -2724,22 +2721,17 @@ $$
 \text{obj}^\star  = - \frac{1}{2}\sum_{j=1}^T\frac{G_j^2}{H_j+\lambda} + \gamma T \tag{\maltese}
 $$
 
-So if we have the tree structure, then we have $G_j$ and $H_j$ from which we get the optimal leaf scores for that tree structure. Having this, we can only compare two trees and say whcih one is more optimal, i.e. gives smaller objective value. What is the best tree? ideally we would enumerate all possible trees and pick the best one.  In practice this is intractable, so we will go greedy and try to optimize one level of the tree at a time at every split. According to equation $\maltese$,  the difference in the objective because of a split at a node is:
+So if we have the tree structure, then we have $G_j$ and $H_j$ from which we get the optimal leaf scores for that tree structure. Having this, we can only compare two trees and say which one is more optimal, i.e. gives smaller objective value (or smaller residual error). Now what is the best tree? ideally we would enumerate all possible trees and pick the best one.  In practice this is intractable, so we will go greedy and try to optimize one level of the tree at a time at every split. According to equation $\maltese$,  the difference in the objective because of a split at a node is:
 
 $$
 \text{Gain} = \frac{1}{2} \Big ( \frac{G^2_L}{H_L+\lambda} + \frac{G^2_R}{H_R+\lambda} - \frac{(G_L + G_R)^2}{H_L + H_R+\lambda} \Big) - \gamma
 $$
 
-If this is positive, the new objective is smaller. However the hyperparameter $\gamma$ is the minimum required gain to make a split. In XGBoost, feature importance is calculated base on the total gain obtained by all splits using the feature.  These gains are summed (or averaged) per feature over all trees and reported as feature importance. The best feature contributes most to reducing the error. It is better to use **SHAP Values** as a more modern and precise way to evaluate feature impartanct. It calculates feature attribution per prediction and can give:
-- Global feature importance
-- Local explanations (per prediction)
-- Handles feature interaction and correlation better
+If this is positive, the new objective is smaller. However the hyperparameter $\gamma$ is the minimum required gain to make a split. **In XGBoost, feature importance is calculated base on the total gain obtained by all splits using the feature.  These gains are summed (or averaged) per feature over all trees and reported as feature importance**. The best feature contributes most to reducing the error. On the other hand, increasing hyperparameter $\lambda$ would decrease the leaf scores at every split which in turn, makes splitting a more conservative because less gain would then be obatined from a split. So in XGBoost, splits are not made by impurity or variance like in standard decision trees. Instead, they’re made by directly minimizing the second-order Taylor approximation of the loss.
 
-SHAP is slower, but more accurate and interpretable, especially for regulated or sensitive domains. On the other hand, increasing hyperparameter $\lambda$ would decrease the leaf scores at every split which in turn, makes splitting a more conservative because less gain would then be obatined from a split. So in XGBoost, splits are not made by impurity or variance like in standard decision trees. Instead, they’re made by directly minimizing the second-order Taylor approximation of the loss.
+As it was clear from the objective $\text{obj}^t$, the new tree $f_t$ tries to decrease the residual of the previous model $y - \hat y^{(t-1)}$. In other words, it reduces the current model's error. The learning rate $\eta$ controls how much $f_t$ contributes to this reduction. So the new tree is added with a shrinkage to the model to imporve it. This how gradient boosting learns sequentially — always training the next model to fix the mistakes of the combined model so far.
 
-As it was clear from the above $\text{obj}^t$, the new tree $f_t$ tries to decrease the residual of the previous model $y - \hat y^{(t-1)}$. In other words, it reduces the current model's error. The learning rate $\eta$ controls how much f_t contributes to this reduction. So the new tree is added with shrinkage to the model to imporve it. This how gradient boosting learns sequentially — always training the next model to fix the mistakes of the combined model so far.
-
-Gradient boosting is a low-bias, high-variance model:
+<!-- Gradient boosting is a low-bias, high-variance model:
 
 | 🔧 Tuning           | Effect                                        |
 | ------------------- | --------------------------------------------- |
@@ -2747,9 +2739,9 @@ Gradient boosting is a low-bias, high-variance model:
 | Many deep trees     | Lowers bias but risks overfitting (↑variance) |
 | Small learning rate | More trees needed; better generalization      |
 | Regularization      | Helps reduce variance (e.g. L1/L2 in XGBoost) |
+ -->
 
-
-##### Hyperparameter Tuning in XGBoost
+Hyperparameter Tuning in XGBoost
 
 | Hyperparameter      | Purpose                                                                             |
 | ------------------- | ----------------------------------------------------------------------------------- |
@@ -2765,12 +2757,20 @@ Gradient boosting is a low-bias, high-variance model:
 Reference: [Introduction to Boosted Trees](https://xgboost.readthedocs.io/en/stable/tutorials/model.html)
 
 
-### Stacking
+ A better alternative to XGBoost feature importance is to use **SHAP Values** as a more modern and precise way to evaluate feature impartance. It calculates feature attribution per prediction and can give:
+- Global feature importance
+- Local explanations (per prediction)
+- Handles feature interaction and correlation better
 
-Stacking is based on a simple idea: instead of using trivial functions such as hard voting to aggregate the predictions of all predictors in an ensemble, why don’t we train a model to perform this aggregation? To train the blender, a common approach is to use a hold-out set. First, the training set is split in two subsets. The first subset is used to train the predictors in the first layer, say 3 predictors. To train the blender, a common approach is to use a hold-out set. First, the training set is split in two subsets. The first subset is used to train the predictors in the first layer. This ensures that the predictions are “clean,” since the predictors never saw these instances during training. Now for each instance in the hold-out set, there are three predicted values. We can create a new training set using these predicted values as input features (which makes this new training set three-dimensional), and keeping the target values. The blender is trained on this new training set, so it learns to predict the target value given the first layer’s predictions. It is actually possible to train several different blenders this way (e.g., one using Linear Regression, another using Random Forest Regression, and so on): we get a whole layer of blenders. The trick is to split the training set into three subsets.
+SHAP is slower, but more accurate and interpretable, especially for regulated or sensitive domains. 
+
+
+## Stacking
+
+Stacking is based on a simple idea: instead of using trivial functions such as hard voting to aggregate the predictions of all predictors in an ensemble, why don’t we train a model to perform this aggregation? To train the blender, a common approach is to use a hold-out set. First, the training set is split in two subsets. The first subset is used to train the predictors in the first layer, say 3 predictors. To train the blender, a common approach is to use a hold-out set.  This ensures that the predictions are “clean,” since the predictors never saw these instances during training. Now for each instance in the hold-out set, there are three predicted values. We can create a new training set using these predicted values as input features (which makes this new training set three-dimensional), and keeping the target values. The blender is trained on this new training set, so it learns to predict the target value given the first layer’s predictions. It is actually possible to train several different blenders this way (e.g., one using Linear Regression, another using Random Forest Regression, and so on): we get a whole layer of blenders. The trick is to split the training set into three subsets.
 
 - Stacking method combine diverse models (e.g., decision tree, SVM, neural net).
-- Their predictions are passed to a meta-learner (often logistic regression or another tree).
+- Their predictions are passed to a **meta-learner** (often logistic regression or another tree).
 - The meta-model learns to correct the weaknesses of the base models.
   
 🔧 Example:
@@ -2823,7 +2823,7 @@ $$
 \end{cases}
 $$
 
-Note that distant points $x^{(i)}$ to the line do not affect the solution of this problem so, we could remove it from the training set and the optimal w would be the same. The important training examples are the ones with algebraic margin 1, and are called _support vectors_. Hence, this algorithm is called the hard Support Vector Machine (SVM) (or Support Vector Classifier). SVM-like algorithms are often called max-margin or large-margin. The support vectors in hard SVM lie exactly on the margin boundaries:
+Note that distant points $x^{(i)}$ to the line do not affect the solution of this problem so, we could remove them from the training set and the optimal $\bm w$ would be the same. The important training examples are the ones with algebraic margin 1, and are called _support vectors_. Hence, this algorithm is called the hard Support Vector Machine (SVM) (or Support Vector Classifier). SVM-like algorithms are often called max-margin or large-margin. The support vectors in hard SVM lie exactly on the margin boundaries:
 
 $$
 t^{(i)}(\bm w^T\bm x^{(i)}+b) = 1
@@ -2834,7 +2834,7 @@ Removing a support vector would change the decision boundary. How can we apply t
 ### Soft Margin SVM (Real-World, Noisy Data)
 
 The strategy for solving this is to:
-- Allow some points to be within the margin or even be misclassified; we represent this with slack variables $ξ_i$.
+- Allow some points to be within the margin or even be misclassified; we represent this with *slack variables* $ξ_i$.
 - But constrain or penalize the total amount of slack as a regularizer.
 
 <p align="center">
@@ -2844,11 +2844,13 @@ The strategy for solving this is to:
 So the soft margin constraint could be expressed as:
 
 $$
+\begin{equation*}
 \begin{cases}
 \min_{\bm w, b, \bm \xi} ||\bm w||^2_2 + \gamma \sum_i \xi_i \\
  \text{s.t.}\;\; t^{(i)}(\bm w^T\bm x^{(i)}+b) \ge 1-\xi_i &\forall i= 1,\dots, N \\
  \xi_i \ge 0 &\forall i= 1,\dots, N
 \end{cases}
+\end{equation*}\tag{\dag}
 $$
 
 <!-- $γ$ is a hyperparameter that trades oﬀ the margin with the amount of slack.
@@ -2859,23 +2861,23 @@ We can simplify the soft margin constraint by eliminating $ξ_i$. The constraint
 - If $1- t^{(i)}(\bm w^T\bm x^{(i)}+b)$ is negative, $\xi_i = 0$ is the trivial solution.
 - If $1- t^{(i)}(\bm w^T\bm x^{(i)}+b)$ is positive, then the trivial solution is $\xi_i = 1- t^{(i)}(\bm w^T\bm x^{(i)}+b)$.
   
-In fact $\xi_i = \max\big (0, 1- t^{(i)}(\bm w^T\bm x^{(i)}+b)\big)$ is th solution for $\xi$. Therefore our objective is now summarizes to the following:
+In fact $\xi_i = \max\big (0, 1- t^{(i)}(\bm w^T\bm x^{(i)}+b)\big)$ is the solution for $\xi$. Therefore our objective is now summarizes to the following:
 
 $$
 \min_{\bm w, b} \sum_{i=1}^N \max\big (0, 1- t^{(i)}(\bm w^T\bm x^{(i)}+b)\big) + \frac{1}{2\gamma} ||\bm w||^2_2
 $$
 
-The loss function $L(y,t) = \max(0, 1-ty)$ is called the **hinge** loss. The second term is the L2-norm of the weights. Hence, the soft-margin SVM can be seen as a linear classifier with hinge loss and an L2 regularizer.
+The loss function $L(y,t) = \max(0, 1-ty)$ is called the **hinge** loss. The second term is the L2-norm of the weights. Hence, t**he soft-margin SVM can be seen as a linear classifier with hinge loss and an L2 regularizer**.
 
 
 #### Dual Form & Kernel Trick
-The Lagrange (primal) function corresponding to the previous optimization objective is:
+The Lagrange (primal) function corresponding to the  optimization objective ($\dag$) is:
 
 $$
 L_p = ||\bm w||^2_2 + \gamma \sum_i \xi_i - \sum_i \alpha_i \big( t^{(i)}(\bm w^T\bm x^{(i)}+b) - (1-\xi_i) \big) - \sum_i\mu_i\xi_i
 $$
 
-which we minimize with respect to $\bm w, b$ and $\xi_i$. Settig the respective derivatives to zero, we get
+which we minimize with respect to $\bm w, b$ and $\xi_i$. Setting the respective derivatives to zero, we get
 
 $$
 \begin{align}
@@ -2885,7 +2887,7 @@ $$
 \end{align}
 $$
 
-as well as the positivity constraints $α_i, µ_i, ξ_i ≥0$ for all $i$. By substituting the above equations into $L_P$, we obtain the Lagrangian (Wolfe) dual objective function
+as well as the positivity constraints $α_i, µ_i, ξ_i ≥0$ for all $i$. By substituting the above equations into $L_P$, we obtain the **Lagrangian (Wolfe) dual** objective function
 
 $$
 \max_{\alpha} \sum_{i=1}^n \alpha_i - \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i\alpha_j t^{(i)} t^{(j)}   \bm {x^{(i)}}^T  \bm {x^{(j)}} 
@@ -2915,7 +2917,7 @@ $$
 t^{(i)}(\bm {\hat w}^T\bm x^{(i)} + \hat b) = 1- \hat \xi_i
 $$
 
-otherwise condition (4) implies $\hat α_i = 0$. These observations are called the **support vectors**, since the solution $\bm {\hat w}$ only depends on them. Among these support points, some will lie on the edge of the margin $\hat ξ_i = 0$, some inside the margin $0 < \hat ξ_i < 1$, and others are misclassified $\hat ξ_i > 1$ (on the wrong side of the decision boundary).
+otherwise condition (4) implies $\hat α_i = 0$. These observations are called the **support vectors**, since the solution $\bm {\hat w}$ only depends on them. Among these support points, some will lie on the edge of the margin $\hat ξ_i = 0$, some inside the margin $0 < \hat ξ_i < 1$, and others are misclassified $\hat ξ_i > 1$ and outside of the margin on the wrong side of the decision boundary.
 
 ### Support Vector Machines and Kernels
 
@@ -2948,7 +2950,7 @@ f(x) = \bm w^T h(\bm x) + b & = \sum_i \hat \alpha_i t^{(i)} h(\bm x^{(i)})^Th(\
 \end{align*} 
 $$
 
-In fact, we need not specify the transformation $h(\bm x)$ at all, but require only knowledge of the kernel function $K(\bm x^{(i)}, \bm x^{(j)}) = \left< h(\bm x^{(i)}) h(\bm x^{(j)})\right>$ that computes inner products in the transformed space. $K$ should be a symmetric positive (semi-) definite function. Three popular choices for K in the SVM literature are:
+In fact, we need not specify the transformation $h(\bm x)$ at all, but require only knowledge of the kernel function $K(\bm x^{(i)}, \bm x^{(j)}) = \left< h(\bm x^{(i)}), h(\bm x^{(j)})\right>$ that computes inner products in the transformed space. $K$ should be a symmetric positive (semi-) definite function. Three popular choices for $K$ in the SVM literature are:
 
 - $d$th-Degree polynomial: $K(x,x') = (1 + ⟨x,x'⟩)^d$
 - Radial basis: $K(x,x') = \exp(−γ∥x−x'∥^2)$,
@@ -2988,9 +2990,9 @@ Neural networks are therefore said to be universal approximators. For example, a
 
 We can connect lots of units together into a _directed acyclic graph_. This gives a _feed-forward_ neural network. That’s in contrast to _recurrent_ neural networks, which can have cycles. Typically, units are grouped together into _layers_. Each layer connects N input units to M output units. In the simplest case, all input units are connected to all output units. We call this a _fully connected_ layer. Layer structure of neural networks provide modularity: we can implement each layer’s computations as a black box and then combine or stack them as need. Some common activation functions are:
 - Linear: $y=x$ 
-- Rectified Linear Unit (ReLU): $y = \max(0, x)$
+- **Rectified Linear Unit (ReLU)**: $y = \max(0, x)$
 - Hyperbolic Tangent ($\tanh$)
-- Logisic Sgimoid
+- Logisic Sigmoid
 
 The rate of activation of the sigmoid depends on the norm of $\bm a_k$, and if $||\bm a_k||$ is very small, the unit will indeed be operating in the linear part of its activation function.
 
@@ -2998,26 +3000,28 @@ The rate of activation of the sigmoid depends on the norm of $\bm a_k$, and if $
     <img src="./assets/machine-learning/sigmoid.png" alt="drawing" width="400" height="250" style="center" />
 </p>
 
-The choice of activation function is determined by the nature of the data and the assumed distribution of target variables. Sigmoid and tanh squash inputs to small ranges making their derivatives become tiny for large inputs (i.e., vanishing gradients). But with ReLU, the gradient is strong and doesn’t vanish for $x>0$. It is very fast to compute and empirically, ReLU often leads to faster training and better local minima in deep networks compared to sigmoid or tanh. On the other hand, If a neuron’s input is always negative, its output is always 0, and its gradient is 0 — it never learns. To fix this, **Leaky ** ReLU is used: small slope for $x<0$, e.g., $\text{LeakyReLU}(x)=\max(0.01x,x)$. Since the output of ReLU is not bounded, gradient can explode in deep nets if not normalized properly which BatchNormalization iecomes useful here.
+The choice of activation function is determined by the nature of the data and the assumed distribution of target variables. Sigmoid and tanh squash inputs to small ranges making their derivatives become tiny for large inputs (i.e., vanishing gradients). But with ReLU, the gradient is strong and doesn’t vanish for $x>0$. It is very fast to compute and empirically, ReLU often leads to faster training and better local minima in deep networks compared to sigmoid or tanh. On the other hand, If a neuron’s input is always negative, its output is always 0, and its gradient is 0 — it never learns. To fix this, **Leaky ReLU** is used: small slope for $x<0$, e.g., $\text{LeakyReLU}(x)=\max(0.01x,x)$. Since the output of ReLU is not bounded, gradient can explode in deep nets if not normalized properly which is why BatchNormalization becomes useful here.
 
 If the activation functions of all the hidden units in a network are taken to be linear (or removed), then the entire model collapses to a linear model in the inputs. This follows from the fact that the composition of successive linear transformations is itself a linear transformation. In fact, networks of only linear units give rise to principal component analysis.  Hence a neural network can be thought of as a nonlinear generalization of the linear model, both for regression and classification. 
 
-### Regression MLPs
+<!-- ### Regression MLPs -->
 
-First, MLPs can be used for regression tasks. In genral, for standard regression problems, the activation function is the identity so that $\bm y_k =\bm  a_k$, regressing $K$ targets. If you want to predict a single value (e.g., the price of a house given many of its features), then you just need a single output neuron: its output is the predicted value.  For multivariate regression (i.e., to predict multiple values at once), you need one output neuron per output dimension. In general, when building an MLP for regression, you do not want to use any activation function for the output neurons, so they are free to output any range of values. However, if you want to guarantee that the output will always be positive, then you can use the ReLU activation function, or the softplus activation function in the output layer. Finally, if you want to guarantee that the predictions will fall within a given range of values, then you can use the logistic function or the hyperbolic tangent, and scale the labels to the appropriate range: 0 to 1 for the logistic function, or –1 to 1 for the hyperbolic tangent.
+First, MLPs can be used for regression tasks. In genral, for standard regression problems, the activation function is the identity so that $\bm y_k =\bm  a_k$, regressing $K$ targets in multivariate regression. If you want to predict a single value (e.g., the price of a house given many of its features), then you just need a single output neuron: its output is the predicted value.   In general, when building an MLP for regression, you do not want to use any activation function for the output neurons, so they are free to output any range of values. However, if you want to guarantee that the output will always be positive, then you can use the ReLU activation function, or the softplus activation function in the output layer. Finally, if you want to guarantee that the predictions will fall within a given range of values, then you can use the logistic function or the hyperbolic tangent, and scale the labels to the appropriate range: 0 to 1 for the logistic function, or –1 to 1 for the hyperbolic tangent.
 
-The loss function to use during training is typically the mean squared error, but if you have a lot of outliers in the training set, you may prefer to use the mean absolute error instead. Alternatively, you can use the Huber loss, which is a combination of both. The Huber loss is quadratic when the error is smaller than a threshold $δ$ (typically 1), but linear when the error is larger than $δ$. This makes it less sensitive to outliers than the mean squared error, and it is often more precise and converges faster than the mean absolute error.
+The loss function to use during training is typically the mean squared error, but if you have a lot of outliers in the training set, you may prefer to use the mean absolute error instead. Alternatively, you can use the **Huber loss**, which is a combination of both. The Huber loss is quadratic when the error is smaller than a threshold $δ$ (typically 1), but linear when the error is larger than $δ$. This makes it less sensitive to outliers than the mean squared error, and it is often more precise and converges faster than the mean absolute error.
 
-### Classification MLPs 
+<!-- ### Classification MLPs  -->
 
 MLPs can also be used for classification tasks. For a binary classification problem, you just need a single output neuron using the logistic activation function: the output will be a number between 0 and 1, which you can interpret as the estimated probability of the positive class. Obviously, the estimated probability of the negative class is equal to one minus that number. MLPs can also easily handle multilabel binary classification tasks
  
 Similarly, for multiple binary classification problems, each output unit activation is transformed using a logistic sigmoid function so that $\bm y_k = σ(\bm a_k)$.  For $K$-class multiclass classification, there are $K$ units at the top, with the $k$th unit modeling the probability of class $k$ using softmax activation function. There are $K$ target measurements $t_k$, $k= 1,...,K$, each being coded as a 0−1 variable for the $k$th class and the corresponding classifier is $C(x) = \argmax_k y_k(x_i)$. With the softmax activation function and the cross-entropy error function, the neural network model is exactly a linear logistic regression model in the hidden units, and all the parameters are estimated by maximum likelihood.
  
-If the training set was very skewed, with some classes being overrepresented and others underrepresented, it would be useful to set the class_weight argument when calling the `fit()` method, giving a larger weight to underrepresented classes, and a lower weight to overrepresented classes. These weights would be used by Keras when computing the loss. If you need per-instance weights instead, you can set the sample_weight argument (it supersedes class_weight). This could be useful for example if some instances were labeled by experts while others were labeled using a crowdsourcing platform: you might want to give more weight to the former. You can also provide sample weights (but not class weights) for the validation set by adding them as a third item in the validation_data tuple.
+If the training set was very skewed, with some classes being overrepresented and others underrepresented, it would be useful to set the `class_weight` argument when calling the `fit()` method, giving a larger weight to underrepresented classes, and a lower weight to overrepresented classes. These weights would be used by Keras when computing the loss. If you need per-instance weights instead, you can set the `sample_weight` argument (it supersedes class_weight). This could be useful for example if some instances were labeled by experts while others were labeled using a crowdsourcing platform: you might want to give more weight to the former. 
+
+<!-- You can also provide sample weights (but not class weights) for the validation set by adding them as a third item in the validation_data tuple. -->
 
 
-### Fitting Neural Networks
+## Fitting Neural Networks
 The neural network model has unknown weights and we seek values for them that make the model fit the training data well, i.e, minimizing the error function. For regression, we use sum-of-squared errors as our measure of fit (error function):
 
 $$
@@ -3030,15 +3034,13 @@ $$
 E(\bm w) = - \sum_{k=1}^K \sum_{i=1}^N t_k(x_i)\log y_{k}(x_i)
 $$
 
-Because there is clearly no hope of finding an analytical solution to the equation $∇_{\bm w} E(\bm w) = 0$ we resort to iterative numerical procedures. Most techniques involve choosing some initial value $\bm w(0)$ for the weight vector and then moving through weight space in a succession of steps of the form $\bm w^{(τ+1)} = \bm w^{(τ)} + ∆\bm w^{(τ)} $ where $τ$ labels the iteration step. Different algorithms involve different choices for the weight vector update $∆\bm w^{(τ)}$. Many algorithms make use of gradient information and therefore require that, after each update, the value of $∇E(\bm w)$ is evaluated at the new weight vector $w^{(τ+1)}$.
+Because there is clearly no hope of finding an analytical solution to the equation $∇_{\bm w} E(\bm w) = 0$ we resort to iterative numerical procedures. Most techniques involve choosing some initial value $\bm w(0)$ for the weight vector and then moving through weight space in a succession of steps of the form $\bm w^{(τ+1)} = \bm w^{(τ)} + ∆\bm w^{(τ)} $ where $τ$ labels the iteration step. Different algorithms involve different choices for the weight vector update $∆\bm w^{(τ)}$. Many algorithms make use of gradient information and therefore require that, after each update, the value of $∇E(\bm w)$ is evaluated at the new weight vector $w^{(τ+1)}$. The generic approach to minimizing $E(\bm w)$ is by gradient descent, called **backpropagation** in this setting. Because of the compositional form of the model, the gradient can be easily derived using the chain rule for diﬀerentiation layer by layer from the output of the network toward the beginning. This is done by a forward and backward sweep over the network, keeping track only of quantities local to each unit. 
 
-The generic approach to minimizing $E(\bm w)$ is by gradient descent, called **back-propagation** in this setting. Because of the compositional form of the model, the gradient can be easily derived using the chain rule for diﬀerentiation. This can be computed by a forward and backward sweep over the network, keeping track only of quantities local to each unit. 
+### Backpropogation
 
-#### Backpropogation
+Backpropogation can be implemented with a two-pass algorithm. In the forward pass, the current weights are fixed and the predicted values $y_k (x_i)$ are computed. In the backward pass, the errors $∆\bm w^{(τ)}$ are computed, and then backpropagated to calculate the gradient. The gradient updates are a kind of batch learning, with the parameter updates being a sum over all of the training cases. Learning can also be carried out **online**—processing each observation one at a time, updating the gradient after each training case, and cycling through the training cases many times.  A training **epoch** refers to one sweep through the entire training set. Online training allows the network to handle very large training sets, and also to update the weights as new observations come in.
 
-Backpropogation can be implemented with a two-pass algorithm. In the forward pass, the current weights are fixed and the predicted values $y_k (x_i)$ are computed. In the backward pass, the errors $∆\bm w^{(τ)}$ are computed, and then back-propagated to give the errors. The gradient updates are a kind of batch learning, with the parameter updates being a sum over all of the training cases. Learning can also be carried out **online**—processing each observation one at a time, updating the gradient after each training case, and cycling through the training cases many times.  A training **epoch ** refers to one sweep through the entire training set. Online training allows the network to handle very large training sets, and also to update the weights as new observations come in.
-
-We want to compute the cost gradient $dJ/d\bm w$, which is the vector of partial derivatives. This is the average of $dL/d\bm w$ over all the training examples, so in this lecture we focus on computing $dL/d\bm w$. Take one layer perceptron as an example with regularizer:
+As an example of how backpropogation helps computing gradient, we try to compute the cost gradient $dJ/d\bm w$, which is the vector of partial derivatives. This is the average of $dL/d\bm w$ over all the training examples, so in this lecture we focus on computing $dL/d\bm w$. Take one layer perceptron as an example with regularizer:
 
 $$
 \begin{align*}
@@ -3121,7 +3123,7 @@ $$
 \end{pmatrix}
 $$ 
 
-is the Jacobian matrix. So If $\bm z = \bm W \bm x$, then $\frac{\partial \bm z}{\partial \bm x} = \bm W$ and $\dot {\bm x} = \bm W^T \dot {\bm z}$. Backprop is used to train the overwhelming majority of neural nets today. Check your derivatives numerically by plugging in a small value of h, e.g. 10−10. This is known as finite diﬀerences.
+is the Jacobian matrix. So If $\bm z = \bm W \bm x$, then $\frac{\partial \bm z}{\partial \bm x} = \bm W$ and $\dot {\bm x} = \bm W^T \dot {\bm z}$. Backprop is used to train the overwhelming majority of neural nets today. Check your derivatives numerically by plugging in a small value of h. This is known as **finite diﬀerences**.
 
 $$
 \frac{\partial }{\partial x_i} f(x_1, \dots, x_N) = \lim_{h \rightarrow 0} \frac{f(x_1,\dots, x_i+h,\dots, x_N) - f(x_1,\dots, x_i-h,\dots, x_N)}{2h}
@@ -3129,7 +3131,7 @@ $$
 
 Run gradient checks on small, randomly chosen inputs. Use double precision floats (not the default for TensorFlow, PyTorch, etc.!), Compute the relative error: $|a−b| / (|a|+ |b|)$. The relative error should be very small, e.g. $10^{−6}$. Gradient checking is really important! Learning algorithms often appear to work even if the math is wrong.
 
-#### Neural Nets: Non-convex Optimization
+### Neural Nets: Non-convex Optimization
 
 Training a network with hidden units cannot be convex because of **permutation symmetries**. Suppose you have a simple feed-forward network: `x → Hidden Layer → Output`. Let’s say the hidden layer has 3 neurons. Each neuron applies:
 
@@ -3143,32 +3145,27 @@ $$
 \hat y = \sum_{j=1}^3 v_j h_j + c
 $$
 
-Now suppose you swap  $w_1 \leftrightarrow w_2$ and $b_1 \leftrightarrow b_2$  and then swap output weights  $v_1 \leftrightarrow v_2$. The function computed by the network does not change at all. There are 3! of these permutations of hidden units that compute the same function (For a layer with m neurons: m! possible permutations).  Suppose we average the parameters of all 3! permutations and consider the model with these averages as parameter values. It is a degenerate model because all the hidden units are identical. On the other hand, if the minimizing the loss was a convex optimization problem, we should have smaller loss for this average parameters because loss of average is less than the average of loss. This implies that the degenerate model should be better choice which is ridiculous. Hence, training multilayer neural nets is non-convex. Permutation symmetries imply that  the loss surface has many equivalent minima. These are not isolated points — they’re connected by symmetrical transformations
+Now suppose you pick two neurons 1, 2 in hidden layer, swap  their corresponding incoming weights $w_1 \leftrightarrow w_2$ and $b_1 \leftrightarrow b_2$, and then swap their outgoing weights  $v_1 \leftrightarrow v_2$ (their outgoing weights). The overall function computed by the network remains the same and the network's output does not change ss long as all connections are permuted consistently. This implied many different parameter configurations represent the same function. These configurations have the same loss. So the loss surface has many symmetric minima — but they are functionally identical. That is not the case for convex loss function as there is only one global optima for convex functions. On the other hand, suppose we average the parameters of any two of these permuted parameter configuration  permutations and substitute this average value for all the parameters we averaged. We get a model that is a degenerate because all the hidden units are identical. On the other hand, if the loss was a convex optimization problem, we should have obtained smaller loss for this degenerate configuration which is absurd. Hence, training multilayer neural nets is non-convex. Permutation symmetries imply that  the loss surface has many equivalent minima. These are not isolated points — they’re connected by symmetrical transformations.
 
 ​	
  
 
-#### Training Neural Networks
+### Training Neural Networks
 
-There is quite an art in training neural networks. The model is generally overparametrized, and the optimization problem is nonconvex and unstable unless certain guidelines are followed. Unfortunately, gradients often get smaller and smaller as the algorithm progresses down to the lower layers. As a result, the Gradient Descent update leaves the lower layer connection weights virtually unchanged, and training never converges to a good solution. This is called the vanishing gradients problem. In some cases, the opposite can happen: the gradients can grow bigger and bigger, so many layers get insanely large weight updates and the algorithm diverges. This is the exploding gradients problem, which is mostly encountered in recurrent neural networks.
+There is quite an art in training neural networks. The model is generally overparametrized, and the optimization problem is nonconvex and unstable unless certain guidelines are followed. Unfortunately, gradients often get smaller and smaller as the algorithm progresses down to the lower layers. As a result, the Gradient Descent update leaves the lower layer connection weights virtually unchanged, and training never converges to a good solution. This is called the **vanishing gradients** problem. In some cases, the opposite can happen: the gradients can grow bigger and bigger, so many layers get insanely large weight updates and the algorithm diverges. This is the **exploding gradients** problem, which is mostly encountered in recurrent neural networks. Looking at the logistic activation function, you can see that when inputs become large (negative or positive), the function saturates at 0 or 1, with a derivative extremely close to 0. Thus when backpropagation kicks in, it has virtually no gradient to propagate back through the network, and what little gradient exists keeps getting diluted as backpropagation progresses down through the top layers, so there is really nothing left for the lower layers.
 
-Looking at the logistic activation function, you can see that when inputs become large (negative or positive), the function saturates at 0 or 1, with a derivative extremely close to 0. Thus when backpropagation kicks in, it has virtually no gradient to propagate back through the network, and what little gradient exists keeps getting diluted as backpropagation progresses down through the top layers, so there is really nothing left for the lower layers.
+We need the signal to flow properly in both directions: in the forward direction when making predictions, and in the reverse direction when backpropagating gradients. We don’t want the signal to die out, nor do we want it to explode and saturate. For the signal to flow properly, the researchers argue that we need the variance of the outputs of each layer to be equal to the variance of its inputs, and we also need the gradients to have equal variance before and after flowing through a layer in the reverse direction. 
 
-We need the signal to flow properly in both directions: in the forward direction when making predictions, and in the reverse direction when backpropagating gradients. We don’t want the signal to die out, nor do we want it to explode and saturate. For the signal to flow properly, the researchers argue that we need the variance of the outputs of each layer to be equal to the variance of its inputs,2 and we also need the gradients to have equal variance before and after flowing through a layer in the reverse direction. 
+#### Random Initialization
 
-##### Random Initialization
+**Random Initialization**: the connection weights of each layer must be initialized randomly. this is called Xavier initialization. By default, Keras uses this initialization with a uniform distribution. Note that the use of exact zero weights leads to zero derivatives and perfect symmetry, and the algorithm never moves. Starting instead with large weights often leads to poor solutions.
 
-It is actually not possible to guarantee both unless the layer has an equal number of inputs and neurons (these numbers are called the fan-in and fan-out of the layer), but they proposed a good compromise that has proven to work very well in practice: **Random Initialization**: the connection weights of each layer must be initialized randomly. this is called Xavier initialization. By default, Keras uses this initialization with a uniform distribution. Note that the use of exact zero weights leads to zero derivatives and perfect symmetry, and the algorithm never moves. Starting instead with large weights often leads to poor solutions.
+#### Vanishing/Exploding Gradients
+One of the insights in the 2010 paper by Glorot and Bengio was that the vanishing/exploding gradients problems were in part due to a poor choice of activation function. But it turns out that other activation functions than sigmoid behave much better in deep neural networks, in particular the ReLU activation function, mostly because it does not saturate for positive values (and also because it is quite fast to compute). Unfortunately, the ReLU activation function is not perfect. It suffers from a problem known as the dying ReLUs: during training, some neurons effectively die, meaning they stop outputting anything other than 0. In some cases, you may find that half of your network’s neurons are dead, especially if you used a large learning rate. A neuron dies when its weights get tweaked in such a way that the weighted sum of its inputs are negative for all instances in the training set. When this happens, it just keeps outputting 0s, and gradient descent does not affect it anymore since the gradient of the ReLU function is 0 when its input is negative. To solve this problem, you may want to use a variant of the ReLU function, such as the **leaky ReLU**. This function is defined as $\text{LeakyReLU}(z) = \max(αz, z)$
 
-##### Vanishing/Exploding Gradients
-One of the insights in the 2010 paper by Glorot and Bengio was that the vanishing/exploding gradients problems were in part due to a poor choice of activation function. But it turns out that other activation functions behave much better in deep neural networks, in particular the ReLU activation function, mostly because it does not saturate for positive values (and also because it is quite fast to compute).
+#### Batch Normalization
 
-Unfortunately, the ReLU activation function is not perfect. It suffers from a problem known as the dying ReLUs: during training, some neurons effectively die, meaning they stop outputting anything other than 0. In some cases, you may find that half of your network’s neurons are dead, especially if you used a large learning rate. A neuron dies when its weights get tweaked in such a way that the weighted sum of its inputs are negative for all instances in the training set. When this happens, it just keeps outputting 0s, and gradient descent does not affect it anymore since the gradient of the ReLU function is 0 when its input is negative. To solve this problem, you may want to use a variant of the ReLU function, such as the leaky ReLU. This function is defined as LeakyReLUα(z) = max(αz, z)
-
-##### Batch Normalization
-
-Batch Normalization (BN) was a technique to address the vanishing/exploding gradients problems. The technique consists of adding an operation in the model just before or after the activation function of each hidden layer, simply zero-centering and normalizing each input, then scaling and shifting the result using two new parameter vectors per layer: one for scaling, the other for shifting. In other words, this operation lets the model learn the optimal scale and mean of each of the layer’s inputs. In many cases, if you add a BN layer as the very first layer of your neural network, you do not need to standardize your training set (e.g., using a StandardScaler): the BN layer will do it for you (well, approximately, since it only looks at one batch at a time, and it can also rescale and shift each input feature).In order to zero-center and normalize the inputs, the algorithm needs to estimate each input’s mean and standard deviation. It does so by evaluating the mean and standard deviation of each input over the current mini-batch
-
+Batch Normalization (BN) was a technique to address the vanishing/exploding gradients problems. The technique consists of adding an operation in the model just before or after the activation function of each hidden layer, simply zero-centering and normalizing each input, then scaling and shifting the result using two new parameter vectors per layer: one for scaling, the other for shifting. In other words, this operation lets the model learn the optimal scale and mean of each of the layer’s inputs. In many cases, if you add a BN layer as the very first layer of your neural network, you do not need to standardize your training set (e.g., using a StandardScaler): the BN layer will do it for you (well, approximately, since it only looks at one batch at a time, and it can also rescale and shift each input feature).In order to zero-center and normalize the inputs, the algorithm needs to estimate each input’s mean and standard deviation. It does so by evaluating the mean and standard deviation of each input over the current mini-batch.
 
 $$
 \begin{align*}
@@ -3179,11 +3176,11 @@ $$
 \end{align*}
 $$
 
-where $m_B$ is the mini-batch size and $\otimes$ represents element-wise multiplication. It was reported that BN is leading to a huge improvement in the ImageNet classification task (ImageNet is a large database of images classified into many classes and commonly used to evaluate computer vision systems). The vanishing gradients problem was strongly reduced, to the point that they could use saturating activation functions such as the tanh and even the logistic activation function. The networks were also much less sensitive to the weight initialization. They were able to use much larger learning rates, significantly speeding up the learning process.
+where $m_B$ is the mini-batch size and $\otimes$ represents element-wise multiplication. It was reported that BN is leading to a huge improvement in the ImageNet classification task (ImageNet is a large database of images classified into many classes and commonly used to evaluate computer vision systems). The vanishing gradients problem was strongly reduced, to the point that they could use saturating activation functions such as the `tanh` and even the logistic activation function. The networks were also much less sensitive to the weight initialization. They were able to use much larger learning rates, significantly speeding up the learning process.
 
 You may find that training is rather slow, because each epoch takes much more time when you use batch normalization. However, this is usually counterbalanced by the fact that convergence is much faster with BN, so it will take fewer epochs to reach the same performance. All in all, wall time will usually be smaller (this is the time measured by the clock on your wall). Batch Normalization has become one of the most used layers in deep neural networks, to the point that it is often omitted in the diagrams, as it is assumed that BN is added after every layer.
 
-##### Clipping Gradients
+#### Clipping Gradients
 
 Another popular technique to lessen the exploding gradients problem is to simply clip the gradients during backpropagation so that they never exceed some threshold. This is called **Gradient Clipping**. This technique is most often used in recurrent neural networks, as Batch Normalization is tricky to use in RNNs. This will clip every component of the gradient vector to a value between –1.0 and 1.0.
 
@@ -3191,11 +3188,11 @@ Another popular technique to lessen the exploding gradients problem is to simply
 <!-- ##### Scaling of the Inputs
 Since the scaling of the inputs determines the eﬀective scaling of the weights in the bottom layer, it can have a large eﬀect on the quality of the final solution. At the outset it is best to standardize all inputs to have mean zero. and standard deviation one. This ensures all inputs are treated equally in the regularization process, and allows one to choose a meaningful range for the random starting weights. -->
 
-##### Number of Hidden Units and Layers
+#### Number of Hidden Units and Layers
 
-It is most common to put down a reasonably large number of units and train them with regularization. Some researchers use. Choice of the number of hidden layers is guided by background knowledge. and experimentation. Each layer extracts features of the input for regression or classification. Use of multiple hidden layers allows construction of hierarchical features at diﬀerent levels of resolution.
+It is most common to put down a reasonably large number of units and train them with regularization. Choice of the number of hidden layers is guided by background knowledge. and experimentation. Each layer extracts features of the input for regression or classification. Use of multiple hidden layers allows construction of hierarchical features at diﬀerent levels of resolution.
 
-##### Regularization in Neural Networks 
+#### Regularization in Neural Networks 
 
 Note that $M$, the number of hidden units controls the number of parameters (weights and biases) in the network, and so we might expect that in a maximum likelihood setting there will be an optimum value of $M$ that gives the best generalization performance, corresponding to the optimum balance between under-fitting and over-fitting. The generalization error, however, is not a simple function of $M$ due to the presence of local minima in the error function. Here we see the effect of choosing multiple random initializations for the weight vector for a range of values of $M$. The overall best validation set performance in this case occurred for a particular solution having $M = 8$. In practice, one approach to choosing $M$ is in fact to plot a graph of the kind shown below and then to choose the specific solution having the smallest validation set error.
 
@@ -3211,8 +3208,8 @@ $$
 
 This regularizer is also known as weight decay and has been discussed at length. Larger values of $λ$ will tend to shrink the weights toward zero: typically cross-validation is used to estimate λ. The effective model complexity is then determined by the choice of the regularization coefficient $λ$. As we have seen previously, this regularizer can be interpreted as the negative logarithm of a zero-mean Gaussian prior distribution over the weight vector $\bm w$. You can use ℓ1 and ℓ2 regularization to constrain a neural network’s connection weights (but typically not its biases). Here is how to apply ℓ2 regularization to a Keras layer’s connection weights, using a regularization factor of 0.01. The `l2()` function returns a regularizer that will be called to compute the regularization loss, at each step during training. This regularization loss is then added to the final loss.
 
-##### Dropout
-**Dropout** is one of the most popular regularization techniques for deep neural networks. It is a fairly simple algorithm: at every training step, every neuron (including the input neurons, but always excluding the output neurons) has a probability p of being temporarily “dropped out,” meaning its output is set to zero during this training step and no gradients flow through it., but it may be active during the next training step. So it does not contribute to forward pass or backpropagation for that training step. This happens only during training. The hyperparameter $p$ is called the dropout rate, and it is typically set to 50%. At inference time, all neurons are used normally. Dropout 
+#### Dropout
+**Dropout** is one of the most popular regularization techniques for deep neural networks. It is a fairly simple algorithm: at every training step, every neuron (including the input neurons, but always excluding the output neurons) has a probability $p$ of being temporarily “dropped out,” meaning its output is set to zero during this training step and no gradients flow through it., but it may be active during the next training step. So it does not contribute to forward pass or backpropagation for that training step. This happens only during training. The hyperparameter $p$ is called the **dropout rate**, and it is typically set to 50%. At inference time, all neurons are used normally. Dropout 
 - prevents the network from relying too heavily on specific neurons (co-adaptation).
 - encourages the network to learn more robust, generalized representations.
 - acts like training an ensemble of smaller networks, and averaging them at inference.
@@ -3222,24 +3219,18 @@ If you observe that the model is overfitting, you can increase the dropout rate.
 
 #### Early stopping
 
-Often neural networks have too many weights and will overfit the data at the global minimum of R. In early developments of neural networks, either by design or by accident, an _early stopping_ rule was used to avoid overfitting.  The training of nonlinear network models corresponds to an iterative reduction of the error function defined with respect to a set of training data. For many of the optimization algorithms used for network training, such as conjugate gradients, the error is a nonincreasing function of the iteration index. However, the error measured with respect to independent data, generally called a validation set, often shows a decrease at first, followed by an increase as the network starts to over-fit. Training can therefore be stopped at the point of smallest error with respect to the validation dataset in order to obtain a network having good generalization performance.
-
-The behaviour of the network in this case is sometimes explained qualitatively in terms of the effective number of degrees of freedom in the network, in which this number starts out small and then to grows during the training process, corresponding to a steady increase in the effective complexity of the model. 
+Often neural networks have too many weights and will overfit the data at the global minimum of R. In early developments of neural networks, either by design or by accident, an _early stopping_ rule was used to avoid overfitting.  The training of nonlinear network models corresponds to an iterative reduction of the error function defined with respect to a set of training data. For many of the optimization algorithms used for network training, such as conjugate gradients, the error is a nonincreasing function of the iteration index. However, the error measured with respect to independent data, generally called a validation set, often shows a decrease at first, followed by an increase as the network starts to over-fit. Training can therefore be stopped at the point of smallest error with respect to the validation dataset in order to obtain a network having good generalization performance. The behaviour of the network in this case is sometimes explained qualitatively in terms of the effective number of degrees of freedom in the network, in which this number starts out small and then to grows during the training process, corresponding to a steady increase in the effective complexity of the model. 
 
 #### Faster Optimizers
 Training a very large deep neural network can be painfully slow. So far we have seen four ways to speed up training (and reach a better solution): applying a good initialization strategy for the connection weights, using a good activation function, using Batch Normalization, and reusing parts of a pretrained network (possibly built on an auxiliary task or using unsupervised learning). Another huge speed boost comes from using a faster optimizer than the regular Gradient Descent optimizer. Some popular ones are **Adam**, **AdaGrad**, **RMSProp**.
 
 If you set it way too high, training may actually diverge. If you set it too low, training will eventually converge to the optimum, but it will take a very long time. If you set it slightly too high, it will make progress very quickly at first, but it will end up dancing around the optimum, never really settling down. If you have a limited computing budget, you may have to interrupt training before it has converged properly, yielding a suboptimal solution.
 
-##### Learning Rate, Batch Size and Other Hyperparameters
+#### Learning Rate, Batch Size and other Hyperparameters
 
 The number of hidden layers and neurons are not the only hyperparameters you can tweak in an MLP. Here are some of the most important ones, and some tips on how to set them:
 
-The learning rate is arguably the most important hyperparameter. In general, the optimal learning rate is about half of the maximum learning rate. So a simple approach for tuning the learning rate is to start with a large value that makes the training algorithm diverge, then divide this value by 3 and try again, and repeat until the training algorithm stops diverging. The batch size can also have a significant impact on your model’s performance and the training time. In general the optimal batch size will be lower than 32.
- 
-A small batch size ensures that each training iteration is very fast, and although a large batch size will give a more precise estimate of the gradients, in practice this does not matter much since the optimization landscape is quite complex and the direction of the true gradients do not point precisely in the direction of the optimum. However, having a batch size greater than 10 helps take advantage of hardware and software optimizations, in particular for matrix multiplications, so it will speed up training. Moreover, if you use Batch Normalization, the batch size should not be too small.
-
-In general, the ReLU activation function will be a good default for all hidden layers. For the output layer, it really depends on your task. In most cases, the number of training iterations does not actually need to be tweaked: just use early stopping instead.
+The **learning rate** is arguably the most important hyperparameter. In general, the optimal learning rate is about half of the maximum learning rate. So a simple approach for tuning the learning rate is to start with a large value that makes the training algorithm diverge, then divide this value by 3 and try again, and repeat until the training algorithm stops diverging. The **batch size** can also have a significant impact on your model’s performance and the training time. In general the optimal batch size will be lower than 32. A small batch size ensures that each training iteration is very fast, and although a large batch size will give a more precise estimate of the gradients, in practice this does not matter much since the optimization landscape is quite complex and the direction of the true gradients do not point precisely in the direction of the optimum. However, having a batch size greater than 10 helps take advantage of hardware and software optimizations, in particular for matrix multiplications, so it will speed up training. Moreover, if you use Batch Normalization, the batch size should not be too small. In general, the ReLU activation function will be a good default for all hidden layers. For the output layer, it really depends on your task. In most cases, the number of training iterations does not actually need to be tweaked: just use early stopping instead.
 
 #### Reusing Pretrained Layers
 It is generally not a good idea to train a very large DNN from scratch: instead, you should always try to find an existing neural network that accomplishes a similar task to the one you are trying to tackle, then just reuse the lower layers of this network: this is called **transfer learning**. It will not only speed up training considerably, but will also require much less training data. 
@@ -3251,7 +3242,7 @@ Try freezing all the reused layers first (i.e., make their weights non-trainable
 If you still cannot get good performance, and you have little training data, try dropping the top hidden laye r(s) and freeze all remaining hidden layers again. You can iterate until you find the right number of layers to reuse. If you have plenty of training data, you may try replacing the top hidden layers instead of dropping them, and even add more hidden layers. So why did I cheat? Well it turns out that transfer learning does not work very well with small dense networks: it works best with deep convolutional neural networks, so we will revisit transfer learning.
 
 
-### Mixture Density Networks
+## Mixture Density Networks (Optional)
 
 The goal of supervised learning is to model a conditional distribution $p(\bm t \mid \bm x)$, which for many simple regression problems is chosen to be Gaussian. However, practical machine learning problems can often have significantly non-Gaussian distributions. These can arise, for example, with inverse problems in which the distribution can be multimodal, in which case the Gaussian assumption can lead to very poor predictions.
 
@@ -3263,10 +3254,10 @@ As demonstration, data for this problem is generated by sampling a variable $\bm
 
 Least squares corresponds to maximum likelihood under a Gaussian assumption. We see that this leads to a very poor model for the highly non-Gaussian inverse problem. We therefore seek a general framework for modelling conditional probability distributions. This can be achieved by using a mixture model for $p(\bm t\mid \bm x)$ in which both the mixing coefficients as well as the component densities are flexible functions of the input vector $x$, giving rise to the mixture density network.  For any given value of $\bm x$, the mixture model provides a general formalism for modelling an arbitrary conditional density function $p(\bm t \mid \bm x)$. Here we shall develop the model explicitly for Gaussian components, so that
 $$
-p(\bm t\mid \bm x) = \sum_{k=1}^K π_k(\bm x) \mathcal N (\bm t \mid \bm \mu_k (\bm x), σ^2_k(\bm x))
+p(\bm t\mid \bm x) =  \sum_{k=1}^K  p(\bm t \mid \bm x, c_k)p(c_k \mid \bm x) =  \sum_{k=1}^K π_k(\bm x) \mathcal N (\bm t \mid \bm \mu_k (\bm x), σ^2_k(\bm x))
 $$
 
-This is an example of a heteroscedastic model since the noise variance on the data is a function of the input vector $x$. Instead of Gaussians, we can use other distributions for the components, such as Bernoulli distributions if the target variables are binary rather than continuous. We have also specialized to the case of isotropic covariances for the components, although the mixture density network can readily be extended to allow for general covariance matrices by representing the covariances using a Cholesky factorization. We now take the various parameters of the mixture model, namely the mixing coefficients $π_k(\bm x)$, the means $µ_k(\bm x)$, and the variances $σ^2_k(\bm x)$, to be governed by the outputs of a conventional neural network that takes $\bm x$ as its input.
+where $c_k$ is component $k$. This is an example of a heteroscedastic model since the noise variance on the data is a function of the input vector $x$. Instead of Gaussians, we can use other distributions for the components, such as Bernoulli distributions if the target variables are binary rather than continuous. We have also specialized to the case of isotropic covariances for the components, although the mixture density network can readily be extended to allow for general covariance matrices by representing the covariances using a Cholesky factorization. We now take the various parameters of the mixture model, namely the mixing coefficients $π_k(\bm x)$, the means $µ_k(\bm x)$, and the variances $σ^2_k(\bm x)$, to be governed by the outputs of a conventional neural network that takes $\bm x$ as its input.
 
 If there are $L$ components in the mixture model, and if $\bm t$ has K components, then the network will have $L$ output unit activations denoted by $a^π_k$ that determine the mixing coefficients $π_k(\bm x)$, K outputs denoted by $a^σ_k$ that determine the kernel widths $σ_k(\bm x)$, and L × K outputs denoted by $a^µ_{kj}$ that determine the components $µ_{kj}(\bm x)$ of the kernel centres $µ_k(\bm x)$. The total number of network outputs is given by (K + 2) L, as compared with the usual K outputs for a network, which simply predicts the conditional means of the target variables. The mixing coefficients must satisfy the constraints
 
@@ -3280,9 +3271,7 @@ $$
 \pi_k(\bm x) = \frac{e^{a^{\pi}_k}}{\sum_{l=1}^K e^{a^{\pi}_l}}
 $$
 
-Similarly, the variances must satisfy $σ^2_k(\bm x) \geq 0$ and so can be represented in terms of the exponentials of the corresponding network activations using $\sigma_k(\bm x) = e^{a^{\sigma}_k}$. Because the means $\bm µ_k(\bm x)$ have real components, they can be represented directly by the network output activations $\mu_{kj}(\bm x) = a^{\mu}_{kj}$. 
-
-The adaptive parameters of the mixture density network comprise the vector $\bm w$ of weights and biases in the neural network, that can be set by maximum likelihood, or equivalently by minimizing an error function defined to be the negative logarithm of the likelihood. For independent data, this error function takes the form
+Similarly, the variances must satisfy $σ^2_k(\bm x) \geq 0$ and so can be represented in terms of the exponentials of the corresponding network activations using $\sigma_k(\bm x) = e^{a^{\sigma}_k}$. Because the means $\bm µ_k(\bm x)$ have real components, they can be represented directly by the network output activations $\mu_{kj}(\bm x) = a^{\mu}_{kj}$.  The adaptive parameters of the mixture density network comprise the vector $\bm w$ of weights and biases in the neural network, that can be set by maximum likelihood, or equivalently by minimizing an error function defined to be the negative logarithm of the likelihood. For independent data, this error function takes the form
 
 $$
 E(\bm w) =− \sum_{k=1}^N \ln \Big( \sum_{k=1}^k \pi_k(\bm x, \bm w) \mathcal N (\bm t_n \mid \bm \mu_k(\bm x_n,  \bm w), \sigma^2_k(\bm x_n, \bm w)) \Big)
@@ -3302,30 +3291,26 @@ $$
 \mathbb E [\bm t\mid \bm x] = \int \bm t p(\bm t \mid \bm x) d\bm t= \sum_{k=1}^K π_k(\bm x) \bm \mu_k(\bm x)
 $$
 
-We can similarly evaluate the variance of the density function about the conditional averag - see p277.
+We can similarly evaluate the variance of the density function about the conditional average $\mathbb E [ || \bm t− \mathbb E[\bm t\mid x] ||^2 \mid \bm x]$ - see p277 in [Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf).
 
 
 
 # Convolutional Neural Networks
 
-**Convolutional networks networks** (LeCun 1989), also known as convolutional neural or CNNs, are a specialized kind of neural network for processing data that has a known, grid-like topology. Examples include time-series data, which can be thought of as a 1D grid taking samples at regular time intervals, and image data, which can be thought of as a 2D grid of pixels. Most commonly, ConvNet architectures make the explicit assumption that the inputs are images.
-
-The name _convolutional neural network_ indicates that the network employs a  mathematical operation called **convolution**. Convolution is a specialized kind of linear operation. Convolutional networks are simply neural networks that use convolution in place of general matrix multiplication in at least one of their layers. Convolution of two functions is defined as:
+**Convolutional Neural Networks** (LeCun 1989), or ConvNet or CNNs, are a specialized kind of neural network for processing data that has a known, **grid-like topology**. Examples include time-series data, which can be thought of as a 1D grid taking samples at regular time intervals, and image data, which can be thought of as a 2D grid of pixels. Most commonly, ConvNet architectures make the explicit assumption that the inputs are images. The name _convolutional neural network_ indicates that the network employs a mathematical operation called **convolution**. Convolution is a specialized kind of linear operation. Convolutional networks are simply neural networks that use convolution in place of general matrix multiplication in at least one of their layers. Convolution of two functions is defined as:
 
 $$
   (x*w)(t) = \int_{-\infty}^{\infty} x(s)w(t-s) ds
 $$
 
-Convolution natuarally appears in different areas of Mathematics such as Probability Theory. For example, the pdf of the sum of two random variables is convolution of their pdfs. If `x` and `w` are defined only on integer `t`, we can define the discrete convolution:
+Convolution natuarally appears in different areas of Mathematics such as Probability Theory. For example, the pdf of the sum of two random variables is convolution of their pdfs. If $x$ and $w$ are defined only on integer $t$, we can define the discrete convolution:
 
 $$
 (x*w)(t) = \sum_{s = -\infty}^{\infty} x(s)w(t-s)
 $$
 
 
-The first argument `x` to the convolution is often referred to as the **input** and the second `w` argument as the **filter** (or **kernel**). The output is sometimes referred to as the **feature map**. In machine learning applications, the input is usually a multidimensional array of data and the kernel is usually a multidimensional array of parameters that are adapted by the learning algorithm. We will refer to these multidimensional arrays as **tensors**. Because each element of the input and kernel must be explicitly stored separately, we usually assume that these functions are zero everywhere but the finite set of points for which we store the values. 
-
-We often use convolutions over more than one axis at a time. For example, if we use a two-dimensional image I as our input, we probably also want to use a two-dimensional kernel:
+The first argument $x$ to the convolution is often referred to as the **input** and the second $w$ argument as the **filter** (or **kernel**). The output is sometimes referred to as the **feature map**. In machine learning applications, the input is usually a multidimensional array of data and the kernel is usually a multidimensional array of parameters that are adapted by the learning algorithm. We will refer to these multidimensional arrays as **tensors**. Because each element of the input and kernel must be explicitly stored separately, we usually assume that these functions are zero everywhere but the finite set of points for which we store the values. We often use convolutions over more than one axis at a time. For example, if we use a two-dimensional image I as our input, we probably also want to use a two-dimensional kernel:
 
 $$
 (I*K)(i,j) = \sum_m\sum_n I(m,n) K(i+m, j+n).
@@ -3355,7 +3340,7 @@ Convolution leverages three important ideas that can help improve a machine lear
     </p>
 
 
-    We highlight one output unit `s3` and also highlight the input units in `x` that aﬀect this unit. These units are known as the **receptive field** of `s3`. The **receptive field** is the spatial extent of a filter (or in other words, the connectivity). Note that the extent of the connectivity along the depth axis (depth of the filter) is always equal to the depth of the input volume. The connections are local in 2D space (along width and height), but always full along the entire depth of the input volume. (Top) When s is formed by convolution with a kernel of width , only three inputs aﬀect s3. When (Bottom) s is formed by matrix multiplication, connectivity is no longer sparse, so all of the inputs aﬀect s3.
+    We highlight one output unit $s_3$ and also highlight the input units in $x$ that aﬀect this unit. These units are known as the **receptive field** of $s_3$. The **receptive field** is the spatial extent of a filter (or in other words, the connectivity). Note that the extent of the connectivity along the depth axis (depth of the filter) is always equal to the depth of the input volume. The connections are local in 2D space (along width and height), but always full along the entire depth of the input volume. (Top) When $s$ is formed by convolution with a kernel of width three, only three inputs aﬀect $s_3$. When (Bottom) $s$ is formed by matrix multiplication, connectivity is no longer sparse, so all of the inputs aﬀect $s_3$.
 
     <p align="center">
         <img src="./assets/convnet/sparse-connectivity3.png" alt="drawing" width="400" height="300" style="center" />
@@ -3380,9 +3365,7 @@ The image below on the right was formed by taking each pixel in the original ima
     <img src="./assets/convnet/edge-detection.png" alt="drawing" width="400" height="200" style="center" />
 </p>
 
-This shows the strength of all of the vertically oriented edges in the input image, which can be a useful operation for object detection. Both images are 280 pixels tall. The input image is 320 pixels wide while the output image is 319 pixels wide. This transformation can be described by a convolution kernel containing two elements, and 319 × 280 × 3 = 267,960 floating point operations (two multiplications and requires 319 one addition per output pixel) to compute using convolution. 
-
-As a more clear example, suppose you have a simple image of a square split into white (left) and gray (right) area from the middle. Convolute this matrix with a filter that will turn out to be the vertical edge detector.  The following matrix a a representation of this:
+This shows the strength of all of the vertically oriented edges in the input image, which can be a useful operation for **object detection**. Suppose you have a simple image of a square split into white (left) and gray (right) area from the middle. Convolute this matrix with a filter that will turn out to be the vertical edge detector.  The following matrix is a representation of this:
 
 $$
 \begin{bmatrix}
@@ -3403,14 +3386,11 @@ $$
 \end{bmatrix}
 $$
 
-which activates the middle pixels vertically in the image as the border between white and gray.
-
-
-To describe the same transformation with a matrix multiplication would take 320× 280× 319 × 280, or over eight billion, entries in the matrix, making convolution four billion times more eﬃcient for representing this transformation. The straightforward matrix multiplication algorithm performs over sixteen billion floating point operations, making convolution roughly 60,000 times more eﬃcient computationally. Convolution with a single kernel can only extract one kind of feature, albeit at many spatial locations. Usually we want each layer of our network to extract many kinds of features, at many locations. So we use several filters to capture more information. 
+which is activating the middle pixels vertically in the image as the border between white and gray. If the input image is 320 x 280, the the ouput image will have dimension 319 x 279. To describe the same transformation with a matrix multiplication in a fully connected layer, we would need 320× 280× 319 × 279, or about eight billion entries in the matrix, making convolution two billion times more eﬃcient for representing this transformation using only four parameters of the fiter which is a huge gain computationally. Convolution with a single kernel can only extract one kind of feature, albeit at many spatial locations. Usually we want each layer of our network to extract many kinds of features, at many locations. So we use several filters to capture more information. 
 
 
 ### Pooling
-A typical layer of a convolutional network consists of three stages. In the first stage, the layer performs several convolutions in parallel to produce a set of linear activations. In the second stage, each linear activation is run through a nonlinear activation function, such as the rectified linear activation function. This stage is sometimes called the **detector stage**. In the third stage, we use a **pooling function** to modify the output of the layer further. A pooling function replaces the output of the net at a certain location with a summary statistic of the nearby outputs. 
+A typical layer of a convolutional network consists of three stages. In the first stage, the layer performs several convolutions in parallel to produce a set of linear activations. In the second stage, each linear activation is run through a nonlinear activation function, such as the rectified linear activation function. This stage is sometimes called the **detector stage**. In the third stage, we use a **pooling function** to modify the output of the layer further. *A pooling function replaces the output of the net at a certain location with a summary statistic of the nearby outputs*. 
 
 
 <p align="center">
@@ -3430,7 +3410,7 @@ Pooling over spatial regions produces invariance to translation, but if we pool 
     <img src="./assets/convnet/max-pooling2.png" alt="drawing" width="400" height="350" style="center" />
 </p>
 
-A pooling unit that pools over multiple features that are learned with separate filters can learn to be invariant to transformations of the input. Each filter attempts to match a slightly diﬀerent orientation of the 5. When a 5 appears in the input, the corresponding filter will match it and cause a large activation in a detector unit. The max pooling unit then has a large activation regardless of which detector unit was activated. Max pooling over spatial positions is naturally invariant to translation; this multi-channel approach is only necessary for learning other transformations.
+A pooling unit that pools over multiple features that are learned with separate filters can learn to be **invariant to transformations** of the input. Each filter attempts to match a slightly diﬀerent orientation of the 5. When a 5 appears in the input, the corresponding filter will match it and cause a large activation in a detector unit. The max pooling unit then has a large activation regardless of which detector unit was activated. Max pooling over spatial positions is naturally **invariant to translation**; this multi-channel approach is only necessary for learning other transformations.
 
 Pooling is also used for **downsampling**. Here we use max-pooling with a pool width of 3 and a stride between pools of 2. This reduces the representation size by a factor of 2, which reduces the computational and statistical burden on the next layer. Note that the rightmost pooling region has a smaller size, but must be included if we do not want to ignore some of the detector units.
 
@@ -3438,7 +3418,7 @@ Pooling is also used for **downsampling**. Here we use max-pooling with a pool w
     <img src="./assets/convnet/downsampling.png" alt="drawing" width="400" height="200" style="center" />
 </p>
 
-In all cases, pooling helps to make the representation become approximately invariant to small translations of the input. The pooled outputs do not change. Invariance to local translation can be a very useful property if we care more about whether some feature is present than exactly where it is. When determining whether an image contains a face, we need not know the location of the eyes with pixel-perfect accuracy, we just need to know that there is an eye on the left side of the face and an eye on the right side of the face. In other contexts, it is more important to preserve the location of a feature. For example, if we want to find a corner defined by two edges meeting at a specific orientation, we need to preserve the location of the edges well enough to test whether they meet. 
+In all cases, *pooling helps to make the representation become approximately invariant to small translations of the input*.  The pooled outputs do not change. Invariance to local translation can be a very useful property if we care more about whether some feature is present than exactly where it is. When determining whether an image contains a face, we need not know the location of the eyes with pixel-perfect accuracy, we just need to know that there is an eye on the left side of the face and an eye on the right side of the face. In other contexts, it is more important to preserve the location of a feature. For example, if we want to find a corner defined by two edges meeting at a specific orientation, we need to preserve the location of the edges well enough to test whether they meet. 
 
 Other popular pooling functions include the **average** of a rectangular neighborhood, the **L2 norm** of a rectangular neighborhood, or a **weighted average** based on the distance from the central pixel. Pooling can complicate some kinds of neural network architectures that use top-down information, such as Boltzmann machines and autoencoders. Convolution and pooling can cause **underfitting**. If a task relies on preserving precise spatial information, then using pooling on all features can increase the training error. Discarding pooling layers has also been found to be important in training good generative models, such as variational autoencoders (VAEs) or generative adversarial networks (GANs).
 
@@ -3446,11 +3426,11 @@ Other popular pooling functions include the **average** of a rectangular neighbo
 ### Hyperparameters
 Three hyperparameters control the size of the output volume of a convlutional layer: 
 
-- **Depth**: a hyperparameter corresponding to the number of filters we would like to use, each learning to look for something different in the input. For example, if the first Convolutional Layer takes as input the raw image, then different neurons along the depth dimension may activate in presence of _various oriented edges, or blobs of color_. We will refer to a set of neurons that are all looking at the same region of the input as a **depth column**.
+- **Depth**: the number of filters we would like to use, each learning to look for something different in the input. For example, if the first Convolutional Layer takes as input the raw image, then different neurons along the depth dimension may activate in presence of _various oriented edges, or blobs of color_. We will refer to a set of neurons that are all looking at the same region of the input as a **depth column**.
 
-- **Stride**: specifies the stride with which we slide the filter. When the stride is 1 then we move the filters one pixel at a time. When the stride is 2 (or uncommonly 3 or more, though this is rare in practice) then the filters jump 2 pixels at a time as we slide them around. This will produce smaller output volumes spatially.
+- **Stride**:  the stride with which we slide the filter. When the stride is 1 then we move the filters one pixel at a time. When the stride is 2 (or uncommonly 3 or more, though this is rare in practice) then the filters jump 2 pixels at a time as we slide them around. This will produce smaller output volumes spatially.
 
-- **Zero-Padding**: One essential feature of any convolutional network implementation is the ability to implicitly **zero-pad**. Without this feature, the width of the representation shrinks by one pixel less than the filter width at each layer. Zero padding the input allows us to control the filter width and the size of the output independently. Without zero padding, we are forced to choose between shrinking the spatial extent of the network rapidly and using small filters—both scenarios that significantly limit the expressive power of the network.  The nice feature of zero padding is that it will allow us to control the spatial size of the output volumes (most commonly as we’ll see soon we will use it to exactly preserve the spatial size of the input volume so the input and output width and height are the same).
+- **Zero-Padding**: One essential feature of any convolutional network implementation is the ability to implicitly **zero-pad**. Without this feature, the width of the representation shrinks by one pixel less than the filter width at each layer. *Zero padding the input allows us to control the filter width and the size of the output independently*. Without zero padding, we are forced to choose between shrinking the spatial extent of the network rapidly and using small filters—both scenarios that significantly limit the expressive power of the network.  The nice feature of zero padding is that it will allow us to control the spatial size of the output volumes (most commonly as we’ll see soon we will use it to exactly preserve the spatial size of the input volume so the input and output width and height are the same).
 
 
 We can compute the spatial size of the output volume as a function of the input volume size (W), the receptive field size of the Conv Layer neurons (F), the stride with which they are applied (S), and the amount of zero padding used (P) on the border. You can convince yourself that the correct formula for calculating how many neurons “fit” is given by `(W−F+2P)/S+1`. For example for a 7x7 input and a 3x3 filter with stride 1 and pad 0 we would get a 5x5 output. With stride 2 we would get a 3x3 output.
@@ -3491,16 +3471,14 @@ In the output volume, the d-th depth slice (of size W2×H2) is the result of per
 
 ### Backpropagation
 
-The backward pass for a convolution operation (for both the data and the weights) is also a convolution (but with spatially-flipped filters). This is easy to derive in the 1-dimensional case with a toy example.
-
-Recall from the backpropagation chapter that the backward pass for a `max(x, y)` operation has a simple interpretation as only routing the gradient to the input that had the highest value in the forward pass. Hence, during the forward pass of a pooling layer it is common to keep track of the index of the max activation (sometimes also called the switches) so that gradient routing is efficient during backpropagation. This way max pooling layer add no cost for backpropogation.
+The backward pass for a convolution operation (for both the data and the weights) is also a convolution (but with spatially-flipped filters). Recall from the backpropagation chapter that the backward pass for a `max(x, y)` operation has a simple interpretation as only routing the gradient to the input that had the highest value in the forward pass. Hence, during the forward pass of a pooling layer it is common to keep track of the index of the max activation (sometimes also called the switches) so that gradient routing is efficient during backpropagation. This way max pooling layer add no cost for backpropogation.
 
 
 ## Converting FC layers to CONV layers
 
-It is worth noting that the only difference between FC (fully connected) and CONV layers is that the neurons in the CONV layer are connected only to a local region in the input, and that many of the neurons in a CONV volume share parameters. However, the neurons in both layers still compute dot products, so their functional form is identical. Therefore, it turns out that it’s possible to convert between FC and CONV layers:
+It is worth noting that the only difference between FC (fully connected) and CONV layers is that the neurons in the CONV layer are connected only to a local region in the input, and that many of the neurons in a CONV volume share parameters. However, **the neurons in both layers still compute dot products, so their functional form is identical**. Therefore, it turns out that it’s possible to convert between FC and CONV layers:
 
-- For any CONV layer there is an FC layer that implements the same forward function. The weight matrix would be a large matrix that is mostly zero except for at certain blocks (due to local connectivity) where the weights in many of the blocks are equal (due to parameter sharing). This is extremely computationally wastful.
+- **For any CONV layer there is an FC layer that implements the same forward function**. The weight matrix would be a large matrix that is mostly zero except for at certain blocks (due to local connectivity) where the weights in many of the blocks are equal (due to parameter sharing). This is extremely computationally wastful.
 
 -  Any FC layer can be converted to a CONV layer. For example, an FC layer with K=4096 units that is looking at some input volume of size 7×7×512 can be equivalently expressed as a CONV layer with F=7,P=0,S=1,K=4096 (K is the number of filters). In other words, we are setting the filter size to be exactly the size of the input volume, and hence the output will simply be 1×1×4096 since only a single depth column “fits” across the input volume, giving identical result as the initial FC layer. 
 
@@ -3514,9 +3492,7 @@ It turns out that this conversion allows us to “slide” the original ConvNet 
 
 _Evaluating the original ConvNet (with FC layers) independently across 224x224 crops of the 384x384 image in strides of 32 pixels gives an identical result to forwarding the converted ConvNet one time but the second option is much more efficient_. 
 
-Naturally, forwarding the converted ConvNet a single time is much more efficient than iterating the original ConvNet over all those 36 locations, since the 36 evaluations share computation. This trick is often used in practice to get better performance, where for example, it is common to resize an image to make it bigger, use a converted ConvNet to evaluate the class scores at many spatial positions and then average the class scores.
-
-Lastly, what if we wanted to efficiently apply the original ConvNet over the image but at a stride smaller than 32 pixels? We could achieve this with multiple forward passes. For example, note that if we wanted to use a stride of 16 pixels we could do so by combining the volumes received by forwarding the converted ConvNet twice: First over the original image and second over the image but with the image shifted spatially by 16 pixels along both width and height.
+Naturally, forwarding the converted ConvNet a single time is much more efficient than iterating the original ConvNet over all those 36 locations, since the 36 evaluations share computation. This trick is often used in practice to get better performance, where for example, it is common to resize an image to make it bigger, use a converted ConvNet to evaluate the class scores at many spatial positions and then average the class scores. Lastly, what if we wanted to efficiently apply the original ConvNet over the image but at a stride smaller than 32 pixels? We could achieve this with multiple forward passes. For example, note that if we wanted to use a stride of 16 pixels we could do so by combining the volumes received by forwarding the converted ConvNet twice: First over the original image and second over the image but with the image shifted spatially by 16 pixels along both width and height.
 
 
 ## ConvNet Architectures
@@ -3572,13 +3548,13 @@ There are several architectures in the field of Convolutional Networks that have
 
 - **AlexNet**. The first work that popularized Convolutional Networks in Computer Vision was the AlexNet, developed by Alex Krizhevsky, Ilya Sutskever and Geoff Hinton. The AlexNet was trained on the ImageNet dataset for ILSVRC challenge in 2012 and significantly outperformed the second runner-up (top 5 error of 16% compared to runner-up with 26% error). The Network had a very similar architecture to LeNet, but was deeper, much bigger (60M parameters), and featured Convolutional Layers stacked on top of each other (previously it was common to only have a single CONV layer always immediately followed by a POOL layer). Input size was 227x227x3 (224x224x3 in the paper, a mistake?). It used Relu activation function and some times strides 4 (not common today). It had a complicated way to train layer on multiple GPUs (were very slow then). It was this paper that attracted reseacher to take computer vision and beyond more seriously.
 
-- **GoogLeNet (Inception Network)**. The ILSVRC 2014 winner was a Convolutional Network from Szegedy et al. from Google. Its main contribution was the development of Inception Module that dramatically reduced the number of parameters in the network (4M, compared to AlexNet with 60M). Additionally, this paper uses Average Pooling instead of Fully Connected layers at the top of the ConvNet, eliminating a large amount of parameters that do not seem to matter much. What the inception layer says is that instead of having to choosing filter size in conv layer or even pooling layer, let do them all. There are also several followup versions to the GoogLeNet, most recently Inception-v4. For example, you might apply 1x1, 3x3, 5x5 filters and/or pooling all together and stack up the results.
+- **GoogLeNet (Inception Network)**. The ILSVRC 2014 winner was a Convolutional Network from Szegedy et al. from Google. Its main contribution was the development of Inception Module that dramatically reduced the number of parameters in the network (4M, compared to AlexNet with 60M). Additionally, this paper uses Average Pooling instead of Fully Connected layers at the top of the ConvNet, eliminating a large amount of parameters that do not seem to matter much. What the **inception layer** says is that instead of having to choosing filter size in conv layer or even pooling layer, let model do them all. There are also several followup versions to the GoogLeNet, most recently Inception-v4. For example, you might apply 1x1, 3x3, 5x5 filters and/or pooling all together and stack up the results.
 
     <p align="center">
         <img src="./assets/convnet/inception-module.png" alt="drawing" width="500" height="150" style="center" />
     </p>
 
-    So let the network learn whatever combination of these filter sizes needed to get better results. There is a computational cost here that can be eleviated by using 1x1 convolutions. For example, imagine 28x28x192 input and 5x5 filter size, same applied to it to ouput 28x28x32. The number of multiplications required here is 28x28x5x5x192x32 ~ 120M. Alternatively, we first apply a 1x1 Conv layer to output 28x28x16 (called bottle neck) and then apply 5x5 Conv layer to get 28x28x32. The number of maultiplications now is 28x28x192x16 + 28x28x16x5x5x32 ~ 2.4M + 10M = 12.4M which order of magnitude smaller (# additions are similar). The bottle neck laer doesnt seem to hurt the performance. The following shows inception module.
+    So let the network learn whatever combination of these filter sizes needed to get better results. There is a computational cost here that can be eleviated by using 1x1 convolutions. For example, imagine 28x28x192 input and 5x5 filter size, same applied to it to ouput 28x28x32. The number of multiplications required here is 28x28x5x5x192x32 ~ 120M. Alternatively, we first apply a 1x1 Conv layer to output 28x28x16 (called bottle neck) and then apply 5x5 Conv layer to get 28x28x32. The number of multiplications now is 28x28x192x16 + 28x28x16x5x5x32 ~ 2.4M + 10M = 12.4M which order of magnitude smaller (# additions are similar). The bottle neck layer doesnt seem to hurt the performance. The following shows inception module.
     
     <p align="center">
     <img src="./assets/convnet/inception-module2.png" alt="drawing" width="500" height="200" style="center" />
@@ -3627,13 +3603,17 @@ There are several architectures in the field of Convolutional Networks that have
 
     As is common with Convolutional Networks, notice that most of the memory (and also compute time) is used in the early CONV layers, and that most of the parameters are in the last FC layers. In this particular case, the first FC layer contains 100M weights, out of a total of 138M.
 
-- **ResNet**. Residual Network developed by Kaiming He et al. was the winner of ILSVRC 2015. It features special skip connections and a heavy use of batch normalization. The architecture is also missing fully connected layers at the end of the network. The reader is also referred to Kaiming’s presentation (video, slides), and some recent experiments that reproduce these networks in Torch. ResNets are currently by far the state of the art Convolutional Neural Network models and are the default choice for using ConvNets in practice (as of May 10, 2016). In particular, also see more recent developments that tweak the original architecture from Kaiming He et al. Identity Mappings in Deep Residual Networks (published March 2016). An interesting feature in ResNet is _Residual Block_ design which is the output of layer l (which is the putput of layer l+1) is added to the linear part of of layer l+2 (if dimensions of the two are not equal, multiply it with a matrix of appropriate size  with entries to be learnt during training:$$z^{[l+2]} + wa^{[l]}$$ where w=0 if dimension of a and z are the same) before applying its non-linearity relu. 
+- **ResNet**. Residual Network developed by Kaiming He et al. was the winner of ILSVRC 2015. It features special **skip connections** and a heavy use of **batch normalization**. The architecture is also missing fully connected layers at the end of the network. The reader is also referred to Kaiming’s presentation (video, slides), and some recent experiments that reproduce these networks in Torch. ResNets are currently by far the state of the art Convolutional Neural Network models and are the default choice for using ConvNets in practice (as of May 10, 2016). In particular, also see more recent developments that tweak the original architecture from Kaiming He et al. Identity Mappings in Deep Residual Networks (published March 2016). An interesting feature in ResNet is **Residual Block** design which is the output of layer l (which is the input of layer $\ell+1$) is added to the linear part of  layer $\ell+2$. If dimensions of the two are not equal, multiply it with a matrix of appropriate size  with entries to be learnt during training.
+  
+  $$z^{[l+2]} + wa^{[l]}$$ 
+  
+  where $w=1$ if dimension of a and z are the same before applying its non-linearity relu. 
 
 <p align="center">
-    <img src="./assets/convnet/resblock.png" alt="drawing" width="500" height="100" style="center" />
+    <img src="./assets/convnet/resblock.png" alt="drawing" width="700" height="150" style="center" />
 </p>
 
-This is called a shortcut because layer l+1 is totally skipped (skip connection). The authors realized that using residual blocks allow training much deeper nets if they are stacked. This trick can strenthen the backprop gradient signal so convergence is stronger and reduce the loss for much longer interations. 
+This is called a shortcut because layer $\ell+1$ is totally skipped (skip connection). The authors realized that using *residual blocks allow training much deeper nets if they are stacked*. This trick can strenthen the backprop gradient signal so convergence is stronger and reduce the loss for much longer interations. 
 
 
 
@@ -3660,7 +3640,7 @@ In practice, very few people train an entire Convolutional Network from scratch 
     - Remove the last fully-connected layer (this layer’s outputs are the 1000 class scores for a different task like ImageNet)
     - Treat the rest of the ConvNet as a fixed feature extractor for the new dataset 
 
-    In an AlexNet, this would compute a 4096-D vector for every image that contains the activations of the hidden layer immediately before the classifier. We call these features **CNN codes**. It is important for performance that these codes are ReLUd (i.e. thresholded at zero) if they were also thresholded during the training of the ConvNet on ImageNet (as is usually the case). Once you extract the 4096-D codes for all images, train a linear classifier (e.g. Linear SVM or Softmax classifier) for the new dataset.
+    In an AlexNet, this would compute a 4096-D vector for every image that contains the activations of the hidden layer immediately before the classifier. We call these **features CNN codes**. It is important for performance that these codes are ReLUd (i.e. thresholded at zero) if they were also thresholded during the training of the ConvNet on ImageNet (as is usually the case). Once you extract the 4096-D codes for all images, train a linear classifier (e.g. Linear SVM or Softmax classifier) for the new dataset.
 
 2. **Fine-tuning the ConvNet**: The second strategy is to not only replace and retrain the classifier on top of the ConvNet on the new dataset, but to also fine-tune the weights of the pretrained network by continuing the backpropagation. It is possible to fine-tune all the layers of the ConvNet, or it’s possible to keep some of the earlier layers fixed (due to overfitting concerns) and only fine-tune some higher-level portion of the network. This is motivated by the observation that the earlier features of a ConvNet contain more generic features (e.g. edge detectors or color blob detectors) that should be useful to many tasks, but later layers of the ConvNet becomes progressively more specific to the details of the classes contained in the original dataset. In case of ImageNet for example, which contains many dog breeds, a significant portion of the representational power of the ConvNet may be devoted to features that are specific to differentiating between dog breeds.
 
@@ -3686,12 +3666,7 @@ There are a few additional things to keep in mind when performing Transfer Learn
 
 - **Data Augmentation**: use _mirroring_, _random cropping_, _rotation_, _sheering_, _color shifting_ (RGB channels), _PCA color augmentation_ to keep the tint controlled. These _distortions_ can be implemented in separate threads during training in each mini batches. In other words, one or more threads become responsible for loading and implementing these distortions in parallel to training. 
 
-- **Open Source**: use the models in open source community usually implemented by the authors of the paers themselves rather than implemnting them yourself from scratch. These resources can be found on github. 
-
-
-
-
-
+- **Open Source**: use the models in open source community usually implemented by the authors of the papers themselves rather than implemnting them yourself from scratch. These resources can be found on GitHub. 
 
 
 --------------
@@ -3708,7 +3683,7 @@ References:
 
 # Unsupervised Learning: PCA, K-Means, GMM
 
-Many Machine Learning problems involve thousands or even millions of features for each training instance. Not only does this make training extremely slow, it can also make it much harder to find a good solution, as we will see. This problem is often referred to as the curse of dimensionality. 
+Many Machine Learning problems involve thousands or even millions of features for each training instance. Not only does this make training extremely slow, it can also make it much harder to find a good solution, as we will see. This problem is often referred to as the **curse of dimensionality**. 
 
 
 ## Curse of Dimensionality
@@ -3737,9 +3712,7 @@ Although the curse of dimensionality certainly raises important issues for patte
 
 Fortunately, in real-world problems, it is often possible to reduce the number of features considerably, turning an intractable problem into a tractable one. For example in image data, two neighboring pixels are often highly correlated: if you merge them into a single pixel (e.g., by taking the mean of the two pixel intensities), you will not lose much information!
 
-Reducing dimensionality does lose some information (just like compressing an image to JPEG can degrade its quality), so even though it will speed up training, it may also make your system perform slightly worse. It also makes your pipelines a bit more complex and thus harder to maintain. So you should first try to train your system with the original data before considering using dimensionality reduction if training is too slow. In some cases, however, reducing the dimensionality of the training data may filter out some noise and unnecessary details and thus result in higher performance (but in general it won’t; it will just speed up training).
-
-Apart from speeding up training, dimensionality reduction is also extremely useful for data visualization (or DataViz). Reducing the number of dimensions down to two (or three) makes it possible to plot a condensed view of a high-dimensional training set on a graph and often gain some important insights by visually detecting patterns, such as clusters. Moreover, DataViz is essential to communicate your conclusions to people who are not data scientists, in particular decision makers who will use your results.
+Reducing dimensionality does lose some information (just like compressing an image to JPEG can degrade its quality), so even though it will speed up training, it may also make your system perform slightly worse. It also makes your pipelines a bit more complex and thus harder to maintain. So you should first try to train your system with the original data before considering using dimensionality reduction if training is too slow. In some cases, however, reducing the dimensionality of the training data may filter out some noise and unnecessary details and thus result in higher performance (but in general it won’t; it will just speed up training). Apart from speeding up training, dimensionality reduction is also extremely useful for data visualization (or DataViz). Reducing the number of dimensions down to two (or three) makes it possible to plot a condensed view of a high-dimensional training set on a graph and often gain some important insights by visually detecting patterns, such as clusters. Moreover, DataViz is essential to communicate your conclusions to people who are not data scientists, in particular decision makers who will use your results.
 
 In dimensionality reduction, we try to learn a mapping to a lower dimensional space that preserves as much information as possible about the input. Dimensionality reduction techniques can save computation/memory, reduce overfitting, help visualize in 2 dimensions.
 
@@ -3754,17 +3727,17 @@ In dimensionality reduction, we try to learn a mapping to a lower dimensional sp
 -  **Linear Discriminant Analysis (LDA)** is actually a classification algorithm, but during training it learns the most discriminative axes between the classes, and these axes can then be used to define a hyperplane onto which to project the data. The benefit is that the projection will keep classes as far apart as possible, so LDA is a good technique to reduce dimensionality before running another classification algorithm such as an SVM classifier.
   
 
-## Linear dimensionality reduction (PCA)
+## Linear Dimensionality Reduction (PCA)
 
-Principal Component Analysis (PCA) is by far the most popular dimensionality reduction algorithm. First it identifies the hyperplane that lies closest to the data, and then it projects the data onto it. PCA identifies the axes called Principal Components that account for the largest amount of variance in the training set. PCA is defined as an orthogonal linear transformation on the feature vectors of a dataset that transforms the data to a new coordinate system such that the transformed feature vectors expand in the directions of the greatest variances and they are uncorrelated. So how can you find the principal components of a training set? Luckily, there is a standard matrix factorization technique called **Singular Value Decomposition (SVD)** which we will discuss shortly.
+**Principal Component Analysis (PCA)** is by far the most popular dimensionality reduction algorithm. First it identifies the hyperplane that lies closest to the data, and then it projects the data onto it. PCA identifies the axes called **Principal Components** that account for the largest amount of variance in the training set. PCA is defined as an orthogonal linear transformation on the feature vectors of a dataset that transforms the data to a new coordinate system such that the transformed feature vectors expand in the *directions of the greatest variances* and they are *uncorrelated*. So how can you find the principal components of a training set? Luckily, there is a standard matrix factorization technique called **Singular Value Decomposition (SVD)** which we will discuss shortly.
 
-Suppose $X$ is a $n\times p$ data matrix of $n$ samples with $p$ features with column-wise zero empirical mean per feature. Otherwise replace rows $\bm x_i$ of $X$ with $\bm x_i - \bm \mu$ where $\bm \mu=1/n\sum_i \bm x_i$. We are looking for an orthonormal $p\times p$ matrix $W$ to change the basis of the space into a new basis representing the direction of maximum variances. The columns of $W$ are the unit basis vectors we are looking for.  Note that the sample variance of data along a unit vector $\bm w$ is $\frac{||X\bm w||^2}{n-1}$. So our first unit basis vector is obtained as follows:
+Suppose $X$ is a $n\times p$ data matrix of $n$ samples with $p$ features with column-wise zero empirical mean per feature. Otherwise replace rows $\bm x_i$ of $X$ with $\bm x_i - \bm \mu$ where $\bm \mu=1/n\sum_i \bm x_i$. We are looking for an orthonormal $p\times p$ matrix $W$ to change the basis of the space into a new basis representing the directions of maximum variances. The columns of $W$ are the unit basis vectors we are looking for.  Note that the sample variance of data along a unit vector $\bm w$ is $\frac{||X\bm w||^2}{n-1}$. So our first unit basis vector is obtained as follows:
 
 $$
 \bm w_1 = \argmax_{\bm w} \frac{||X\bm w||^2}{||\bm w||^2} =   \argmax_{\bm w} \frac{\bm w^T X^T X\bm w}{\bm w^T \bm w} 
 $$
 
-A standard result for a positive semidefinite matrix such as $X^TX$ is that the quotient's maximum possible value is the largest eigenvalue of the matrix, which occurs when $\bm w$ is the corresponding eigenvector. So $\bm w_1$ is the eigenvalue of $X^TX$ corresponding to the largest eigenvector. To find the second max variance unit basis vector, we repeat the same process for the new data matrix $X'$ whose rows are subtraction od $X$ rows from $\bm w_1$: $X' = X - X\bm w_1\bm w_1^T$ and so on until we find the $p$th vector $\bm w_p$. It turns out that each step gives the remaining eigenvectors of $X^TX$ in the decreasing order of eigenvalues. The basis vectors which are the eigenvectors of $X^TX$ are also called **principal components**. The transformation $X W$ maps a data vector $x_i$ from an original space to a new space of p variables which are uncorrelated over the dataset.
+A standard result for a positive semidefinite matrix such as $X^TX$ is that the quotient's maximum possible value is the *largest eigenvalue* of the matrix, which occurs when $\bm w$ is the corresponding eigenvector. So $\bm w_1$ is the eigenvector of $X^TX$ corresponding to the largest eigenvalue. To find the second max variance unit basis vector, we repeat the same process for the new data matrix $X'$ whose rows are subtraction od $X$ rows from $\bm w_1$: $X' = X - X\bm w_1\bm w_1^T$ and so on until we find the $p$th vector $\bm w_p$. It turns out that each step gives the remaining eigenvectors of $X^TX$ in the decreasing order of eigenvalues. The basis vectors which are the eigenvectors of $X^TX$ are the principal components. The transformation $X W$ maps a data vector $x_i$ from an original space to a new space of p variables which are uncorrelated over the dataset.
 
 A dimensionality reduction of data $X$ is obtained selecting the first few columns of $XW$ which represent the highest data variations in a smaller feature space of $<p$ dimensions.  For example, keeping only the first two principal components finds the two-dimensional plane through the high-dimensional dataset in which the data is most spread out, so if the data contains clusters these too may be most spread out, and therefore most visible to be plotted out in a two-dimensional diagram; whereas if any two random directions through the data are chosen, the clusters may be much less spread apart from each other, and may in fact be much more likely to substantially overlay each other, making them indistinguishable.
 
@@ -3774,11 +3747,9 @@ The explained variance ratio of each principal component indicates the proportio
 <img src="./assets/machine-learning/pca-elbow-curve.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
-Similarly, in regression analysis, the larger the number of explanatory variables allowed, the greater is the chance of overfitting the model, producing conclusions that fail to generalize. One approach, especially when there are strong correlations between different possible explanatory variables, is to reduce them to a few principal components and then run the regression against them, a method called _principal component regression_.
+Similarly, in regression analysis, the larger the number of explanatory variables allowed, the greater is the chance of overfitting the model, producing conclusions that fail to generalize. One approach, especially when there are strong correlations between different possible explanatory variables, is to reduce them to a few principal components and then run the regression against them, a method called _principal component regression_. In machine learning, the orthogonal projection of a data point $\bm x$ onto the subspace $\mathcal S$ spanned by a subset of principal components is the point  $\bm {\tilde x} ∈ \mathcal S$ closest to $\bm x$ and is called the reconstruction of $\bm x$. Choosing a subspace to maximize the projected variance, or minimize the reconstruction error, is called principal component analysis (PCA). 
 
-In machine learning, the orthogonal projection of a data point $\bm x$ onto the subspace $\mathcal S$ spanned by a subset of principal components is the point  $\bm {\tilde x} ∈ \mathcal S$ closest to $\bm x$ and is called the reconstruction of $\bm x$. Choosing a subspace to maximize the projected variance, or minimize the reconstruction error, is called principal component analysis (PCA). 
-
-PCA can be viewed from another point. The matrix $\frac{1}{n-1}X^TX$ itself is the **empirical sample covariance** matrix of the dataset.  By definition, given a sample consisting of $n$ independent observations $\bm x_1,\dots, \bm x_n$ of multivariate random variable $\bm X$, an unbiased estimator of the (p×p) covariance matrix $\Sigma = \mathbb E[(\bm X-\mathbb E[\bm X])(\bm X-\mathbb E[\bm X])^T]$ is the sample covariance matrix
+PCA can be viewed from another point. The matrix $\frac{1}{n-1}X^TX$ itself is the **empirical sample covariance matrix** of the dataset.  By definition, given a sample consisting of $n$ independent observations $\bm x_1,\dots, \bm x_n$ of multivariate random variable $\bm X$, an unbiased estimator of the (p×p) covariance matrix $\Sigma = \mathbb E[(\bm X-\mathbb E[\bm X])(\bm X-\mathbb E[\bm X])^T]$ is the sample covariance matrix
 
 $$
 \frac{1}{n-1} \sum_{i=1}^n (\bm x_i - \bm \mu)(\bm x_i - \bm \mu)^T.
@@ -3786,18 +3757,16 @@ $$
 
 Note that every term in the above sum is a $p\times p$ matrix. In our context, this is exactly the matrix $\frac{1}{n-1}X^TX$ in a compact way - recall that WLOG we assumed $\bm \mu = \bm 0$. Here matrix product $A\times B$ is being done in an equivalent way: column $i$ of $A$ is matrix-multiplied by row $i$ of $B$ for every $i$ from 1 to $p$, then add all these matrices to get $A\times B$. 
 
-##### Spectral Decomposition: 
-A symmetric matrix A has a full set of real eigenvectors, which can be chosen to be orthonormal. This gives a decomposition $A= QΛQ^⊤$, where $Q$ is orthonormal and $Λ$ is diagonal. The columns of $Q$ are eigenvectors, and the diagonal entries $λ_j$ of Λ are the corresponding eigenvalues. I.e., symmetric matrices are diagonal in some basis. A symmetric matrix A is positive semidefinite iﬀ each $λj ≥0$. Being a symmetric, positive semi-definite matrix, $X^TX$ is diagonalizable:
+### Spectral Decomposition: 
+A symmetric matrix A has a full set of real eigenvectors, which can be chosen to be orthonormal. This gives a decomposition $A= QΛQ^T$, where $Q$ is orthonormal and $Λ$ is diagonal. The columns of $Q$ are eigenvectors, and the diagonal entries $λ_j$ of $Λ$ are the corresponding eigenvalues. I.e., symmetric matrices are diagonal in some basis. A symmetric matrix A is positive semidefinite iﬀ each $λ_j ≥0$. Being a symmetric, positive semi-definite matrix, $X^TX$ is diagonalizable:
 
 $$
 X^TX = W \Lambda W^T
 $$
 
-where $\Lambda$ is the diagonal matrix of eigenvalues of $X^TX$. The columns of $W$ are eigenvectors of  $X^TX$ which are also the principal components. 
+where $\Lambda$ is the diagonal matrix of eigenvalues of $X^TX$. The columns of $W$ are eigenvectors of  $X^TX$ which are also the principal components. Because trace is invariant under the change of basis and since the original diagonal entries in the covariance matrix $X^TX$ are the variances of the features, **the sum of the eigenvalues must also be equal to the sum of the original variances**. In other words, the cumulative proportion of the top $k$ eigenvalue is the "explained variance" of the first $k$ principal components.
 
-Because trace is invariant under the change of basis and since the original diagonal entries in the covariance matrix $X^TX$ are the variances of the features, the sum of the eigenvalues must also be equal to the sum of the original variances. In other words, the cumulative proportion of the top $k$ eigenvalue is the "explained variance" of the first $k$ principal components.
-
-#### Singular value decomposition
+### Singular Value Decomposition
 
 The spectral decomposition is a special case of the singular value decomposition, which states that any matrix $A_{m\times n}$ can be expressed as  $A=UΣV$ where  $U_{m \times m}$  and  $V_{n\times n}$ are unitary matrices and $Σ_{m\times n}$ is a diagonal matrix. The principal components transformation can also be associated with another matrix factorization, the **singular value decomposition (SVD)** of $X$,
 
@@ -3809,7 +3778,7 @@ $$
 
 - $U$ is an n-by-n matrix, the columns of which are orthogonal unit vectors of length n called the left singular vectors of $X$ (eigenvectors of $XX^T$)
 
-- $W$ is a p-by-p matrix whose columns are orthogonal unit vectors of length p and called the right singular vectors of $X$ (eigenvectors of $X^TX$ and principal components). 
+- $W$ is a p-by-p matrix whose columns are orthogonal unit vectors of length p and called the right singular vectors of $X$ which are the eigenvectors of $X^TX$ and the principal components. 
 
 
 #### Limitation of PCA
@@ -3824,7 +3793,7 @@ $$
 
 ## Autoencoders (Advanced PCA) and Nonlinear Dimensionality Reduction
 
-An **autoencoder** is a feed-forward neural net whose job it is to take an input $\bm x$ and predict itself $\bm x$. To make this non-trivial, we need to add a bottleneck layer whose dimension is much smaller than the input. Deep nonlinear autoencoders learn to project the data, not onto a subspace, but onto a nonlinear manifold.
+An **autoencoder** is a feed-forward neural net whose job it is to take an input $\bm x$ and predict itself $\bm x$. To make this non-trivial, we need to add a **bottleneck layer** whose dimension is much smaller than the input. Deep nonlinear autoencoders learn to project the data, not onto a subspace, but onto a nonlinear manifold.
 
 ```mermaid
 graph BT;
@@ -3835,14 +3804,14 @@ The lower half of the architecture is called **encoder** and the top half is cal
 - Map high-dimensional data to two dimensions for visualization
 - Learn abstract features in an unsupervised way so you can apply them to a supervised task (Unlabled data can be much more plentiful than labeled data)
 
-Loss function is naturally $|| \bm x - \bm {\tilde x}||^2$. It is proven result that the linear autoencoder is equivalent to PCA: If you restrict the autoencoder to:
+Loss function is naturally $|| \bm x - \bm {\tilde x}||^2$, the sum of square error. It is proven result that the linear autoencoder is equivalent to PCA: If you restrict the autoencoder to:
 - Linear activation functions (no ReLU/tanh)
 - No bias terms
 - Single hidden layer
 - Mean-centered input
 
 Then...
- - The autoencoder learns the same subspace as PCA!
+ - The autoencoder learn the same subspace as PCA!
 - The weights of the encoder/decoder span the space of the top $k$ principal components.
 
 | Property         | PCA                   | Autoencoder                                       |
@@ -3856,9 +3825,7 @@ Then...
 
 ## Unsupervised Learning Techniques: Clustering
 
-Sometimes the data form clusters, where examples within a cluster are similar to each other, and examples in diﬀerent clusters are dissimilar. Such a distribution is **multimodal**, since it has multiple modes, or regions of high probability mass. Grouping data points into clusters, with no labels, is called **clustering**.
-
-Clustering is used in a wide variety of applications, including:
+Sometimes the data form clusters, where examples within a cluster are similar to each other, and examples in diﬀerent clusters are dissimilar. Such a distribution is **multimodal**, since it has multiple modes, or regions of high probability mass. Grouping data points into clusters, with no labels, is called **clustering**. Clustering is used in a wide variety of applications, including:
 
 -  **Customer Segmentation**: you can cluster your customers based on their purchases, their activity on your website, and so on. This is useful to understand who your customers are and what they need, so you can adapt your products and marketing campaigns to each segment. For example, this can be useful in recommender systems to suggest content that other users in the same cluster enjoyed.
 -  **Data Analysis**: when analyzing a new dataset, it is often useful to first discover clusters of similar instances, as it is often easier to analyze clusters separately.
@@ -3906,9 +3873,9 @@ $$
 \min_{R} || X- RM||^2
 $$
 
-where $R$ is cluster assignment and $M$ are centroids. In K-means, each cluster forms a Voronoi cell: region closest to that centroid. The decision boundaries between clusters are linear — K-Means assumes spherical, equally sized clusters in Euclidean space. The K-means algorithm is based on the use of squared Euclidean distance as the measure of dissimilarity between a data point and a prototype vector. Not only does this limit the type of data variables that can be considered (it would be inappropriate for cases where some or all of the variables represent categorical labels for instance), but it can also make the determination of the cluster means nonrobust to outliers. We can generalize the K-means algorithm by introducing a more general dissimilarity measure between two vectors $\bm x$ and $\bm x'$. K-means is sensetive to outliers as they can shift the mean significantly. Use Robust alternatives (e.g., K-Medoids) by choosing a more approriate dissimilarity measure. 
+where $R$ is cluster assignment and $M$ are centroids. In K-means, each cluster forms a **Voronoi cell**: region closest to that centroid. The decision boundaries between clusters are linear — K-Means assumes spherical, equally sized clusters in Euclidean space. The K-means algorithm is based on the use of squared Euclidean distance as the measure of dissimilarity between a data point and a prototype vector. Not only does this limit the type of data variables that can be considered (it would be inappropriate for cases where some or all of the variables represent categorical labels for instance), but it can also make the determination of the cluster means nonrobust to outliers. We can generalize the K-means algorithm by introducing a more general dissimilarity measure between two vectors $\bm x$ and $\bm x'$. *K-means is sensetive to outliers as they can shift the mean significantly*. Use Robust alternatives (e.g., K-Medoids) by choosing a more approriate dissimilarity measure. 
 
-Whenever an assignment is changed, the sum squared distances $J$ of data points from their assigned cluster centers is reduced. The objective $J$ is non-convex (so coordinate descent on $J$ is not guaranteed to converge to the global minimum - NP-hard, but Lloyd’s gives local optima.)  Unfortunately, although the algorithm is guaranteed to converge, it may not converge to the right solution (i.e., it may get stuck at local minima): this depends on the centroid initialization.  
+Whenever an assignment is changed, the sum squared distances $J$ of data points from their assigned cluster centers is reduced. The objective $J$ is non-convex (so coordinate descent on $J$ is not guaranteed to converge to the global minimum - NP-hard, but Lloyd’s gives local optima.)  *Unfortunately, although the algorithm is guaranteed to converge, it may not converge to the right solution (i.e., it may get stuck at local minima): this depends on the centroid initialization*. 
 
 <p align="center">
     <img src="./assets/machine-learning/k-means.png" alt="drawing" width="500" height="200" style="center" />
@@ -3923,26 +3890,22 @@ $$
 where $a$ is the mean distance to the other instances in the same cluster (it is the mean intra-cluster distance), and $b$ is the mean nearest-cluster distance, that is the mean distance to the instances of the next closest cluster (defined as the one that minimizes $b$, excluding the instance’s own cluster). The silhouette coefficient can vary between -1 and +1: $a$ coefficient close to +1 means that the instance is well inside its own cluster and far from other clusters, while a coefficient close to 0 means that it is close to a cluster boundary, and finally a coefficient close to -1 means that the instance may have been assigned to the wrong cluster. An even more informative visualization is obtained when you plot every instance’s silhouette coefficient, sorted by the cluster they are assigned to and by the value of the coefficient. This is called a *silhouette diagram*:
 
 <p align="center">
-    <img src="./assets/machine-learning/k-means2.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/machine-learning/k-means2.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 
-As the figure above shows, when k=5, all clusters have similar sizes, so even though the overall silhouette score from k=4 is slightly greater than for k=5, it seems like a good idea to use k=5 to get clusters of similar sizes.
-
-K-Means does not behave very well when the clusters have varying sizes, different densities, or non-spherical shapes. For example, Figure 9-11 shows how K-Means clusters a dataset containing three ellipsoidal clusters of different dimensions, densities and orientations:
+As the figure above shows, when k=5, all clusters have similar sizes, so even though the overall silhouette score from k=4 is slightly greater than for k=5, it seems like a good idea to use k=5 to get clusters of similar sizes. K-Means does not behave very well when the clusters have varying sizes, different densities, or non-spherical shapes. For example, the following figure shows how K-Means clusters a dataset containing three ellipsoidal clusters of different dimensions, densities and orientations:
 
 <p align="center">
     <img src="./assets/machine-learning/k-means3.png" alt="drawing" width="500" height="200" style="center" />
 </p>
 
-It is important to scale the input features before you run K-Means, or else the clusters may be very stretched, and K-Means will perform poorly. Scaling the features does not guarantee that all the clusters will be nice and spherical, but it generally improves things. You can also think of K-means as some sort of compression: every point is replaced by its cluster centroid.
+It is important to **scale the input features** before you run K-Means, or else the clusters may be very stretched, and K-Means will perform poorly. Scaling the features does not guarantee that all the clusters will be nice and spherical, but it generally improves things. You can also think of K-means as some sort of compression: every point is replaced by its cluster centroid.
 
 
 ### Mixtures of Gaussians
 
-A Gaussian mixture model (GMM) is a probabilistic model that assumes that the instances were generated from a mixture of several Gaussian distributions whose parameters are unknown. All the instances generated from a single Gaussian distribution form a cluster that typically looks like an ellipsoid. Each cluster can have a different ellipsoidal shape, size, density and orientation.
- 
-It is a generative model, meaning you can actually sample new instances from it. There are several GMM variants: in the simplest variant, implemented in the GaussianMixture class, you must know in advance the number k of Gaussian distributions.
+A Gaussian mixture model (GMM) is a probabilistic model that assumes that the instances were generated from a mixture of several Gaussian distributions whose parameters are unknown. All the instances generated from a single Gaussian distribution form a cluster that typically looks like an ellipsoid. Each cluster can have a different ellipsoidal shape, size, density and orientation. It is a generative model, meaning you can actually sample new instances from it. There are several GMM variants: in the simplest variant, implemented in the GaussianMixture class, you must know in advance the number $k$ of Gaussian distributions.
 
 We now turn to a formulation of Gaussian mixtures in terms of discrete latent variables. This will provide us with a deeper insight into this important distribution, and will also serve to motivate the expectation-maximization algorithm. Gaussian mixture distribution can be written as a linear superposition of Gaussians in the form
 
@@ -4014,7 +3977,7 @@ $$
 p(Z \mid X, \mu, Σ, π) \propto p(X\mid Z, \mu, Σ, π) p(Z)  = \prod_{n=1}^N \prod_{k=1}^K π_k^{z_{nk}} \mathcal N(\bm x_n \mid \bm \mu_k, \Sigma_k)^{z_{nk}}
 $$
 
-Because we cannot use the complete-data log likelihood $\ln p(X, Z \mid \mu, Σ, π)$, we consider instead its expected value under the posterior distribution of the latent variable to be maximized (according to EM algorithm):
+Because we cannot use the complete-data log likelihood $\ln p(X, Z \mid \mu, Σ, π)$, we consider instead _its expected value under the posterior distribution of the latent variable to be maximized (according to EM algorithm)_:
 
 $$
 \begin{align*}
@@ -4030,7 +3993,7 @@ $$
 p(z_k=1 \mid x) = \mathbb E[z_{nk}] = \frac{π_k \mathcal N(\bm x \mid \bm \mu_k, \Sigma_k)}{\sum_j π_j \mathcal{N}(\bm x \mid \bm {\mu}_j,  \Sigma_j)} = \gamma(z_{nk})
 $$
 
-as mentioned before. According to EM algorithm, first we choose some initial values for the parameters $\mu_{\text{old}}$, $\Sigma_{\text{old}}$, $π_{\text{old}}$, and use these to evaluate the responsibilities $\gamma(z_{nk})$ (the E step) from the previous equation. We then keep the responsibilities fixed and maximize the expectation mentioned above with respect to $µ_k$, $Σ_k$ and $π_k$ (the M step). This leads to closed form solutions for $\mu_{\text{new}}$, $\Sigma_{\text{new}}$, $π_{\text{new}}$:
+according to Bayes' Theorem. According to EM algorithm, first we choose some initial values for the parameters $\mu_{\text{old}}$, $\Sigma_{\text{old}}$, $π_{\text{old}}$, and use these to evaluate the responsibilities $\gamma(z_{nk})$ (the E step) from the previous equation. We then keep the responsibilities fixed and maximize the expectation mentioned above with respect to $µ_k$, $Σ_k$ and $π_k$ (the M step). This leads to closed form solutions for $\mu_{\text{new}}$, $\Sigma_{\text{new}}$, $π_{\text{new}}$:
 
 $$
 \begin{align*}
@@ -4069,14 +4032,14 @@ $$
 
 is very messy gradient. Each point $\bm x_n$ could have come from any of K Gaussians, and we don’t know which. There is no closed-form gradient for mixture weights $π_k$ plus they should meet constraints (sum to 1) as well as covariance matrix contraint which makes derivatives expensive and complicated to compute. The solution of the above equation is invarient to permutation of parameters so its not a convex optimization just like neural networks. EM solves this neatly by using posterior probabilities as soft assignments and Turning the hard likelihood into an expected complete-data log-likelihood, which can be optimized in closed form.
 ​	
-Unfortunately, just like K-Means, EM can end up converging to poor solutions, so it needs to be run several times, keeping only the best solution. When there are many dimensions, or many clusters, or few instances, EM can struggle to converge to the optimal solution. You might need to reduce the difficulty of the task by limiting the number of parameters that the algorithm has to learn: one way to do this is to limit the range of shapes and orientations that the clusters can have. This can be achieved by imposing constraints on the covariance matrices. To do this, just set the covariance_type hyperparameter
+Unfortunately, just like K-Means, EM can end up converging to poor solutions, so it needs to be run several times, keeping only the best solution. When there are many dimensions, or many clusters, or few instances, EM can struggle to converge to the optimal solution. You might need to reduce the difficulty of the task by limiting the number of parameters that the algorithm has to learn: one way to do this is to limit the range of shapes and orientations that the clusters can have. This can be achieved by imposing constraints on the covariance matrices. 
 
 The computational complexity of training a GaussianMixture model depends on the number of instances $m$, the number of dimensions $n$, the number of clusters $k$, and the constraints on the covariance matrices. If covariance_type is "spherical or "diag", it is $\mathcal O(kmn)$, assuming the data has a clustering structure. If covariance_type is "tied" or "full", it is $\mathcal O(kmn^2 + kn^3)$, so it will not scale to large numbers of features.
  
-Using a Gaussian mixture model for anomaly detection is quite simple: any instance located in a low-density region can be considered an anomaly. You must define what density threshold you want to use. Gaussian mixture models try to fit all the data, including the outliers, so if you have too many of them, this will bias the model’s view of “normality”: some outliers may wrongly be considered as normal. If this happens, you can try to fit the model once, use it to detect and remove the most extreme outliers, then fit the model again on the cleaned up dataset. Another approach is to use robust covariance estimation methods.
+Using a Gaussian mixture model for anomaly detection is quite simple: _any instance located in a low-density region can be considered an anomaly_. You must define what density threshold you want to use. Gaussian mixture models try to fit all the data, including the outliers, so if you have too many of them, this will bias the model’s view of “normality”: some outliers may wrongly be considered as normal. If this happens, you can try to fit the model once, use it to detect and remove the most extreme outliers, then fit the model again on the cleaned up dataset. Another approach is to use robust covariance estimation methods.
 
 
-#### The General EM Algorithm
+### The General EM Algorithm
 
 Given a joint distribution $p(X, Z \mid θ)$ over observed variables $X$ and latent variables $Z$, governed by parameters $θ$, the goal is to maximize the likelihood function $p(X\mid θ)$ with respect to $θ$.
 
@@ -4089,18 +4052,13 @@ Given a joint distribution $p(X, Z \mid θ)$ over observed variables $X$ and lat
  and return to step II.
 
 
-#### Relation to K-means
-Comparison of the K-means algorithm with the EM algorithm for Gaussian mixtures shows that there is a close similarity. Whereas the K-means algorithm performs a _hard_ assignment of data points to clusters, in which each data point is associated uniquely with one cluster, the EM algorithm makes a soft assignment based on the posterior probabilities. In fact, we can derive the K-means algorithm as a particular limit of EM for Gaussian mixtures just like a soft version of K-means, with fixed priors and covariance. GMM reduces to K-Means if all Gaussians have identical spherical covariances and assignments are hard. See Bishop p443.
+### Relation to K-means
+Comparison of the K-means algorithm with the EM algorithm for Gaussian mixtures shows that there is a close similarity. Whereas the K-means algorithm performs a _hard_ assignment of data points to clusters, in which each data point is associated uniquely with one cluster, the EM algorithm makes a soft assignment based on the posterior probabilities. In fact, we can derive the K-means algorithm as a particular limit of EM for Gaussian mixtures just like a soft version of K-means, with fixed priors and covariance. **GMM reduces to K-Means if all Gaussians have identical spherical covariances and assignments are hard**. See [Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf), p443.
 
 
 ###  Bayesian Gaussian Mixture Models
 
-Rather than manually searching for the optimal number of clusters, it is possible to
-use instead the BayesianGaussianMixture class which is capable of giving weights
-equal (or close) to zero to unnecessary clusters. Just set the number of clusters n_com
-ponents to a value that you have good reason to believe is greater than the optimal
-number of clusters (this assumes some minimal knowledge about the problem at
-hand), and the algorithm will eliminate the unnecessary clusters automatically.
+Rather than manually searching for the optimal number of clusters, it is possible to use instead the BayesianGaussianMixture class which is capable of giving weights equal (or close) to zero to unnecessary clusters. Just set the number of clusters n_com ponents to a value that you have good reason to believe is greater than the optimal number of clusters (this assumes some minimal knowledge about the problem at hand), and the algorithm will eliminate the unnecessary clusters automatically.
 
 ```python
 from sklearn.mixture import BayesianGaussianMixture
@@ -4149,14 +4107,16 @@ $$
 The first term is named $\mathcal L(q, \theta) $ and the second term is  $KL(q \parallel p)$ is the **Kullback-Leibler divergence** between $q(Z)$ and the posterior distribution $p(Z|X, θ)$. So we obtain the decomposition:
 
 $$
- \ln p(X\mid θ) = \mathcal L(q, \theta) + \text{KL}(q\parallel p)
+\begin{equation*}
+ \ln p(X\mid θ) = \mathcal L(q, \theta) + \text{KL}(q\parallel p) \tag{\ddag} 
+\end{equation*}
 $$
 
 
 Recall that the Kullback-Leibler divergence satisfies $KL(q \parallel p) \ge 0$, with equality if, and only if, $q(Z) = p(Z \mid X, θ)$. It therefore follows from the above equation that $\mathcal L(q, θ) \le \ln p(X|θ) \;\; \forall q, \theta $, in other words that $\mathcal L(q, \theta) $ is a lower bound on $\ln p(X|θ)$. 
 
 The EM algorithm is a two-stage iterative optimization technique for finding maximum likelihood solutions. We can use the above decomposition to define the EM algorithm and to demonstrate that it does indeed maximize the log likelihood. Suppose that the current value of the parameter vector is $θ_\text{old}$. 
-- In the E step, the lower bound $\mathcal L(q, θ_\text{old})$ is maximized with respect to $q(Z)$ while holding $θ_\text{old}$ fixed. The solution to this maximization problem is easily seen by noting that the value of $\ln p(X\mid θ_\text{old})$ does not depend on $q(Z)$ and so the largest value of $\mathcal L(q, θ_\text{old})$ will occur when the Kullback-Leibler divergence is minimized (i.e. vanishes), in other words when $q(Z)$ is equal to the posterior distribution $p(Z\mid X, θ_\text{old})$  in which case, the lower bound will equal the log likelihood $\ln p(X|θ)$.
+- In the E step, the lower bound $\mathcal L(q, θ_\text{old})$ is maximized with respect to $q(Z)$ while holding $θ_\text{old}$ fixed. The solution to this maximization problem is easily seen by noting that in equation ($\ddag$), the value of $\ln p(X\mid θ_\text{old})$ does not depend on $q(Z)$ (constant w.r.t $q(Z)$) and so the largest value of $\mathcal L(q, θ_\text{old})$ will occur when the Kullback-Leibler divergence is minimized (i.e. vanishes), in other words when $q(Z)$ is equal to the posterior distribution $p(Z\mid X, θ_\text{old})$  in which case, the lower bound will equal the log likelihood $\ln p(X|θ)$.
 - In the subsequent M step, the distribution $q(Z)$ is held fixed and the lower bound $\mathcal L(q, θ)$ is maximized with respect to $θ$ to give some new value $θ_\text{new}$. This will cause the lower bound to increase (unless it is already at a maximum), which will necessarily cause the corresponding log likelihood function to increase. Because the distribution q is determined using the old parameter values rather than the new values and is held fixed during the $M$ step, it will not equal the new posterior distribution $\mathcal L(q, θ_\text{new})$, and hence there will be a nonzero $\text{KL}$ divergence.
 
 <p align="center">
@@ -4175,8 +4135,11 @@ where the second term is constant as it is simply the negative entropy of the $q
 We can also use the EM algorithm to maximize the posterior distribution $p(θ \mid X)$ for models in which we have introduced a prior $p(θ)$ over the parameters. To see this, we note that as a function of $θ$, we have $p(θ \mid X) = p(θ, X)/p(X)$ and so
 
 $$
-\ln p(θ\mid X) = \mathcal L(q, θ) + KL(q\parallel p) + \ln p(θ)− \ln p(X)\\
-\ge \mathcal L(q, θ)  + \ln p(θ)− \ln p(X). 
+\begin{align*}
+\ln p(θ\mid X) &= \mathcal L(q, θ) + KL(q\parallel p) + \ln p(θ)− \ln p(X)\\
+&\ge \mathcal L(q, θ)  + \ln p(θ)− \ln p(X)\\
+&\ge \mathcal L(q, θ)  + \ln p(θ).
+\end{align*}
 $$
 
 where $\ln p(X)$ is a constant. We can again optimize the right-hand side alternately with respect to $q$ and $θ$. The optimization with respect to $q$ gives rise to the same E-step equations as for the standard EM algorithm, because $q$ only appears in $\mathcal L(q, θ)$. The M-step equations are modified through the introduction of the prior term $\ln p(θ)$, which typically requires only a small modification to the standard maximum likelihood M-step equations.
@@ -4187,9 +4150,8 @@ where $\ln p(X)$ is a constant. We can again optimize the right-hand side altern
 
 # Interpreting ML
 
-### partial dependence plot
 
-Partial dependence plots (PDP) show the dependence between the objective function (target response) and a set of input features of interest, marginalizing over the values of all other input features (the ‘complement’ features). Intuitively, we can interpret the partial dependence as the expected target response as a function of the input features of interest.
+**Partial dependence plots (PDP)** show the dependence between the objective function (target response) and a set of input features of interest, marginalizing over the values of all other input features (the ‘complement’ features). Intuitively, we can interpret the partial dependence as the expected target response as a function of the input features of interest.
 
 Let $X_s$ be the set of input features of interest (i.e. the features parameter). Assuming the feature are not correlated (are independence), the partial dependence of the response  $f$ at a point  $x_s$ is defined as:
 
@@ -4203,15 +4165,11 @@ $$
 
 where $n$ is the number of times $X_s = x_s$.  Due to the limits of human perception, the size of the set of input features of interest must be small (usually, one or two) thus the input features of interest are usually chosen among the most important features.
 
-### Permutation importance
-
-The permutation feature importance is defined to be the decrease in a model score when a single feature value is randomly shuffled.
+The **permutation feature importance** is defined to be the decrease in a model score when a single feature value is randomly shuffled.
 
 ### SHAPLEY Values
 
-SHAP values are one of the most powerful and interpretable ways to understand how each feature affects an individual prediction. They’re based on solid math and are widely used in explainable ML.
-
-A concept from game theory - Nobel Prize in Economics 2012. In the ML context, the game is prediction of an instance, each player is a feature, coalitions are subsets of features, and the game payoff is the difference in predicted value for an instance and the mean prediction (i.e. null model with no features used in prediction). The **Shapley value** $\phi_i(v) $ is given by the formula
+SHAP values are one of the most powerful and interpretable ways to understand how each feature affects an individual prediction. They’re based on solid math and are widely used in explainable ML. It is a concept from **game theory** - Nobel Prize in Economics 2012. In the ML context, the game is prediction of an instance, each player is a feature, coalitions are subsets of features, and the game payoff is the difference in predicted value for an instance and the mean prediction (i.e. null model with no features used in prediction). The **Shapley value** $\phi_i(v) $ is given by the formula:
 
 $$
 \frac{1}{\text{number of players}}\sum_{\text{coalitions excluding $i$}} \frac{\text{mariginal contribution of $i$ to coalition}}{\text{number of coalitions excluding $i$ of this size}}
@@ -4219,14 +4177,14 @@ $$
 
 <!-- ![img](https://wikimedia.org/api/rest_v1/media/math/render/svg/6fe739cf2e00ee18336b028ada7971d124e63f2b) -->
 
-We will give a simple example - suppose there are 3 features $a$, $b$ and $c$ used in a regression problem. The figure shows the possible coalitions, where the members are listed in the first line and the predicted value for the outcome using just that coalition in the model is shown in the second line.
+As a simple example, suppose there are 3 features $a$, $b$ and $c$ used in a regression problem. The figure below shows the possible coalitions, where the members are listed in the first line and the predicted value for the outcome using just that coalition in the model is shown in the second line.
 
 <p align="center">
     <img src="./assets/machine-learning/shapley_value.png" alt="drawing" width="300" height="400" style="center" />
 </p>
 <!-- ![img](figs/shapley.png) -->
 
-Let's work out the Shapley value of feature $a$. First we work out the weights
+Let's work out the Shapley value of feature $a$. First we work out the weights:
 
 <p align="center">
     <img src="./assets/machine-learning/shapley_value2.png" alt="drawing" width="300" height="400" style="center" />
@@ -4238,7 +4196,7 @@ The red arrows point to the coalitions where $a$ was added (and so made a contri
 - The total weights on each row are equal to each other. Since there are 3 rows, the total weight of each row sums to $1/3$
 - All weights within a row are equal - since the second row has two weights, each weight must be $1/6$
 
-Now we multiply the weights by the marginal contributions - the value minus the coalition without that feature. So we have Shapely values as follows:
+Now we multiply the weights by the **marginal contributions** - the value minus the coalition without that feature. So we have Shapely values as follows:
 
 $$
 \psi_a(v) = \frac{1}{3}(105-100) + \frac{1}{6}(125-120) + \frac{1}{6}(100-90) + \frac{1}{3}(115-130) \\
@@ -4254,7 +4212,8 @@ $$
 \psi_c(v) = 21.666\\
 $$
 
-So $\psi_a(v) + \psi_b(v) + \psi_c(v) = 14.999$.
+So $\psi_a(v) + \psi_b(v) + \psi_c(v) = 14.999$. 
+<!-- This explains additive property of Shapley values, that is they explain (add up to) the difference between the prediction for this specific instance from the null default prediction (which is the same from all instances).    -->
 
 
 
@@ -4262,13 +4221,13 @@ So $\psi_a(v) + \psi_b(v) + \psi_c(v) = 14.999$.
 
 Shapley Additive exPlanations: 
 
-Note that the sum of Shapley values for all features is the same as the difference between the predicted value of the full model (with all features) and the null model (with no features). So the Shapley values provide an *additive* measure of feature importance. In fact, we have a simple linear model that explains the contributions of each feature.
+Note that the sum of Shapley values for all features is the same as the difference between the predicted value of the full model (with all features) and the null model (with no features, which is the default prediction for all instances) . So the Shapley values provide an *additive* measure of feature importance. In fact, we have a simple linear model that explains the contributions of each feature.
 
-- Note 1: The prediction is for each instance (observation), so this is a local interpretation. However, we can average over all observations to get a global value.
-- Note 2: There are $2^n$ possible coalitions of $n$ features, so exact calculation of the Shapley values as illustrated is not feasible in practice. See the reference book for details of how calculations are done in practice.
-- Note 3: Since Shapley values are additive, we can just add them up over different ML models, making it useful for ensembles.
-- Note 4: Strictly, the calculation we show is known as kernelSHAP. There are variants for different algorithms that are faster such as treeSHAP, but the essential concept is the same.
-- Note 5: The Shapeley values quantify the contributions of a feature when it is added to a coalition. This measures something different from the permutation feature importance, which assesses the loss in predictive ability when a feature is removed from the feature set.
+- **Note 1**: The prediction is for each instance (observation), so this is a local interpretation. However, we can average over all observations to get a global value.
+- **Note 2**: There are $2^n$ possible coalitions of $n$ features, so exact calculation of the Shapley values as illustrated is not feasible in practice. See the reference book for details of how calculations are done in practice.
+- **Note 3**: Since Shapley values are additive, we can just add them up over different ML models, making it useful for ensembles.
+- **Note 4**: Strictly, the calculation we show is known as **kernelSHAP**. There are variants for different algorithms that are faster such as **treeSHAP**, but the essential concept is the same.
+- **Note 5**: The Shapeley values quantify the contributions of a feature when it is added to a coalition. This measures something different from the permutation feature importance, which assesses the loss in predictive ability when a feature is removed from the feature set.
 
 You can just get an "importance" type bar graph, which shows the mean absolute Shapley value for each feature. You can also use max absolute Shapley value as well.
 
@@ -4277,7 +4236,7 @@ You can just get an "importance" type bar graph, which shows the mean absolute S
     <img src="./assets/machine-learning/shap_mean.png" alt="drawing" width="400" height="400" style="center" />
 </p>
 
-Use a beeswarm plot to summarize the entire distribution of SHAP values for each feature:
+Use a **Beeswarm Plot** to summarize the entire distribution of SHAP values for each feature:
 
 <p align="center">
     <img src="./assets/machine-learning/shap_value3.png" alt="drawing" width="500" height="400" style="center" />
@@ -4285,7 +4244,7 @@ Use a beeswarm plot to summarize the entire distribution of SHAP values for each
 
 This shows the jittered Shapley values for all instances for each feature (Titanic dataset). An instance to the right of the vertical line (null model which predict the constant mean of target response for all inputs) means that the model predicts a higher probability of survival than the null model. If a point is on the right and is red, it means that for that instance, a high value of that feature predicts a higher probability of survival. For example, `sex_female` shows that if you have a high value (1 = female, 0 = male) your probability of survival is increased. Similarly, younger age predicts higher survival probability.
 
-##### Force plot
+#### Force plot
 We show the _forces_ acting on a single instance (index 10). The model predicts a probability of survival of 0.03, which is lower than the base probability of survival (0.39). The force plot shows which features affect the difference between the full and base model predictions. Blue arrows means that the feature decreases survival probability, red arrows means that the feature increases survival probability.
 
 <p align="center">
@@ -4327,7 +4286,7 @@ We show the _forces_ acting on a single instance (index 10). The model predicts 
 └── README.md
 
 
-### Pyhton Environment
+### Python Environment
 
 Use virtual environments (like `venv`) and declare dependencies in `requirements.txt`.
 
