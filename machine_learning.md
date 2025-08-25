@@ -146,7 +146,7 @@
     - [SHAPLEY Values](#shapley-values)
   - [SHAP](#shap)
       - [Force plot](#force-plot)
-- [MLOps](#mlops)
+- [MLOps: Machine Learning Pipelines in Production](#mlops-machine-learning-pipelines-in-production)
   - [Workspace Setup](#workspace-setup)
     - [Python Environment](#python-environment)
   - [Data Mining Tools](#data-mining-tools)
@@ -161,6 +161,61 @@
   - [Deployment-Ready Inference](#deployment-ready-inference)
   - [Launch, Monitor, and Maintain Your System](#launch-monitor-and-maintain-your-system)
   - [Best Practices for Production](#best-practices-for-production)
+  - [Full Life Cycle of MLOps Pipeline](#full-life-cycle-of-mlops-pipeline)
+    - [Typical ML pipeline:](#typical-ml-pipeline)
+      - [Full ML pipeline diagram for the project](#full-ml-pipeline-diagram-for-the-project)
+      - [Key Best Practice Highlights](#key-best-practice-highlights)
+    - [Airflow DAGs](#airflow-dags)
+    - [DVC’s Role in ML Pipelines](#dvcs-role-in-ml-pipelines)
+      - [How to Use DVC](#how-to-use-dvc)
+    - [Scenario](#scenario)
+      - [What `dvc push` does?](#what-dvc-push-does)
+      - [What are deps and outs?](#what-are-deps-and-outs)
+      - [Key differences vs manual version tags](#key-differences-vs-manual-version-tags)
+      - [Controlling what you push](#controlling-what-you-push)
+    - [Git vs DVC](#git-vs-dvc)
+      - [Best practices for version control](#best-practices-for-version-control)
+      - [Best practices for DVC+Airflow](#best-practices-for-dvcairflow)
+      - [How DVC + Airflow works](#how-dvc--airflow-works)
+      - [How versioning works in this DAG](#how-versioning-works-in-this-dag)
+    - [Airflow for ML pipelines](#airflow-for-ml-pipelines)
+      - [Initialize Airflow and Create a Dag](#initialize-airflow-and-create-a-dag)
+    - [Deep MLOps Pipeline (Full ML Lifecycle)](#deep-mlops-pipeline-full-ml-lifecycle)
+      - [Fraud Detection](#fraud-detection)
+      - [ML Pipeline: DVC + Airflow](#ml-pipeline-dvc--airflow)
+      - [Airflow DAG — Automate Entire Lifecycle](#airflow-dag--automate-entire-lifecycle)
+      - [Enforce Data Consistency](#enforce-data-consistency)
+      - [DVC+Airflow+MinIO](#dvcairflowminio)
+      - [Why use DVC with S3/MinIO remote?](#why-use-dvc-with-s3minio-remote)
+      - [What you shouldn't do with DVC + S3 remote](#what-you-shouldnt-do-with-dvc--s3-remote)
+    - [Model Registry: MLflow](#model-registry-mlflow)
+      - [MLflow Model Registry](#mlflow-model-registry)
+      - [MLflow vs DVC](#mlflow-vs-dvc)
+      - [MinIO prep - daul network (docker compose)](#minio-prep---daul-network-docker-compose)
+      - [MLFlow Model Registry (Docker)](#mlflow-model-registry-docker)
+    - [Inference Pipeline](#inference-pipeline)
+      - [Inference Pipeline Plan](#inference-pipeline-plan)
+      - [Project Layout](#project-layout)
+      - [Inference Types](#inference-types)
+      - [Robust Inference – Best Practices](#robust-inference--best-practices)
+    - [Monitoring](#monitoring)
+    - [Complete ML System Monitoring](#complete-ml-system-monitoring)
+      - [Model Performance Monitoring - Example](#model-performance-monitoring---example)
+        - [Two Key Alerts in Grafana](#two-key-alerts-in-grafana)
+      - [Monitoring Blueprint](#monitoring-blueprint)
+    - [Inference Monitoring](#inference-monitoring)
+      - [Instrument FastAPI](#instrument-fastapi)
+    - [Prometheus Alerts](#prometheus-alerts)
+      - [How to Set Prometheus Alerts Up - Alertmanager](#how-to-set-prometheus-alerts-up---alertmanager)
+    - [Alerts to Trigger an Action: Model Rollback via MLflow](#alerts-to-trigger-an-action-model-rollback-via-mlflow)
+      - [Automated Rollback Triggers:](#automated-rollback-triggers)
+      - [How Models Get Loaded](#how-models-get-loaded)
+      - [Most Common Situations for Model Rollback :](#most-common-situations-for-model-rollback-)
+      - [Model Rollback Mechanism based on High Latency Inference](#model-rollback-mechanism-based-on-high-latency-inference)
+      - [Grafana as Code](#grafana-as-code)
+    - [Logging and Tracing](#logging-and-tracing)
+        - [Instrument your FastAPI app](#instrument-your-fastapi-app)
+
 
 
 # Introduction 
@@ -1093,7 +1148,6 @@ F^{−1}_n (p) = inf \{x : \hat F_n(x) ≥ p\}
 \]
 
 We call $T(\hat F_n) = \hat F^{-1}_n (p)$ the $p$th **sample quantile**.
-
 
 
 ### Bootstrap 
@@ -4253,13 +4307,14 @@ We show the _forces_ acting on a single instance (index 10). The model predicts 
 
 
 
-# MLOps
+# MLOps: Machine Learning Pipelines in Production 
 
 
-  ## Workspace Setup
+## Workspace Setup
 
   Here is a description of how to structure a workspace setup for a machine learning project optimized for production, covering Python environment, data pipeline, preprocessing, and deployment readiness:
 
+```yaml
   ml_project/
 │
 ├── data/                     # (optional local) raw & processed data
@@ -4284,7 +4339,7 @@ We show the _forces_ acting on a single instance (index 10). The model predicts 
 ├── requirements.txt / pyproject.toml
 ├── .env                      # Secrets/config (never commit)
 └── README.md
-
+```
 
 ### Python Environment
 
@@ -4848,6 +4903,1764 @@ A production-optimized ML workspace should:
 - Be ready for CI/CD and containerized deployment
 
 
+
+## Full Life Cycle of MLOps Pipeline 
+
+Full life cycle of a typical ML pipeline — from raw data to live, monitored model — in a way that’s close to how companies actually build it in production.
+
+1. **Problem Definition & Requirements**
+Before touching code:
+- Business goal: What are we predicting/optimizing? (e.g., fraud detection, churn prediction, recommendation)
+- Success metrics: Accuracy, F1-score, AUC, latency, cost constraints.
+- Constraints: Data privacy, real-time or batch, infrastructure limitations.
+
+2. **Data Ingestion**
+Bring in data from its source(s):
+- Sources: Databases (SQL, NoSQL), APIs, data lakes (S3, GCS), event streams (Kafka).
+- Ingestion methods: ETL/ELT jobs, scheduled pipelines (Airflow, Prefect).
+- Versioning: Store raw snapshots with tags for reproducibility.
+Example: `fraud_data_2025-08-13.csv` stored in `s3://bucket/data/raw/`
+
+3. **Data Preprocessing**
+Clean and prepare for modeling:
+- Cleaning: Handle missing values, remove duplicates, fix inconsistent formats.
+- Transformation: Scaling, encoding, feature extraction.
+- Splitting: Train/validation/test or time-based splits for temporal data.
+- Automation: Save preprocessed data to `data/processed/` or a feature store.
+Example Tools: Pandas, PySpark, dbt, Feast.
+
+4. **Feature Engineering**
+Enhance model signal:
+- Domain features: Derived variables (e.g., transaction frequency, rolling averages).
+- Interaction features: Combinations or transformations of raw features.
+- Embedding features: For text, images, categorical variables.
+- Feature store: So models in training and production use identical transformations.
+
+5. **Model Training**
+Core ML step:
+- Model choice: Logistic Regression, XGBoost, Neural Networks, LLMs.
+- Training loop: Fit model on training data, tune hyperparameters.
+- Cross-validation: Ensure robustness.
+- Experiment tracking: MLflow, Weights & Biases (log metrics, parameters, artifacts).
+- Model versioning: Tag models for reproducibility.
+
+6. **Model Evaluation**
+Check performance before deployment:
+- Metrics: Precision, recall, ROC-AUC, MSE, etc.
+- Business impact: Cost/benefit analysis of errors.
+- Robustness tests: Stress test on edge cases, fairness checks.
+- Sign-off: Decide if it meets production criteria.
+
+7. **Packaging & Deployment**
+Make it available for use:
+- Formats: mlflow model, joblib pickle, TensorFlow SavedModel.
+- Serving options:
+    - Batch inference: Spark jobs, scheduled ETL.
+    - Real-time API: FastAPI, Flask, gRPC, AWS SageMaker Endpoint.
+- CI/CD integration: Auto-build & deploy on model approval.
+- Containerization: Docker + orchestration (Kubernetes).
+
+8. **Monitoring & Maintenance**
+Keep it healthy after release:
+- Performance drift: Drop in accuracy, recall, etc.
+- Data drift: Feature distributions changing from training.
+- Latency & uptime: API performance metrics.
+- Retraining triggers: Schedule or event-based.
+- Alerts: PagerDuty, Slack notifications.
+
+9. **Continuous Improvement**
+Pipeline is never truly done:
+- Add new features
+- Switch models
+- Optimize for cost or speed
+- A/B testing with new versions
+
+### Typical ML pipeline:
+
+```mermaid
+flowchart TD
+    A[Business Problem] --> B[Data Ingestion]
+    linkStyle 0 stroke: blue;
+    B --> C[Data Lake/Feature Store]
+    linkStyle 1 stroke: blue;
+    C --> D[Preprocessing]
+    linkStyle 2 stroke: blue;
+    D --> E[Feature Engineering]
+    linkStyle 3 stroke: blue;
+    E --> F[Model Training & Evaluation]
+    linkStyle 4 stroke: blue;
+    F --> G[Model Registry]
+    linkStyle 5 stroke: blue;
+    G --> H[Deployment: Batch/Real-Time]
+    linkStyle 6 stroke: blue;
+    H --> I[Monitoring & Feedback Loop]
+    linkStyle 7 stroke: blue;
+    I --> B
+    linkStyle 8 stroke: blue;
+```
+
+From raw data to live, monitored model — in a way that’s close to how companies actually build it in production.
+
+Problem Definition & Requirements
+Our case: Fraud detection
+- Goal: Predict if a transaction is fraudulent
+- Metric: ROC-AUC + precision/recall balance (fraud = high cost of false negatives)
+- Constraint: Should support both batch scoring and real-time API scoring later.
+
+Data Ingestion: 
+- Can be  automated via Airflow DAG to pull latest data nightly. 
+- Store both raw CSV and a Parquet copy for faster reads.
+
+Data Preprocessing:  
+- Can add `preprocessing.py` that outputs processed data into `data/processed/` although not necassary for every use case. I didn't.
+- Save preprocessing logic in a `sklearn.Pipeline` object so training and inference match. This way you don't need to save processed data.
+
+Feature Engineering: 
+- Create `feature_engineering.py`. Example: transaction frequency per user, average transaction amount over last 30 days, etc.
+- Store features in a feature store (could start with Feast local mode).
+
+Model Training:
+- Wrap training in train.py script with config-driven parameters (config.yaml)
+- Log experiments to MLflow Tracking
+- Save trained model to models/ and register in MLflow Model Registry.
+
+Model Evaluation:
+- Move metrics into `evaluate.py`
+- Store evaluation JSON (metrics_{version_tag}.json) in `reports/`
+- Generate HTML/Markdown reports for stakeholders
+
+Packaging & Deployment:
+- Create serve.py (FastAPI app)
+  - For real-time: Deploy container to AWS SageMaker endpoint or ECS.
+  - For batch: Create batch_inference.py to score incoming CSVs from S3.
+
+Monitoring & Maintenance:
+- Log predictions + actuals to a monitoring table
+- Use Evidently AI or custom scripts for drift detection
+Alerts via email/Slack when drift or performance drop is detected.
+
+Continuous Improvement:
+- Use feedback loop to retrain periodically
+- Test new model architectures (XGBoost → LightGBM → Neural Net)
+- Use A/B testing between old and new models in production.
+
+#### Full ML pipeline diagram for the project 
+
+```yaml
+             ┌─────────────────────────┐
+             │ 1. Problem Definition   │
+             │ - Goal, metrics, SLA    │
+             │ - Stakeholder alignment │
+             └───────────┬─────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────┐
+│ 2. Data Ingestion (Best practice: version everything)    │
+│ - Source: S3 bucket / Data lake                          │
+│ - Tool: boto3 or AWS CLI, Airflow DAG                    │
+│ - Script: data_ingestion.py (save_data_local)            │
+│ - Store raw CSV + Parquet in data/raw/                   │
+└─────────────────────────┬────────────────────────────────┘
+                          │
+                          ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 3. Data Preprocessing (Best practice: same logic in train & inference) │
+│ - Tool: Pandas / PySpark                                               │
+│ - Script: preprocessing.py                                             │
+│ - Save output in data/processed/                                       │
+│ - Package transformations in sklarn.Pipeline                           │
+│ - Versioned with DVC or stored in Feature Store                        │
+└─────────────────────────┬──────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 4. Feature Engineering (Best practice: store features in Feature Store) │
+│ - Tool: Pandas, scikit-learn, Feature Store (Feast)                     │
+│ - Script: feature_engineering.py                                        │
+│ - Examples: rolling stats, frequency counts, embeddings                 │
+│ - Store reusable features for multiple models                           │
+└─────────────────────────┬───────────────────────────────────────────────┘
+                          │
+                          ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ 5. Model Training (Best practice: reproducibility & tracking)             │
+│ - Tool: scikit-learn, XGBoost, LightGBM, PyTorch                          │
+│ - Experiment tracking: MLflow / Weights & Biases                          │
+│ - Script: train.py                                                        │
+│ - Config-driven parameters (config.yaml)                                  │
+│ - Save model artifacts to models/ and register in MLflow Model Registry   │
+└─────────────────────────┬─────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ 6. Model Evaluation (Best practice: report for stakeholders)    │
+│ - Tool: scikit-learn metrics, Matplotlib, Seaborn               │
+│ - Script: evaluate.py                                           │
+│ - Output: metrics_{version_tag}.json + HTML report in reports/  │
+│ - Sign-off before deployment                                    │
+└─────────────────────────┬───────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 7. Packaging & Deployment (Best practice: CI/CD automated deployment)   │
+│ - Format: MLflow model / joblib / ONNX                                  │
+│ - Real-time: FastAPI → Docker → AWS ECS / SageMaker                     │
+│ - Batch: batch_inference.py → scheduled via Airflow                     │
+│ - CI/CD: GitHub Actions / GitLab CI for build & deploy                  │
+└─────────────────────────┬───────────────────────────────────────────────┘
+                          │
+                          ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ 8. Monitoring & Maintenance (Best practice: alerting on drift & latency)  │
+│ - Tools: Evidently AI (data drift), Prometheus + Grafana (latency, uptime)│
+│ - Log predictions + actuals to monitoring DB                              │
+│ - Alerts via Slack / PagerDuty                                            │
+└─────────────────────────┬─────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌───────────────────────────────────────────────────────┐
+│ 9. Continuous Improvement                             │
+│ - Retraining triggers: schedule or drift detection    │
+│ - A/B testing new models                              │
+│ - Incremental feature additions                       │
+└───────────────────────────────────────────────────────┘
+
+```
+#### Key Best Practice Highlights
+- **Version everything**— raw data, processed data, features, models.
+- **Match preprocessing in training & inference** — store as a serialized pipeline.
+- **Automate** — use Airflow or Prefect for recurring jobs.
+- **Track experiments** — MLflow or Weights & Biases to reproduce results.
+- **Containerize deployment** — Docker for portability, CI/CD for automation.
+- **Monitor in production** — detect drift, performance drops, API latency issues.
+- **Retrain on schedule or event-based triggers** — don’t wait for big accuracy drops.
+
+
+### Airflow DAGs
+Airflow DAGs are useful in an ML pipeline because they solve a very practical problem: getting all the steps of your pipeline to run automatically, in the right order, at the right time, and with the right dependencies tracked.
+
+Here’s why teams use Airflow instead of ad-hoc scripts:
+
+1. **Scheduling & Automation**
+- Without Airflow: You’d manually run `data_ingestion.py` every day (or cron job it).
+- With Airflow: You define a DAG (Directed Acyclic Graph) that says:
+  - Pull latest raw data from S3
+  - Preprocess & feature engineer
+  - Train model if new data arrives
+  - Evaluate & push model to registry
+  - Airflow will run these steps daily, hourly, or event-based without you touching anything.
+
+2. **Dependency Management**
+- You can specify that Step B only runs if Step A succeeds.
+Example:
+  - If S3 ingestion fails, don’t bother training a model.
+  - If evaluation fails (model worse than before), skip deployment.
+
+3. **Versioned & Reproducible Workflows**
+- Airflow logs which scripts ran, with which parameters, at what time, and with what outputs.
+- If a step fails, you can rerun just that step without redoing everything else.
+
+4. **Scalability**
+Airflow can run steps on different machines or containers, not just your laptop. Example:
+   - Data preprocessing runs on a Spark cluster.
+   - Model training runs on a GPU node.
+   - Deployment step pushes to AWS SageMaker.
+
+5. **Monitoring & Alerts**
+- Built-in UI to see pipeline runs.
+- Can send Slack/Email alerts if:
+  - Data didn’t arrive.
+  - Training failed.
+  - Model didn’t deploy.
+
+
+In development phase, it’s often better to:
+- Keep scripts modular (`preprocessing.py`, `train.py`, etc.)
+- Run them manually or via a simple Makefile or shell script
+- Track results in MLflow or Weights & Biases
+
+Once your preprocessing, training, and evaluation scripts stop changing daily,
+- Put them in a config-driven pipeline (e.g., Python scripts that take parameters)
+- Maybe chain them together in a bash script or Makefile
+Production phase:
+- Wrap these stable scripts in Airflow DAGs
+Schedule them
+- Add monitoring, retries, and alerts
+
+### DVC’s Role in ML Pipelines
+
+DVC (Data Version Control) is not a replacement for Airflow, MLflow, or your scripts. It’s a data & artifact versioning system with reproducibility baked in. Think of it as Git for data and models.
+
+1. **Versioning Data**
+Tracks raw data, processed data, feature sets. Example:
+    ```sh
+    dvc add data/raw/fraud_data_2025-08-13.csv
+    dvc push
+    ```
+   Ensures you can reproduce any experiment with the exact same dataset.
+
+2. **Versioning Features & Models**
+After preprocessing or feature engineering:
+    ```sh
+    dvc add data/processed/features_v1.parquet
+    dvc add models/fraud_model_v1.pkl
+    dvc push
+    ```
+    DVC tracks changes in `features/models`, so your Airflow DAG can always pull the right version for training or inference.
+
+3. **Linking Pipeline Stages**
+DVC can define stages with dependencies: raw data → preprocessing → features → training → evaluation. Each stage:
+   - Knows its inputs and outputs
+   - Can re-run only if inputs change
+
+    Example:
+
+    ```sh
+    stages:
+      preprocess:
+        cmd: python src/preprocess.py
+        deps:
+          - data/raw/fraud_data.csv
+        outs:
+          - data/processed/features.parquet
+      train:
+        cmd: python src/train.py
+        deps:
+          - data/processed/features.parquet
+        outs:
+          - models/fraud_model.pkl
+    ```
+
+4. **Interaction with Airflow**
+- Airflow orchestrates execution timing & dependencies, runs scripts.
+- DVC ensures exact inputs/outputs are versioned and experiments are reproducible.
+
+- Airflow + DVC combo:
+  -  Airflow DAG runs preprocessing → training → evaluation
+  - DVC makes sure data, features, and models are pinned to versions, so every DAG run is reproducible.
+
+5. **Interaction with MLflow**
+- MLflow tracks experiment metrics, parameters, model artifacts.
+- DVC tracks raw data, processed features, and model files themselves.
+- Together: MLflow + DVC = full reproducibility (metrics + code + data + model).
+
+ ✅ In short:
+-  DVC: version your data, features, models, and pipeline stages
+-  Airflow: orchestrates when to run each stage
+- MLflow: tracks metrics, parameters, and models
+  
+#### How to Use DVC
+
+DVC starts locally, but its real power comes from remote storage integration. Let me clarify:
+
+1. **Local tracking**
+ - DVC creates `.dvc` files and a `dvc.lock` that track data, features, models locally.
+- You can version them just like Git, but it doesn’t store the actual files in Git (only pointers).
+
+2. Remote storage
+You can configure DVC to use S3, GCS, Azure Blob, SSH, or even shared network drives as a remote storage.
+
+    ```sh
+    dvc remote add -d myremote s3://mybucket/ml-data
+    dvc push
+    dvc pull
+    ```
+  
+    Now your data, features, and models are centralized and accessible to other team members or servers.
+
+3. Pipeline reproducibility
+Even if the pipeline runs on another machine or server, DVC can pull the exact same dataset and features for training.
+
+✅ In short:
+- Local: tracks versions and dependencies
+- Remote: stores large files and ensures reproducibility across machines
+- Airflow/MLflow: orchestrate and log runs, but DVC ensures the same data + model is always used.
+
+
+DVC isn’t just for raw data. Best practices:
+
+| Category                       | Example                                    | Notes                                                                                   |
+| ------------------------------ | ------------------------------------------ | --------------------------------------------------------------------------------------- |
+| **Raw data**                   | `data/raw/...`                             | Immutable, pulled from S3, external sources, or dumps                                   |
+| **Processed / feature data**   | `data/processed/features.parquet`          | Store intermediate outputs that are expensive to compute, especially for large datasets |
+| **Trained models**             | `models/model.pkl`, `models/xgboost/`      | Any model artifacts you want to version for reproducibility                             |
+| **Metrics / reports**          | `reports/metrics.json`, `reports/figures/` | Optional but helpful to track experiments                                               |
+| **Large experiment artifacts** | embeddings, vector stores, checkpoints     | Anything too big for Git but needed to reproduce results                                |
+
+Rule of thumb: anything big, expensive to compute, or non-deterministic should go through DVC.
+
+Let’s walk through a realistic DVC story with S3 using our fraud detection pipeline, step by step, and show how `dvc.yaml` orchestrates it.
+
+### Scenario
+You have:
+- Raw transaction data on S3 (`s3://fraud-data-bucket/raw/fraud_2025-08-13.csv`)
+- Preprocessing script: `src/preprocess.py` → outputs features to `data/processed/features.parquet`
+- Training script: `src/train.py` → outputs `models/fraud_model.pkl`
+You want everything versioned and reproducible with DVC
+
+Step 1: **Initialize DVC**
+```sh
+git init
+dvc init
+git add .dvc .dvcignore .gitignore 
+git commit -m "Init DVC for fraud pipeline"
+```
+
+Step 2: **Configure remote storage (S3)**
+```sh
+dvc remote add -d s3remote s3://fraud-data-bucket/dvc-storage
+dvc remote modify s3remote access_key_id <YOUR_KEY>
+dvc remote modify s3remote secret_access_key <YOUR_SECRET>
+```
+Step 3: **Track raw data with DVC**
+```sh
+# local file you just downloaded
+dvc add data/raw/fraud_2025-08-13.csv
+git add data/raw/fraud_2025-08-13.csv.dvc .gitignore
+git commit -m "Track raw fraud dataset with DVC"
+dvc push # sync to S3 remote
+```
+- `dvc add` creates a small file `fraud_2025-08-13.csv.dvc` in the same dir. this file is a pointer/metadata file telling DVC where the real data lives in the cache. It is the tracking file for the real file `fraud_2025-08-13.csv`.
+-  Moves the real dataset into DVC cache directory `.dvc/cache/` using a hashed folder structure and replaces it in your working dir with a hard link to save space
+-  Add the .dvc for to your Gir repo so it can be versioned in Git (not the dataset itself)
+-  Git tracks the `.dvc` file (and `fraud_2025-08-13.csv.dvc`) so that collaborators know which version to use.
+-  Creates `.gitignore` in `data/` so that Git does not try to commit the raw data files themselves. Don't delete it - without it you might accidentally commit big data files to Git 
+-  When you `dvc push`, those hash-named files are uploaded to your remote where you see  
+    ```sh
+    files/md5/4f/2e57c55fbd3432f77c79d2c6b8a6f7
+    files/md5/...
+    ```
+    each hash is a version of a file.
+  - Anyone who clones your repo and runs `dvc pull` will get exactly the same files downloaded to their local dir based on the `.dvc` pointer files
+
+DVC stores the file hash and keeps a pointer in Git. If the file content changes, DVC knows automatically. In our project, raw data was tracked as a stage output (from `ingest`) rather than via manual `dvc add`. Both approaches work - if a file is produced by a script, define it as an `out` in `dvc.yaml`; if its aone-off dataset you downloaded, use `dvc add`.
+
+Step 4: **Define DVC pipeline (`dvc.yaml`) - (file-level DAG)**
+
+   DVC enables automatic reproducibility: dvc repro reruns only what changed.
+
+```sh
+stages:
+  preprocess:
+    cmd: python src/preprocess.py --input data/raw/fraud_2025-08-13.csv --output data/processed/features.parquet
+    deps:
+      - src/preprocess.py
+      - data/raw/fraud_2025-08-13.csv
+    outs:
+      - data/processed/features.parquet
+
+  train:
+    cmd: python src/train.py --input data/processed/features.parquet --output models/fraud_model.pkl
+    deps:
+      - src/train.py
+      - data/processed/features.parquet
+    outs:
+      - models/fraud_model.pkl
+    metrics:
+      - reports/train_metrics.json
+```
+```sh
+git add dvc.yaml dvc.lock params.yaml
+git commit -m "pipeline +params"
+```
+- Deps: tell DVC what to watch for changes.
+- Outs: tell DVC what files it manages and caches.
+- Metrics: track evaluation results automatically.
+- Params: contains parameters whose values used in `dvc.yaml`
+
+  **Best practices**:
+  - Track every stage that produces a reproducible output.
+  - Include your code, input files (data), and parameters.
+  - Commit the `dvc.yaml` + `dvc.lock` + `params.yaml` to Git — this is your “pipeline version.”
+  - Use `dvc repro` to reproduce results on any machine.
+
+Step 5: **Run the pipeline**
+```sh
+dvc repro  # runs only needed stages (hash-based)
+```
+In production, Airflow DAGs call these same scripts. DVC ensures exact versions of inputs/outputs, while Airflow handles scheduling and orchestration.
+
+DVC automatically checks hashes of deps:
+- If `data/raw/fraud_2025-08-13.csv` changed, it reruns preprocessing and training automatically.
+- Runs preprocess if needed
+- Runs train if features changed. It reruns training but keeps preprocessing cached without rerunning it
+- Outputs and metrics are versioned
+
+Step 6: **Push artifacts to S3**
+```sh
+dvc push  # pushes data to S3 remote
+git push  # pushes code+pointers (no big files in Git)
+```
+- Raw data, features, and models are stored in S3.
+- Another teammate or server can:
+
+```sh
+dvc pull
+dvc repro
+```
+They get the exact same data + features + model, fully reproducible.
+
+
+Step 7: **Track experiments**
+- You can change `train.py` hyperparameters, run dvc repro → metrics change
+- DVC keeps a history of inputs/outputs and works well with MLflow metrics logging for experiments
+
+After setting up this:
+- Raw data, processed features, and trained model now live in your S3 DVC remote
+- Any teammate or server can dvc pull to reproduce the exact same data + model
+
+
+When you manually tag your data (e.g., fraud_2025-08-13.csv), you control the version but that version is not tied to the content of the file. DVC versioning adds automatic reproducibility:
+- DVC tracks the exact hash of the file (SHA256), so even if two files have the same name, DVC knows if contents changed.
+- Every time the file changes, DVC can trigger pipeline stages to rerun (dvc repro) — you don’t have to manually manage version tags. DVC does this by noticing changes in **deps** and **outs**.
+- DVC works with both local files and remote storage. The hash ensures reproducibility whether your file lives locally or in S3.
+
+To quickly check to see what DVC thinks is tracked:
+```sh
+dvc list .
+dvc status -c
+```
+#### What `dvc push` does?
+
+- 1️⃣ Check .dvc files for tracked data
+  - DVC reads `data.dvc` (or other `.dvc` metafiles) to know which files are tracked and what their hashes are.
+
+- 2️⃣ Look in the local DVC cache
+  - DVC sees if the blob with that MD5 hash exists in `.dvc/cache/4f/2e57c55fbd3432f77c79d2c6b8a6f7`. If it doesn’t exist, dvc push won’t work — you’d need to run dvc add or dvc commit first.
+
+- 3️⃣ Compare cache with remote
+  - DVC checks your remote storage (S3, GCS, Azure Blob, SSH, etc.) to see if the hash already exists there. If it does, nothing is uploaded. If it doesn’t, it schedules it for upload.
+
+- 4️⃣ Upload to remote storage
+  - For files that are missing remotely, DVC uploads them by hash, not by their original name. On S3, the object path might look like:
+  `s3://my-dvc-bucket/4f/2e57c55fbd3432f77c79d2c6b8a6f7`. This way, DVC avoids duplication — even if you have 10 files with the same content, only one copy exists remotely.
+
+- 5️⃣ Your `.dvc` file stays in Git
+  - The actual big file is not in Git — only the small `.dvc` pointer file is versioned in Git.
+  - You commit and push the `.dvc` file to GitHub so others know which dataset version you used.
+
+Later, when someone runs `dvc pull`:
+- They get your `.dvc` file from Git.
+- DVC sees the hash and downloads the blob from your S3 remote into `.dvc/cache`.
+- DVC places it back into `data/raw/fraud_data_v20250812_203000.csv` so your code can use it.
+
+✅ In short:
+`dvc push` takes the local cached data (already added with dvc add) and syncs it to your remote storage so you and your teammates can later `dvc pull` it anywhere.
+
+
+#### What are deps and outs?
+- deps (dependencies): the inputs for a stage. If any dep changes, DVC knows to rerun this stage. Examples: raw CSV, preprocessing script, config files.
+- outs (outputs): the files that this stage produces. DVC tracks their hash and stores them in cache (and optionally remote). DVC knows downstream stages depend on these outputs.
+- Together, deps + outs define a DAG of reproducible computation, similar to Airflow’s DAG but at the file level.
+- deps and outs have to be local paths. For DVC to track the file content and hash, you must reference a local path.
+
+| What Happens                    | Where              |
+| ------------------------------- | ------------------ |
+| Track inputs (for re-run logic) | `deps:`            |
+| Track outputs (for versioning)  | `outs:`            |
+| Store hashes & timestamps       | `dvc.lock`         |
+| Cache outputs (reproduce later) | DVC internal cache |
+
+
+DVC will handle syncing with remote storage, but it always works from local paths. For any outs of any stage in `dvc.yaml`, DVC automatically track them so no need to manually add them. 
+
+| Concept     | What it does                                | Notes                                          |
+| ----------- | ------------------------------------------- | ---------------------------------------------- |
+| Manual tag  | You decide the filename/version             | Works, but DVC hash adds reproducibility       |
+| DVC `dep`   | Input file/script that triggers stage rerun | Must be local path                             |
+| DVC `out`   | Output file tracked by DVC cache            | Must be local path; can be pushed to S3 remote |
+| `dvc repro` | Rebuilds stages whose deps changed          | Uses hashes, not filenames                     |
+
+
+#### Key differences vs manual version tags
+
+| Feature                      | Manual tags           | DVC hash workflow                                  |
+| ---------------------------- | --------------------- | -------------------------------------------------- |
+| Track raw data               | Filename only         | SHA256 hash, exact content tracked                 |
+| Track processed features     | Filename + manual tag | DVC manages caching & reruns only if input changes |
+| Trigger reruns automatically | ❌ Manual              | ✅ `dvc repro` handles dependencies automatically   |
+| Reproducibility              | Manual                | ✅ Guaranteed (hash + remote storage)               |
+| Team sharing                 | Manual sync           | ✅ `dvc push` + `dvc pull`                          |
+| Remote storage support       | Manual copy/S3        | ✅ DVC handles sync to S3 automatically             |
+
+In short: DVC replaces manual bookkeeping of versions with hash-based reproducibility and automated reruns. Your version tags can still exist as metadata, but DVC ensures you never accidentally rerun the wrong pipeline or lose a version.
+
+#### Controlling what you push
+
+- Pull a specific version
+Check out a Git commit that points to the desired data version:
+
+  ```sh
+  git checkout <commit-hash>
+  dvc pull
+  ```
+  DVC sees the `.dvc` files at that commit, pulls only the required hashes from remote.
+- Push specific files
+  By default, `dvc push` uploads all local cache files referenced in the current Git commit. To push a specific .dvc file: `dvc push data/processed/features_v1.parquet.dvc`
+
+Use `dvc status -c` shows which outputs are in your remote vs local cache. Helps you know what will actually be pushed or pulled.
+
+
+### Git vs DVC
+ Git does hashing and pointers, but it’s not built for large data and ML pipelines. Here’s why DVC is necessary compared to git:
+
+| Feature                   | Git                  | DVC                                                   |
+| ------------------------- | -------------------- | ----------------------------------------------------- |
+| File size                 | <100MB ideally       | Any size (GBs, TBs)                                   |
+| Storage                   | Repo grows with data | Data stored in remote/cache, Git stores only pointers |
+| Versioning large binaries | Inefficient          | Efficient (hash + remote storage)                     |
+| Reproducible pipelines    | ❌                    | ✅ `dvc.yaml` stages, deps/outs                        |
+| Partial rerun of pipeline | ❌                    | ✅ Only stages with changed deps rerun                 |
+
+1. Git is for code, DVC is for data + experiments
+- Git: tracks source code, small config files
+- DVC: tracks datasets, features, models, and their dependencies for reproducibility - these are ignored by git so will not be commit to Git repo themselves. After Git repo clones and `dvc pull`, those will be pulled from remote repo and available to use.  
+- ML experiments often involve large CSVs, Parquet, model binaries — Git can’t handle efficiently
+2. Pipelines
+- Git doesn’t know “if I change preprocessing, rerun training”
+- DVC tracks deps/outs and only reruns stages that need it → like a lightweight make for ML
+3. Remote storage & team collaboration
+- Git pushes/pulls source code only
+- DVC pushes/pulls data, features, models via S3, GCS, etc.
+Your team can reproduce any experiment without manually downloading datasets
+
+✅ In short:
+- Git + DVC = code + data reproducibility.
+- Git → code, version control
+- DVC → data/models, pipeline stages, reproducibility, remote storage
+
+
+#### Best practices for version control
+- Always commit .dvc files + dvc.yaml + dvc.lock before pushing data.
+- Use Git tags/branches to mark data versions.
+- For experiments:
+```sh
+dvc exp run
+dvc exp show
+dvc exp apply <id>
+```
+
+This helps track metrics and versions without creating permanent Git commits immediately.
+- Use `dvc gc` periodically to remove old cache and remote files not referenced by any commit.
+
+
+#### Best practices for DVC+Airflow
+1. Use DVC for reproducibility, Airflow for orchestration
+- DVC ensures the exact same dataset and model is used.
+- Airflow ensures the tasks run in order, on schedule, and with monitoring/logs.
+2. Always `dvc pull` at the start of the DAG
+- Ensures the DAG uses the correct version of data.
+3. Use `dvc repro` for specific stages
+- Avoid running the entire pipeline if only some steps changed.
+4. Push outputs at the end
+- `dvc push` after training/evaluation ensures models and processed data are available for future runs.
+
+
+- Don’t include dvc pull inside the stage unless you really want to.
+- Keep DVC stage purely as a reproducible transformation: inputs → outputs.
+- Pull raw data in Airflow DAG or manual step before running dvc repro.
+
+```yaml
+                   +-----------------+
+                   |   S3 Raw Data   |  <-- Remote storage (DVC)
+                   +-----------------+
+                             |
+                             |  dvc pull
+                             v
+                   +-----------------+
+                   |   Local Cache   |  <-- .dvc/cache stores hashes
+                   +-----------------+
+                             |
+                             v
+                   +-----------------+
+                   | Preprocessing   |  <-- DVC stage
+                   |  (pipeline.pkl) |
+                   +-----------------+
+                             |
+                             v
+                   +-----------------+
+                   | Feature Eng.    |  <-- DVC stage
+                   | (features.parquet)
+                   +-----------------+
+                             |
+                             v
+                   +-----------------+
+                   | Model Training  |  <-- DVC stage
+                   | (model.pkl)     |
+                   +-----------------+
+                             |
+                             v
+                   +-----------------+
+                   | Metrics / Eval  |  <-- optional DVC stage
+                   +-----------------+
+                             |
+                             v
+                   +-----------------+
+                   | DVC Push        |  <-- Upload processed data, features, models
+                   +-----------------+
+                             |
+                             v
+                   +-----------------+
+                   | FastAPI Deploy  |  <-- Serve latest model
+                   +-----------------+
+```
+
+#### How DVC + Airflow works
+Airflow DAG tasks call:
+- `dvc pull` → ensures correct raw data version
+- `dvc repro <stage>` → runs stage if dependencies changed
+- `dvc push` → updates remote with new outputs
+
+DVC caching
+- Local `.dvc/cache` stores all versions by hash
+- Only changed outputs are recomputed
+- Old versions remain cached for reproducibility
+
+Versioning
+- Git tracks `.dvc` pointer files (ex. `raw.dvc`, `pipeline.dvc`, etc.)
+- Each DAG run can be associated with a Git commit + DVC hashes
+- Allows rolling back or reproducing any previous run
+
+✅ Takeaways
+- DVC = data & artifact versioning, reproducibility, caching
+- Airflow = scheduling, orchestration, logging, dependency management
+- Integration = DAG calls DVC commands → fully automated, reproducible ML pipeline
+
+| Feature                        | Benefit                            |
+| ------------------------------ | ---------------------------------- |
+| Fully reproducible pipeline    | ✅ Any version\_tag can be restored |
+| Efficient re-runs              | ✅ Only runs when deps change       |
+| Works with Airflow or manually | ✅ Trigger `dvc repro` anywhere     |
+
+
+
+#### How versioning works in this DAG
+- Pull data
+  - `dvc pull data/raw.dvc` ensures you get the exact version referenced in your Git commit.
+- Preprocess
+  `dvc repro -s preprocess` checks:
+  - deps: raw data + preprocessing script
+  - If either changed → rerun
+  - If unchanged → use cached output
+- Feature engineering & training
+  - Each stage only reruns if its dependencies changed.
+  - Ensures you never mix versions of data and models.
+- Push outputs
+  - `dvc push` uploads new processed data, features, or models to remote.
+
+Other team members can pull the same versions with dvc pull.
+
+ 
+### Airflow for ML pipelines
+
+We use airflow to run the main parts of the full cycle ML pipeline:
+
+- DVC pipeline: ETL + Preprocessing + Model Training and Registering 
+- Inference pipeline
+- Monitoring pipeline
+  
+DVC pipeline already explained. We use 
+- **MLFlow** for model versioning, experimenting and registering. 
+- **S3 (`minio` for Dev)** as its backend for storage models, artifacts and DVC caches.
+
+
+#### Initialize Airflow and Create a Dag
+Use the official Airflow docker compose yaml file to run Airflow. Add your own Dockerfile for customizing the image, for example installing extra packages, env variables etc. Airflow docker compose configures and runs backend databases (Redis, Postgres), Airflow Scheduler, Airflow Worker and Airflow Webserver at `http://localhost:8000`. Airflow won’t show DAGs if syntax errors exist in their `.py` file.
+
+
+Airflow creates folder for its operation such as `dags/` where we put our DAGs for each pipeline such as `dvc_dag.py`. This is a DVC versioned pipeline that controls data flow into processing, training models stages which also log/register ML pipelines or models.  This DAG meets the following objectives:
+
+### Deep MLOps Pipeline (Full ML Lifecycle)
+
+In this project we build a fraud detection pipeline with Airflow, DVC and MLflow along with inference server and some monitoring and observability best practices.
+
+#### Fraud Detection
+Data Schema
+
+| Column Name       | Type         | Notes                       |
+| ----------------- | ------------ | --------------------------- |
+| transaction\_id   | int          | Unique ID                   |
+| amount            | float        | Outliers here               |
+| transaction\_time | float        | Seconds since account open  |
+| transaction\_type | categorical  | e.g., “online”, “in-person” |
+| location\_region  | categorical  | e.g., “US-West”, “EU”       |
+| is\_fraud         | binary (0/1) | Target — imbalanced         |
+
+Feature Example
+| Feature Type    | Example Features                   |
+| --------------- | ---------------------------------- |
+| Numeric         | Transaction Amount, Time Delta     |
+| Categorical     | Transaction Type, Region           |
+| Derived         | Amount/Time ratio, Z-score outlier |
+| Target (binary) | Fraud (1) vs Legit (0)             |
+
+We use simulated data for and train models for fraud detection. I chose the task because it:
+- Adds depth to inference pipeline
+  - Monitor prediction confidence
+  - Alert on anomaly spikes
+- Builds class imbalance handling into pipeline
+  - Showcase robust MLOps + Monitoring
+
+
+| Component           | Decision                                  |
+| ------------------- | ----------------------------------------- |
+| Data Domain         | **Fraud Detection**                       |
+| Data Ingestion      | CSV, simulate imbalanced + outliers       |
+| Data Versioning     | **DVC** + structured filenames + metadata |
+| Monitoring Use Case | Confidence, drift, outliers, latency      |
+
+#### ML Pipeline: DVC + Airflow
+Ml pipeline consists of steps from availability of raw data to up the trained models ready for deployment. This the scalable ETL + Preprocessing Pipeline + Training Pipeline with Versioning data and models. This pipeline is orchestrated with Airflow for maximum flexibility
+
+| Component                  | Description                          | Tool/Option                     |
+| -------------------------- | ------------------------------------ | ------------------------------- |
+| **Data Preprocessing**     | Save preprocessing params/stats/pipelines      | sklearn + pickle                |
+| **Model Versioning**       | Experiement/save models with parametes, inputs        | MLflow / S3              |
+| **Data Versioning**        | Track datasets/artifacts used in ML pipeline      | DVC / manual logging            |
+| **Pipeline Orchestration** | Automate full flow                   | Airflow DAGs                    |
+| **Artifact Tracking**      | Logs, models, metrics tracked        | MLflow / S3          |
+| **Train Trigger**          | DAG or API starts training on demand | Airflow trigger or FastAPI POST |
+
+#### Airflow DAG — Automate Entire Lifecycle
+
+| Stage                | Operator       | Description                       |
+| -------------------- | -------------- | --------------------------------- |
+| Raw Data Ingestion   | BashOperator   | Run ETL with `python etl_task.py` |
+| Preprocess + Version | BashOperator   | `dvc repro preprocess`            |
+| Train + Version      | BashOperator   | `dvc repro train`                 |
+| Notify/Log           | PythonOperator | Slack or log output               |
+
+
+This pipeline pulls a versioned data tagged (ex, `v20250817_175136`) from S3, saves it locally at `data/raw`. (The version tag here represents a sample of real data a model is built using it. This version tag may not be necessary because DVC automatic versioning will be applied instead of manual versioning.) 
+
+As `data/raw` is in the output of a DVC stage in `dvc.yaml`, it will be tracked by DVC automatically; no need to manually `dvc add` it. ETL Task simulates data load (e.g., CSV from data_source/, or generate synthetic tabular data), clean nulls, format columns and saves to `data/raw/*.csv`. Preprocessing stage loads this data as its dependency `deps` and _fits_ a sklearn preprocessing pipeline (Scale e.g., StandardScaler, impute, encode, feature engineering)which is saved and tracked at `artifacts/preprocess`.  Next, we have two models to train: *Outlier Detector* and *Fraud Detector*. DVC stages `train_outlier` and `train_model` will run the train logic for each task using raw data in `data/raw` followed by preprocessor pipeline. Models, their parameters, metrics, sample inputs and related tags are logged, versioned and registered in MLFlow server. Also model artifacts are saved and tracked by DVC at `artifacts/models`. 
+
+All the stages (inputs and outputs) in this pipeline are version controlled by DVC so they only run if previous stages changed. At every stage, versions of outputs `outs` are cached and pushed to the remote for reproducibility. Anyone can pull versions and reproduce the pipeline quickly. Model tags explicitly contain information (git commit hash) about the data version or the preprocessor version which trained the model. So it is easy to checkout from that specific version and exactly reproduce the pipeline that rained that particular version of the models. 
+
+Now your teammate can reproduce the versioned pipeline as follows without needing to have the original data at all by cloning this Git repo:
+  
+```sh
+git clone <this_repo>
+cd <this_repo>
+dvc pull 
+ ```
+After this:
+- `git clone` gets the repo with `.dvc` metadata (or `dvc.yaml` + `.dvc/cache` refs)
+- `dvc pull` fetches the actual dataset from the configured DVC remote `s3://mlflow-artifacts/files/md5/...`  into the corresponsding folder on local machine: ex. `data/raw` for raw data, `artifacts/preprocess` for preprocess pipeline etc.
+
+That's it! No need for the original CSV data file or `.pkl` artifacts to be present. Thats exactly where DVC shines. If only data needed to be pulled, run `dvc pull data/raw`. If only a preprocess pipeline of a particular version needed, run
+
+```sh
+git checkout <commit-or-tag>  # pick the corresponding commit with the version
+dvc pull  # downloads the exact deps/outs from remote
+dvc repro preprocess. # returns the stage if the code has changed
+```
+
+- `git checkout` locks them to the pipeline + data version
+- `dvc pull` fetches all cached files required for that commit
+- `dvc repro` lets them rebuild if they want to regenerate
+
+DVC remote storage is configured (S3, MinIO, GCS, etc.) so any output you choose to track is backed up in the cloud — but not cluttering your laptop/disk.
+
+
+Note that we didnt save the processed data (clean data). 
+
+| Element                    | Our Decision                                                |
+| -------------------------- | ----------------------------------------------------------- |
+| **Clean Data File**        | ❌ **Not saved** — we avoid storing processed data           |
+| **Preprocessing Pipeline** | ✅ Saved as artifact (`pipeline_{tag}.pkl`)                  |
+| **Training Data Source**   | ✅ Apply pipeline *on raw data again* at training time       |
+| **Result**                 | Minimal storage, full reproducibility, modular and scalable |
+
+#### Enforce Data Consistency 
+To ensure data is consistent at training and inference:
+- Save Preprocessing Artifacts
+- Validate Data at Inference
+
+1. Preprocess stage saves:
+    - Feature names (features_final)
+    - Scaler/encoder (e.g., pickle)
+2. Train script loads these
+    - Enforces data format before training
+    - Saves the artifacts again for inference reuse
+3. Inference step validates:
+    - Incoming data columns == expected columns
+    - Version match check via `version_tag_meta.json`
+
+
+| Step                | File/Artifact                  |
+| ------------------- | ------------------------------ |
+| Preprocess saves    | `preprocess_metadata.json`     |
+| Train loads + uses  | scaler, encoder, feature names |
+| Inference uses same | Load scaler/encoder + validate |
+
+
+
+#### DVC+Airflow+MinIO
+
+To set up remote repo for DVC, You need to populate the `.dvc/config` with remote and credentials to connect to it.
+```
+# .dvc/config
+[core]
+    remote = minio
+['remote "minio"']
+    url = s3://mlflow-artifacts
+    endpointurl = http://minio:9000
+    access_key_id = minioadmin
+    secret_access_key = minioadmin
+    use_ssl = false
+``` 
+You can do this by running the following commands:
+
+```bash
+#!/bin/bash
+dvc remote add -f minio s3://mlflow-artifacts
+dvc remote modify minio endpointurl http://minio:9000
+dvc remote modify minio access_key_id minioadmin
+dvc remote modify minio secret_access_key minioadmin
+dvc remote modify minio use_ssl false
+dvc remote default minio
+```
+You can clean a remote using `dvc remote remove <previous-remote>`. You can use `mc` or Terraform/Ansible to set bucket policy at startup:
+
+```bash
+mc alias set minio http://minio:9000 minioadmin minioadmin
+mc mb --ignore-existing minio/mlflow-artifacts
+mc anonymous set public minio/mlflow-artifacts
+```
+
+You can test from inside the actual worker container using:
+```sh
+aws --endpoint-url http://minio:9000 s3 ls s3://mlflow-artifacts
+dvc push
+```
+
+#### Why use DVC with S3/MinIO remote?
+- Version control for data and models
+  - DVC tracks file versions using content hashes. Even if your data lives remotely, DVC keeps a local cache and metadata so you can reproduce exactly the same pipeline outputs later, or roll back to previous versions easily.
+- Reproducibility & Pipeline automation
+  - DVC tracks pipeline stages, dependencies, and outputs, so you can run dvc repro and it only reruns what changed. It’s like make but for ML/data pipelines.
+- Efficient storage & transfer
+  - Because DVC tracks files by hash and caches locally, it only uploads/downloads changed files, not everything every time.
+- Collaboration
+  - Your team can share data & models through the remote storage (S3/MinIO), but still work with versioned files locally. DVC metadata (.dvc files, dvc.lock) stay in Git and track exactly which data version corresponds to code.
+- Decoupling local storage & remote
+  - You can keep large datasets off your local machine, fetching only what you need from remote via dvc pull, and pushing results back with dvc push.
+
+#### What you shouldn't do with DVC + S3 remote
+Don’t directly write pipeline outputs to S3 URLs in outs. DVC can’t cache remote outputs and can’t reproduce reliably. Always write outputs locally and let DVC push them to remote for versioning and storage.
+
+It generally does not make sense to have deps or outs pointing directly to S3 (or MinIO) in your `dvc.yaml`. Why?
+- DVC expects dependencies (deps) to be local files or files in your Git repo. It uses these to detect changes and decide what to rerun. If your dep is remote (S3), DVC cannot easily track changes or even check if it exists without downloading it. Outputs (outs) should be local paths where your pipeline writes data.
+- DVC manages these local outputs, caches them, and then pushes them to the remote storage. It does not support having outputs directly on S3 because it can’t cache or track them properly.
+
+
+Typical Workflow with DVC, Airflow, MLflow & S3
+
+1. Data storage (S3 / MinIO)
+   - Your raw data (e.g., logs, images, CSVs) is stored in a remote S3 bucket (MinIO).
+   - This is your source of truth raw data, immutable and accessible from anywhere.
+
+2. Data ingestion / Extraction (Airflow)
+   - Airflow orchestrates the entire ML pipeline as a workflow with multiple tasks.
+   - First step: download or copy the raw data from S3 into a local workspace inside your Airflow worker (or an ephemeral container).
+   - This can be a DVC pull operation to bring a specific version of data or a direct download via awscli or mc command.
+
+3. Preprocessing & Feature Engineering (DVC)
+   - Now, you preprocess the raw data locally (cleaning, feature extraction, transforms).
+   - DVC tracks this step as a pipeline stage:
+   - The input: raw data files (local copies)
+   - The command: preprocessing script (e.g. python preprocessing.py)
+   - The output: processed data stored locally (e.g. data/processed/)
+   - DVC tracks all input/output files by hashing content, so you know exactly which version of input produced which output.
+
+4. Model Training 
+   - Next pipeline stage: train your ML model using the processed data.
+   - The output: trained model files locally (e.g. models/model.pkl).
+   - DVC tracks the training stage, inputs, outputs.
+   - You log metrics, parameters, artifacts, and model versions in MLflow.
+   - MLflow acts as your model registry + experiment tracker.
+
+5. Push artifacts and data 
+   - After each stage, you push the generated artifacts and processed data to S3 (your remote DVC storage) with dvc push.
+   - This lets all collaborators reproduce the pipeline and retrieve exact versions of data and models.
+
+
+
+6. Deployment & Monitoring
+   - Once the model is trained and registered, you might have:
+   - Airflow tasks to deploy the model (e.g. to SageMaker, KFServing).
+   - Airflow jobs to monitor model performance, data drift.
+   - MLflow holds the model versions & deployment metadata.
+   - DVC ensures full reproducibility of data and models.
+
+
+| Step                    | Tool(s)                   | What it does                                 |
+| ----------------------- | ------------------------- | -------------------------------------------- |
+| Data storage            | S3 / MinIO                | Store raw and processed data remotely        |
+| Pipeline orchestration  | Airflow                   | Schedule and monitor pipeline stages         |
+| Data versioning         | DVC                       | Track input/output files, pipeline stages    |
+| Model versioning        | MLflow                    | Log metrics, register model versions         |
+| Execution               | Airflow triggers DVC cmds | Run stages like preprocess, train, push data |
+| Deployment & Monitoring | Airflow + MLflow          | Deploy model, monitor, trigger retraining    |
+
+Why not only DVC?
+- DVC tracks data and pipeline stages locally and remotely, but it does not schedule jobs or handle retries.
+- Airflow runs those stages on schedule, manages dependencies and resources.
+MLflow manages model experiments, deployments, and metrics tracking — things DVC doesn’t do.
+
+
+
+----------------
+
+We don't save processed data here because it is just easy to apply the saved preprocess pipeline on the raw data at every stage, just like it is for inference later. 
+
+-----------------
+
+### Model Registry: MLflow
+
+A professional-grade model registry used for model versioning, rollback, promotion, audit trails, and safe deployment. What Is a Model Registry? A Model Registry is like Docker Hub for ML models:
+-  Stores versions of trained models to track all model artifacts, preprocessors, outlier detectors, and metadata.
+- Provides CLI or API to list models, load by version, and rollback.
+-  Keeps metadata (accuracy, dataset, hyperparameters).
+-  Tracks model stages: staging → production → archived.
+-  Allows rollback to prior models if issues arise.
+-  Integrates with CI/CD for automated deployment.
+
+#### MLflow Model Registry
+
+| Feature              | MLflow Registry             | Comparable in Software         |
+| -------------------- | --------------------------- | ------------------------------ |
+| Model Versioning     | Each model gets a version   | Like Docker tags: v1, v2       |
+| Promotion & Rollback | Move to “Production” stage  | Like Git branches/tags         |
+| Storage Backend      | Local, S3, GCS, Azure       | Like Docker Hub or Artifactory |
+| UI Dashboard         | Track models visually       | Like DockerHub Web UI          |
+| Integration          | Airflow, FastAPI, DVC, etc. | Seamless in pipelines          |
+
+
+#### MLflow vs DVC
+
+
+| Aspect              | MLflow                      | DVC                         |
+| ------------------- | --------------------------- | --------------------------- |
+| Primary Purpose     | Model tracking & deployment | Data + model versioning for development    |
+| Stores Artifacts    | Yes (models, metrics)       | Yes (models, datasets)      |
+| Experiment Tracking | Built-in (metrics, params): Every training run auto-logged + versioned | No (but can log separately) |
+| Rollback Support    | Yes (model promotion): Easily deploy previous model version      | Manual checkout             |
+| UI Dashboard        | Yes (MLflow UI): Track runs, metrics, artifacts, and models via browser            | No UI for registry          |
+| Integration         | REST API, Python, Airflow   | Git, CLI                    |
+| **DVC + MLflow**         | Co-exist:  MLflow for registry          | Co-exist: DVC for pipeline 
+
+
+🔹 DVC is:
+   - Great for pre-production: experiments, pipelines, and versioning of data + intermediate artifacts (preprocessed data, trained models).
+   - Good for collaboration: “hey, checkout this commit + dvc pull → you have my exact experiment.”
+   - Not meant for serving: you don’t want your inference service doing `dvc pull` every time it needs a model. That’s slow, brittle, and couples serving infra to DVC.
+
+🔹 MLflow is:
+  - Model registry & serving: gives you a “decisive model” to promote as Production.
+  - Single source of truth: at inference you fetch the blessed model version (e.g., `mlflow.sklearn.load_model("models:/fraud-detector/Production"`).
+   - CI/CD friendly: fits cleanly into deployment pipelines.
+
+🔹 Workflow pattern in many teams
+- Experimentation:
+  - Use DVC to version datasets, training code, and model artifacts.
+  - Run experiments, track results in DVC + MLflow (DVC for reproducibility, MLflow for experiment logs & metrics).
+- Model selection
+  - Pick the best model from experiments.
+  - Register that model in MLflow (or another registry).
+- Production / Inference
+  - Serving system pulls model only from MLflow (not from DVC).
+  - DVC stays in the background, used only if someone wants to retrain or reproduce experiments.
+
+So you can think of DVC as a pre-production (research + reproducibility) tool, and MLflow as the production-facing registry/serving tool.
+
+
+#### MinIO prep - daul network (docker compose)
+MinIO Prep: Create Bucket mlflow-artifacts
+After starting MinIO:
+- Go to http://localhost:9001 (MinIO console)
+- Login with minioadmin:minioadmin
+- Create bucket: mlflow-artifacts
+
+Since you're using MinIO (an S3-compatible object store) for MLflow artifacts, MLflow uses boto3 (AWS SDK for Python) under the hood to access and download models from S3 (MinIO).
+
+To keep databases isolated (also we have 2 postgres db), you want to:
+- Isolate Postgres for MLflow on its own network (e.g., `mlflow_net`).
+- Allow only MLflow to access it.
+- Avoid conflicts with other Postgres instances (e.g., used by Airflow).
+- Keep MLflow connected to `airflow_net` (for artifact storage, etc.).
+
+Solution: **Dual-Network MLflow**
+```
+networks:
+  airflow_net:
+    external: true
+  mlflow_net:
+    driver: bridge
+```
+Put mlflow service on both networks:
+
+```
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.11.1
+    ...
+    networks:
+      - airflow_net
+      - mlflow_net
+```
+
+- Postgres for MLflow is fully isolated.
+- MLflow has access to Postgres + the rest of your stack.
+- Other services (like Airflow) cannot access MLflow’s Postgres.
+
+
+#### MLFlow Model Registry (Docker)
+
+Setup MLflow with MinIO (resembles S3) via Docker Compose
+
+
+| Feature                      | Status                               |
+| ---------------------------- | ------------------------------------ |
+| Metrics logging              | ✅ Done                               |
+| Artifact logging             | ✅ Done                               |
+| Model versioning             | ✅ Done                               |
+| Rollback possible via UI     | ✅ Ready                              |
+| Dockerized MLflow server     | ✅ Running                            |
+| MLflow ↔ Airflow Integration | 🔧 In progress (network fix pending) |
+
+
+
+### Inference Pipeline
+We create a FastAPI server to deploy our inference logic and to expose inference metrics which is critical for monitoring of model performance and creating active alerts. FastAPI endpoint for single online inference applies:
+- Outlier detection during inference
+- Responds with `is_fraud`, `probability`, `is_outlier`, `version`
+
+
+
+####  Inference Pipeline Plan
+1. **Integrate registry with inference** to dynamically load latest or specific versions.
+2. **Input Handling** (Robustness Layer)
+   - Accept inputs as JSON, CSV, or API payload.  
+   - Validate schema: column names, data types.
+   - Handle missing values, unexpected categories, or out-of-range numerical values.
+✨ Use **pydantic** for schema validation (popular in FastAPI).
+3. **Preprocessing & Outlier Handling**
+   - Use `preprocessor.transform(X)` to apply exact same transformations as training.
+   - Detect and optionally flag/remove outliers: Z-score or IQR for numeric.
+   - Novel category handling for categorical (via handle_unknown='ignore').
+4. **Prediction Logic**
+    - Apply pipeline to get **online predictions** + confidence scores.
+    - Optionally support **batch inference** or streaming (FastAPI, Kafka, Airflow).
+5. **Logging + Monitoring** (Best Practice)
+   - Log each request + response for auditability.
+   - Track model drift, data drift, input distribution changes.
+   -  Send metrics to Prometheus.
+6. **Error Handling + Alerts**
+   - Catch inference failures, malformed inputs.
+   - Return meaningful error messages (JSON with error codes).
+   - Integrate with alerting system (email, Slack, etc.) or for automatic healing (model rollback)
+
+
+#### Project Layout
+```sh
+project/
+│
+├── inference/
+    ├── app/
+    │   ├── __init__.py 
+    │   ├── metrics.py 
+    │   ├── model_loader.py   # Load pipeline & metadata
+    │   ├── predict.py 
+    │   ├── schema.py   # Input/Output Pydantic models
+    │   ├── utils.py      # Optional: input checks outlier detection
+    │   └── inference.log        # Logs
+│   ├── docker-compose-inference.yaml
+│   ├── Dockerfile
+│   ├── main.py   # FastAPI app (main file)
+│   ├── requirements.txt
+├── artifacts/
+│   ├── preprocess/pipeline.pkl
+│   └── models/model.pkl   # Saved full pipeline
+│
+├── version_meta.json
+```
+
+#### Inference Types
+1. **Online Inference** (Real-Time or Near Real-Time)
+- Definition: Input comes in one or many requests via an API, and predictions are made immediately.
+- Batch Input is possible, e.g., list of transactions, but the system waits for all predictions and returns them synchronously.
+- Still called "online inference" because it's synchronous and API-driven.
+Example: POST an array of transactions → get an array of results immediately.
+1. **Batch Inference** (Offline or Async)
+- Definition: Run large volume of predictions on stored data (e.g., CSV, database) in scheduled jobs or on demand.
+- Typically no immediate response — output saved to file, database, or storage.
+- Often run in Airflow, Spark, or via CLI scripts.
+Example: Run predictions on 1 million transactions → save results to `predictions_vX.csv`.
+
+
+#### Robust Inference – Best Practices
+Goal: prevent the model from making wild predictions on anomalous inputs.
+
+- **Outlier Detection & Handling** (Must-Have for Safety)  
+   - **Flag Outliers** → log, discard, or fall back to safe prediction (e.g., “Not confident”):
+      -  **Z-score or IQR-based filtering** (lightweight) – flag/remove extreme values.
+         -  Save stats (like mean, std, IQR) at training time if using Z-score/IQR.
+      - **Pre-trained Isolation Forest** (more powerful) – We trained it on training data, used it at inference to detect abnormal inputs. IsolationForest is stronger than  Z-score/IQR so skip it if using Isolation Forest.
+      -  We saved and used the outlier detector artifact from training stage to be used for inference.
+
+- **Feature Validation & Schema Enforcement**: We used **pydantic** for:
+  - Input type checks (string, float, int, etc.)
+  - Allowed ranges / categories
+  - Missing fields, malformed inputs
+    - Save feature schema in a JSON file at training → validate at inference.
+
+- **Prediction Confidence Threshold**: Used `predict_proba` or model confidence.
+  - If confidence < threshold → reject or flag prediction.
+  - Useful for real-world deployment to avoid low-confidence decisions.
+
+- **Drift Detection Hooks**: Log key stats at inference:
+  - Feature means/stds → compare to training.
+  - Use statistical tests (e.g., KL divergence, PSI) to track drift → log alerts to `/metrics`.
+
+- **Fail-Safes & Fallbacks**
+  - If any inference step fails → return HTTP 503 + log error.
+  - Optional: default prediction or safe mode.
+  - Use try-except block around the full inference flow.
+
+To safeguard model prediction, we’ll fit **IsolationForest** as outlier detector on the preprocessed training data and save it. It 
+  - Fits Isolation Forest on clean features.
+  - Flags ~1% of data as outliers (via *contamination=0.01*).
+  - Saves `outlier_detector_{version_tag}.pkl` to artifacts.
+  - Registers outlier detector to model registry - MLFlow
+  - Records its path in `version_meta.json`.
+
+At inference, we first find its prediction on the input data. If predicted "outlier", we do not try to get Fraud Model prediction. 
+
+We also added:
+  - **Batch Inference Endpoint** – e.g., POST a file or list of transactions. Can be an  Airflow Task – Automate daily batch inference
+  - **Metrics Exposure** – Add Prometheus-compatible `/metrics` 
+  - **Logging Each Request** – To file or stdout (for monitoring/debugging)
+
+
+In production systems, single vs. batch inference are often handled as separate endpoints for clarity, performance tuning, and scalability. Here's how it's treated in real systems:
+
+| Use Case             | API Endpoint Example  | Reason for Separation                                    |
+| -------------------- | --------------------- | -------------------------------------------------------- |
+| **Single Inference** | `POST /predict`       | Simple, low latency, immediate feedback                  |
+| **Batch Inference**  | `POST /predict/batch` | Vectorized operations, better throughput, async-friendly |
+
+Why Separate?
+- Validation Schemas Differ: `Single=TransactionInput`; `Batch=List[TransactionInput]`
+- Error Handling: Batch may return partial results or per-item errors
+- Performance Optimization: Batch may use bulk pre-processing or queuing
+- Rate Limiting: You might throttle batch jobs differently
+- Async Design: Batch can support async processing (submit → poll → download)
+
+
+Full Next Steps Plan
+
+1. **Monitoring & Metrics**
+    - Ensure your inference endpoint exposes metrics at `/metrics` (Prometheus format) if you haven’t done it yet.
+    - Add logging for batch inference with success/failure and summary stats.
+    - Consider implementing basic monitoring for model drift, input feature distribution, and latency.
+   - Optionally add alerting hooks for anomalies in prediction or performance.
+2. **Batch Inference + Airflow Integration**
+   - Make sure batch inference runs smoothly daily via Airflow DAG with logging.
+   - Add error handling and retry logic.
+   - Store batch output and metrics in versioned files.
+   - Explore more advanced scheduling or event-driven triggering if needed.
+3. **Inference Endpoint Robustness**
+   - Input validation and type checking for single and batch requests.
+   - Outlier detection integration to handle edge cases gracefully.
+   - Optionally include lightweight preprocessing checks (e.g., range checks, missing values).
+   - Consider adding rate limiting or authentication if deploying publicly.
+4. **Documentation & Readme**
+    - Write clear README summarizing:
+    - Data flow pipeline (ETL, preprocessing, training, outlier, inference, batch, registry)
+    - How to run locally, with Docker, and Airflow
+    - How to add new data, retrain, and deploy updated models
+    - How to monitor metrics and logs
+    - Include example API requests and responses.
+
+
+<!-- 
+### Inference Pipeline — FastAPI Microservice
+
+| Component    | Plan                                                                |
+| ------------ | ------------------------------------------------------------------- |
+| Model Loader | Load latest version from model registry                      |
+| API Endpoint | `POST /predict` — accepts JSON, runs preprocessor + model pipeline  |
+| Monitoring   | Log latency, prediction distribution → push to Prometheus + Grafana |
+| Alerts       | If drift/anomaly in prediction → trigger webhook alert              | -->
+
+
+### Monitoring
+Monitoring and observability is the the critical part of any system. Without them we do not exactly know whether system is sharp and healthy or if not, where the problem might be. Among common tools to help us with observability is **Prometheus** for collecting metrics and creating alarms on them directly using its **Alert Manager**. We also need to connect Prometheus to a visualization tool such as **Grafana** to create dashboards with panels to visually watch how desired metrics are changing. Grafana also allows us to create alerts on those dashboards. These alerts will fire when conditions met to trigger some defined actions such as sending notifications, rolling back models and so on.
+
+### Complete ML System Monitoring
+
+| Scope                              | What We Monitor                                           |
+| ---------------------------------- | --------------------------------------------------------- |
+| **Model Performance**              | Accuracy, F1, Drift, Outlier %, Fraud Rate                |
+| **API Inference Server (FastAPI)** | Request count, latency, error rate, throughput            |
+| **Batch Jobs (Airflow)**           | Task duration, status (success/failure), retrain triggers |
+| **System Health**                  | CPU, RAM, Disk (Docker containers)                        |
+
+#### Model Performance Monitoring - Example
+For example to monitor model performance, we can expose evaluation metrics via an endpoint (FastAPI, see `ml_metrics/`) so Prometheus can scrape an endpoint `/model-metrics`. Then build a Grafana dashboard + panels to visualize them and set alerts with thresholds to activate and notify admin or proceed with other actions. I created a FastAPI server to store model metrics and expose them for 
+
+
+##### Two Key Alerts in Grafana
+| Alert Name       | Trigger Condition                         |
+| ---------------- | ----------------------------------------- |
+| 🚨 Accuracy Drop | `model_accuracy < 0.85`                   |
+| 🕒 Slow Training | `training_duration_seconds > 2.0` seconds |
+
+
+- Add multiple panels (accuracy, duration etc.) to your dashboard (ML-Metrics)
+    - Choose your dashboard, add visualization that is a panel, insert a query for Prometheus (ex. for accuracy `model_accuracy{model_name="LogisticRegression_v1"}`), choose type of panel (Gauge in this case), chooose, min/min value for allowed range, colors and so on. Save dashboard to have Accuracy panel added!
+    - Repeat the same steps to create another panel for Training Duration, as Time Series type. Save the dashboard. You can repeat this for latency, inference count etc...
+- Create Alerts for each panel: add alert rule for accuracy if its value below .85 to fire and trigger a webhook that send a payload to a POST endpoint served by FastApi metrics-server. This is done by creating Contact Point, as webhook type with url to be http://metrics-server:8000/alert ... Add this Contact Point to the alert. Repeat this for all panels.
+- Go to Alert, Notification Policy to make sure it points to the Contact Point with webhook. Configure other things as desired. 
+- Test the alerts, trigger Airflow pipeline to output a low accuracy (predict everything 0), and long training time (sleep for 2s). Watch the dashboard. Both alerts should fire and send a payload to FastApi alert endpoint
+
+All the alerts can be logged in Redis (for history/audit) add actions on the alerts such as Auto-retraining model if accuracy alert fires.
+
+Provisioning resources manually is not scalable, auditable and in short, not the best practice. We will do this using YAML/JSON file.
+
+#### Monitoring Blueprint
+1. **Expose Inference Server Metrics** (via `/metrics`)
+     - Used `prometheus_fastapi_instrumentator` to automatically `/metrics` to  track: latencies, counts, status codes, etc.
+     - Used `prometheus_client` to define custom metrics: outliers count, fraud count, request count, average fraud score, inference latency using Histograms
+2. **Expose Airflow Metrics** (via Prometheus Exporter)
+   - Airflow can emit metrics to Prometheus via statsd or prometheus-exporter
+   - Monitor: DAG run duration, task failures, retries
+3. **Container Health Metrics** (**Prometheus Node Exporter** / cAdvisor)
+   - Monitors Docker container resource usage
+   - CPU %, memory, disk I/O, network
+   - Scrape via Prometheus
+   - Grafana: dashboards for resource bottlenecks
+4. **Grafana Dashboards** (Unified View)
+   - Dashboard 1: Model Performance over time
+   - Dashboard 2: API Inference Traffic (live)
+   - Dashboard 3: Airflow Batch Job Monitoring
+   - Dashboard 4: System Resources (cAdvisor)
+5. Optional: Alerting Rules
+     - Slack/Email alerts if:
+     - API error rate > 5%
+     - Fraud rate spike
+     - Batch job fails
+     - CPU > 90% for 5min
+
+
+### Inference Monitoring
+
+| Metric                   | Alert Strategy                          |
+| ------------------------ | --------------------------------------- |
+| Class distribution drift | Alert if % fraud spikes                 |
+| Confidence score drop    | Alert if low confidence common          |
+| Outlier count increase   | Alert on statistical outlier spike      |
+| Latency per request      | Real-time latency alert (for inference) |
+
+
+#### Instrument FastAPI
+Add Prometheus Instrumentation to FastAPI which exposes `/metrics` Endpoint Automatically. This handles automatically by `instrumentator.expose(app)` — Prometheus can now scrape this.
+
+| Library                             | Purpose                                             | Recommendation            |
+| ----------------------------------- | --------------------------------------------------- | ------------------------- |
+| `prometheus-client`                 | Low-level metric creation (Counters, Gauges)        | ✅ Use **both**            |
+| `prometheus-fastapi-instrumentator` | Auto-instrument FastAPI (latency, error rate, etc.) | ✅ Use **for API metrics** |
+
+Use prometheus-fastapi-instrumentator for automatic API monitoring,
+AND use prometheus-client to define custom metrics like fraud_predictions_total.
+
+### Prometheus Alerts
+
+Using YAML-based configuration gives you reproducibility, automation, and portability — key principles for any production-grade monitoring stack. Here’s how you can achieve full YAML-based alerting and monitoring:
+
+  -  **Prometheus + Alertmanager** (YAML-Configured)
+  - Prometheus scrapes metrics and triggers alerts (from YAML).
+  - Alertmanager receives alerts from Prometheus and routes them (email, Slack, etc.).
+  - Grafana visualizes metrics and alerts, can optionally sync alert rules from Prometheus.
+
+Use Alertmanager for Alerts, YAML-Configured, because
+   - Alertmanager is standard with Prometheus.
+   - Its YAML config supports routing, silencing, retries, etc.
+   - Keeps alert logic centralized in Prometheus.
+   - Grafana can just be your dashboard, not your alert engine.
+
+#### How to Set Prometheus Alerts Up - Alertmanager
+   - Add Alertmanager Docker Service (docker-compose)
+   - Mount `alertmanager.yaml` for notification config (YAML-based)
+   - Configure alerting rules in `alert_rules.yml`
+   - Configure `prometheus.yml` to point to Alertmanager
+   - Use `alertmanager.yaml` to configure alert an receiver such as api endpoint `/alert` 
+   -  Let Grafana display alerts, but Prometheus will own them.
+
+### Alerts to Trigger an Action: Model Rollback via MLflow
+We can add an Airflow task for auto rollback on model performance drop - Example: 
+ - If accuracy < threshold, load previous best model
+ - If inference latency < threshold, load previous best model
+
+This is where MLflow model versions + tags becomes useful. After setting up an alert such as "High Inference Latency", configure alert manager to have a receiver for this alert such as an API endpoint using hooks. In our case we used `fastapi-hook`to configure alert manager to send an high inference latency alert to our model server at `http://inference-api:8000/alert` which will handle the **model rollback** using MLflow and Airflow.  
+
+To test this, construct an intentionally slower version of the current model in production by subclassing sklearn Logistic Regression and promote it to production using `/dags/test_model_rollback.py`. After receiving traffic, the high latency activates the alert which send a POST request to inference endpoint `/alert`. This part runs an Airflow DAG to rollback the model by de-promoting the running model to stage level and send back a signal to inference serve `/rollback_model` to reload the serving model which automatically loads the previous model in production. 
+
+#### Automated Rollback Triggers:
+- High latency (measured in Grafana alert → webhook to Airflow).
+- Poor accuracy or drift (model monitoring).
+- Outliers spike or business KPIs drop.
+
+
+| Component             | Manual / Automated                                    |
+| --------------------- | ----------------------------------------------------- |
+| MLflow Model Register | Automated in `train_fraud_detector_task.py`                          |
+| Rollback Decision     | Optional: manual OR automated                         |
+| Model Rollback        | Automated via Airflow DAG                             |
+| Inference Server Load | Automated as it's using dynamic load                       |
+| Alerts to Trigger     | Automated (Prometheus → Alertmanager → FastAPI → DAG) |
+
+
+#### How Models Get Loaded 
+| Approach                 | Description                                                  |
+| ------------------------ | ------------------------------------------------------------ |
+| Static load (file)       | Loads `.pkl` model file once. Cannot rollback automatically. |
+| **MLflow Registry Load** | Always loads **"Production" model** via MLflow URI.          |
+| Reload Endpoint          | Allows triggering reload manually or via webhook.            |
+
+#### Most Common Situations for Model Rollback :
+- 🚨 Performance Degradation in Production
+  - Real-time metrics (e.g., accuracy, latency, drift) show drop in performance. Example: Fraud detection model starts misclassifying legitimate transactions after retraining.
+- ⚠️ Infrastructure or Deployment Failure
+  - Model fails to load, crashes API, or increases latency significantly. Example: New model is too large, causing memory overload or timeout.
+- 📊 Data Drift or Unexpected Input Patterns
+  - Data in production shifts, and model can't handle it well, Example: New product types appear in e-commerce, model was never trained on them.
+- 🧪 Failed A/B Test or Canary Deployment
+  - New model loses to the old one in real-world A/B comparison.
+Decision made to revert to previous stable version.
+- 🔍 Audit or Regulatory Requirement
+  - Need to revert for compliance reasons or errors found during post-deployment audits.
+
+| Aspect                       | Manual Rollback                         | Automated Rollback                                          |
+| ---------------------------- | --------------------------------------- | ----------------------------------------------------------- |
+| **Trigger**                  | Human decision, often after monitoring. | Automated metrics (latency, accuracy) trigger rollback.     |
+| **Common In**                | High-risk domains: finance, healthcare. | Low-latency systems, e.g., recommender engines, e-commerce. |
+| **Tools Used**               | MLflow UI, scripts, CI/CD tools         | Airflow, Kubernetes, Argo, Prometheus + Alertmanager        |
+| **Typical Time to Rollback** | Minutes to hours.                       | Seconds to minutes.                                         |
+
+Mature MLOps setups rely on:
+- Prometheus + Grafana Alerts + Airflow/K8s job → rollback.
+- CI/CD pipelines that monitor key performance metrics and automatically revert if thresholds are crossed.
+
+This is the critical decision point in production MLOps: When exactly should a model rollback be triggered automatically?
+
+- 🎯 Step 1: Define Rollback Trigger Criteria
+    - Option 1: **Latency Spike**
+        - Metric: inference_latency_seconds (already set up in Prometheus)
+        - Trigger: Average latency > 0.5s for 5 minutes.
+    - Pros: Simple, fast to detect.
+    - Cons: May be caused by infra, not the model.
+    
+    - Option 2: **Drop in Model Accuracy or Precision**
+        - Metric: fraud_detection_accuracy or equivalent.
+        - Trigger: Accuracy drops below 90% over X predictions.
+    - Pros: Directly tied to model performance.
+    - Cons: Needs ground truth or labeled data — not always available immediately.
+
+    - Option 3: **Outlier Rate Surge**
+        - Metric: Outlier counter (is_outlier == True) rate.
+        - Trigger: Outlier rate > 10% for 5 minutes.
+    - Pros: Detects data drift quickly.
+    - Cons: May generate false positives.
+
+    - Option 4: **Custom Business Logic**
+    Example: % of flagged fraudulent transactions increases unexpectedly.
+    Tied to KPIs.
+
+- 🔧 Step 2: What Happens After Trigger?
+Two Options for Rollback Execution:
+  - A. Reload in FastAPI Automatically	FastAPI /reload_model endpoint loads previous version.
+  - B. Airflow DAG triggers	Airflow finds last good model in MLflow and triggers reload by sending a request to FastAPI.
+
+This URL is used in FastAPI to trigger a DAG in Airflow via its REST API.
+
+```sh
+AIRFLOW_TRIGGER_URL = "http://airflow-webserver:8080/api/v1/dags/model_rollback/dagRuns"
+```
+
+This URL is:
+- The official Airflow API endpoint to trigger DAGs.
+- Needs to be reachable from FastAPI (same Docker network).
+- Auth must match Airflow credentials.
+
+
+#### Model Rollback Mechanism based on High Latency Inference
+
+After model is deployed inot production, latecy in inference increases shaply for some time (say 2m). High Inference Latency alert (Prometheus/Grafan alert - our case Prometheus) fires, and hits the Fastapi `/alert` endpoint which in turn, sends POST request to an Airflow DAG to start rollback the model to previous stable version. This module finds the previous version, depromotes the current version to staging from production and send the previous version back to a fastapi endpoint `/model_rollback` ro relaod the prevous model for inference. 
+
+The main pipeline is logged and loaded using `mlflow.sklearn.log_model` or `mlflow.sklearn.load_model` which create a "sklearn flavor" model.
+
+I had diffculty simulating a "delayed model" to be used for testing this pipeline. The idea was to use a model in production, device some deplay its pipeline and register it as the new vesion which goes to production. I subclassed a LogisticRegression instance `DelayedLogisticRegression()` to put sleep in time in it prediction methods and registered it.
+
+```python
+class DelayedLogisticRegression(LogisticRegression):
+    def predict(self, X):
+        time.sleep(5)
+        return super().predict(X)
+
+    def predict_proba(self, X):
+        time.sleep(5)
+        return super().predict_proba(X)
+```
+
+At the time of loading it for inference, it get error
+```
+ModuleNotFoundError: No module named 'unusual_prefix_83f8cee858e09b35f281415321530c3cdc750909_test_model_rollback'
+```
+When a custom model class is saved using `cloudpickle`, it stores the full module path. If your script/module structure has changed since the model was saved (e.g., different filename, renamed class, or the model was saved inside a notebook with a weird module name), MLflow can't locate the exact same class to unpickle. This means that cloudpickle expects that same module structure at load time. So I created a module in `utils` containing the subclass definition and made it avaialabe at loading time in the same path used when logging and registering so the import (`from utils.delayed_model import DelayedLogisticRegression`) works normally at loading (no need to put this line is script when loading beause it is not used explicitly but implcitly and internally when unpickling). This was an elegant solution to preserve sklearn flavor, keep things modular and clean so i could still keep the same methods `mlflow.sklearn.log_model` or `mlflow.sklearn.load_model` working for the customed delayed pipeline. Also put `/utils` in `PYTHONPATH` variable enviroment so python finds it when importing - i used ENV ... in Dockerfile. The other option would be to used `mlflow.pyfunc`for logging and loading which is a bit more invovled.
+
+Now we just built a self-healing ML pipeline:
+- 🚀 Delayed model deploys to production
+- ⚠️ Latency detection triggers FastAPI /alert
+- 🔁 FastAPI kicks off an Airflow DAG
+- 🔙 Airflow rolls back the model to a previous, faster version
+- ⚡ Inference server reloads the older version
+- 🧠 System auto-stabilizes
+
+We’ve operationalized:
+- Model monitoring
+- Automatic rollback
+- Version management
+- FastAPI + Airflow orchestration
+- Resilient deployment with minimal manual intervention
+
+#### Grafana as Code
+
+What we built:
+
+- Pre-defined Dashboard (via YAML/JSON) with:
+  - Inference latency
+  - Fraud prediction rate
+  - Outlier count
+  - Request count per version
+  - Drift score
+- Alert Rules (YAML or in Prometheus) for:
+  - High latency (>500ms avg over 5m)
+  - No predictions for 5 minutes
+  - High outlier ratio (>10%)
+
+Grafana provision dashboards + alerts on startup from YAML/JSON files. All configurable, reusable, version-controlled.
+
+
+  ```sh
+  /project/
+  └── monitoring/
+      ├── grafana/
+      │   ├── dashboards/
+      │   │   ├── system_monitoring.json
+      │   │   └── model_monitoring.json   # Prebuilt dashboard
+      │   └── provisioning/
+      │       ├── alerting/
+      │       │   ├── alerting_rules.yaml  
+      │       ├── dashboards/     # Links dashboards at startup
+      │       │   ├── dashboards.yaml  
+      │       ├── datasources/     # Optional: Grafana alert rule
+      │       │   └── datasource.yaml 
+      ├── alertmanager/
+      │   ├── alertmanager.yaml
+      ├── prometheus/
+      │   ├── alert_rules.yaml
+      │   ├── prometheus.yaml
+      ├── open_telemetry/
+      │   ├── otel-config.yaml
+  ```
+
+Let's do a complete example: first configure Prometheus as a source for grafana using a yaml file such as `grafana/datasources/datasource.yaml`. Then we can auto-provision a Grafana dashboard + an alert for high inference latency using only YAML:
+  - Dashboard with inference latency panel: `grafana/dashboards/model_monitoring.json`
+  - Auto-provisioned alert if latency > 0.5 seconds: `grafana/provisioning/alerting/alerting_rules.yaml`
+  - No manual UI setup.
+
+
+Different dashboards = different monitoring concerns:
+  - Model Performance → accuracy, fraud rate, outliers
+  - System Health → latency, uptime, errors, throughput
+
+| File                               | Purpose                                                                                                           |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `model_monitoring.json`            | Dashboard with **model-level metrics**/**inference_monitoring** (e.g., fraud prediction count, outliers count, inference latency (percentile 95), average inference latency etc.)              |
+| `system_monitoring.json` | Dashboard focused on **system-level metrics**, CPU usage, Memory usage, Dicsk usage etc.  |
+
+For System Monitoring Dashboard, we use **node-exporter** (is per host machine not per container) or **Docker stats** for container-level metrics. Add it to the same docker-compose as Prometheus for simplicity. Prometheus scrapes `http://node_exporter:9100/metrics`. Node-exporter exposes metrics on `http://localhost:9100/metrics` from the host system itself. Prometheus (inside Docker) can scrape it using host.docker.internal:9100 if on Mac/Windows, or using the actual IP on Linux. Replace mountpoint: should be `/root` of your system, in my case `/vscode`. Node Exporter gathers system metrics (CPU, memory, disk, network).
+
+
+### Logging and Tracing
+
+Basic tracing is worth it, especially for a real-time ML inference pipeline. It is useful for:
+
+- Debugging latency & performance bottlenecks
+  - Tracing shows you how much time is spent on each step (e.g., model load, prediction, data parsing). This is crucial in low-latency pipelines.
+  - Better than logs for flow visualization
+  - Logs tell you what happened, traces show you how long each component took and how they relate. This is useful when diagnosing unexpected slowdowns.
+- Supports observability maturity
+- Cheap to set up
+  - A few decorators or context managers and you’re done. You don’t need full distributed tracing for a demo project — a single Jaeger pod can handle it.
+
+```sh
+[Your ML Service / API Container]
+   ↓ sends metrics → Prometheus
+   ↓ sends traces  → OpenTelemetry → Jaeger
+   ↓ logs          → (stdout or ELK/other)
+```
+
+Use Jaeger (OpenTelemetry Backend) for tracing spans and full request paths:
+- Visualizes individual request traces
+-  Is great with FastAPI, Airflow, and others when you use `opentelemetry-instrumentation` packages:  `opentelemetry-sdk`, `opentelemetry-exporter-jaeger`, `opentelemetry-instrumentation-fastapi` etc. 
+ - Add a `TracerProvider` and exporter
+ - Add middleware in FastAPI to record traces, ex. `OpenTelemetry Collector` 
+
+Use opentelemtry-sdk with OTLPExporter to send traces to the Collector. Open Jaeger UI `localhost:16686` -> search for your services -> see spans, timing and call paths. Create tracing object in a module `utils/tracing/tracing.py` and import them when needed
+
+##### Instrument your FastAPI app
+- Use OpenTelemery SDK and a tracing middleware (or manually add spans)
+- Export traces via OTLP to your local OpenTelemetry Collector  
+See `utils/tracing/tracing.py`
+- Open Jaeger UI, slect your `service.name` (whatever set in your trace setup) from drop down to see each trace, with spans for function calls, DB querire etc... - spans represent operations line your `/predict` endpoint handler etc. Make a request to `/predict` to see the traces.
+
+
+You can also add tracing spans and integrate them smoothly with your existing logging code:
+
+1. Set Up OT middleware for FastAPI
+Now instead of manually creating spans everywhere, use OpenTelemetry's automation instrumentation middleware for FastAPI.
+
+```python
+from fastapi import FastAPI
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+app = FastAPI()
+
+# Instrument app to automatically create spans for incoming HTTP requests
+FastAPIInstrumentor.instrument_app(app)
+```
+This will automaticall trace every request, capture latency , HTTP status, route etc.
+
+2. Add manual spans inside imprtant business logic
+```python
+from opentelemetry import trace
+
+tracer = trace.get_tracer(__name__)
+
+@app.post("/predict")
+def predict(...):
+    with tracer.start_as_current_span("predict_handler"):
+        # your prediction logic here
+        ...
+```
+This will create span named "predict_handler" that wraps your predict call, showing up in Jaeger UI
+
+3. Add trace context to logs for easy correlation of your logs with traces by adding the trace ID and span ID in log messages.
+
+-------------------------
+
+Useful Docker Comands : 
+```sh
+docker-compose build --no-cache  # builds with ignoring cache
+docker stop $(docker ps -aq)  # Stop all containers
+docker rm $(docker ps -aq)   #Remove all containers
+docker volume ls  # Identify airflow-related volumes
+docker volume rm project_postgres-db-volume  # Replace with real names
+docker network create -d bridge airflow_net # Create a shared network
+docker network rm airflow_net  # Delete network
+docker network inspect airflow_net # See which services are inside the network
+```
+
+
+
+
+
+<!-- 
+## ML Pipeline — With Real Monitoring
+
+- ✅ Stage 1 — Stream Data + Drift Detection (Redis)
+    - Simulate real-time data stream
+    - Inject drift after batch 5
+    - Detect drift and log drift score
+- ✅ Stage 2 — Model Training + Metric Logging
+    - Train a real model (Logistic Regression)
+    - Log accuracy, loss, training time to Prometheus
+- ✅ Stage 3 — Monitoring with Prometheus + Grafana
+    - Serve /metrics endpoint (FastAPI or Flask)
+    - Add Prometheus scraper + Grafana dashboards
+
+
+### Stage 1: Stream Data + Drift Detection (Redis)
+
+#### Redis Streaming + Drift
+Add Redis to Docker (already done), start it:
+```sh
+redis-server --daemonize yes
+
+# Confirm it’s running:
+redis-cli ping
+# Should return: PONG
+```
+
+#### Add Redis Stream Function to DAG File
+In `ml_pipeline_dag.py`, add this streaming task `stream_data_with_drift` as a function and add `detect_drift` function. Here we used redis list (queue) for storing messages as it is 
+- ✅ Reliable — avoids drift task failure
+- ✅ You can always switch to Kafka pub/sub later
+- ✅ Industry uses queues too (e.g., Celery, RabbitMQ, SQS)
+
+Upgrade to **Kafka Pub/Sub** later for production. Here 10 batch of data generated and after batch 5, we shift the mean by 2.0. This will be detected by the second task. Trigger the DAG and see the log:
+```sh
+Batch 1 - Drift score: 0.02 → No drift
+...
+Batch 7 - Drift score: 5.12 → ⚠️ Drift detected
+...
+``` -->
+
+
+
+<!-- 
+## ML Pipeline — With Real Monitoring
+
+- ✅ Stage 1 — Stream Data + Drift Detection (Redis)
+    - Simulate real-time data stream
+    - Inject drift after batch 5
+    - Detect drift and log drift score
+- ✅ Stage 2 — Model Training + Metric Logging
+    - Train a real model (Logistic Regression)
+    - Log accuracy, loss, training time to Prometheus
+- ✅ Stage 3 — Monitoring with Prometheus + Grafana
+    - Serve /metrics endpoint (FastAPI or Flask)
+    - Add Prometheus scraper + Grafana dashboards
+
+
+### Stage 1: Stream Data + Drift Detection (Redis)
+
+#### Redis Streaming + Drift
+Add Redis to Docker (already done), start it:
+```sh
+redis-server --daemonize yes
+
+# Confirm it’s running:
+redis-cli ping
+# Should return: PONG
+```
+
+#### Add Redis Stream Function to DAG File
+In `ml_pipeline_dag.py`, add this streaming task `stream_data_with_drift` as a function and add `detect_drift` function. Here we used redis list (queue) for storing messages as it is 
+- ✅ Reliable — avoids drift task failure
+- ✅ You can always switch to Kafka pub/sub later
+- ✅ Industry uses queues too (e.g., Celery, RabbitMQ, SQS)
+
+Upgrade to **Kafka Pub/Sub** later for production. Here 10 batch of data generated and after batch 5, we shift the mean by 2.0. This will be detected by the second task. Trigger the DAG and see the log:
+```sh
+Batch 1 - Drift score: 0.02 → No drift
+...
+Batch 7 - Drift score: 5.12 → ⚠️ Drift detected
+...
+``` -->
 
 
 
