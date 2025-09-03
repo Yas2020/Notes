@@ -12,48 +12,43 @@
     - [Byte Pair Encoding (BPE) Tokenizer](#byte-pair-encoding-bpe-tokenizer)
     - [WordPiece Tokenizer](#wordpiece-tokenizer)
     - [Unigram Tokenizer](#unigram-tokenizer)
-    - [SentencePiece](#sentencepiece)
+      - [SentencePiece](#sentencepiece)
   - [Word Normalization, Lemmatization and Stemming](#word-normalization-lemmatization-and-stemming)
     - [Lemmatization](#lemmatization)
     - [Sentence Segmentation](#sentence-segmentation)
-- [N-gram Language Models](#n-gram-language-models)
+- [$n$-gram Language Models](#n-gram-language-models)
     - [Markov Assumption](#markov-assumption)
     - [Evaluating Language Models](#evaluating-language-models)
       - [Perplexity](#perplexity)
 - [Text Classification and Sentiment](#text-classification-and-sentiment)
   - [Naive Bayes](#naive-bayes)
     - [Training Naive Bayes Classifiers](#training-naive-bayes-classifiers)
-    - [Evaluation: Precision, Recall, F-measure](#evaluation-precision-recall-f-measure)
+  - [Evaluation: Precision, Recall, F-measure](#evaluation-precision-recall-f-measure)
     - [Evaluating with more than two classes](#evaluating-with-more-than-two-classes)
-  - [Lagistic Regression](#lagistic-regression)
-    - [Other classification tasks and features](#other-classification-tasks-and-features)
-    - [Designing versus learning features:](#designing-versus-learning-features)
+  - [Logistic Regression](#logistic-regression)
     - [Multinomial Logistic Regression](#multinomial-logistic-regression)
     - [Learning in Multinomial Logistic Regression](#learning-in-multinomial-logistic-regression)
-- [Vector Semantics and Word Embeddings](#vector-semantics-and-word-embeddings)
-  - [Word2Vec](#word2vec)
-    - [Vector Semantics](#vector-semantics)
-    - [Word Embeddings](#word-embeddings)
+- [Vector semantics and Word Embeddings](#vector-semantics-and-word-embeddings)
+  - [Word Embeddings](#word-embeddings)
   - [How to Create Word Embeddings?](#how-to-create-word-embeddings)
     - [Continuous Bag of Words Model (CBOW)](#continuous-bag-of-words-model-cbow)
     - [Continuous Skip-grams](#continuous-skip-grams)
-    - [High-Dimensional Outputs](#high-dimensional-outputs)
-      - [Negative Sampling](#negative-sampling)
+  - [High-Dimensional Outputs](#high-dimensional-outputs)
+    - [Negative Sampling](#negative-sampling)
   - [Visualizing Embeddings](#visualizing-embeddings)
-  - [Some application of word embedding?](#some-application-of-word-embedding)
 - [Recurrent Neural Nets (RNNs)](#recurrent-neural-nets-rnns)
   - [Training RNN](#training-rnn)
     - [Computing the Gradient in RNN](#computing-the-gradient-in-rnn)
   - [Different Types of RNNs](#different-types-of-rnns)
   - [Language Models and Text Generation](#language-models-and-text-generation)
-    - [More about Sampling](#more-about-sampling)
+    - [Sampling](#sampling)
       - [Beam Search](#beam-search)
-        - [Error Abalysis in Beam Search](#error-abalysis-in-beam-search)
+      - [Error Analysis in Beam Search](#error-analysis-in-beam-search)
   - [Modeling Sequences Conditioned on Context with RNNs](#modeling-sequences-conditioned-on-context-with-rnns)
   - [Bidirectional RNNs](#bidirectional-rnns)
-  - [The Challenge of Long-Term Dependencies](#the-challenge-of-long-term-dependencies)
+  - [The Challenge of Long-Term Dependencies in RNNs](#the-challenge-of-long-term-dependencies-in-rnns)
   - [The Long Short-Term Memory and Other Gated RNNs](#the-long-short-term-memory-and-other-gated-rnns)
-  - [LSTM](#lstm)
+  - [Long Short-Term Memory (LSTM)](#long-short-term-memory-lstm)
   - [Gated Recurrent Units (GRU)](#gated-recurrent-units-gru)
   - [Clipping Gradients](#clipping-gradients)
   - [Encoder-Decoder Model with RNNs](#encoder-decoder-model-with-rnns)
@@ -71,7 +66,7 @@
     - [Generation in LLMs](#generation-in-llms)
       - [Greedy Search](#greedy-search)
       - [Beam Search](#beam-search-1)
-      - [Sampling](#sampling)
+      - [Sampling](#sampling-1)
         - [Temperature:](#temperature)
         - [Top-k Sampling](#top-k-sampling)
         - [Top-p Sampling](#top-p-sampling)
@@ -147,44 +142,51 @@
       - [Train a BERT-like Model from Scratch](#train-a-bert-like-model-from-scratch)
   
 
-<!-- ---
-**Author:** Yaser Eftekhari  
-**Date:** April 11, 2025
---- -->
-
-<!-- ## Neural Language Models -->
-
-<!-- # Sequence Modeling -->
-
 <br><br><br><br>
 
 # Regular Expressions
 
-One of the most useful tools for text processing in computer science has been the **regular expression** (often shortened to **regex**). Formally, a regular expression is an algebraic notation for characterizing a set of strings. Regular expressions are particularly useful for searching in texts, when we have a pattern to search for and a **corpus** of texts to search through. Unix command-line tool `grep` takes a regular expression and returns every line of the input document that matches the expression.
+One of the most useful tools for text processing  has been the **regular expression** (often shortened to **regex**). Regular expressions are particularly useful for searching in texts, when we have a pattern to search for and a **corpus** of texts to search through. Unix command-line tool `grep` takes a regular expression and returns every line of the input document that matches the expression.
 
 
 The simplest kind of regular expression is a sequence of simple characters; putting characters in sequence is called _concatenation_. To search for `woodchuck`, we type `woodchuck`. _Regular expressions are case sensitive_. The string of characters inside the braces specifies a disjunction of characters to match. For example, the pattern `[wW]` matches patterns containing either `w` or `W`.
 
-The brackets can be used with the dash (-) to specify any one character in a range. The pattern `[2-5]` specifies any one of the characters 2, 3, 4, or 5.
+The brackets can be used with the dash `-` to specify any one character in a range. The pattern `[2-5]` specifies any one of the characters 2, 3, 4, or 5.
 
-If the caret`^` is the first symbol after the open square brace `[`, the resulting pattern is _negated_. For example, the pattern `[^a]` matches any single character (including special characters) except `a`.
+If the caret `^` is the first symbol after the open square brace `[`, the resulting pattern is _negated_. For example, the pattern `[^a]` matches any single character (including special characters) except `a`. The question mark `?` means “the preceding character or nothing”.
 
-The question mark `?` means “the preceding character or nothing”.
-
-| Regex | Match (single characters) | Example Patterns Matched |
-|------| ------------------------- | -------------------------|
-| `[^A-Z]` | not an upper case letter | “Oyfn pripetchik” |
-| `[^Ss]` | neither ‘S’ nor ‘s’ | “I have no exquisite reason for’t” |
-| `[^.]` |  not a period | “our resident Djinn” |
-| `[e^]` | either ‘e’ or ‘^’ |  “look up ^ now” |
-| `a^b` | the pattern ‘a^b’ | “look up a^ b now” |
-| `woodchucks?` | woodchuck or woodchucks | “woodchuck” |
-| `colou?r` | color or colour | “color” |
+| Regex | Match (single characters) | Example Patterns Matched | #Matches
+|------| ------------------------- | -------------------------| ------ |
+| `[^A-Z]` | not an upper case letter | "oyfn pripetchik" | 15
+| `[^Ss]` | neither ‘S’ nor ‘s’ | "Said so" | 5
+| `[^.]` |  not a period | "Yes." | 3
+| `[e^]` | either ‘e’ or ‘^’ |  “Look up ^” | 1
+| `^The` | new line followed by 'The'  | “The best” | 3
+| `woodchucks?` | woodchuck or woodchucks | “woodchuck” | 1
+| `colou?r` | color or colour | “color, colour” | 2
 
 
-`a*` means “any string of zero or more as”. This will match `a` or `aaaaaa`, but it will also match the empty string at the start of Off Minor since the string Off Minor starts with zero a’s. So the regular expression for matching one or more `a` is `aa*`.
+`a*` means “any string of zero or more `a`s”. This will match `a` or `aaaaaa`, but it will also match the empty string at the start of `Off Minor` since this string starts with zero `a`s. So the regular expression for matching one or more `a` is `aa*`. `[ab]*` means “zero or more a’s or b’s”. This pattern finds 8 matches in the string "Salam baba":
 
-`[ab]*` means “zero or more a’s or b’s”. `+`, which means “one or more occurrences of the immediately preceding character or regular expression”. Thus, the expression `[0-9]+` is the normal way to specify “a sequence of digits”. There are thus two ways to specify the sheep language: `baaa*!` or `baa+!`.
+|start | end |content
+| ----- | ----- | -------- 
+0| 0| 
+1|2|a
+2|2|
+3|4|a
+4|4|
+5|5|
+6|10|baba
+10|10
+
+As mentioned before, `*` matches empty strings too.  `+`, means “one or more occurrences of the immediately preceding character or regular expression”. So `[ab]+` finds only 3 matches in the previous sentence:
+|start | end |content
+| ----- | ----- | -------- 
+1| 2| a
+3|4|a
+6|10| baba
+
+and no empty string. Also, the expression `[0-9]+` is the normal way to specify “a sequence of digits”. Thus these two patterns are equivalent: `baaa*!` or `baa+!`. 
 
 One very important special character is the period `.`, a wildcard expression that matches any single character (except a carriage return).
 
@@ -194,11 +196,9 @@ One very important special character is the period `.`, a wildcard expression th
 
 The wildcard is often used together with the `*` to mean “any string of characters”. For example, suppose we want to find any line in which a particular word, for example, `aardvark`, appears twice. We can specify this with the regular expression `aardvark.*aardvark`.
 
+The most common anchors are the caret `^` and the dollar sign `$`. The caret `^` matches the start of a line. Thus, the caret `^` has three uses: to match the start of a line, to indicate a negation inside of square brackets, and just to mean a caret. The dollar sign `$` matches the end of a line. So the pattern ` $` is a useful pattern for matching a space at the end of a line, and `^The dog\.$` matches a line that contains only the phrase `The dog.`. 
 
-The most common anchors are the caret`^` and the dollar sign `$`. The caret `^` matches the start of a line. Thus, the caret `^` has three uses: to match the start of a line, to indicate a negation inside of square brackets, and just to mean a caret. The dollar sign `$` matches the end of a line. So the pattern ` $` is a useful pattern for matching a space at the end of a line, and `^The dog\.$` matches a line that contains only the phrase `The dog.`. 
-
-
-`\b` matches a word boundary, and `\B` matches a non word-boundary. Thus, `\bthe\b` matches the word the but not the word _other_. A “word” for the purposes of a regular expression is defined based on the definition of words in programming languages as a sequence of digits, underscores, or letters. Thus `\b99\b` will match the string `99` in There are `99` bottles of beer on the wall (because `99` follows a space) but not `99` in There are `299` bottles of beer on the wall (since `99` follows a number). But it will match `99` in `$99` (since `99` follows a dollar sign (`$`), which is not a digit, underscore, or letter).
+`\b` matches a word boundary, and `\B` matches a non word-boundary. Thus, `\bthe\b` matches the word the but not the word _other_. A “word” for the purposes of a regular expression is defined based on the definition of words in programming languages as a sequence of digits, underscores, or letters. Thus `\b99\b` will match the string `99` in There are `99` bottles of beer on the wall (because `99` follows a space) but not `99` in "There are `299` bottles of beer on the wall" (since `99` follows a number). But it will match `99` in `$99` (since `99` follows a dollar sign `$`, which is not a digit, underscore, or letter).
 
 Search for “cat or dog” ? we need a new operator, the **disjunction** operator, also called the pipe symbol `|` . The pattern `cat|dog` matches either the string cat or the string dog.
 
@@ -213,7 +213,7 @@ With the parentheses, we could write the expression `Column [0-9]+ *` to match t
 | Sequences and anchors | `^my end$` |
 |Disjunction | `\|` |
 
-Thus, because counters have a higher precedence than sequences, `the*` matches `theeeee` but not `thethe`. Because sequences have a higher precedence than disjunction, `the|any` matches the or any but not `thany` or `theny`. Patterns can be ambiguous in another way. Consider the expression `[a-z]*` when matching against the text once upon a time. Since `[a-z]*` matches zero or more letters, this expression could match nothing, or just the first letter `o` in `once. In these cases regular expressions always match the largest string they can; we say that patterns are **greedy**, expanding to cover as much of a string as they can.
+Thus, because counters have a higher precedence than sequences, `the*` matches `theeeee` but not `thethe`. Because sequences have a higher precedence than disjunction, `the|any` matches the or any but not `thany` or `theny`. Patterns can be ambiguous in another way. Consider the expression `[a-z]*` when matching against the text once upon a time. Since `[a-z]*` matches zero or more letters, this expression could match nothing, or just the first letter `o` in "once". In these cases regular expressions always match the largest string they can; we say that patterns are **greedy**, expanding to cover as much of a string as they can.
 
 There are, however, ways to enforce _non-greedy matching_, using another meaning of the `?` qualifier. The operator `*?` is a `*` that matches as little text as possible. The operator `+?` is a `+` that matches as little text as possible.
 
@@ -231,37 +231,41 @@ There are, however, ways to enforce _non-greedy matching_, using another meaning
 
 ### Substitution, Capture Groups
 
-An important use of regular expressions is in **substitutions**. For example, the substitution operator `s/regexp1/pattern/` used in Python and in Unix commands like `vim` or `sed` allows a string characterized by a regular expression to be replaced by another string: `s/colour/color/`
+An important use of regular expressions is in **substitutions**. For example, the substitution operator `s/regexp1/pattern/` used in Python and in Unix commands like `sed` allows a string characterized by a regular expression to be replaced by another string: `s/colour/color/`
 
-It is often useful to be able to refer to a particular subpart of the string matching the first pattern. To do this, we put parentheses ( and ) around the first pattern and use the number operator `\1` in the second pattern to refer back. Here’s how it looks: `s/([0-9]+)/<\1>/`. For example, suppose we are looking for the pattern “the Xer they were, the Xer they will be”, where we want to constrain the two X’s to be the same string. 
+It is often useful to be able to refer to a particular subpart of the string matching the first pattern. To do this, we put parentheses `(` and `)` around the first pattern and use the number operator `\1` in the second pattern to refer back. Here’s how it looks: `s/([0-9]+)/<\1>/`. For example, suppose we are looking for the pattern “the Xer they were, the Xer they will be”, where we want to constrain the two X’s to be the same string. Consider, `the (.*)er they were, the \1er they will be`. This use of parentheses to store a pattern in memory is called a **capture group**. Every time a capture group is used (i.e., parentheses surround a pattern), the resulting match is stored in a numbered register. If you match two different sets of parentheses, `\2` means whatever matched the second capture group. Thus `the (.*)er they (.*), the \1er we \2` will match `the faster they ran, the faster we ran` but not `the faster they ran, the faster we ate`.
 
-Consider, `the (.*)er they were, the \1er they will be`. This use of parentheses to store a pattern in memory is called a **capture group**. Every time a capture group is used (i.e., parentheses surround a pattern), the resulting match is stored in a numbered register. If you match two different sets of parentheses, `\2` means whatever matched the second capture group. Thus `the (.*)er they (.*), the \1er we \2` will match `the faster they ran, the faster we ran` but not `the faster they ran, the faster we ate`.
+Parentheses thus have a double function in regular expressions:
+- They are used to group terms for specifying the order in which operators should apply, and 
+- They are used to capture something in a register. 
+ 
+Occasionally we might want to use parentheses for grouping, but don’t want to capture the resulting pattern in a register. In that case we use a **non-capturing group**, which is specified by putting the special commands `?:` after the open parenthesis, in the form `(?: pattern )`. For example, the regex
 
-Parentheses thus have a double function in regular expressions; they are used to group terms for specifying the order in which operators should apply, and they are used to capture something in a register. Occasionally we might want to use parentheses for grouping, but don’t want to capture the resulting pattern in a register. In that case we use a **non-capturing group**, which is specified by putting the special commands `?:` after the open parenthesis, in the form `(?: pattern )`. For example, `(?:some|a few) (people|cats) like some \1`  will match `some cats like some cats` but not `some cats like some some`.
+ `(?:some|a few) (people|cats) like some \1`  
+
+will match `some cats like some cats` or `some people like some people` but not `some people like some cats`.
 
 ### Lookahead Assertions
 
-Finally, there will be times when we need to predict the future: look ahead in the text to see if some pattern matches, but not yet advance the pointer we always keep to where we are in the text, so that we can then deal with the pattern if it occurs, but if it doesn’t we can check for something else instead.
+Finally, there will be times when we need to predict the future: look ahead in the text to see if some pattern matches, but not yet advance the pointer; We always keep to where we are in the text, so that we can then deal with the pattern if it occurs, but if it doesn’t we can check for something else instead.
 
-These lookahead assertions make use of the `(?` syntax that we saw in the previous section for non-capture groups. The operator `(?= pattern)` is true if pattern occurs, but is zero-width, i.e. the match pointer doesn’t advance. The operator `(?! pattern)` only returns true if a pattern does not match, but again is zero-width and doesn’t advance the pointer. Negative lookahead is commonly used when we are parsing some complex pattern but want to rule out a special case. For example suppose we want to match, at the beginning of a line, any single word that doesn’t start with “Volcano”. We can use negative lookahead to do this: `^(?!Volcano)[A-Za-z]+`. 
+These **lookahead** assertions make use of the `(?` syntax that we saw in the previous section for non-capture groups. The operator `(?= pattern)` is true if pattern occurs, but is zero-width, i.e. the match pointer doesn’t advance. The operator `(?! pattern)` only returns true if a pattern does not match, but again is zero-width and doesn’t advance the pointer. **Negative lookahead** is commonly used when we are parsing some complex pattern but want to rule out a special case. For example suppose we want to match, at the beginning of a line, any single word that doesn’t start with “Volcano”. We can use negative lookahead to do this: `^(?!Volcano)[A-Za-z]+`. 
 
 <br><br><br><br>
 
 # Words
 
-Before we talk about processing words, we need to decide what counts as a word. Let’s start by looking at one particular corpus (plural corpora), a computer-readable collection of text or speech. Whether we treat period `.`, comma `,`, and so on as words depends on the task. Punctuation is critical for finding boundaries of things (commas, periods, colons) and for identifying some aspects of meaning (question marks, exclamation marks, quotation marks). For some tasks, like part-of-speech tagging or parsing or speech synthesis, we sometimes treat punctuation marks as if they were separate words.
+Before we talk about processing words, we need to decide what counts as a word. Let’s start by looking at one particular corpus (plural corpora), a computer-readable collection of text or speech. Whether we treat period `.`, comma `,`, and so on as words **depends on the task**. Punctuation is critical for finding boundaries of things (commas, periods, colons) and for identifying some aspects of meaning (question marks, exclamation marks, quotation marks). For some tasks, like part-of-speech tagging or parsing or speech synthesis, we sometimes treat punctuation marks as if they were separate words.
 
 An **utterance** is the spoken correlate of a sentence:
 
 `I do uh main- mainly business data processing`
 
-This utterance has two kinds of disfluencies. The broken-off word main- is called a **fragment**. Words like uh and um are called **fillers** or filled pauses. Should we consider these to be words? Again, it depends on the application. If we are building a speech transcription system, we might want to eventually strip out the disfluencies. They and they might be lumped together as the same type in some tasks, like speech recognition, where we care more about the sequence of words and less about the formatting, while for other tasks, such as deciding whether a particular word is a name of a person or location (named-entity tagging), capitalization is a useful feature and is retained. Sometimes we keep around two versions of a particular NLP model, one with capitalization and one without capitalization.
+This utterance has two kinds of disfluencies. The broken-off word `main-` is called a **fragment**. Words like `uh` and `um` are called **fillers** or filled pauses. Should we consider these to be words? Again, it depends on the application. If we are building a speech transcription system, we might want to eventually strip out the disfluencies. They might be lumped together as the same type in some tasks, like speech recognition, where we care more about the sequence of words and less about the formatting, while for other tasks, such as deciding whether a particular word is a name of a person or location (named-entity tagging), capitalization is a useful feature and is retained. Sometimes we keep around two versions of a particular NLP model, one with capitalization and one without capitalization.
 
-It’s sometimes useful to make a further distinction. Consider inflected forms like cats versus cat. We say these two words are different **wordforms** but have the same lemma. A lemma is a set of lexical forms having the same **stem**, and usually the same major part-of-speech. The wordform is the full inflected or derived form of the word. The two wordforms cat and cats thus have the same lemma, which we can represent as cat. For morphologically complex languages like Arabic, we often need to deal with lemmatization. For most tasks in English, however, wordforms are sufficient, and when we talk about words in this book we almost always mean wordforms.
+It’s sometimes useful to make a further distinction. Consider inflected forms like `cats` versus `cat`. We say these two words are different **wordforms** but have the same *lemma*. A **lemma** is a set of lexical forms having the same **stem**, and usually the same major part-of-speech. The wordform is the full inflected or derived form of the word. The two wordforms `cat` and `cats` thus have the same lemma, which we can represent as `cat`. For morphologically complex languages like Arabic, we often need to deal with **lemmatization**. For most tasks in English, however, wordforms are sufficient, and when we talk about words in this book we almost always mean wordforms. One of the situations even in English where we talk about lemmas is when we measure the number of words in a dictionary. Dictionary entries or boldface forms are a very rough approximation to (an upper bound on) the number of lemmas (since some lemmas have multiple boldface forms).
 
-One of the situations even in English where we talk about lemmas is when we measure the number of words in a dictionary. Dictionary entries or boldface forms are a very rough approximation to (an upper bound on) the number of lemmas (since some lemmas have multiple boldface forms).
-
-Finally, we should note that in practice, for many NLP applications (for example for neural language modeling) we don’t actually use words as our internal unit of representation at all! We instead tokenize the input strings into tokens, which can be words but can also be only parts of words. Before almost any natural language processing of a text, the text has to be normalized, a task called **text normalization**. At least three tasks are commonly applied as part of any normalization process:
+Finally, we should note that in practice, for many NLP applications (for example for neural language modeling) we don’t actually use words as our internal unit of representation at all! We instead **tokenize** the input strings into tokens, which can be words but can also be only parts of words. Before almost any natural language processing of a text, the text has to be normalized, a task called **text normalization**. At least three tasks are commonly applied as part of any normalization process:
 
 1. Tokenizing (segmenting) words
 2. Normalizing word formats
@@ -270,12 +274,12 @@ Finally, we should note that in practice, for many NLP applications (for example
 
 ## Word and Subword Tokenization
 
-The simple Unix tools are fine for getting rough word statistics but more sophisticated algorithms are generally necessary for **tokenization**, the task of segmenting running text into words. There are roughly two classes of tokenization algorithms. In **top-down tokenization**, we define a standard and implement rules to implement that kind of tokenization. But more commonly instead of using words as the input to NLP algorithms, we break up words into **subword** tokens, which can be words or parts of words or even individual letters. These are derived via bottom-up tokenization, in which we use simple statistics of letter sequences to come up with the _vocabulary of subword tokens_, and break up the input text into those subwords.
+The simple Unix tools are fine for getting rough word statistics but more sophisticated algorithms are generally necessary for **tokenization**, the task of segmenting running text into words. These are the features for the input data going into the model. Better features create a more powerful model. Therefore, tokenization is the same as feature engineering in NLP. There are roughly two classes of tokenization algorithms. In **top-down tokenization**, we define a standard and implement rules to implement that kind of tokenization. But more commonly instead of using words as the input to NLP algorithms, we break up words into **subword** tokens, which can be words or parts of words or even individual letters. These are derived via **bottom-up** tokenization, in which we use simple statistics of letter sequences to come up with the _vocabulary of subword tokens_, and break up the input text into those subwords.
  
 
-Consider the word "listen,"and it consists of six letters. How can a computer understand this word? Assign a number to each letter? A common coding formatis called ASCII, where common letters and symbols are encoded into the values from 0 to 255. It's useful in that only one byte is needed to store the value for a letter. For example, the letter L is 76, I is 73, and so on. This is a perfectly valid encoding but then it becomes much harder to extract meaning from these numbers after breaking down the structure to the smallest building blocks like this. For example, in a sentence, if we change the order of words, one can still extract the moeaning of the sentence. But at character level, this is not easy for English language. For example the words LISTEN and SILENT are totally irrelevant although made of the same letters. 
+Consider the word "listen", and it consists of six letters. How can a computer understand this word? Assign a number to each letter? A common coding format is called ASCII, where common letters and symbols are encoded into the values from 0 to 255. It's useful in that only one byte is needed to store the value for a letter. For example, the letter L is 76, I is 73, and so on. This is a perfectly valid encoding *but then it becomes much harder to extract meaning from these numbers after breaking down the structure to the smallest building blocks like this*. For example, in a sentence, if we change the order of words, one can still extract the meaning of the sentence. But at character level, this is not easy for English language. For example the words LISTEN and SILENT are totally irrelevant although made of the same letters. 
 
-There are some other subtelty into how to tokenize. Consider the sentenct: `"Don't you love 🤗 Transformers? We sure do."`. If tokenized by white space only, Then we get `["Don't", "you", "love", "🤗", "Transformers?", "We", "sure", "do."]`. The punctuations are attached to the words "Transformer" and "do", which is suboptimal. We should take the punctuation into account so that a model does not have to learn a different representation of a word and every possible punctuation symbol that could follow it, which would explode the number of representations the model has to learn. Taking punctuation into account, tokenizing our exemplary text would give:
+There are some other subtelty into how to tokenize. Consider the sentence: `"Don't you love 🤗 Transformers? We sure do."`. If tokenized by white space only, Then we get `["Don't", "you", "love", "🤗", "Transformers?", "We", "sure", "do."]`. The punctuations are attached to the words "Transformer" and "do", which is suboptimal. We should take the punctuation into account so that a model does not have to learn a different representation of a word and every possible punctuation symbol that could follow it, which would explode the number of representations the model has to learn. Taking punctuation into account, tokenizing our exemplary text would give:
 
 ```sh
 ["Don", "'", "t", "you", "love", "🤗", "Transformers", "?", "We", "sure", "do", "."]
@@ -283,7 +287,7 @@ There are some other subtelty into how to tokenize. Consider the sentenct: `"Don
 
 Better. However, it is disadvantageous, how the tokenization dealt with the word "Don't". "Don't" stands for "do not", so it would be better tokenized as `["Do", "n't"]`. Depending on the rules we apply for tokenizing a text, a different tokenized output is generated for the same text. A pretrained model only performs properly if you feed it an input that was tokenized with the same rules that were used to tokenize its training data. 
 
-For instance, the BertTokenizer tokenizes `"I have a new GPU!"` as follows:
+For instance, the `BertTokenizer` tokenizes `"I have a new GPU!"` as follows:
 
 ```python
 from transformers import BertTokenizer
@@ -295,45 +299,43 @@ tokenizer.tokenize("I have a new GPU!")
 ```sh
 ["i", "have", "a", "new", "gp", "##u", "!"]
 ```
-Because we are considering the uncased model, the sentence was lowercased first. We can see that the words `["i", "have", "a", "new"]` are present in the tokenizer's vocabulary, but the word "gpu" is not. Consequently, the tokenizer splits `"gpu"` into known subwords: `["gp" and "##u"]`. `"##"` means that the rest of the token should be attached to the previous one, without space (for decoding or reversal of the tokenization).
+Because we are considering the uncased model, the sentence was lowercased first. We can see that the words `["i", "have", "a", "new"]` are present in the tokenizer's vocabulary, but the word `gpu` is not. Consequently, the tokenizer splits `gpu` into known subwords: `gp` and `##u`. The part `##` means that the rest of the token should be attached to the previous one, without space (for decoding or reversal of the tokenization).
 
-The way we tokenize would directly affect the output vocabulary size. A large vocab size forces the model to have an enormous embedding matrix as the input and output layer, which causes both an increased memory and time complexity at training and for inference as well. In general, transformers models rarely have a vocabulary size greater than 50,000, especially if they are pretrained only on a single language. 
+The way we tokenize would directly affect the output **vocabulary size**. A large vocab size forces the model to have an enormous embedding matrix as the input and output layer, which causes both an increased memory and time complexity at training and for inference as well. In general, transformer models rarely have a vocabulary size greater than 50,000, especially if they are pretrained only on a single language. 
 
 
 ### Top-down (rule-based) tokenization
 
-While the Unix command sequence just removed all the numbers and punctuation, for most NLP applications we’ll need to keep these in our tokenization. We often want to break off punctuation as a separate token; commas are a useful piece of information for parsers, and periods help indicate sentence boundaries. But we’ll often want to keep the punctuation that occurs word _internally_, in examples like `m.p.h.`, `Ph.D.`, `AT&T`, and `cap’n`. Special characters and numbers will need to be kept in prices ($45.55) and dates (01/02/06); we don’t want to segment that price into separate tokens of “45” and “55”. And there are URLs (https://www.stanford.edu), Twitter hashtags (#nlproc), or email addresses (someone@cs.colorado.edu). Number expressions introduce complications; in addition to appearing at word boundaries, commas appear inside numbers in English, every three digits: 555,500.50. Tokenization differs by language. 
+While the Unix command sequence just removed all the numbers and punctuation, for most NLP applications we’ll need to keep these in our tokenization. We often want to break off punctuation as a separate token; commas are a useful piece of information for parsers, and periods help indicate sentence boundaries. But we’ll often want to keep the punctuation that occurs word _internally_, in examples like `m.p.h.`, `Ph.D.`, `AT&T`, and `cap’n`. Special characters and numbers will need to be kept in prices `$45.55` and dates `01/02/06`; we don’t want to segment that price into separate tokens of `45` and `55`. And there are URLs `https://www.stanford.edu`, Twitter hashtags `#nlproc`, or email addresses `someone@cs.colorado.edu`. Number expressions introduce complications; in addition to appearing at word boundaries, commas appear inside numbers in English, every three digits: `555,500.50`. *Tokenization differs by language* too. 
 
-A tokenizer can also be used to expand clitic contractions that are marked by apostrophes, converting what’re to the two tokens what are, and we’re to we are. A clitic is a part of a word that can’t stand on its own, and can only occur when it is attached to another word. Depending on the application, tokenization algorithms may also tokenize multiword expressions like New York or rock ’n’ roll as a single token, which requires a multiword expression dictionary of some sort. Tokenization is thus intimately tied up with named entity recognition, the task of detecting names, dates, and organizations. In practice, since tokenization is run before any other language processing, it needs to be very fast. For word tokenization we generally use deterministic algorithms based on regular expressions compiled into efficient finite state automata.
+A tokenizer can also be used to expand **clitic contractions** that are marked by apostrophes, converting `what’re` to the two tokens `what` `are`. A clitic is a part of a word that can’t stand on its own, and can only occur when it is attached to another word. Depending on the application, tokenization algorithms may also tokenize multiword expressions like `New York` or `rock ’n’ roll` as a single token, which requires a multiword expression dictionary of some sort. Tokenization is thus intimately tied up with **named entity recognition**, the task of detecting names, dates, and organizations. In practice, since tokenization is run before any other language processing, it needs to be very fast. For word tokenization we generally use deterministic algorithms based on regular expressions compiled into efficient finite state automata.
 
 ```python
 
 text = 'That U.S.A. poster-print costs $12.40...'
-pattern = r’’’(?x) # set flag to allow verbose regexps
+pattern = r'''(?x) # set flag to allow verbose regexps
      (?:[A-Z]\.)+ # abbreviations, e.g. U.S.A.
      | \w+(?:-\w+)* # words with optional internal hyphens
      | \$?\d+(?:\.\d+)?%? # currency, percentages, e.g. $12.40, 82%
      | \.\.\. # ellipsis
      | [][.,;"’?():_‘-] # these are separate tokens; includes ], [
-     ’’’
+     '''
 nltk.regexp_tokenize(text, pattern)
 ```
 ```sh
 ['That', 'U.S.A.', 'poster-print', 'costs', '$12.40', '...']
 ```
 
-NLP algorithms often learn some facts about language from one corpus (a training corpus) and then use these facts to make decisions about a separate test corpus and its language. Thus if our training corpus contains, say the words low, new, newer, but not lower, then if the word lower appears in our test corpus, our system will not know what to do with it. To deal with this unknown word problem, modern tokenizers automatically induce sets of tokens that include tokens smaller than words, called **subwords**. Subwords can be arbitrary substrings, or they can be meaning-bearing units like the morphemes `-est` or `-er`. (A morpheme is the smallest meaning-bearing unit of a language; for example the word "unwashable" has the morphemes `un-`, `wash`, and `-able`.). In modern tokenization schemes, most tokens are words, but some tokens are frequently occurring morphemes or other subwords like `-er`. 
+NLP algorithms often learn some facts about language from one corpus (a training corpus) and then use these facts to make decisions about a separate test corpus and its language. Thus if our training corpus contains, say the words `low`, `new`, `newer`, but not `lower`, then if the word `lower` appears in our test corpus, our system will not know what to do with it. To deal with this unknown word problem, modern tokenizers automatically induce sets of tokens that include tokens smaller than words, called **subwords**. Subwords can be arbitrary substrings, or they can be meaning-bearing units like the morphemes `-est` or `-er`. (A morpheme is the smallest meaning-bearing unit of a language; for example the word "unwashable" has the morphemes `un-`, `wash`, and `-able`.). In modern tokenization schemes, most tokens are words, but some tokens are frequently occurring morphemes or other subwords like `-er`.  Most tokenization schemes have two parts:
 
-Most tokenization schemes have two parts:
-
-- **Token learner** takes a raw training corpus (sometimes roughly pre-separated into words, for example by whitespace) and induces a vocabulary, a set of tokens
+- **Token learner** takes a raw training corpus (sometimes roughly pre-separated into words, for example by whitespace) and induces a vocabulary, a set of tokens.
 - **Token segmenter** takes a raw test sentence and segments it into the tokens in the vocabulary 
 
 There are known algorithms for tokenizing text which uses the corpus statistics to decide how to segment a text into tokens. Instead of just breaking words at every white space or at every character (in Chinese, for example), these algorithms use the data to determine how to tokenize it. This family is often called **subword tokenization** because tokens can be parts of words or a whole word. Three common algorithm here are:
 
 - **Byte Pair Encoding (BPE)** 
 - **WordPiece**
-- **Unigram Language Modeling Tokenization**
+- **Unigram Language Modeling**
 
 
 Two algorithms are widely used: **byte-pair encoding** (Sennrich et al., 2016), and **unigram language modeling** (Kudo, 2018), There is also a **SentencePiece** library that includes implementations of both of these (Kudo and Richardson, 2018a), and people often use the name SentencePiece to simply mean unigram language modeling tokenization.
@@ -343,34 +345,35 @@ Two algorithms are widely used: **byte-pair encoding** (Sennrich et al., 2016), 
 
 BPE relies on a pre-tokenizer that splits the training data into words. Pretokenization can be as simple as space tokenization, e.g. GPT-2, Roberta. More advanced pre-tokenization include rule-based tokenization, e.g. XLM, FlauBERT which uses Moses for most languages, or GPT which uses Spacy and ftfy, to count the frequency of each word in the training corpus.
 
-After pre-tokenization, a set of unique words has been created and the frequency with which each word occurred in the training data has been determined. The BPE token learner begins with a vocabulary that is just the set of all individual characters. It then examines the training corpus,
-
+After pre-tokenization (which determines the word boundaries), a set of unique words has been created and the frequency with which each word occurred in the training data has been determined. The BPE token learner begins with a vocabulary that is just the set of all individual characters. It then examines the training corpus:
 - Chooses the two symbols that are most frequently adjacent (say ‘A’, ‘B’) 
 - Adds a new merged symbol ‘AB’ to the vocabulary, and replaces every adjacent ’A’ ’B’ in the corpus with the new ‘AB’
 - It continues to count and merge, creating new longer and longer character strings, until $k$ merges have been done creating $k$ novel tokens
   
-$k$ is the hyperparameter of the algorithm to define before training the tokenizers. The resulting vocabulary consists of the original set of characters plus $k$ new symbols. The algorithm is usually run inside words (not merging across word boundaries), so the input corpus is first white-space-separated to give a set of strings, each corresponding to the characters of a word, plus a special end-of-word symbol , and its counts.
+Number $k$ is the hyperparameter of the algorithm to define before training the tokenizers. The resulting vocabulary consists of the original set of characters plus $k$ new symbols. The algorithm is usually run inside words (not merging across word boundaries), so the input corpus is first white-space-separated to give a set of strings, each corresponding to the characters of a word, plus a special end-of-word symbol , and its counts.
 
-Once we’ve learned our vocabulary, the token segmenter is used to tokenize a test sentence. The token segmenter just runs on the merges we have learned from the training data on the test data. It runs them greedily, in the order we learned them. (Thus the frequencies in the test data don’t play a role, just the frequencies in the training data). So first we segment each test sentence word into characters. Then we apply the first rule, then the second rule and so on. Of course in real settings BPE is run with many thousands of merges on a very large input corpus. The result is that most words will be represented as full symbols, and only the very rare words (and unknown words) will have to be represented by their parts. There might inevitably be some unseen symbols that are unencodable by the generated vocabulary. One solution is to replace any unencodable symbol with a special name UNK ("unknown"). 
+Once we’ve learned our vocabulary, the token segmenter is used to tokenize a test sentence. The token segmenter just runs on the merges we have learned from the training data on the test data. It runs them greedily, in the order we learned them. (Thus the frequencies in the test data don’t play a role, just the frequencies in the training data do). 
+- First we segment each test sentence word into characters. 
+- Then we apply the first rule, then the second rule and so on. 
+ 
+Of course in real settings BPE is run with many thousands of merges on a very large input corpus. The result is that most words will be represented as full symbols, and only the very rare words (and unknown words) will have to be represented by their parts. There might inevitably be some unseen symbols that are unencodable by the generated vocabulary. One solution is to replace any unencodable symbol with a special name `UNK` ("unknown"). 
 
 Byte pair encoding replaces the highest-frequency pair of bytes with a new byte that was not contained in the initial dataset. A lookup table of the replacements is required to rebuild the initial dataset. The modified version builds "tokens" (units of recognition) that match varying amounts of source text, from single characters (including single digits or single punctuation marks) to whole words (even long compound words).
 
-The byte-level BPE is another approach. It simply converts the text into UTF-8 first, and treat it as a stream of bytes. This guarantees that any text encoded in UTF-8 can be encoded by the BPE. This has been used in BERT-like models like RoBERTa, BART, and DeBERTa, and GPT-like models like GPT-2. A base vocabulary that includes all possible base characters can be quite large if e.g. all unicode characters are considered as base characters. To have a better base vocabulary, GPT-2 uses bytes as the base vocabulary, which is a clever trick to force the base vocabulary to be of size 256 while ensuring that every base character is included in the vocabulary. With some additional rules to deal with punctuation, the GPT2's tokenizer can tokenize every text without the need for the symbol. GPT-2 has a vocabulary size of 50,257, which corresponds to the 256 bytes base tokens, a special end-of-text token and the symbols learned with 50,000 merges.
+The **byte-level BPE** is another approach. It simply converts the text into UTF-8 first, and treat it as a stream of bytes. This guarantees that any text encoded in UTF-8 can be encoded by the BPE. This has been used in BERT-like models like RoBERTa, BART, and DeBERTa, and GPT-like models like GPT-2. A base vocabulary that includes all possible base characters can be quite large if e.g. all unicode characters are considered as base characters. To have a better base vocabulary, GPT-2 uses bytes as the base vocabulary, which is a clever trick to force the base vocabulary to be of size 256 while ensuring that every base character is included in the vocabulary. With some additional rules to deal with punctuation, the GPT2's tokenizer can tokenize every text without the need for the `UNK` symbol. GPT-2 has a vocabulary size of 50,257, which corresponds to the 256 bytes base tokens, a special end-of-text token and the symbols learned with 50,000 merges.
 
 
 ### WordPiece Tokenizer
 
-WordPiece is the tokenization algorithm Google developed to pretrain BERT. It has since been reused in quite a few Transformer models based on BERT, such as DistilBERT, MobileBERT, Funnel Transformers, and MPNET. IT has two versions of the WordPiece algorithm: Bottom-up and top-down. In both cases goal is the same: "Given a training corpus and a number of desired tokens D, the optimization problem is to select D wordpieces such that the resulting corpus is minimal in the number of wordpieces when segmented according to the chosen wordpiece model."
+WordPiece is the tokenization algorithm Google developed to pretrain BERT. It has since been reused in quite a few Transformer models based on BERT, such as DistilBERT, MobileBERT, Funnel Transformers, and MPNET. It has two versions of the WordPiece algorithm: bottom-up and top-down. In both cases, the goal is the same: "Given a training corpus and a number of desired tokens D, the optimization problem is to select D word pieces such that the resulting corpus is minimal in the number of word pieces when segmented according to the chosen word piece model."
 
-The original bottom-up WordPiece algorithm, is based on byte-pair encoding. Like BPE, It starts with the alphabet, and iteratively combines common bigrams to form word-pieces and words. Like BPE, WordPiece starts from a small vocabulary including the special tokens used by the model and the initial alphabet. Since it identifies subwords by adding a prefix (like ## for BERT), each word is initially split by adding that prefix to all the characters inside the word. So, for instance, "word" gets split like this `w ##o ##r ##d`. 
-
-Thus, the initial alphabet contains all the characters present at the beginning of a word and the characters present inside a word preceded by the WordPiece prefix. Then, again like BPE, WordPiece learns merge rules. The main difference is the way the pair to be merged is selected. Instead of selecting the most frequent pair, WordPiece computes a score for each pair, using the following formula:
+The original bottom-up WordPiece algorithm, is based on byte-pair encoding. Like BPE, It starts with the alphabet, and iteratively combines common bigrams to form word-pieces and words. Like BPE, WordPiece starts from a small vocabulary including the special tokens used by the model and the initial alphabet. Since it identifies subwords by adding a prefix (like `##` for BERT), each word is initially split by adding that prefix to all the characters inside the word. So, for instance, `word` gets split like this `w ##o ##r ##d`.  Thus, the initial alphabet contains all the characters present at the beginning of a word and the characters present inside a word preceded by the WordPiece prefix. Then, again like BPE, WordPiece learns merge rules. The main difference is the way the pair to be merged is selected. Instead of selecting the most frequent pair, WordPiece computes a score for each pair, using the following formula:
 
 $$
 \text{score} =  \frac{\text{freq\_of\_pair}}{\text{freq\_of\_first\_element} \times \text{freq\_of\_second\_element}}
 $$
 
-By dividing the frequency of the pair by the product of the frequencies of each of its parts, the algorithm prioritizes the merging of pairs not only based on the frequency of the individual parts but more weight on the frequency of the combination itself in the vocabulary. For instance, it won’t necessarily merge ("un", "##able") even if that pair occurs very frequently in the vocabulary, because "un" and "##able" will likely have high frequencies as they appear in a lot of other words as well. In contrast, a pair like ("hu", "##gging") will probably be merged faster (assuming the word “hugging” appears often in the vocabulary) since "hu" and "##gging" are likely to be less frequent individually.
+By dividing the frequency of the pair by the product of the frequencies of each of its parts, the algorithm prioritizes the merging of pairs not only based on the frequency of the individual parts but more weight on the frequency of the combination itself in the vocabulary. For instance, it won’t necessarily merge `un` and `##able` even if that pair occurs very frequently in the vocabulary, because `un` and `##able` will likely have high frequencies as they appear in a lot of other words as well. In contrast, a pair like `hu`, `##gging` will probably be merged faster (assuming the word `hugging` appears often in the vocabulary) since `hu` and `##gging` are likely to be less frequent individually.
 
 Source: [Hugging Face](https://huggingface.co/learn/llm-course/en/chapter6/6)
 
@@ -381,23 +384,19 @@ TensorFlow Text's vocabulary generator follows the top-down implementation from 
 
 ### Unigram Tokenizer
 
-The Unigram algorithm is often used in **SentencePiece**, which is the tokenization algorithm used by models like AlBERT, T5, mBART, Big Bird, and XLNet. Unigram is not used directly for any of the models in the transformers, but it's used in conjunction with SentencePiece.
+The Unigram algorithm is often used in **SentencePiece**, which is the tokenization algorithm used by models like AlBERT, T5, mBART, Big Bird, and XLNet. Unigram is not used directly for any of the models in the transformers, but it's used in conjunction with SentencePiece. Compared to BPE and WordPiece, Unigram works in the other direction: it starts from a big vocabulary and removes tokens from it until it reaches the desired vocabulary size. There are several options to use to build that base vocabulary: we can take the most common substrings in pre-tokenized words, for instance, or apply top-down BPE on the initial corpus with a large vocabulary size.
 
-Compared to BPE and WordPiece, Unigram works in the other direction: it starts from a big vocabulary and removes tokens from it until it reaches the desired vocabulary size. There are several options to use to build that base vocabulary: we can take the most common substrings in pre-tokenized words, for instance, or apply top-down BPE on the initial corpus with a large vocabulary size.
-
-At each step of the training, the Unigram algorithm computes a loss over the corpus given the current vocabulary. Then, for each symbol in the vocabulary, the algorithm computes how much the overall loss would increase if the symbol was removed, and looks for the symbols that would increase it the least. Those symbols have a lower effect on the overall loss over the corpus, so in a sense they are “less needed” and are the best candidates for removal.
-
-This is all a very costly operation, so we don’t just remove the single symbol associated with the lowest loss increase, but the $p$ being a hyperparameter you can control, usually 10 or 20 percent of the symbols associated with the lowest loss increase. This process is then repeated until the vocabulary has reached the desired size. Note that we never remove the base characters, to make sure any word can be tokenized.
+At each step of the training, the Unigram algorithm computes a loss over the corpus given the current vocabulary. Then, for each symbol in the vocabulary, the algorithm computes how much the overall loss would increase if the symbol was removed, and looks for the symbols that would increase it the least. Those symbols have a lower effect on the overall loss over the corpus, so in a sense they are “less needed” and are the best candidates for removal. This is all a very costly operation, so we don’t just remove the single symbol associated with the lowest loss increase, but the $p$ being a hyperparameter you can control, usually 10 or 20 percent of the symbols associated with the lowest loss increase. This process is then repeated until the vocabulary has reached the desired size. Note that we never remove the base characters, to make sure any word can be tokenized.
 
 Now, this is still a bit vague: the main part of the algorithm is to compute a loss over the corpus and see how it changes when we remove some tokens from the vocabulary, but we haven’t explained how to do this yet. This step relies on the tokenization algorithm of a Unigram model, so we’ll dive into this next.
 
 Source: [Hugging Face](https://huggingface.co/learn/llm-course/en/chapter6/7)
 
 
-### SentencePiece
+#### SentencePiece
 All tokenization algorithms described so far have the same problem: It is assumed that the input text uses spaces to separate words. However, not all languages use spaces to separate words. One possible solution is to use language specific pre-tokenizers, e.g. XLM uses a specific Chinese, Japanese, and Thai pre-tokenizer. To solve this problem more generally, SentencePiece: [A simple and language independent subword tokenizer and detokenizer for Neural Text Processing (Kudo et al., 2018)](https://arxiv.org/pdf/1808.06226) treats the input as a raw input stream, thus including the space in the set of characters to use. It then uses the BPE or unigram algorithm to construct the appropriate vocabulary.
 
-The XLNetTokenizer uses SentencePiece for example, which is also why the "▁" character was included in the vocabulary. Decoding with SentencePiece is very easy since all tokens can just be concatenated and "▁" is replaced by a space.
+The XLNetTokenizer uses SentencePiece for example, which is also why the `▁` character was included in the vocabulary. Decoding with SentencePiece is very easy since all tokens can just be concatenated and `▁` is replaced by a space.
 
 ```python
 from transformers import XLNetTokenizer
@@ -430,28 +429,29 @@ Simple stemmers can be useful in cases where we need to collapse across differen
 
 ### Sentence Segmentation
 
-**Sentence segmentation** is another important step in text processing. The most useful cues for segmenting a text into sentences are punctuation, like periods, question marks, and exclamation points. Question marks and exclamation points are relatively unambiguous markers of sentence boundaries. Periods, on the other hand, are more ambiguous. The period character “.” is ambiguous between a sentence bound- ary marker and a marker of abbreviations like Mr. or Inc. The previous sentence that you just read showed an even more complex case of this ambiguity, in which the final period of Inc. marked both an abbreviation and the sentence boundary marker. For this reason, sentence tokenization and word tokenization may be addressed jointly.
+**Sentence segmentation** is another important step in text processing. The most useful cues for segmenting a text into sentences are punctuation, like periods, question marks, and exclamation points. Question marks and exclamation points are relatively unambiguous markers of sentence boundaries. Periods, on the other hand, are more ambiguous. The period character `.` is ambiguous between a sentence boundary marker and a marker of abbreviations like Mr. or Inc. The previous sentence that you just read showed an even more complex case of this ambiguity, in which the final period of Inc. marked both an abbreviation and the sentence boundary marker. For this reason, sentence tokenization and word tokenization may be addressed jointly.
 
 In general, sentence tokenization methods work by first deciding (based on rules or machine learning) whether a period is part of the word or is a sentence-boundary marker. An abbreviation dictionary can help determine whether the period is part of a commonly used abbreviation; the dictionaries can be hand-built or machine- learned (Kiss and Strunk, 2006), as can the final sentence splitter.
 
 
+<br><br>
 
 
-<br><br><br><br>
+# $n$-gram Language Models
 
-
-
-# N-gram Language Models
-
-N-grams are fundamental and give you a foundation that will allow you to understand more complicated models in the specialization. These models allow you to calculate probabilities of certain words happening in a specific sequence. Using that, you can build an auto-correct or even a search suggestion tool. Other applications of N-gram language modeling include: 
+$n$-gram models allow you to calculate probabilities of certain words happening in a specific sequence. Using that, you can build an auto-correct or even a search suggestion tool. Other applications of $n$-gram language modeling include: 
 
 - **Speech Recognition**: 
-  $$P(\text{I saw a van}) > P(\text{eyes awe of an})$$
+    $$
+      P(\text{I saw a van}) > P(\text{eyes awe of an})
+    $$
 - **Spelling Correction**: 
-  $$P(\text{entered the shop to buy}) > P(\text{entered the shop to buy})$$
-- **Augmentative Communication**: prdict modt likely word from menu for people unable to physically talk or sign
+    $$
+      P(\text{entered the shop to buy}) > P(\text{entered the shop to bye})
+    $$
+- **Augmentative Communication**: predict most likely word from menu for people unable to physically talk or sign
 
-A n-gram is a sequence of n words sitting next to each other in the corpus. 
+A **$n$-gram** is a sequence of $n$ words sitting next to each other in the corpus. 
 
 Example:
 Corpus: `I am happy becuse I am learning`
@@ -471,20 +471,18 @@ P(\text{happy} \mid \text{I}) &= \frac{C(\text{I happy})}{C(\text{I})} = \frac{0
 \]
 
 
-Suppose the history h is `The water of Walden Pond is so beautifully ` and we want to know the probability that the next word is `blue`: 
+Suppose the history $h$ is `The water of Walden Pond is so beautifully ` and we want to know the probability that the next word is `blue`: 
 
 $$
 P(\text{blue} \mid \text{The water of Walden Pond is so beautifully})
 $$
 
-One way to estimate this probability is directly from relative frequency counts: take a very large corpus, count the number of times we see "The water of Walden Pond is so beautifully", and count the number of times this is followed by "blue". Then the ratio is the answer:  C(The water of Walden Pond is so beautifully blue) divided by C(The water of Walden Pond is so beautifully) 
-
-If we had a large enough corpus, we could compute these two counts and estimate the probability. But even the entire web isn’t big enough to give us good estimates for counts of entire sentences. This is because language is creative; new sentences are invented all the time, and we can’t expect to get accurate counts for such large objects as entire sentences. For this reason, we’ll need more clever ways to estimate the probability of a word (more accurately, token) w given a history h, or the probability of an entire word sequence W.
+One way to estimate this probability is directly from relative frequency counts: take a very large corpus, count the number of times we see "The water of Walden Pond is so beautifully", and count the number of times this is followed by "blue". Then the ratio is the answer:  $C($The water of Walden Pond is so beautifully blue$)$ divided by $C($The water of Walden Pond is so beautifully$)$. If we had a large enough corpus, we could compute these two counts and estimate the probability. But even the entire web isn’t big enough to give us good estimates for counts of entire sentences. This is because language is creative; new sentences are invented all the time, and we can’t expect to get accurate counts for such large objects as entire sentences. For this reason, we’ll need more clever ways to estimate the probability of a word (more accurately, token) $w$ given a history $h$, or the probability of an entire word sequence $W$.
 
 Now, how can we compute probabilities of entire sequences like $P(w_1,w_2,...,w_n)$? One thing we can do is decompose this probability using the **chain rule of probability**:
 
 $$
-P(X_1,X_2, \dots, X_n)= \prod_{k=1}^n P(X_K \mid  X_{1:K-1})
+P(w_1,w_2, \dots, w_n)= \prod_{k=1}^n P(w_K \mid  w_{1:K-1})
 $$
 
 Approximate the probability of a sentence using 
@@ -509,20 +507,16 @@ The chain rule shows the link between computing the joint probability of a seque
 
 ### Markov Assumption
 
-In practice, the corpus rarely contains the exact same phrases as the ones you computed your probabilities on. Hence, you can easily end up getting a probability of 0. To make an estimation of these probabilities, we might want to follow the Markov assumption that indicates only the last word matters. 
-
-The intuition of the $n$-gram model is that instead of computing the probability of a word given its entire history, we can approximate the history by just the last $n-1$ few words. Hence you can model the entire sentence as follows:
+In practice, the corpus rarely contains the exact same phrases as the ones you computed your probabilities on. Hence, you can easily end up getting a probability of 0. To make an estimation of these probabilities, we might want to follow the Markov assumption that indicates only the last word matters. The intuition of the $n$-gram model is that instead of computing the probability of a word given its entire history, we can approximate the history by just the last $n-1$ few words. Hence you can model the entire sentence as follows:
 
 $$
 P(w_m \mid w_{1:m-1}) \approx P(w_m \mid w_{m-n: m-1})
 $$
 
-for $m > n$. 
-
-The bigram model, for example, approximates the probability of a word given all the previous words $P(w_n \mid w_{1:n−1})$ by using only the conditional probability given the preceding word $P(w_n \mid w_{n−1})$. That is, you can model the entire sentence as follows:
+for $m > n$. The bigram model, for example, approximates the probability of a word given all the previous words $P(w_n \mid w_{1:n−1})$ by using only the conditional probability given the preceding word $P(w_n \mid w_{n−1})$. That is, you can model the entire sentence as follows:
 
 $$
-P(w_{1:n}) \approx \prod^n_{i=1} P(w_i  \mid  w_{i-1})
+P(w_{1:n}) \approx \prod^n_{i=1} P(w_i  \mid  w_{i-1}),
 $$
 
 For example, instead of computing the probability
@@ -537,32 +531,27 @@ $$
 P(\text{blue} \mid \text{beautifully})
 $$
 
-The assumption that the probability of a word depends only on the previous word is called a **Markov** assumption. Given the bigram assumption for the probability of an individual word, we can compute the probability of a complete word sequence by substituting:
+The assumption that the probability of a word depends only on the previous word is called **Markov assumption**. Given the bigram assumption for the probability of an individual word, we can compute the probability of a complete word sequence by substituting:
 
 $$
 P(w_{1:n}) ≈ \prod_{k=1}^n P(w_k \mid w_{k−1})
 $$
 
-How do we estimate these bigram or n-gram probabilities? An intuitive way to estimate probabilities is called **maximum likelihood estimation** or **MLE**. We get the MLE estimate for the parameters of an $n$-gram model by getting counts from a corpus, and normalizing the counts so that they lie between 0 and 1. For probabilistic models, normalizing means dividing by some total count so that the resulting probabilities fall between 0 and 1 and sum to 1.
-
-For example, to compute a particular bigram probability of a word $w_n$ given a previous word $w_{n−1}$, we’ll compute the count of the bigram $C(w_{n−1}w_n)$ and normalize by the sum of all the bigrams that share the same first word $w_{n−1}$:
+How do we estimate these bigram or $n$-gram probabilities? An intuitive way to estimate probabilities is **Maximum Likelihood Estimation** or **MLE** to get an estimate for the parameters of an $n$-gram model by getting counts from a corpus, and normalizing the counts so that they lie between 0 and 1. For probabilistic models, normalizing means dividing by some total count so that the resulting probabilities fall between 0 and 1 and sum to 1. For example, to compute a particular bigram probability of a word $w_n$ given a previous word $w_{n−1}$, we’ll compute the count of the bigram $C(w_{n−1}w_n)$ and normalize by the sum of all the bigrams that share the same first word $w_{n−1}$:
 
 $$
 P(w_n \mid w_{n−1}) = \frac{C(w_{n−1}w_n)}{\sum_w C(w_{n−1}w)}
 $$
 
-This ratio is called a _relative frequency_. 
+This ratio is called a _relative frequency_.  Although for pedagogical purposes we have only described bigram models, when there is sufficient training data we use trigram models, which condition on the previous two words, or 4-gram or 5-gram models. For these larger $n$-grams, we’ll need to assume extra contexts to the left and right of the sentence end. For example, to compute trigram probabilities at the very beginning of the sentence, we use two pseudo-words for the first trigram i.e., $P(I \mid <s><s>)$.
 
-Although for pedagogical purposes we have only described bigram models, when there is sufficient training data we use trigram models, which condition on the previous two words, or 4-gram or 5-gram models. For these larger n-grams, we’ll need to assume extra contexts to the left and right of the sentence end. For example, to compute trigram probabilities at the very beginning of the sentence, we use two pseudo-words for the first trigram i.e., $P(I \mid \;<s><s>)$.
-
-Language model probabilities are always stored and computed as **log probabilities** in log space. This is because probabilities are (by definition) less than or equal to 1, and so the more probabilities we multiply together, the smaller the product becomes. Multiplying enough n-grams together would result in numerical underflow. To avoid **underflow**, you can work with log probabilities:
+Language model probabilities are always stored and computed as **log probabilities** in log space. This is because probabilities are (by definition) less than or equal to 1, and so the more probabilities we multiply together, the smaller the product becomes. Multiplying enough n-grams together would result in **numerical underflow**. To avoid underflow, you can work with log probabilities:
 
 $$
-\log P(w^n_1) \approx \sum^n_{i=1} \log P(w_i  \mid  w_{i-1})
+\log P(w_{1:n}) \approx \sum^n_{i=1} \log P(w_i  \mid  w_{i-1})
 $$
 
-
-Adding in log space is equivalent to multiplying in linear space, so we combine log probabilities by adding them. By adding log probabilities instead of multiplying probabilities, we get results that are not as small. We do all computation and storage in log space, and just convert back into probabilities if we need to report probabilities at the end by taking the exp of the logprob.
+*Adding in log space is equivalent to multiplying in linear space*, so we combine log probabilities by adding them. We do all computation and storage in log space, and just convert back into probabilities if we need to report probabilities at the end by taking the exp of the log probability.
 
 Now that we have joint distribution of words, we have a generative model using 2-grams:
 
@@ -570,7 +559,7 @@ Now that we have joint distribution of words, we have a generative model using 2
 - Choose next bigram starting with previous word
 - Continue until `</s>` is picked 
 
-We usually start and end a sentence with the following tokens respectively: `<s> </s>`.  When computing probabilities using a unigram, you can append an `<s>` in the beginning of the sentence. To generalize to an N-gram language model, you can add N-1 start tokens `<s>`.  For the end of sentence token `</s>`, you only need one even if it is an N-gram. Example of bigram:
+We usually start and end a sentence with the following tokens respectively: `<s> </s>`.  When computing probabilities using a unigram, you can append an `<s>` in the beginning of the sentence. To generalize to an $n$-gram language model, you can add N-1 start tokens `<s>`.  For the end of sentence token `</s>`, you only need one even if it is an $n$-gram. Example of bigram:
 
 corpus=`<s>Lyn drinks chocolate</s> <s>John drinks tea</s> <s>Lyn eats chocolate</s>`
 
@@ -586,67 +575,59 @@ P(\text{chocolate} \mid \text{eats})&=\frac{1}{1}
 
 ### Evaluating Language Models
 
-The best way to evaluate the performance of a language model is to embed it in an application (downstream tasks) and measure how much the application improves. Such end-to-end evaluation is called **extrinsic evaluation**. Extrinsic evaluation is the only way to know if a particular improvement in the language model (or any component) is really going to help the task at hand. Thus for evaluating n-gram language models that are a component of some task like speech recognition or machine translation, we can compare the performance of two candidate language models by running the speech recognizer or machine translator twice, once with each language model, and seeing which gives the more accurate transcription.
+The best way to evaluate the performance of a language model is to embed it in an application (downstream tasks) and measure how much the application improves. Such end-to-end evaluation is called **extrinsic evaluation**. Extrinsic evaluation is the only way to know if a particular improvement in the language model (or any component) is really going to help the task at hand. Thus for evaluating $n$-gram language models that are a component of some task like speech recognition or machine translation, we can compare the performance of two candidate language models by running the speech recognizer or machine translator twice, once with each language model, and seeing which gives the more accurate transcription.
 
-Unfortunately, running big NLP systems end-to-end is often very expensive. Instead, it’s helpful to have a metric that can be used to quickly evaluate potential improvements in a language model. An intrinsic evaluation metric is one that measures the quality of a model independent of any application. 
+Unfortunately, running big NLP systems end-to-end is often very expensive. Instead, it’s helpful to have a metric that can be used to quickly evaluate potential improvements in a language model. An **intrinsic evaluation** metric is one that measures the quality of a model independent of any application. 
 
-In order to evaluate any machine learning model, we need to have at least three distinct data sets: the training set, the development set, and the test set. The training set is the data we use to learn the parameters of our model; for simple n-gram language models it’s the corpus from which we get the counts that we normalize into the probabilities of the n-gram language model. The test set is a different, held-out set of data, not overlapping with the training set, that we use to evaluate the model. We need a separate test set to give us an unbiased estimate of how well the model we trained can generalize when we apply it to some new unknown dataset. A machine learning model that perfectly captured the training data, but performed terribly on any other data, wouldn’t be much use when it comes time to apply it to any new data or problem! We thus measure the quality of an n-gram model by its performance on this unseen test set or test corpus.
+In order to evaluate any machine learning model, we need to have at least three distinct data sets: the training set, the development set, and the test set. The training set is the data we use to learn the parameters of our model; for simple $n$-gram language models it’s the corpus from which we get the counts that we normalize into the probabilities of the $n$-gram language model. The test set is a different, held-out set of data, not overlapping with the training set, that we use to evaluate the model. We need a separate test set to give us an unbiased estimate of how well the model we trained can generalize when we apply it to some new unknown dataset. A machine learning model that perfectly captured the training data, but performed terribly on any other data, wouldn’t be much use when it comes time to apply it to any new data or problem! We thus measure the quality of an $n$-gram model by its performance on this unseen test set or test corpus.
 
-How should we choose a training and test set? The test set should reflect the language we want to use the model for. If we’re going to use our language model for speech recognition of chemistry lectures, the test set should be text of chemistry lectures. The standard answer is simple: whichever language model assigns a higher probability to the test set—which means it more accurately predicts the test set—is a better model. Given two probabilistic models, the better model is the one that better predicts the details of the test data, and hence will assign a higher probability to the test data.
+How should we choose a training and test set? The test set should reflect the language we want to use the model for. If we’re going to use our language model for speech recognition of chemistry lectures, the test set should be text of chemistry lectures. How to evaluate the trained model? Which model is better? The standard answer is simple: whichever language model assigns a higher probability to the test set—which means it more accurately predicts the test set—is a better model. Given two probabilistic models, the better model is the one that better predicts the details of the test data, and hence will assign a higher probability to the test data.
 
-How do we divide our data into training, development, and test sets? We want our test set to be as large as possible, since a small test set may be accidentally unrepresentative, but we also want as much training data as possible. At the minimum, we would want to pick the smallest test set that gives us enough statistical power to measure a statistically significant difference between two potential models. It’s important that the devset be drawn from the same kind of text as the test set, since its goal is to measure how we would do on the test set.
+How do we divide our data into training, development, and test sets? We want our test set to be as large as possible, since a small test set may be accidentally unrepresentative, but we also want as much training data as possible. At the minimum, we would want to pick the smallest test set that gives us enough statistical power to measure a statistically significant difference between two potential models. It’s important that the dev set be drawn from the same kind of text as the test set, since its goal is to measure how we would do on the test set.
 
 #### Perplexity
 
-A better model is better at predicting upcoming words, and so it will be less surprised by (i.e., assign a higher probability to) each word when it occurs in the test set. Indeed, a perfect language model would correctly guess each next word in a corpus, assigning it a probability of 1, and all the other words a probability of zero. So given a test corpus, a better language model will assign a higher probability to it than a worse language model.
-
-The probability of a test set (or any sequence) depends on the number of words or tokens in it; the probability of a test set gets smaller the longer the text. We’d prefer a metric that is per-word, normalized by length, so we could compare across texts of different lengths. The metric we use is, a function of probability called perplexity, is one of the most important metrics in NLP, used for evaluating large language models as well as n-gram models. The perplexity (sometimes abbreviated as PP or PPL) of a language model on a test set is the inverse probability of the test set (one over the probability of the test set), normalized by the number of words (or tokens). For this reason it’s sometimes called the per-word or **per-token perplexity**. A text that is written by humans is more likely to have lower perplexity, where a text generated by random word choice would have a higher perplexity.
-
-Perplexity is defined as the exponentiated average negative log-likelihood of a sequence. If we have a tokenized sequence $\bm X = (\bm x^{(1)}, ..., X^{(t)})$, then the perplexitiy of $\bm X$ is
+A better model is better at predicting upcoming words, and so it will be less surprised by (i.e., assign a higher probability to) each word when it occurs in the test set. So given a test corpus, a better language model will assign a higher probability to it than a worse language model. The probability of a test set (or any sequence) depends on the number of words or tokens in it; the probability of a test set gets smaller the longer the text. We’d prefer a metric that is per-word, normalized by length, so we could compare across texts of different lengths. The metric we use is, a function of probability called **perplexity**, is one of the most important metrics in NLP, used for evaluating large language models as well as $n$-gram models. The perplexity (sometimes abbreviated as PP or PPL) of a language model on a test set is the inverse probability of the test set (one over the probability of the test set), normalized by the number of words (or tokens). For this reason it’s sometimes called the per-word or **per-token perplexity**. *A text that is written by humans is more likely to have lower perplexity, where a text generated by random word choice would have a higher perplexity*. Perplexity is defined as the exponentiated average negative log-likelihood of a sequence. If we have a tokenized sequence $\bm x = x^{(1)}, ..., x^{(t)})$ in the test set, then the perplexity of $\bm x$ is
 
 $$
-PPL(\bm X) = \sqrt[t]{\prod_{i=1}^t \frac{1}{P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})}}
+PPL(\bm x) = \sqrt[t]{\prod_{i=1}^t \frac{1}{P(x^{(i)} \mid x^{(i-1)}, ..., x^{(1)})}}
 $$
 
 Use log for more computationally stable formula:
 
 $$
-PPL(\bm X) = \exp(-\frac{1}{t}{\sum_{i=1}^t \log P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})})
+PPL(\bm x) = \exp(-\frac{1}{t}{\sum_{i=1}^t \log P(x^{(i)} \mid x^{(i-1)}, ..., x^{(1)})})
 $$
 
-Another version of this uses $P(x^{(i)}|x^{(i-1)})$ instead of $P(x^{(i)}|x^{(i-1)}, ..., x^{(1)})$ in th eabove formula. If there are $m$ sentences $(s_1,..., s_m)$ in the text, the formula becomes:
+Another version of this uses $P(x^{(i)} \mid x^{(i-1)})$ instead of $P(x^{(i)} \mid x^{(i-1)}, ..., x^{(1)})$ in th previous formula. If there are $m$ sentences $S=(s_1,..., s_m)$ in the text, the formula becomes:
 
 $$
-PPL(\bm X) = \sqrt[m]{\prod_{i=1}^m \prod_{j=1}^{|s_i|} \frac{1}{P(x_i^{(j)}|x_i^{(j-1)})}}
+PPL(\bm S) = \sqrt[m]{\prod_{i=1}^m \prod_{j=1}^{|s_i|} \frac{1}{P(x_i^{(j)} \mid x_i^{(j-1)})}}
 $$
 
-_Probabilities are given according to our model_. Intuitively, perplexitiy can be thought of as an evaluation of the model’s ability to predict uniformly among the set of specified tokens in a corpus. Importantly, this means that the tokenization procedure has a direct impact on a model’s perplexity which should always be taken into consideration when comparing different models.  This is also equivalent to the exponentiation of the cross-entropy between the data and model predictions. 
- 
-Thus the the **lower the perplexity of a model on the data, the better the model**. Minimizing perplexity is equivalent to maximizing the test set probability according to the language model. 
+_Probabilities are given according to our model_. Intuitively, perplexity can be thought of as an evaluation of the model’s ability to predict uniformly among the set of specified tokens in a corpus. Importantly, this means that the tokenization procedure has a direct impact on a model’s perplexity which should always be taken into consideration when comparing different models.  This is also equivalent to the exponentiation of the cross-entropy between the data and model predictions. Thus the the **lower the perplexity of a model on the data, the better the model**. Minimizing perplexity is equivalent to maximizing the test set probability according to the language model. 
 
 
 
 # Text Classification and Sentiment
 
-The goal of classification is to take a single observation, extract some useful features, and thereby classify the observation into one of a set of discrete classes. The most common way of doing text classification in language processing is instead via supervised machine learning, the subject of this chapter. In supervised learning, we have a data set of input observations, each associated with some correct output (a ‘supervision signal’). The goal of the algorithm is to learn how to map from a new observation to a correct output.
-
-A probabilistic classifier additionally will tell us the probability of the observation being in the class. Many kinds of machine learning algorithms are used to build classifiers. **Generative classifiers** like naive Bayes build a model of how a class could generate some input data. Given an observation, they return the class most likely to have generated the observation. **Discriminative classifiers** like logistic regression instead learn what features from the input are most useful to discriminate between the different possible classes. While discriminative systems are often more accurate and hence more commonly used, generative classifiers still have a role.
+The goal of classification is to take a single observation, extract some useful features, and thereby classify the observation into one of a set of discrete classes. The most common way of doing text classification in language processing is instead via supervised machine learning. In supervised learning, we have a data set of input observations, each associated with some correct output (a ‘supervision signal’). The goal of the algorithm is to learn how to map from a new observation to a correct output. A probabilistic classifier additionally will tell us the probability of the observation being in the class. Many kinds of machine learning algorithms are used to build classifiers. **Generative classifiers** like *Naive Bayes* build a model of how a class could generate some input data. Given an observation, they return the class most likely to have generated the observation. **Discriminative classifiers** like *Logistic Regression* instead learn what features from the input are most useful to discriminate between the different possible classes. While discriminative systems are often more accurate and hence more commonly used, generative classifiers still have a role.
 
 ## Naive Bayes
 
-Naive Bayes is a probabilistic classifier, meaning that for a document d, out of all classes $c \in C$ the classifier returns the class $\hat c$ which has the maximum posterior probability given the document $d$:
+**Naive Bayes** is a probabilistic classifier, meaning that for a document $d$, out of all classes $c \in C$ the classifier returns the class $\hat c$ which has the maximum *posterior probability* given the document $d$:
 
 $$
 \hat c = \argmax_{c \in C}  P(c \mid d)
 $$
 
-This idea of _**Bayesian** inference_ has been known since the work of Bayes (1763), and was first applied to text classification by Mosteller and Wallace (1964).  The intuition of Bayesian classification is to use Bayes’ rule to transform Eq. 4.1 into other probabilities that have some useful properties. Based on Bayes’ rule, we can write $\hat c$ as:
+This idea of _**Bayesian** inference_ has been known since the work of Bayes (1763), and was first applied to text classification by Mosteller and Wallace (1964).  The intuition of Bayesian classification is to use Bayes’ rule to transform Eq. 4.1 into other probabilities that have some useful properties. Based on **Bayes’ rule**, we can write $\hat c$ as:
 
 $$
 \hat c =  \argmax_{c \in C}\frac{P(d\mid c)P(c)}{P(d)} = \argmax_{c \in C}P(d\mid c)P(c)
 $$
 
-Because $P(d)$ doesn’t change for each class; we are always asking about the most likely class for the same document d, which must have the same probability $P(d)$. We call Naive Bayes a **generative model**: first a class is sampled from the **prior** $P(c)$, and then the words are generated by sampling from the **likelihood** $P(d\mid c)$.
+Because $P(d)$ does not depend on any class; we are always asking about the most likely class for the same document $d$, which must have the same probability $P(d)$. We call Naive Bayes a **generative model**: first a class is sampled from the **prior** $P(c)$, and then the words are generated by sampling from the **likelihood** $P(d\mid c)$.
 
 Without loss of generality, we can represent a document $d$ as a set of features $f_1,f_2,...,f_n$:
 
@@ -654,75 +635,81 @@ $$
 \hat c =  \argmax_{c \in C}P(f_1,f_2,...,f_n \mid c)P(c)
 $$
 
-This equation is still too hard to compute directly: without some simplifying assumptions, estimating the probability of every possible combination of features (for example, every possible set of words and positions) would require huge numbers of parameters and impossibly large training sets. Naive Bayes classifiers therefore make two simplifying assumptions:
+This equation is still too hard to compute directly: without some simplifying assumptions, estimating the probability of every possible combination of features would require huge numbers of parameters and impossibly large training sets. Naive Bayes classifiers therefore make two simplifying assumptions:
 
-- The first is the _bag-of-words_ assumption discussed intuitively above: we assume position doesn’t matter, and that the word “love” has the same effect on classification whether it occurs as the 1st, 20th, or last word in the document. Thus we assume that the features $f_1,f_2,...,f_n$ only encode word identity and not position. Therefore, we represent a text document as an unordered set of words with their position ignored, keeping only their frequency in the document. 
-- The second is commonly called the naive Bayes assumption: this is the conditional independence assumption that the probabilities $P( f_i\mid c)$ are independent given the class $c$ and hence can be ‘naively’ multiplied as follows:
+- The first is *the bag-of-words assumption: we assume position doesn’t matter*, and that the word “love” has the same effect on classification whether it occurs as the 1st, 20th, or last word in the document. Thus we assume that the features $f_1,f_2, \dots, f_n$ only encode word identity and not position. Therefore, we represent a text document as an unordered set of words with their position ignored, keeping only their frequency in the document. 
+- The second is commonly called *the Naive Bayes assumption:  the conditional independence assumption*; the probabilities $P( f_i\mid c)$ are independent given the class $c$ and hence can be "naively" multiplied as follows:
 
 $$
 P(f_1,f_2,...,f_n \mid c) = \prod_{i=1}^n P(f_i\mid c)
-$$
+$$ 
+>   Note that this doesn’t mean they’re independent!
 
-    Note that this doesn’t mean they’re independent.
+<br>
 
-To apply the naive Bayes classifier to text, we will use each word in the documents as a feature, as suggested above, and we consider each of the words in the document by walking an index through every word position in the document. Naive Bayes calculations, like calculations for language modeling, are done in log space, to avoid underflow and increase speed.
+To apply the naive Bayes classifier to text, we will use each word in the documents as a feature, and we consider each of the words in the document by walking an index through every word position in the document. Naive Bayes calculations, like calculations for language modeling, are done in log space, to avoid underflow and increase speed.
 
 ### Training Naive Bayes Classifiers
 
-How can we learn the probabilities $P(c)$ and $P( f_i\mid c)$? Let’s first consider the maximum likelihood estimate. We’ll simply use the frequencies in the data. For the class prior $P(c)$, we ask what percentage of the documents in our training set are in each class $c$. Let $N_c$ be the number of documents in our training data with class $c$ and $N_{\text{doc}}$ be the total number of documents. Then: $\hat P(c) = \frac{N_c}{N_{\text{doc}}}$
-
-To learn the probability $P( f_i\mid c)$, we’ll assume a feature is just the existence of a word in the document’s bag of words, and so we’ll want $P( w_i\mid c)$, which we compute as the fraction of times the word $w_i$ appears among all words in all documents of class c:
-
+How can we learn the probabilities $P(c)$ and $P( f_i\mid c)$? Let’s first consider the maximum likelihood estimate. We’ll simply use the frequencies in the data. For the class prior $P(c)$, we ask what percentage of the documents in our training set are in each class $c$. Let $N_c$ be the number of documents in our training data with class $c$ and $N_{\text{doc}}$ be the total number of documents. Then: 
 $$
-\hat P(w_i \mid c) = \frac{\text{count}(w_i, c)}{\sum_{w \in V} \text{count}(w,c)}
+\hat P(c) = \frac{N_c}{N_{\text{doc}}}.
 $$
 
-where $V$ is the vocabulary. Remeber that Bayes naively multiplies all the feature likelihoods $\hat P(w_i \mid c)$ together, zero probabilities in the likelihood term for any class will cause the probability of the class to be zero, no matter the other evidence! The simplest solution is the add-one (Laplace) smoothing. While Laplace smoothing is usually replaced by more sophisticated smoothing algorithms in language modeling, it is commonly used in naive Bayes text categorization:
+To learn the probability $P( f_i \mid c)$, we’ll assume a feature is just the existence of a word in the document’s bag of words, and so we’ll want $P( w_i\mid c)$, which we compute as the fraction of times the word $w_i$ appears among all words in all documents of class c:
+
+$$
+\hat P(w_i \mid c) = \frac{\text{count}(w_i, c)}{\sum_{w \in V} \text{count}(w,c)},
+$$
+
+where $V$ is the vocabulary. 
+
+Remember that Bayes naively multiplies all the feature likelihoods $\hat P(w_i \mid c)$ together, zero probabilities in the likelihood term for any class will cause the probability of the class to be zero, no matter the other evidence! The simplest solution is the *add-one (Laplace) smoothing*. While Laplace smoothing is usually replaced by more sophisticated smoothing algorithms in language modeling, it is commonly used in Naive Bayes text categorization:
 
 $$
 \hat P(w_i \mid c) = \frac{\text{count}(w_i, c) + 1}{\sum_{w \in V} \text{count}(w,c) + |V|}
 $$
 
-What do we do about words that occur in our test data but are not in our vocabulary at all because they did not occur in any training document in any class? The solution for such unknown words is to ignore them—remove them from the test document and not include any probability for them at all. 
+What do we do about words that occur in our test data but are not in our vocabulary at all because they did not occur in any training document in any class? The solution for such unknown words is to ignore them!—remove them from the test document and not include any probability for them at all.  Finally, some systems choose to completely ignore another class of words: **stop words**, very frequent words like `the` and `a`. This can be done by sorting the vocabulary by frequency in the training set, and defining the top 10–100 vocabulary entries as stop words, or alternatively by using one of the many predefined stop word lists available online. Then each instance of these stop words is simply removed from both training and test documents as if it had never occurred. In most text classification applications, however, using a stop word list doesn’t improve performance, and so it is more common to make use of the entire vocabulary and not use a stop word list.
 
-Finally, some systems choose to completely ignore another class of words: **stop words**, very frequent words like _the_ and _a_. This can be done by sorting the vocabulary by frequency in the training set, and defining the top 10–100 vocabulary entries as stop words, or alternatively by using one of the many predefined stop word lists available online. Then each instance of these stop words is simply removed from both training and test documents as if it had never occurred. In most text classification applications, however, using a stop word list doesn’t improve performance, and so it is more common to make use of the entire vocabulary and not use a stop word list.
+## Evaluation: Precision, Recall, F-measure
 
-### Evaluation: Precision, Recall, F-measure
+Consider the email classification task into three classes: Spam, Urgent and Normal. The simplest metric is accuracy which asks what percentage of all the observations (for the spam or pie examples that means all emails or tweets) our system labeled correctly. Although accuracy might seem a natural metric, we generally don’t use it for text classification tasks because accuracy doesn’t work well when the classes are unbalanced. Instead of accuracy we generally turn to two other metrics: **precision** and **recall**. To evaluate any system for detecting things, we start by building a **confusion matrix** which keeps the record of the counts classified correctly or incorrectly. 
 
-To evaluate any system for detecting things, we start by building a confusion matrix. To the bottom right of the table is the equation for accuracy, which asks what percentage of all the observations (for the spam or pie examples that means all emails or tweets) our system labeled correctly. Although accuracy might seem a natural metric, we generally don’t use it for text classification tasks because accuracy doesn’t work well when the classes are unbalanced. Instead of accuracy we generally turn to two other metrics: **precision** and **recall**. 
+<p align="center">
+    <img src="./assets/seq-models/confusion_matrix.png" alt="drawing" width="700" height="400" style="center" />
+</p>
 
-- **Precision** measures the percentage of the items that the system detected that are in fact positive: $ \frac{tp}{tp + fp}$. 
-- **Recall** measures the percentage of items actually present in the input that were correctly identified by the system: $\text{Recall} = \frac{tp}{tp + fn}$.
+- **Precision** measures the percentage of the items that the system detected that are in fact positive: 
+  $$
+  \text{Precision} =  \frac{tp}{tp + fp}.
+  $$ 
+- **Recall** measures the percentage of items actually present in the input that were correctly identified by the system: 
+  $$
+  \text{Recall} = \frac{tp}{tp + fn}.
+  $$
 
-Thus precision and recall, unlike accuracy, emphasize true positives: finding the things that we are supposed to be looking for. A balence of precision P and recall R is $F_1$ score: $ 2.\frac{PR}{P + R}$ which the the most commonly used metric. Harmonic mean is used because the harmonic mean of two values is closer to the minimum of the two values than the arithmetic mean is.
+Thus precision and recall, unlike accuracy, emphasize true positives: finding the things that we are supposed to be looking for. A balence of precision P and recall R is $F_1$ score: $ \frac{2PR}{P + R}$ which the the most commonly used metric. Harmonic mean is used because the harmonic mean of two values is closer to the minimum of the two values than the arithmetic mean is.
 
 ### Evaluating with more than two classes
 
-Lots of classification tasks in language processing have more than two classes. For sentiment analysis we generally have 3 classes (positive, negative, neutral) and even more classes are common for tasks like part-of-speech tagging, word sense disambiguation, semantic role labeling, emotion detection, and so on.
+Lots of classification tasks in language processing have more than two classes. For sentiment analysis we generally have 3 classes (positive, negative, neutral) and even more classes are common for tasks like part-of-speech tagging, word sense disambiguation, semantic role labeling, emotion detection, and so on. In order to derive a single metric that tells us how well the system is doing, we can combine these values in two ways. In **macro averaging**, we compute the performance for each class, and then average over classes. In **micro averaging**, we collect the decisions for all classes into a single confusion matrix, and then compute precision and recall from that table:
 
 <p align="center">
-    <img src="./assets/seq-models/confusion_matrix.png" alt="drawing" width="600" height="300" style="center" />
+    <img src="./assets/seq-models/micro-macro-averaging.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
-In order to derive a single metric that tells us how well the system is doing, we can combine these values in two ways. In macroaveraging, we compute the performance for each class, and then average over classes. In microaveraging, we collect the decisions for all classes into a single confusion matrix, and then compute precision and recall from that table:
+*A micro average is dominated by the more frequent class*, since the counts are pooled. The *macro average better reflects the statistics of the smaller classes*, and so is more appropriate when performance on all the classes is equally important or classes are imbalanced. Similarly, micro-macro averaging for recall is computed. Harmonic averaging of these give micro-macro averaging for $F_1$. 
 
-<p align="center">
-    <img src="./assets/seq-models/micro-macro-averaging.png" alt="drawing" width="600" height="300" style="center" />
-</p>
+## Logistic Regression
 
-A microaverage is dominated by the more frequent class, since the counts are pooled. The macroaverage better reflects the statistics of the smaller classes, and so is more appropriate when performance on all the classes is equally important. Similarly, micr-macro averaging for recall is computed. Harmonic averaging of these give micro-macro averagin for $F_1$. 
+**Logistic Regression** is one of the most important analytic tools in the social and natural sciences. In natural language processing, logistic regression is the base-line supervised machine learning algorithm for classification, and also has a very close relationship with neural networks. Logistic Regression can be used to classify an observation into one of two classes, or into one of many classes (multinomial logistic regression). The most important difference between Naive Bayes and Logistic Regression is that Logistic Regression is a discriminative classifier while Naive Bayes is a generative classifier. The goal of binary Logistic Regression is to train a classifier that can make a binary decision about the class of a new input observation. Consider a single input observation $\bm x$, which we will represent by a vector of features $(x_1,x_2,...,x_n)$. We want to know the probability $P(y= 1\mid \bm x)$ that this observation is a member of the class. So perhaps the decision is “positive sentiment” versus “negative sentiment”, the features represent counts of words in a document, $P(y= 1\mid \bm x)$ is the probability that the document has positive sentiment, and $P(y= 0\mid \bm x)$ is the probability that the document has negative sentiment.
 
-## Lagistic Regression
-
-**Logistic regression** is one of the most important analytic tools in the social and natural sciences. In natural language processing, logistic regression is the base-line supervised machine learning algorithm for classification, and also has a very close relationship with neural networks. Logistic regression can be used to classify an observation into one of two classes, or into one of many classes (multinomial logistic regression). The most important difference between naive Bayes and logistic regression is that logistic regression is a discriminative classifier while naive Bayes is a generative classifier. The goal of binary logistic regression is to train a classifier that can make a binary decision about the class of a new input observation.
-
-Consider a single input observation $\bm x$, which we will represent by a vector of features $(x_1,x_2,...,x_n)$. We want to know the probability, $P(y= 1\mid \bm x)$ that this observation is a member of the class. So perhaps the decision is “positive sentiment” versus “negative sentiment”, the features represent counts of words in a document, $P(y= 1\mid \bm x)$ is the probability that the document has positive sentiment, and $P(y= 0\mid \bm x)$ is the probability that the document has negative sentiment.
-
-Logistic regression solves this task by learning, from a training set, a vector of weights and a bias term. Each weight $w_i$ is a real number, and is associated with one of the input features $x_i$. The weight $w_i$ represents how important that input feature is to the classification decision. Geometrically, the linear classifier is a hyperplane spliting the feature space into three regions: on the hyperplane, on one side of it or on the other side of it. To make a decision on a test instance $x$ in the feature space $\mathbb R^n$, the linear classifier can simply evaluate the linear function $z = \bm w \cdot \bm x + \bm b$ at input $x$ to classify it: 
+Logistic Regression solves this task by learning, from a training set, a vector of weights and a bias term. Each weight $w_i$ is a real number, and is associated with one of the input features $x_i$. The weight $w_i$ represents how important that input feature is to the classification decision. Geometrically, the linear classifier is a hyperplane splitting the feature space into three regions: on the hyperplane, on one side of it or on the other side of it. To make a decision on a test instance $\bm x$ in the feature space $\mathbb R^n$, the linear classifier can simply evaluate the linear function $z = \bm w \cdot \bm x + \bm b$ at input $\bm x$ to classify it: 
 
 - $z$ can be positive, meaning $x$ is on one side of the hyperplane. Then the classifier assign $\bm x$ class $y=1$. The larger $z$ indicates the further $\bm x$ is from the hyperplane on that side. This gives the classifier more confidence on its prediction.
 - $z$ can be negative, meaning $\bm x$ is on the opposite side of the hyperplane. Then the classifier assign $x$ class $y=0$. The larger $|z|$ indicates the further $\bm x$ is from the hyperplane on that side. This gives the classifier more confidence on its prediction.
-- $z$ can be zero, meaning $\bm x$ is right on the hyperplane. In this case the classifier is not decisive. $\bm x$ is equally likely to belong to either classes.
+- $z$ can be zero, meaning $\bm x$ is right on the hyperplane. In this case the classifier is not decisive. The input $\bm x$ is equally likely to belong to either classes.
 
 We can mathematically achieve this just by apply **Sigmoid** function $\sigma(z) = \frac{1}{1 + \exp(-z)}$ after the linear function $z$:
 
@@ -734,43 +721,41 @@ $$
     <img src="./assets/seq-models/sigmoid.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
-For any $z$, $0<\sigma(z)<1$. The input to the sigmoid function, the score $z = \bm w \cdot \bm x + \bm b$ is often called the **logit**. This is because the logit function is the inverse of the sigmoid.
+For any $z$, $0<\sigma(z)<1$. The input to the sigmoid function, the score $z = \bm w \cdot \bm x + \bm b$ is often called the **logit**. This is because the logit function is the inverse of the sigmoid:
 
 $$
 \text{logit}(p) = \sigma^{-1} = \ln \frac{p}{1-p}
 $$
 
-Using the term logit for $z$ is a way of reminding us that by using the sigmoid to turn $z$ (which ranges from−∞ to ∞) into a probability, we are implicitly interpreting $z$ as not just any real-valued number, but as specifically a log odds. Sometimes $z$ is also called *unnormalized log probability*. 
+Using the term logit for $z$ is a way of reminding us that by using the sigmoid to turn $z$ (which ranges from−∞ to ∞) into a probability, we are implicitly interpreting $z$ as not just any real-valued number, but as specifically a log odds. Sometimes $z$ is also called **unnormalized log probability**. 
 
-### Other classification tasks and features
+<!-- ### Other Classification Tasks and Features -->
 
-Logistic regression is applied to all sorts of NLP tasks, and any property of the input can be a feature. Consider the task of **period disambiguation**: deciding if a period is the end of a sentence or part of a word, by classifying each period into one of two classes, EOS (end-of-sentence) and not-EOS. We might use features like $x_1$ below expressing that the current word is lower case, perhaps with a positive weight. Or a feature expressing that the current word is in our abbreviations dictionary (“Prof.”), perhaps with a negative weight. A feature can also express a combination of properties. For example a period following an upper case word is likely to be an EOS, but if the word itself is `St.` and the previous word is capitalized then the period is likely part of a shortening of the word street following a street name.
+Logistic regression is applied to all sorts of NLP tasks, and any property of the input can be a feature. Consider the task of **period disambiguation**: deciding if a period is the end of a sentence or part of a word, by classifying each period into one of two classes, `EOS` (end-of-sentence) and `not-EOS`. We might use features like $x_1$ below expressing that the current word is lower case, perhaps with a positive weight. Or a feature expressing that the current word is in our abbreviations dictionary `Prof.`, perhaps with a negative weight. A feature can also express a combination of properties. For example, a period following an upper case word is likely to be an `EOS`, but if the word itself is `St.` and the previous word is capitalized then the period is likely part of a shortening of the word street following a street name.
 
 $$
 \begin{align*}
 x_1 &= 
 \begin{cases}
-1 & \text{if "Case($w_i$) = Lower"}\\
-0 & Otherwise
+1 & \text{if Case($w_i$) = Lower}\\
+0 & \text{Otherwise}
 \end{cases}\\
 x_2 &= 
 \begin{cases}
-1 & \text{if "$w_i \in$ AcronymDict"}\\
-0 & Otherwise
+1 & \text{if $w_i \in$ AcronymDict}\\
+0 & \text{Otherwise}
 \end{cases}\\
 x_3 &= 
 \begin{cases}
-1 & \text{if "$w_i$ = St. and Case($w_{i−1}$) = Upper"}\\
-0 & Otherwise
+1 & \text{if $w_i$ = St. \& Case($w_{i−1}$) = Upper}\\
+0 & \text{Otherwise}
 \end{cases}
 \end{align*}
 $$
 
-### Designing versus learning features: 
+<!-- ### Designed vs. Learned Features -->
 
-In classic models, features are designed by hand by examining the training set with an eye to linguistic intuitions and literature, supplemented by insights from error analysis on the training set of an early version of a system. We can also consider **feature interactions**, complex features that are combinations of more primitive features. We saw such a feature for period disambiguation above, where a period on the word St. was less likely to be the end of the sentence if the previous word was capitalized. Features can be created _automatically_ via **feature templates**, abstract specifications of features. For example a bigram template for period disambiguation might create a feature for every pair of words that occurs before a period in the training set. Thus the feature space is sparse, since we only have to create a feature if that $n$-gram exists in that position in the training set. The feature is generally created as a hash from the string descriptions. A user description of a feature as, “bigram(American breakfast)” is hashed into a unique integer $i$ that becomes the feature number $f_i$. 
-
-It should be clear from the prior paragraph that designing features by hand requires extensive human effort. For this reason, recent NLP systems avoid hand-designed features and instead focus on **representation learning**: ways to learn features automatically in an unsupervised way from the input.
+In classic models, features are designed by hand by examining the training set with an eye to linguistic intuitions and literature, supplemented by insights from error analysis on the training set of an early version of a system. We can also consider **feature interactions**, complex features that are combinations of more primitive features. We saw such a feature for period disambiguation above, where a period on the word St. was less likely to be the end of the sentence if the previous word was capitalized. It is clear that designing features by hand requires extensive human effort. For this reason, recent NLP systems avoid hand-designed features and instead focus on **Representation Learning**: ways to learn features automatically in an unsupervised way from the input.
 
 **Scaling input features**: When different input features have extremely different ranges of values, it’s common to rescale them so they have comparable ranges. We standardize input values by centering them to result in a zero mean and a standard deviation of one (this transformation is sometimes called the **z-score**):
 
@@ -778,10 +763,7 @@ $$
 x'_i = \frac{x_i - \mu_i}{\sigma_i}
 $$
 
-where $\mu_i = \frac{1}{m}\sum_{j=1}^m x^j_i, \sigma_i=\sqrt{\frac{1}{m}\sum_{j=1}^m(x^j_i-\mu_i)}$
-
-
-Alternatively, we can *normalize* the input features values to lie between 0 and 1:
+where $\mu_i = \frac{1}{m}\sum_{j=1}^m x^j_i, \sigma_i=\sqrt{\frac{1}{m}\sum_{j=1}^m(x^j_i-\mu_i)}$. Alternatively, we can *normalize* the input features values to lie between 0 and 1:
 
 $$
 x'_i = \frac{x_i−\min(x_i)}{\max(x_i)−\min(x_i) }
@@ -789,16 +771,16 @@ $$
 
 Having input data with comparable range is useful when comparing values across features. Data scaling is especially important in large neural networks, since it helps speed up gradient descent.
 
-**Choosing a Classifier**: Logistic regression has a number of advantages over naive Bayes. Naive Bayes has overly strong conditional independence assumptions. Consider two features which are strongly correlated; in fact, imagine that we just add the same feature f1 twice. Naive Bayes will treat both copies of f1 as if they were separate, multiplying them both in, overestimating the evidence. By contrast, logistic regression is much more robust to correlated features; if two features f1 and f2 are perfectly correlated, regression will simply assign part of the weight to w1 and part to w2. Thus when there are many correlated features, logistic regression will assign a more accurate probability than naive Bayes. So logistic regression generally works better on larger documents or datasets and is a common default. Despite the less accurate probabilities, naive Bayes still often makes the correct classification decision. Furthermore, naive Bayes can work extremely well (sometimes even better than logistic regression) on very small datasets or short documents.
+**Choosing a Classifier**: Logistic Regression has a number of advantages over Naive Bayes. Naive Bayes has overly strong conditional independence assumptions. Consider two features which are strongly correlated; in fact, imagine that we just add the same feature $f_1$ twice. Naive Bayes will treat both copies of $f_1$ as if they were separate, multiplying them both in, overestimating the evidence. By contrast, logistic regression is much more robust to correlated features; if two features $f_1$ and $f_2$ are perfectly correlated, regression will simply assign part of the weight to $w_1$ and part to $w_2$. Thus when there are many correlated features, Logistic Regression will assign a more accurate probability than Naive Bayes. So Logistic Regression generally works better on larger documents or datasets and is a common default. Despite the less accurate probabilities, Naive Bayes still often makes the correct classification decision. Furthermore, Naive Bayes can work extremely well (sometimes even better than logistic regression) on very small datasets or short documents.
 
 ### Multinomial Logistic Regression
 
-Sometimes we need more than two classes. Perhaps we might want to do 3-way sentiment classification (positive, negative, or neutral). In such cases we use **multinomial logistic regression**, also called **softmax regression**. In multinomial logistic regression, we want to label each observation with a class $k$ from a set of $K$ classes, under the stipulation that only one of these classes is the correct one (**hard classification**: an observation can not be in multiple classes). The output $\bm y$ for each input $\bm x$ will be a vector of length $K$. If class $c$ is the correct class, we’ll set $y_c = 1$, and set all the other elements of $y$ to be 0 (*one-hot vector*). The job of the classifier is to produce an estimate vector $\hat {\bm y}$. For each class $k$, the value $\hat y_k$ will be the classifier’s estimate of the probability $p(y_k = 1 \mid x)$.
+Sometimes we need more than two classes. Perhaps we might want to do 3-way sentiment classification (positive, negative, or neutral). In such cases we use **Multinomial Logistic Regression**, also called **Softmax Regression**. In multinomial logistic regression, we want to label each observation with a class $k$ from a set of $K$ classes, under the stipulation that only one of these classes is the correct one (**hard classification**: an observation can not be in multiple classes). The output $\bm y$ for each input $\bm x$ will be a vector of length $K$. If class $c$ is the correct class, we’ll set $y_c = 1$, and set all the other elements of $y$ to be 0 - **one-hot vector**. The job of the classifier is to produce an estimate vector $\hat {\bm y}$. For each class $k$, the value $\hat y_k$ will be the classifier’s estimate of the probability $p(y_k = 1 \mid x)$.
 
-One can think of multinomial model with $K$ possible outcomes, as running $K$ independent *binary logistic regression* models. As we mentioned the linear finction extimates the log probability of input $\bm x$ belongs to class $i$. So we can write:
+As we mentioned the linear function estimates the log probability of input $\bm x$ belongs to class $i$. So we can write:
 
 $$
-\ln p(y_i = 1 \mid \bm x) = \bm w_i \cdot \bm x - \ln Z
+\ln p(y_i = 1 \mid \bm x) = \bm w_i \cdot \bm x - \ln Z.
 $$
 
 As in the binary case, we need an extra term $-\ln Z$ to ensure that the whole set of probabilities forms a probability distribution, i.e. so that they all sum to one: $\sum_{i=1}^K p(y_i=1 \mid \bm x) = 1$. The reason why we need to add a term to ensure normalization, rather than multiply as is usual, is because we have taken the logarithm of the probabilities. Based on this, we obtain:
@@ -807,9 +789,7 @@ $$
 p(y_i = 1 \mid \bm x) = \frac{1}{Z}e^{\bm w_i \cdot \bm x}
 $$
 
-So $Z = \sum_{i=1}^K e^{\bm w_i \cdot \bm x}$. That explains why softmax gives the probability $p(y_i = 1 \mid \bm x)$. 
-
-Based on this obeservation, let $\bm W$ have the shape $K \times f$, for $K$ the number of output classes and $f$, the number of input features. The bias vector $\bm b$ has one value for each of the $K$ output classes. Therefore: 
+So $Z = \sum_{i=1}^K e^{\bm w_i \cdot \bm x}$. That explains why Softmax gives the probability $p(y_i = 1 \mid \bm x)$. Based on this obeservation, let $\bm W$ have the shape $K \times f$, for $K$ the number of output classes and $f$, the number of input features. The bias vector $\bm b$ has one value for each of the $K$ output classes. Therefore: 
 
 $$
 \hat {\bm y}= \text{softmax}(\bm W\bm x + \bm b).
@@ -828,68 +808,63 @@ L_{\text{cross-entropy}} &= - \log p(y \mid \bm x) \\
 \end{align*}
 $$
 
-The loss function for multinomial logistic regression generalizes the binary loss equation above for $K$ classes:
+The loss function for multinomial logistic regression generalizes the binary loss equation for $K$ classes:
 
 $$
 \begin{align*}
 L_{\text{cross-entropy}}(\bm {\hat y}, \bm y) &= - \sum_{k=1}^K y_k\log \hat y_k \\
 &= -\log \hat y_k \\
+&= - \log p(y_k=1 \mid \bm x) \\
 &= -\log \frac{e^{\bm w_k \cdot\bm x}}{\sum_{j=1}^K e^{\bm w_j \cdot\bm x}}
 \end{align*}
 $$
 
-Hence the cross-entropy loss is simply the log of the output probability corresponding to the correct class, and we therefore negative log likelihood loss also call the **negative log likelihood loss**. For logistic regression, this loss function is conveniently convex. A convex function has at most one minimum; there are no local minima to get stuck in, so gradient descent starting from any point is guaranteed to find the minimum. (By contrast, the loss for multi-layer neural networks is non-convex, and gradient descent may get stuck in local minima for neural network training and never find the global optimum.)
+Hence the cross-entropy loss is simply the log of the output probability corresponding to the correct class, and it is also called the **negative log likelihood loss**. For Logistic Regression, this loss function is conveniently convex. A **convex function** has at most one minimum; there are no local minima to get stuck in, so gradient descent starting from any point is guaranteed to find the minimum. (By contrast, the loss for multi-layer neural networks is non-convex, and gradient descent may get stuck in local minima for neural network training and never find the global optimum.)
 
-We learn the parametes $\bm w_i$ by apply **Stochastic Gradient Descent Algorithm**. Stochastic gradient descent is an online algorithm that minimizes the loss function by computing its gradient after each training example, and nudging parameter $\theta$ in the right direction. Stochastic gradient descent is called _stochastic_ because it chooses a single random example at a time, moving the weights so as to improve performance on that single example. That can result in very choppy movements, so it’s common to compute the gradient over batches of training instances rather than a single instance. For example in batch training we compute the gradient over the entire dataset. By seeing so many examples, batch training offers a superb estimate of which direction to move the weights, at the cost of spending a lot of time processing every single example in the training set to compute this perfect direction.
-
-A compromise is mini-batch training: we train on a group of $m$ examples (perhaps 512, or 1024) that is less than the whole dataset. (If $m$ is the size of the dataset, then we are doing batch gradient descent; if m = 1, we are back to doing stochastic gradient descent.) Mini-batch training also has the advantage of computational efficiency. The mini-batches can easily be vectorized, choosing the size of the mini-batch based on the computational resources. This allows us to process all the examples in one mini-batch _in parallel_ and then accumulate the loss, something that’s not possible with individual or batch training.
+We learn the parametes $\bm w_i$ by applying **Stochastic Gradient Descent Algorithm**. Stochastic gradient descent is an online algorithm that minimizes the loss function by computing its gradient after each training example, and nudging parameter $\theta$ in the right direction. Stochastic gradient descent is called _stochastic_ because it chooses a single random example at a time, moving the weights so as to improve performance on that single example. That can result in very choppy movements, so it’s common to compute the gradient over batches of training instances rather than a single instance. For example in batch training we compute the gradient over the entire dataset. By seeing so many examples, batch training offers a superb estimate of which direction to move the weights, at the cost of spending a lot of time processing every single example in the training set to compute this perfect direction. A compromise is mini-batch training: we train on a group of $m$ examples (perhaps 512, or 1024) that is less than the whole dataset. (If $m$ is the size of the dataset, then we are doing batch gradient descent; if m = 1, we are back to doing stochastic gradient descent.) *Mini-batch training also has the advantage of computational efficiency*. The mini-batches can easily be vectorized, choosing the size of the mini-batch based on the computational resources. This allows us to process all the examples in one mini-batch _in parallel_ and then accumulate the loss, something that’s not possible with individual or batch training.
 
 
 
-# Vector Semantics and Word Embeddings
-
-Vector semantics is the standard way to represent word meaning in NLP, helping us model many of the aspects of word meaning we saw in the previous section. The idea of vector semantics is to represent a word as a point in a multidimensional semantic space that is derived (in ways we’ll see) from the distributions of embeddings word neighbors. Vectors for representing words are called embeddings.
-
-In the tf-idf model, an important baseline, the meaning of a word is defined by a simple function of the counts of nearby words. We will see that this method results in very long vectors that are sparse, i.e. mostly zeros (since most words simply never occur in the context of others). We’ll introduce the word2vec model family for constructing short, dense vectors that have useful semantic properties.
-
-## Word2Vec
-
-The mothod tf-idf represents a word as a sparse (mostly zeros), long vector with dimensions corresponding to words in the vocabulary or documents in a collection. Plus it focuses mostly on frequency of words in document rather than which words might appear together or in which order, more similar to bag-of-words. A more powerful word representation is **embeddings** which are short and dense vectors with number of dimensions ranging from 50-1000, rather than the much larger vocabulary size or number of documents we’ve seen. And the vectors are dense: instead of vector entries being sparse, mostly-zero counts or functions of counts, the values will be real-valued numbers that can be negative. It turns out that dense vectors work better in every NLP task than sparse vectors.
-
-
-Synonym: One important component of word meaning is the relationship between word senses. For example when one word has a sense whose meaning is identical to a sense of another word, or nearly identical, we say the two senses of those two words are synonyms. Synonyms include such pairs as "couch/sofa, vomit/throw up, filbert/hazelnut, car/automobile". Two words are synonymous if they are substitutable for one another in any sentence without changing the truth conditions of the sentence, the situations in which the sentence would be true.
-
-While words don’t have many synonyms, most words do have lots of similar words. Cat is not a synonym of dog, but cats and dogs are certainly similar words. In moving from synonymy to similarity, it will be useful to shift from talking about relations between word senses (like synonymy) to relations between words (like similarity). Dealing with words avoids having to commit to a particular representation of word senses, which will turn out to simplify our task. The notion of word similarity is very useful in larger semantic tasks. Knowing how similar two words are can help in computing how similar the meaning of two phrases or sentences are, a very important component of tasks like question answering, paraphrasing, and summarization. One way of getting values for word similarity is to ask humans to judge how similar one word is to another. A number of datasets have resulted from such experiments. 
-
-### Vector Semantics
+# Vector semantics and Word Embeddings
 
 Vector semantics is the standard way to represent word meaning in NLP. The proposal by linguists like Joos (1950), Harris (1954), and Firth (1957) to define the meaning of a word by its distribution in language use, meaning its neighboring words or grammatical environments. _Their idea was that two words that occur in very similar distributions (whose neighboring words are similar) have similar meanings_.
 
-The idea of vector semantics is to represent a word as a point in a multidimensional semantic space that is derived from the distributions of embeddings word neighbors. Vectors for representing words are called **embeddings** although the term is sometimes more strictly applied only to dense vectors like word2vec, rather than sparse tf-idf. 
+The idea of vector semantics is to represent a word as a point in a multidimensional semantic space that is derived from the distributions of the word neighbors. Vectors for representing words are called **embeddings** although the term is sometimes more strictly applied only to dense vectors like word2vec, rather than sparse tf-idf. 
 
-Raw frequency is very skewed and not very discriminative. If we want to know what kinds of contexts are shared by cherry and strawberry but not by digital and information, we’re not going to get good discrimination from words like `the`, `it`, or `they`, which occur frequently with all sorts of words and aren’t informative about any particular word. It’s a bit of a paradox. Words that occur nearby frequently (maybe pie nearby cherry) are more important than words that only appear once or twice. Yet words that are too frequent—ubiquitous, like `the` or `good`— are unimportant. How can we balance these two conflicting constraints?
+Raw frequency is very skewed and not very discriminative. If we want to know what kinds of contexts are shared by *cherry* and *strawberry* but not by *digital* and *information*, we’re not going to get good discrimination from words like `the`, `it`, or `they`, which occur frequently with all sorts of words and aren’t informative about any particular word. It’s a bit of a paradox. Words that occur nearby frequently (maybe pie nearby *cherry*) are more important than words that only appear once or twice. Yet words that are too frequent—ubiquitous, like `the` or `good`— are unimportant. How can we balance these two conflicting constraints?
 
-The **tf-idf weighting** is the product of two terms, each term capturing one of these two intuitions. The first is the **term frequency**: the frequency of the word $t$ in the document $d$. We can just use the raw count as the term frequency: count($t$,$d$) or even better: 
+<!-- In the tf-idf model, an important baseline, the meaning of a word is defined by a simple function of the counts of nearby words. This method results in very long vectors that are sparse, i.e. mostly zeros since most words simply never occur in the context of others. We’ll introduce the *word2vec* model family for constructing short, dense vectors that have useful semantic properties. -->
+
+
+The **tf-idf** weighted value $w_{t,d}$ for word $t$ in document $d$ is:
 
 $$
-tf_{t,d} = 
-\begin{cases}
-1 + \log(\text{count}(t, d)) & \text{if \text{count}($t$, $d$) > 0} \\
+w_{t,d} = tf_{t,d} \times idf_t
+$$
+
+ which combines *term frequency*  (just the raw count)
+ 
+$$
+ tf_{t,d} = 
+ \begin{cases}
+1+\log \text{count}(t,d) & \text{count}(t,d) > 0, \\
 0 & \text{otherwise}
-\end{cases}
+ \end{cases}
 $$
 
-The intuition is that a word appearing 100 times in a document doesn’t make that word 100 times more likely to be relevant to the meaning of the document. The second factor in tf-idf is used to give a higher weight to words that occur only in a few documents and less weight to the one that repeat in many documents. Terms that are limited to a few documents are useful for discriminating those documents from the rest of the collection; terms that occur frequently across the entire collection aren’t as helpful. The **document frequency** df$_t$ of a term $t$ is the number of documents it occurs in. We emphasize discriminative words via the inverse document frequency or idf term weight: idf$_t$ = $\log(\frac{N}{df_t})$ where $N$ is the total number of documents in the collection, and $df_t$ is the number of documents in which term t occurs. The tf-idf weighted value $w_{t,d}$ for word t in document d thus combines term frequency tf with idf: $w_{t,d} = tf_{t,d} \times idf_t$.
+and the *inverse document frequency*  is $\log \Big(\frac{N}{df_t}\Big )$ where $N$ is the total number of documents in the collection and $df_t$ is the number of documents in which term $t$ occurs. The log is used to damp the ratio because of the large number of documents in many collections. The second factor (idf) emphasizes discriminative words and gives a higher weight to words that occur only in a few documents. Terms that are limited to a few documents are useful for discriminating those documents from the rest of the collection; terms that occur frequently across the entire collection aren’t as helpful. If a word appears in every document, the tf-idf weighting leads it to be ignored because idf factor becomes 0 (the column corresponding to that word is all zeros!). The method tf-idf represents a word as a sparse (mostly zeros), long vector with dimensions corresponding to words in the vocabulary or documents in a collection. Plus it focuses mostly on frequency of words in document rather than which words might appear together or in which order, more similar to bag-of-words. 
 
-### Word Embeddings
+A more powerful word representation is **embeddings** which are short and dense vectors with number of dimensions ranging from 50-1000, rather than the much larger vocabulary size or number of documents we’ve seen. And the vectors are dense: instead of vector entries being sparse, mostly-zero counts or functions of counts, the values will be real-valued numbers that can be negative. It turns out that dense vectors work better in every NLP task than sparse vectors. One important component of word meaning is the relationship between word senses. For example when one word has a sense whose meaning is identical to a sense of another word, or nearly identical, we say the two senses of those two words are synonyms. Synonyms include such pairs as `couch/sofa`, `vomit/throw up`, `filbert/hazelnut`, `car/automobile`. Two words are synonymous if they are substitutable for one another in any sentence without changing the truth conditions of the sentence, the situations in which the sentence would be true.
+
+While words don’t have many synonyms, most words do have lots of similar words. Cat is not a synonym of dog, but cats and dogs are certainly similar words. In moving from *synonymy to similarity*, it will be useful to shift from talking about relations between word senses (like synonymy) to relations between words (like similarity). Dealing with words avoids having to commit to a particular representation of word senses, which will turn out to simplify our task. The notion of word similarity is very useful in larger semantic tasks. Knowing how similar two words are can help in computing how similar the meaning of two phrases or sentences are, a very important component of tasks like question answering, paraphrasing, and summarization. One way of getting values for word similarity is to ask humans to judge how similar one word is to another. A number of datasets have resulted from such experiments. 
+
+## Word Embeddings
 
 Neural language models share statistical strength between one word (and its context) and other similar words and contexts. For example, if the word `dog` and the word `cat` map to representations that share many attributes, then sentences that contain the word cat can inform the predictions that will be made by the model for sentences that contain the word `dog`, and vice-versa. Because there are many such attributes, there are many ways in which generalization can happen, transferring information from each training sentence to an exponentially large number of semantically related sentences. The curse of dimensionality requires the model to generalize to a number of sentences that is exponential in the sentence length. We sometimes call these word representations **word embeddings**.
 
-The word representations embed those points in a feature space of lower dimension. In the original space, every word is represented by a **one-hot vector** using a vocabulary we choose (for example, if man is the word number 5391 in this dictionary, we represent it with a vector with 1 in position 5391 and zero anywhere else). So every pair of words is at Euclidean distance $\sqrt 2$ from each other. For large vocabularies, it can be very computationally expensive to represent an output distribution over the choice of a word, because the vocabulary size is large. In many applications, $|V|$ contains hundreds of thousands of words. So this representation is prone to the curse of dimensionality. Another weaknesses of this representation is that it makes no semantic connection between words such synonyms or opposites etc. Also it does not distinguish them in a meaningful way. For example, the relationship between apple and orange is not any closer as the relationship between any of the other words man, woman, king, queen, and orange. So it's not easy for the learning algorithm to generalize from knowing that knowldge into another similar one.  Also dot product between any two different one-hot vector is zero.
+The word representations embed those points in a feature space of lower dimension. In the original space, every word is represented by a **one-hot vector** using a vocabulary we choose (for example, if man is the word number 5391 in this dictionary, we represent it with a vector with 1 in position 5391 and zero anywhere else). So *every pair of words is at Euclidean distance $\sqrt 2$ from each other*. For large vocabularies, it can be *computationally very expensive to represent an output distribution over the choice of a word*, because the vocabulary size is large. In many applications, $|V|$ contains hundreds of thousands of words. So this representation is prone to the *curse of dimensionality*. Another weaknesses of this representation is that it *makes no semantic connection between words* such synonyms or opposites etc. Also it does not distinguish them in a meaningful way. For example, the relationship between apple and orange is not any closer as the relationship between any of the other words man, woman, king, queen, and orange. So it's not easy for the learning algorithm to generalize from knowing that knowledge into another similar one.  Also *dot product between any two different one-hot vector is zero*.
 
-In the embedding space, words that frequently appear in similar contexts (or any pair of words sharing some “features” learned by the model) are close to each other in the embedding space. This often results in words with similar meanings being neighbors. So semantically similar words map to representations that are close to each other. 
-
-The following figure shows 2-dimensional visualizations of word embeddings obtained from a neural machine translation model ( Bahdanau et al. 2015 , ), zooming in on specific areas where semantically related words have embedding vectors that are close to each other. Countries appear on the left and numbers on the right. Keep in mind that these embeddings are 2-D for the purpose of visualization (using algorithms like t-SNE). In real applications, embeddings typically have higher dimensionality and can simultaneously capture many kinds of similarity between words.
+In the embedding space, words that frequently appear in similar contexts (or any pair of words sharing some “features” learned by the model) are close to each other in the embedding space. This often results in words with similar meanings being neighbors. So semantically similar words map to representations that are close to each other.  The following figure shows 2-dimensional visualizations of word embeddings obtained from a neural machine translation model ( Bahdanau et al. 2015 , ), zooming in on specific areas where semantically related words have embedding vectors that are close to each other. Countries appear on the left and numbers on the right. Keep in mind that these embeddings are 2-D for the purpose of visualization (using algorithms like t-SNE). In real applications, embeddings typically have higher dimensionality and can simultaneously capture many kinds of similarity between words.
 
 <p align="center">
     <img src="./assets/seq-models/word-embedding.png" alt="drawing" width="600" height="500" style="center" />
@@ -903,40 +878,39 @@ In short, the pros for word embedding are:
 
 To create word embeddings you always need a corpus of text, and an embedding method. The context of a word tells you what type of words tend to occur near that specific word. The context is important as this is what will give meaning to each word embedding.
 
-There are many types of possible methods that allow you to learn the word embeddings but mainly they involve a machine learning model performs a learning task, and the main by-products of this task are the word embeddings. The task could be to learn to predict a word based on the surrounding words in a sentence of the corpus. These vectors capture information about the meaning of the word based on the surrounding words. 
+There are many types of possible methods that allow you to learn the word embeddings *but mainly they involve a machine learning model performs a learning task, and the main by-products of this task are the word embeddings*. The task could be to learn to predict a word based on the surrounding words in a sentence of the corpus. These vectors capture information about the meaning of the word based on the surrounding words. 
 
-**Word2vec** is a technique in natural language processing (NLP) for obtaining vector representations of words. The word2vec algorithm estimates these representations by modeling text in a large corpus. Once trained, such a model can detect synonymous words or suggest additional words for a partial sentence. Word2vec was developed by Tomáš Mikolov and colleagues at Google and published in 2013. Word2vec represents a word as a high-dimension vector of numbers which capture relationships between words. In particular, words which appear in similar contexts are mapped to vectors which are nearby as measured by cosine similarity. This indicates the level of semantic similarity between the words, so for example the vectors for walk and ran are nearby, as are those for "but" and "however", and "Berlin" and "Germany". Word2vec can use either of two model architectures to produce these distributed representations of words: 
-- continuous bag of words (CBOW) 
-- continuously sliding skip-gram
+**Word2vec** is a technique in natural language processing (NLP) for obtaining vector representations of words. The word2vec algorithm estimates these representations by modeling text in a large corpus. Once trained, such a model can detect synonymous words or suggest additional words for a partial sentence. Word2vec was developed by Tomáš Mikolov and colleagues at Google and published in 2013. Word2vec represents a word as a high-dimension vector of numbers which capture relationships between words. In particular, *words which appear in similar contexts are mapped to vectors which are nearby as measured by cosine similarity*. This indicates the level of semantic similarity between the words, so for example the vectors for `walk` and `ran` are nearby, as are those for `but` and `however`, and `Berlin` and `Germany`. Word2vec can use either of two model architectures to produce these distributed representations of words: 
+- **Continuous bag of words (CBOW) **
+- **Continuously sliding skip-gram**
 
 In both architectures, word2vec considers both individual words and a sliding context window as it iterates over the corpus.
 
 The CBOW can be viewed as a ‘fill in the blank’ task, where the word embedding represents the way the word influences the relative probabilities of other words in the context window. Words which are semantically similar should influence these probabilities in similar ways, because semantically similar words should be used in similar contexts. The order of context words does not influence prediction (bag of words assumption).
 
-In the continuous skip-gram architecture, the model uses the current word to predict the surrounding window of context words.The skip-gram architecture weighs nearby context words more heavily than more distant context words. According to the authors' note, CBOW is faster while skip-gram does a better job for infrequent words.
+In the continuous skip-gram architecture, the model uses the current word to predict the surrounding window of context words. The skip-gram architecture weighs nearby context words more heavily than more distant context words. According to the authors' note, CBOW is faster while skip-gram does a better job for infrequent words.
 
 These tasks are **self-supervised**: it is both unsupervised in the sense that the input data — the corpus — is unlabelled, and supervised in the sense that the data itself provides the necessary context which would ordinarily make up the labels. 
 
 
 ### Continuous Bag of Words Model (CBOW)
 
-In the case of the continuous bag-of-words model, the objective of the task is to predict a missing word based on the surrounding words. Here is a visualization that shows you how the models works.
+In the case of the continuous bag-of-words model, the objective of the task is to predict a missing word based on the surrounding words. Here is a visualization that shows you how the models works. For example, the window size in the image below is 5. The context size, C, is 2. C usually tells you how many words before or after the center word the model will use to make the prediction. 
 
 <p align="center">
     <img src="./assets/seq-models/cbow1.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
-The window size in the image above is 5. The context size, C, is 2. C usually tells you how many words before or after the center word the model will use to make the prediction. 
 
 Before implementing any natural language processing algorithm, you might want to clean the data and tokenize it into words. This step is called **preprocessing**. Here are a few things to keep track of when handling your data. Cleaning include:
 
-- adjusting letter case (all lower case)
-- removing/replacing punctuations ([,!.?"<>])
-- numbers 
-- special characters or special words (#nlp)
-- eliminate handles and URLs
-- remove stop words like "and, is, a, on, etc"
-- stemming - or convert every wird to its stem. 'dancer', 'dancing', 'danced' all become 'dance'
+- Adjusting letter case (all lower case)
+- Removing/replacing punctuations ([,!.?"<>])
+- Numbers 
+- Special characters or special words (#nlp)
+- Eliminate handles and URLs
+- Remove stop words like "and, is, a, on, etc"
+- Stemming - or convert every word to its stem. 'dancer', 'dancing', 'danced' all become 'dance'
 
 Loop over the text and clean it line by line. You can add as many conditions as you want in the lines to convert them into a dictionary of word tokens, called a **vocabulary** $V$. It is the set of all words appearing in the corpus. Every word in this vocabulary represented by a one-hot vector. A sentence then can be represented by the sum or average of the one-hot vectors of the words in the sentence. 
 
@@ -951,21 +925,24 @@ Context words | Context words vector | Center word | Center word vector
 -------------  | --------------        | ---------    |  -----------------
 I am because I | [0.25, 0.25, 0.0, 0.5, 0.0] | happy | [0, 0, 1, 0, 0]
 
-Our goal is to learn one vector $v_{w}\in \mathbb {R} ^{n}$ for each word  $w\in V$. The architecture for the CBOW model could be described as follows
+Our goal is to learn one vector $v_{w}\in \mathbb {R} ^{n}$ for each word  $w\in V$. The architecture for the CBOW model could be described as follows:
 
 <p align="center">
     <img src="./assets/seq-models/cbow2.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
-where $m$ is the batch size. The final layer goes through a softmax which gives you a distribution over V, vocabulary words. You pick the vocabulary word that corresponds to the `argmax` of the output. 
+where $m$ is the batch size. The final layer goes through a Softmax which gives a distribution over V, vocabulary words. The prediction is the word that corresponds to the `argmax` of the output of Softmax. The cost function for the CBOW model is a **cross-entropy loss** defined as:
+$$J = -\sum_{i=1}^V y_i \log \hat y_i,$$ which needs to be minimized. This is equivalent to maximizing log likelihood $$\prod P(w_i|w_j; j=i\pm n, n\in \mathbb N),$$ because $y_k=0$ except for one entry. Similarly, loss on the batch is 
+$$
+J_{\text{batch}} = -\frac{1}{m}\sum_{i=1}^m\sum_{j=1}^V y_k \log \hat y_k.
+$$ 
 
-The cost function for the CBOW model is a cross-entropy loss defined as:
-$$J = -\sum_{i=1}^V y_i \log \hat y_i,$$ which needs to be minimized. This is equivalent to maximizing log likelihood $$\prod P(w_i|w_j; j=i\pm n, n\in \mathbb N),$$ because $y_k=0$ except for one entry. Similarly, loss on the batch is $$J_{\text{batch}} = -\frac{1}{m}\sum_{i=1}^m\sum_{j=1}^V y_k \log \hat y_k.$$ After the model is trained, One can use the first or second weight matrix as embeddings. For example, $W_1$ is of dim $V\times N$, where $N$ is the embedding dimension. So column 1 is the embedding for word 1 and so on. The weight matrix $W_2^T$ of the second layer can similarly be taken as the embedding matrix. Even the average of the two can be considered as the embedding: $\frac{1}{2}(W_1 + W_2^T)$.
+*After the model is trained, one can use the first or second weight matrix as embeddings*. For example, $W_1$ is of dim $V\times N$, where $N$ is the embedding dimension. So column 1 is the embedding for word 1 and so on. The weight matrix $W_2^T$ of the second layer can similarly be taken as the embedding matrix. Even the average of the two can be considered as the embedding: $\frac{1}{2}(W_1 + W_2^T)$.
 
 
 ### Continuous Skip-grams
 
-While a bag-of-words model predicts a word given the neighboring context, a skip-gram model predicts the context (or neighbors) of a word, given the word itself. The model is trained on skip-grams, which are n-grams that allow tokens to be skipped (see the diagram below for an example). The context of a word can be represented through a set of skip-gram pairs of (target_word, context_word) where context_word appears in the neighboring context of target_word. Given a word in a sentence as target and a window size, we randomly choose a word in the sentence within the window length around the target as its context. For example, if the sentence is "With seven courses this semester, I have to study hard at school", then we could have the following as some skip-grams with window size 6:
+While a bag-of-words model predicts a word given the neighboring context, a skip-gram model predicts the context (or neighbors) of a word, given the word itself. The model is trained on skip-grams, which are $n$-grams that allow tokens to be skipped (see the diagram below for an example). The context of a word can be represented through a set of skip-gram pairs of (target_word, context_word) where context_word appears in the neighboring context of target_word. Given a word in a sentence as target and a window size, we randomly choose a word in the sentence within the window length around the target as its context. For example, if the sentence is "With seven courses this semester, I have to study hard at school", then we could have the following as some skip-grams with window size 6:
 
 target | context
 --------| ------
@@ -979,11 +956,12 @@ $$
 \hat y_i = P(c|t) = \frac{e^{\theta_t^Tc}}{\sum_{c \in V} e^{\theta_{t}^Tc}},
 $$
 
-where $\theta_t$ output of softmax when model input is one-hot vector $t$ for target $t$, and $c$ is the one-hot vector for context word. The loss is cross-entropy the same as mentioned before. Only one probability vector $\hat y$ is computed. Skip-gram treats each context word equally : the models computes the probability for each word of appearing in the context independently of its distance to the center word. 
+where $\theta_t$ output of softmax when model input is one-hot vector $t$ for target $t$, and $c$ is the one-hot vector for context word. The loss is cross-entropy the same as mentioned before. Only one probability vector $\hat y$ is computed. Skip-gram treats each context word equally: the models computes the probability for each word of appearing in the context independently of its distance to the center word. 
 
-Loss functions for CBOW and SkipGram are expensive to compute because of the softmax normalization, where we sum over all $|V|$ scores! Computing the denominator of this formulation involves performing a full softmax over the entire vocabulary words, which are often large terms. See [notes](https://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes01-wordvecs1.pdf) for more details.
+Loss functions for CBOW and SkipGram are expensive to compute because of the softmax normalization, where we sum over all $|V|$ scores! Computing the denominator of this formulation involves performing a full softmax over the entire vocabulary words, which are often large terms. See this [notes](https://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes01-wordvecs1.pdf) for more details.
 
-### High-Dimensional Outputs
+
+## High-Dimensional Outputs
 
 In many applications, vocabulary $V$ contains hundreds of thousands of words. The naive approach to representing such a distribution is to apply an aﬃne transformation from a hidden representation to the output space, then apply the softmax function. Suppose we have a vocabulary $V$ with size $|V|$. The weight matrix describing the linear component of this aﬃne transformation is very large, because its output dimension is $|V|$. This imposes a high memory cost to represent the matrix, and a high computational cost to multiply by it. Because the softmax is normalized across all $|V|$ outputs, it is necessary to perform the full matrix multiplication at training time as well as test time—we cannot calculate only the dot product with the weight vector for the correct output. The high computational costs of the output layer thus arise both at training time (to compute the likelihood and its gradient) and at test time (to compute probabilities for all or selected words). More clearly, the aﬃne-softmax output layer performs the following computations:
 
@@ -1001,7 +979,7 @@ If $\bm h$ contains $n_h$ elements then the above operation is $O(|V|n_h)$. With
 - Hierarchical Softmax
 - Importance Sampling (or Negative Sampling)
 
-#### Negative Sampling
+### Negative Sampling
 A simple idea is we could instead just approximate the loss function. For every training step, instead of looping over the entire vocabulary, we can just sample several negative examples! We "sample" from a noise distribution (Pn(w)) whose probabilities match the ordering of the frequency of the vocabulary. To augment our formulation of the problem to incorporate Negative Sampling, all we need to do is update the objective function, then gradient and the update rule. See [notes](https://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes01-wordvecs1.pdf) for more details. Using this technique, the computational complexity of gradient estimation for the output layer is reduced to be proportional to the number of negative samples rather than proportional to the size of the output vector.
 
 
@@ -1010,48 +988,41 @@ A simple idea is we could instead just approximate the loss function. For every 
 The simplest way to visualize the meaning of a word $w$ embedded in a space is to list the most similar words to $w$ by sorting the vectors for all words in the vocabulary by their _cosine_ with the vector for $w$. For example the 7 closest words to frog using a particular embeddings computed with the GloVe algorithm are: _frogs_, _toad_, _litoria_, _leptodactylidae_, _rana_, _lizard_, and _eleutherodactylus_.
 
  
-Yet another visualization method is to use a clustering algorithm to show a hierarchical representation of which words are similar to others in the embedding space. The uncaptioned figure on the left uses hierarchical clustering of some embedding vectors for nouns as a visualization methods. Probably the most common visualization method, however, is to project the 100 dimensions of a word down into 2 dimensions using a projection method called **t-SNE**.
+Yet another visualization method is to use a clustering algorithm to show a hierarchical representation of which words are similar to others in the embedding space. Probably the most common visualization method, however, is to project the 100 dimensions of a word down into 2 dimensions using a projection method called **t-SNE**. Recent research focuses on ways to try to remove these kinds of biases, for example by developing a transformation of the embedding space that removes gender stereotypes but preserves definitional gender or changing the training procedure. However, although these sorts of debiasing may reduce bias in embeddings, they do not eliminate it, and this remains an open problem.
 
-
-Recent research focuses on ways to try to remove these kinds of biases, for example by developing a transformation of the embedding space that removes gender stereotypes but preserves definitional gender or changing the training procedure. However, although these sorts of debiasing may reduce bias in embeddings, they do not eliminate it, and this remains an open problem.
-
-
-## Some application of word embedding?
+<!-- 
+### Some application of word embedding?
 - **Sentiment Analysis**: use well-know word embeddings to train RNNs for sentiment analysis - many-to-one RNNs... takes a sentence which is a sequence of word embeddings and outputs a a fix number of class prediction (positive/negative) 
-- **Debiasing Word Embeddings**: Modify word embedding so they are less bias
+- **Debiasing Word Embeddings**: Modify word embedding so they are less bias -->
+
 
 
 # Recurrent Neural Nets (RNNs)
 
 Previously, we tried using traditional language models, but it turns out they took a lot of space and RAM.  For example, in the sentence below: 
 
-`Nour was supposed to study with me. I called her but she did not -----`.
+`Nora was supposed to study with me. I called her but she did not -----`.
 
-An N-gram (trigram) would only look at "did not" and would try to complete the sentence from there based on frequencies. As a result, the model will not be able to see the beginning of the sentence "I called her but she" and understand dependecies of the end of the sentence on the beginning so probably the most likely word is to have after "did not". RNNs help us solve this problem by being able to track dependencies that are much further apart from each other. 
+An trigram would only look at "did not" and would try to complete the sentence from there based on frequencies. As a result, the model will not be able to see the beginning of the sentence "I called her but she" and understand dependencies of the end of the sentence on the beginning so probably the most likely word is to have after "did not". RNNs help us alleviate this problem by being able to track dependencies that are much further apart from each other. 
 
-_**Recurrent neural networks** or RNNs are a family of neural networks for processing sequential data_. Much as a convolutional network is a neural network that is specialized for processing a grid of values X such as an image, a recurrent neural network is a neural network that is specialized for processing a sequence of vectors (such as one-hot vectors) $\bm {x}(1)$, ..., $\bm {x}(τ)$. Just as convolutional networks can readily scale to images with large width and height, and some convolutional networks can process images of variable size, recurrent networks can scale to much longer sequences than would be practical for networks without sequence-based specialization. Most recurrent networks can also process sequences of variable length.
+_**Recurrent Neural Networks** or RNNs are a family of neural networks for processing sequential data_. Much as a convolutional network is a neural network that is specialized for processing a grid of values X such as an image, a recurrent neural network is a neural network that is specialized for processing a sequence of vectors (such as one-hot vectors) $\bm {x}(1), \dots,\bm {x}(τ)$. Just as convolutional networks can readily scale to images with large width and height, and some convolutional networks can process images of variable size, recurrent networks can scale to much longer sequences than would be practical for networks without sequence-based specialization. Most recurrent networks can also process sequences of variable length.
 
-To go from multilayer networks to recurrent networks, we need to take advantage of one of the early ideas found in machine learning and statistical models of the 1980s: _sharing parameters across diﬀerent parts of a model_. If we had separate parameters for each value of the time index, we could not generalize to sequence lengths not seen during training, nor share statistical strength across diﬀerent sequence lengths and across diﬀerent positions in time. A traditional fully connected feedforward network would have separate parameters for each input feature, so it would need to learn all of the rules of the language separately at each position in the sentence. By comparison, _a recurrent neural network shares the same weights across several time steps_. The convolution operation allows a network to share parameters across time, but is shallow. The output of convolution is a sequence where each member of the output is a function of a small number of neighboring members of the input. The idea of parameter sharing manifests in the application of the same convolution kernel at each time step. Recurrent networks share parameters in a diﬀerent way. Each member of the output is a function of the previous members of the output. Each member of the output is produced using the same update rule applied to the previous outputs. This recurrent formulation results in the sharing of parameters through a very deep computational graph.
-
-We refer to RNNs as operating on a sequence that contains vectors x(t) with the time step index t ranging from 1 to $τ$. the time step index need not literally refer to the passage of time in the real world. Sometimes it refers only to the position in the sequence. RNNs extends the idea of a computational graph to include cycles. These cycles represent the influence of the present value of a variable on its own value at a future time step. Such computational graphs allow us to define recurrent neural networks.
-
-
-Many recurrent neural networks use equation like the following or a similar one to define the values of their hidden units. 
+To go from multilayer networks to recurrent networks, we need to take advantage of one of the early ideas found in machine learning and statistical models of the 1980s: _sharing parameters across diﬀerent parts of a model_. If we had separate parameters for each value of the time index, we could not generalize to sequence lengths not seen during training, nor share statistical strength across diﬀerent sequence lengths and across diﬀerent positions in time. A traditional fully connected feedforward network would have separate parameters for each input feature, so it would need to learn all of the rules of the language separately at each position in the sentence. By comparison, _a recurrent neural network shares the same weights across several time steps_. The convolution operation allows a network to share parameters across time, but is shallow. The output of convolution is a sequence where each member of the output is a function of a small number of neighboring members of the input. The idea of parameter sharing manifests in the application of the same convolution kernel at each time step. Recurrent networks share parameters in a diﬀerent way. Each member of the output is a function of the previous members of the output. Each member of the output is produced using the same update rule applied to the previous outputs. This recurrent formulation results in the sharing of parameters through a very deep computational graph.We refer to RNNs as operating on a sequence that contains vectors $x(t)$ with the time step index $t$ ranging from 1 to $τ$. The time step index need not literally refer to the passage of time in the real world. Sometimes it refers only to the position in the sequence. RNNs extends the idea of a computational graph to include cycles. These cycles represent the influence of the present value of a variable on its own value at a future time step. Such computational graphs allow us to define recurrent neural networks. Many recurrent neural networks use equation like the following or a similar one to define the values of their hidden units. 
 
 $$
 \bm {h}^{(t)} = f(\bm {h}^{(t-1)}, \bm {x}^{(t)}; \bm {\theta})
 $$
 
-It uses the same transition function $f$ with the same parameters at every time step. Typical RNNs will add extra architectural features such as output layers that read information out of the state $h$ to make predictions. When the recurrent network is trained to perform a task that requires predicting the future from the past, the network typically learns to use ${\bm h}^{(t)}$ as a kind of lossy summary of the task-relevant aspects of the past sequence of inputs up to $t$. This summary is in general necessarily lossy, since it maps an arbitrary length sequence
+It uses the same **transition function** $f$ with the same parameters $\bm {\theta}$ at every time step. Typical RNNs will add extra architectural features such as output layers that read information out of the state $\bm h$ to make predictions. When the recurrent network is trained to perform a task that requires predicting the future from the past, the network typically learns to use ${\bm h}^{(t)}$ as a kind of lossy summary of the task-relevant aspects of the past sequence of inputs up to $t$. This summary is in general necessarily lossy, since it maps an arbitrary length sequence
 
 $$
-(\bm {x}^{(t)}, \bm {x}^{(t-1)}, \bm {x}^{(t-2)},...,\bm {x}^{(2)},\bm {x}^{(1)})
+(\bm {x}^{(t)}, \bm {x}^{(t-1)},...,\bm {x}^{(2)},\bm {x}^{(1)})
 $$
 
 to a fixed length vector $\bm {h}^{(t)}$. Depending on the training criterion, this summary might selectively keep some aspects of the past sequence with more precision than other aspects. For example, if the RNN is used in statistical language modeling, typically to predict the next word given previous words, it may not be necessary to store all of the information in the input sequence up to time $t$, but rather only enough information to predict the rest of the sentence. 
 
 ## Training RNN
-Learning a single, shared model allows generalization to sequence lengths that did not appear in the training set, and allows the model to be estimated with far fewer training examples than would be required without parameter sharing. The followoing is a computational graph to compute the training loss of a recurrent network that maps an input sequence ofx values to a corresponding sequence of output $\bm o$ values. A loss $L$ measures how far each $\bm o$ is from the corresponding training target $\bm y$. When using softmax outputs, we assume $\bm o$ is the _unnormalized log probabilities_ of each possible value of the target variable. The loss $L$ internally computes the normalized probabilities $\hat {\bm y}= softmax(\bm o)$ over the output and compares this to the target $\bm y$. The RNN has input to hidden connections parametrized by a weight matrix $\bm U$ , hidden-to-hidden recurrent connections parametrized by a weight matrix $\bm W$ , and hidden-to-output connections parametrized by a weight matrix $\bm V$. 
+Learning a single, shared model allows generalization to sequence lengths that did not appear in the training set, and allows the model to be estimated with far fewer training examples than would be required without parameter sharing. The following is a computational graph to compute the training loss of a recurrent network that maps an input sequence $\bm x$ values to a corresponding sequence of output $\bm o$ values. A loss $L$ measures how far each $\bm o$ is from the corresponding training target $\bm y$. When using Softmax outputs, we assume $\bm o$ is the _unnormalized log probabilities_ of each possible value of the target variable. The loss $L$ internally computes the normalized probabilities $\hat {\bm y}= \text{softmax}(\bm o)$ over the output and compares this to the target $\bm y$. The RNN has input to hidden connections parametrized by a weight matrix $\bm U$ , hidden-to-hidden recurrent connections parametrized by a weight matrix $\bm W$ , and hidden-to-output connections parametrized by a weight matrix $\bm V$. 
 
 <p align="center">
     <img src="./assets/seq-models/simple-rnn.png" width="400" height="400" style="center" />
@@ -1070,9 +1041,7 @@ Forward propagation begins with a specification of the initial state $\bm {h}(0)
 \end{equation}
 \]
 
-The non-linearity $\text{tanh}$ can be replaced by Relu. Also $\bm W$ and $\bm U$ can be horizontally stack and $\bm h^{(t-1)}$, $\bm x^{(t)}$ veritcally stacked to do only one matrix multiplication to optimize computations. This also perfectly matches backprop gradient using the same way of stacking gradiants and inputs.   
-
-This is an example of a recurrent network that maps an input sequence to an output sequence of the same length. The total loss for a given sequence of $\bm x$ values paired with a sequence of $\bm y$ values would then be just the sum of the losses over all the time steps. For example, if $L^{(t)}$ is the negative log-likelihood of $y{(t)}$, given $(\bm {x}^{(t)}, \bm {x}^{(t-1)}, \bm {x}^{(t-2)},...,\bm {x}^{(2)},\bm {x}^{(1)})
+The non-linearity `tanh` can be replaced by `Relu`. Also $\bm W$ and $\bm U$ can be horizontally stack and $\bm h^{(t-1)}$, $\bm x^{(t)}$ vertically stacked to do only one matrix multiplication to optimize computations. This also perfectly matches backprop gradient using the same way of stacking gradients and inputs.   Here isan example of a recurrent network that maps an input sequence to an output sequence of the same length. The total loss for a given sequence of $\bm x$ values paired with a sequence of $\bm y$ values would then be just the sum of the losses over all the time steps. For example, if $L^{(t)}$ is the **negative log-likelihood** of $y{(t)}$, given $(\bm {x}^{(t)}, \bm {x}^{(t-1)},...,\bm {x}^{(2)},\bm {x}^{(1)})
 $, then
 
 \[
@@ -1080,7 +1049,7 @@ $, then
 \begin{split}
 L \Big((\bm {x}^{(1)}, \bm {x}^{(2)},...,\bm {x}^{(t)}),\; &(\bm {y}^{(1)}, \bm {y}^{(2)},...,\bm {y}^{(t)})\Big) \\ 
 &= \sum_t L^{(t)}\\
-&= -\sum_t log\; p_{\text{model}} \Big( y^{(t)} \; | \; \bm {x}^{(1)}, \bm {x}^{(2)},...,\bm {x}^{(t)}\Big)
+&= -\sum_t \log\; p_{\text{model}} \Big( y^{(t)} \; | \; \bm {x}^{(1)}, \bm {x}^{(2)},...,\bm {x}^{(t)}\Big)
 \end{split}
 \end{equation*}
 \]
@@ -1095,18 +1064,14 @@ p_{\text{model}} \Big( \bm y^{(t)} \; | \; \bm {x}^{(1)},\; \bm {x}^{(2)},...,\b
 \end{equation*}
 \]
 
-where $k$ is the index of token $y^{(t)}$ in the target $\bm y$. Note that length of vectors $\bm {\hat y}^{(t)}$ and $\bm o^{(t)}$ are the same as the size of vocabulary.
-
-Computing the gradient of this loss function with respect to the parameters is an expensive operation. The runtime is $O(τ)$ and cannot be reduced by parallelization because the forward propagation graph is inherently sequential; each time step may only be computed after the previous one. States computed in the forward pass must be stored until they are reused during the backward pass, so the memory cost is also $O(τ)$. The back-propagation algorithm applied to the unrolled graph with $O(τ)$ cost is called back-propagation through time or BPTT.
+where $k$ is the index of token $y^{(t)}$ in the target $\bm y$. Note that length of vectors $\bm {\hat y}^{(t)}$ and $\bm o^{(t)}$ are the same as the size of vocabulary.Computing the gradient of this loss function with respect to the parameters is an expensive operation. The runtime is $O(τ)$ and cannot be reduced by parallelization because the forward propagation graph is inherently sequential; each time step may only be computed after the previous one. States computed in the forward pass must be stored until they are reused during the backward pass, so the memory cost is also $O(τ)$. The back-propagation algorithm applied to the unrolled graph with $O(τ)$ cost is called **back-propagation through time (BPTT)**.
 
 ### Computing the Gradient in RNN
 
-Computing the gradient through a recurrent neural network is straightforward. One simply applies the generalized back-propagation algorithm. Gradients obtained by backpropagation may then be used with any general-purpose gradient-based techniques to train an RNN. To gain some intuition for how the BPTT algorithm behaves, we provide an example of how to compute gradients by BPTT for the RNN equations above. 
-
-The nodes of our computational graph include the parameters $\bm U , \bm V , \bm W , \bm b, \bm c$ as well as the sequence of the nodes indexed by $\bm x^{(t)}, \bm h^{(t)}, \bm o^{(t)},  L^{(t)}$. For each node N we need to compute the gradient $∇_N L$ recursively, based on the gradient computed at nodes that follow it in the graph. We start the recursion with the nodes immediately preceding the final loss
+Computing the gradient through a recurrent neural network is straightforward. One simply applies the generalized back-propagation algorithm. Gradients obtained by back propagation may then be used with any general-purpose gradient-based techniques to train an RNN. To gain some intuition for how the BPTT algorithm behaves, we provide an example of how to compute gradients by BPTT for the RNN equations above.The nodes of our computational graph include the parameters $\bm U , \bm V , \bm W , \bm b, \bm c$ as well as the sequence of the nodes indexed by $\bm x^{(t)}, \bm h^{(t)}, \bm o^{(t)},  L^{(t)}$. For each node N we need to compute the gradient $∇_N L$ recursively, based on the gradient computed at nodes that follow it in the graph. We start the recursion with the nodes immediately preceding the final loss
 
 $$
-\frac{\partial L}{\partial L^{(t)}} = 1
+\frac{\partial L}{\partial L^{(t)}} = 1.
 $$
 
 Assuming that the loss is the negative log-likelihood of the true target $\bm y^{(t)}$ given the input:
@@ -1126,9 +1091,7 @@ Assuming that the loss is the negative log-likelihood of the true target $\bm y^
 \end{equation*}
 \]
 
-where $k$ is the index of token $\bm y^{(t)}$ in the target $\bm y$.
-
-We work our way backwards, starting from the end of the sequence. At the final time step , $τ$, ${\bm h}(τ)$ only has ${\bm o}^{(τ)}$ as a descendent, so its gradient is simple:
+where $k$ is the index of token $\bm y^{(t)}$ in the target $\bm y$.We work our way backwards, starting from the end of the sequence. At the final time step , $τ$, ${\bm h}(τ)$ only has ${\bm o}^{(τ)}$ as a descendent, so its gradient is simple:
 
 $$
 (∇_{\bm h^{(τ)}} L) = {\bm V}^T ∇_{\bm o^{(τ)}} L
@@ -1158,9 +1121,7 @@ for $t = τ$. For $t<τ$, ${\bm h}^{(t)}$ has as descendents both ${\bm o}^{(t)}
 \end{equation*}
 \]
 
-where $\text{diag}\Big( 1 - ({\bm h}^{(t+1)})^2\Big)$ indicates the diagonal matrix continnig the elemets $ 1 - ({\bm h_i}^{(t+1)})^2$ which is the Jacobian of the hyperbolic tangent associates with the hidden unit $i$ at time $t+1$.
-
-Once the gradients on the internal nodes of the computational graph are obtained, it is easy obtain the gradients on the parameter nodes. Look at [Deep Learning by Ian Goodfellow, Yoshua Bengio, Aaron Courville](https://www.amazon.ca/Deep-Learning-Ian-Goodfellow/dp/0262035618/ref=asc_df_0262035618/?tag=googleshopc0c-20&linkCode=df0&hvadid=706745562943&hvpos=&hvnetw=g&hvrand=4165137193847264239&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9000826&hvtargid=pla-416263148149&psc=1&mcid=d1d85934bcd73af29621fd70386e098c&gad_source=1), Chapter 10, page 386, to see calucaltions for $∇_{\bm c} L$, $∇_{\bm b} L$, $∇_{\bm V} L$, $∇_{\bm W} L$ and $∇_{\bm U} L$.
+where $\text{diag}\Big( 1 - ({\bm h}^{(t+1)})^2\Big)$ indicates the diagonal matrix with the elements $ 1 - ({\bm h_i}^{(t+1)})^2$ which is the Jacobian of the hyperbolic tangent associates with the hidden unit $i$ at time $t+1$. Once the gradients on the internal nodes of the computational graph are obtained, it is easy obtain the gradients on the parameter nodes. Look at [Deep Learning by Ian Goodfellow, Yoshua Bengio, Aaron Courville](https://www.amazon.ca/Deep-Learning-Ian-Goodfellow/dp/0262035618/ref=asc_df_0262035618/?tag=googleshopc0c-20&linkCode=df0&hvadid=706745562943&hvpos=&hvnetw=g&hvrand=4165137193847264239&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9000826&hvtargid=pla-416263148149&psc=1&mcid=d1d85934bcd73af29621fd70386e098c&gad_source=1), Chapter 10, page 386, to see calucaltions for $∇_{\bm c} L$, $∇_{\bm b} L$, $∇_{\bm V} L$, $∇_{\bm W} L$ and $∇_{\bm U} L$.
 
 
 ## Different Types of RNNs
@@ -1174,7 +1135,7 @@ RNNs could be used in a variety of tasks ranging from machine translation to cap
 
 Some examples of important design patterns for recurrent neural networks include the following:
 
-- Recurrent networks that produce an output at each time step and have recurrent connections between hidden units (many-to-many). The input and output size might be different. This is the simple RNN application. **Part-of-speech tagging** as sequence labeling is an application.
+- Recurrent networks that produce an output at each time step and have recurrent connections between hidden units (hidden-to-hidden). The input and output size might be different. This is the simple RNN application. **Part-of-speech tagging** as sequence labeling is an application.
 
     <p align="center">
         <img src="./assets/seq-models/part-of-speech-tagging-rnn.png" alt="drawing" width="400" height="300" style="center" />
@@ -1186,7 +1147,7 @@ Some examples of important design patterns for recurrent neural networks include
         <img src="./assets/seq-models/rnn-design1.png" alt="drawing" width="400" height="300" style="center" />
     </p>
 
-    The advantage of eliminating hidden-to-hidden recurrence is that, for any loss function based on comparing the prediction at time $t$ to the training target at time $t$, all the time steps are decoupled. Thus _training can thus be parallelized  (becuase previous hidden state not needed) and the gradient for each step can be computed in isolation_.,which results in a faster training process. However, since this network lacks hidden-to-hidden recurrence, it requires that the output units capture all of the information about the past that the network will use to predict the future. Because the output units are explicitly trained to match the training set targets, they are unlikely to capture the necessary information about the past history of the input, unless the user knows how to describe the full state of the system an provides it as part of the training set targets. This training technique is called **teacher forcing**. At train time, we feed the correct output $\bm y{(t)}$ (instead of $\bm h{(t)}$) drawn from the train set as input to $\bm h{(t+1)}$. When the model is deployed, the true output is generally not known. In this case, we approximate the correct output $\bm y^{(t)}$ with the model’s output $\bm o^{(t)}$, and feed the output back into the model. Teacher forcing is a very common technique for training that emerges from the maximum likelihood criterion, in which during training the model receives the ground truth output $\bm y{(t)}$ as input at time $t+1$. Teacher forcing is commonly used for training models with hidden-to-hidden connections, for example in langugage modeling: 
+    The advantage of eliminating hidden-to-hidden recurrence is that, for any loss function based on comparing the prediction at time $t$ to the training target at time $t$, all the time steps are decoupled. Thus _training can thus be parallelized  (because previous hidden state not needed!) and the gradient for each step can be computed in isolation_.,which results in a faster training process. However, since this network lacks hidden-to-hidden recurrence, it requires that the output units capture all of the information about the past that the network will use to predict the future. Because the output units are explicitly trained to match the training set targets, they are unlikely to capture the necessary information about the past history of the input, unless the user knows how to describe the full state of the system an provides it as part of the training set targets. This training technique is called **teacher forcing**. At train time, we feed the correct output $\bm y{(t)}$ (instead of $\bm h{(t)}$) drawn from the train set as input to $\bm h{(t+1)}$. When the model is deployed, the true output is generally not known. In this case, we approximate the correct output $\bm y^{(t)}$ with the model’s output $\bm o^{(t)}$, and feed the output back into the model. Teacher forcing is a very common technique for training that emerges from the maximum likelihood criterion, in which during training the model receives the ground truth output $\bm y{(t)}$ as input at time $t+1$. Teacher forcing is commonly used for training models with hidden-to-hidden connections, for example in **language modeling**. In these cases, target value $\bm y{(t)}$ at each time step becomes the input to the model at the next time step. 
 
     <p align="center">
         <img src="./assets/seq-models/language-model-rnn.png" alt="drawing" width="500" height="300" style="center" />
@@ -1194,7 +1155,7 @@ Some examples of important design patterns for recurrent neural networks include
 
     Source: [Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3)
 
-    In these cases, target value $\bm y{(t)}$ at eah time step becomes the input to the model at the next time step. 
+    
 
 - Recurrent networks with recurrent connections between hidden units that read an entire sequence and then produce a single output (many-to-one). Sentence classification is an application for this network.
 
@@ -1206,16 +1167,20 @@ Some examples of important design patterns for recurrent neural networks include
 
 ## Language Models and Text Generation
 
-Recall that we saw how to generate text from an n-gram language model by adapting a sampling technique. We first randomly sample a word to begin a sequence based on its suitability as the start of a sequence. We then continue to sample words conditioned on our previous choices until we reach a pre-determined length, or an end of sequence token is generated.
+Recall that we saw how to generate text from an $n$-gram language model by adapting a sampling technique. We first randomly sample a word to begin a sequence based on its suitability as the start of a sequence. We then continue to sample words conditioned on our previous choices until we reach a pre-determined length, or an end of sequence token is generated. Today, this approach of using a language model to incrementally generate words by repeatedly sampling the next word conditioned on our previous choices is called **autoregressive generation**  or **causal LM generation**. Technically an autoregressive model is a model that predicts a value at time $t$ based on a linear function of the previous values at times $t−1$, $t−2$, and so on. Although language models are not linear (since they have many layers of non-linearities), we loosely refer to this generation technique as autoregressive generation since the word generated at each time step is conditioned on the word selected by the network from the previous step. Text generation is of enormous practical importance, part of tasks like 
+- Question Answering, 
+- Machine Translation, 
+- Text Summarization, 
+- Grammar Correction, 
+- Story Generation, 
+- Conversational Dialogue
+ 
+Any task where a system needs to produce text, conditioned on some other text. This use of a language model to generate text is one of the areas in which the impact of neural language models on NLP has been the largest. Text generation, along with image generation and code generation, constitute a new area of AI that is often called **Generative AI**.
 
-Today, this approach of using a language model to incrementally generate words by repeatedly sampling the next word conditioned on our previous choices is called **autoregressive generation**  or **causal LM generation**. Technically an autoregressive model is a model that predicts a value at time $t$ based on a linear function of the previous values at times $t−1$, $t−2$, and so on. Although language models are not linear (since they have many layers of non-linearities), we loosely refer to this generation technique as autoregressive generation since the word generated at each time step is conditioned on the word selected by the network from the previous step.
 
-Text generation is of enormous practical importance, part of tasks like question answering, machine translation, text summarization, grammar correction, story generation, and conversational dialogue; any task where a system needs to produce text, conditioned on some other text. This use of a language model to generate text is one of the areas in which the impact of neural language models on NLP has been the largest. Text generation, along with image generation and code generation, constitute a new area of AI that is often called **generative AI**.
+How do you build a language model in English? To build a language model using a RNN, you will first need a training set comprising a **large corpus** of English text. The word corpus just means a large body or a very large number of English sentences. Let's say you have a sentence in your training set: "_cats average 15 hours of sleep a day_.". The first thing you would do is to **tokenize** the sentence: form a vocabulary, and then map each of these words to one-hot vectors or to indices in your vocabulary. Also model when sentences end commonly done by adding an extra token called `<EOS>` that stands for end of sentence. But `<EOS>` token can be appended to the end of every sentence in your training set if you want your model to explicitly capture when sentences end: "_cats average 15 hours of sleep a day_`<EOS>`". Having carried out the tokenization step, let's build an RNN to model the chance of these different sequences. 
 
-
-How do you build a language model in English? To build a language model using a RNN, you will first need a training set comprising a **large corpus** of English text. The word corpus just means a large body or a very large number of English sentences. Let's say you have a sentence in your training set: "_cats average 15 hours of sleep a day_.". The first thing you would do is to **tokenize** the sentence: form a vocabulary, and then map each of these words to one-hot vectors or to indices in your vocabulary. Also model when sentences end commonly done by adding an extra token called `<EOS>` that stands for end of sentence. But `<EOS>` token can be appended to the end of every sentence in your training set if you want your model to explicitly capture when sentences end: "_cats average 15 hours of sleep a day_`<EOS>`". Having carried out the tokenization step, let's build an RNN to model the chance of these different sequences. One of the things we'll see later is that you end up setting the inputs $\bm x^{(t)}$ to be equal to $\bm y^{(t-1)}$. 
-
-At time zero, set the initial state $\bm h_0 = \bm 0$ by convention. Also set the first input $\bm x^{(1)} = \bm 0$, zero vector. Model will make a Softmax prediction to try to figure out the probability of the first word $\bm y^{(1)}$. The Softmax generates the probability of any word in the dictionary to be the winning candidate for $\bm y^{(1)}$. In our example, this would be a 10,000 way Softmax output if you have 10,000 word vocabulary. Then the RNN steps forward to the next step and it tries to figure out what is the second word. But now we will also give it the correct first word as input (teacher forcing mentioned before). We'll tell it that the first word was actually "cats", so that's $\bm y^{(1)}$, so tell it cats. This is why $\bm y^{(1)}$ is equal to $\bm x^{(2)}$. At the second step, the output is again predicted by Softmax, the RNN's job is to predict what's the chance of it being whatever word it is, given what had come previously. In this case, the right answer was "average" since the sentence starts with "cats average". 
+At time zero, set the initial state $\bm h_0 = \bm 0$ by convention. Also set the first input $\bm x^{(1)} = \bm 0$, zero vector. Model will make a Softmax prediction to try to figure out the probability of the first word $\bm y^{(1)}$. The Softmax generates the probability of any word in the dictionary to be the winning candidate for $\bm y^{(1)}$. In our example, this would be a 10,000 way Softmax output if you have 10,000 word vocabulary. Then the RNN steps forward to the next step and it tries to figure out what is the second word. But now we will also give it the correct first word as input (teacher forcing mentioned before). We'll tell the model that the first word was actually "cats", so that's $\bm y^{(1)}$. This is why $\bm y^{(1)}$ is equal to $\bm x^{(2)}$. At the second step, the output is again predicted by Softmax. In this case, the right answer was "average" since the sentence starts with "cats average". 
 
 $$\bm y^{(2)} = P(\text{"average"} \; | \; \text{"cats"})$$
 
@@ -1242,13 +1207,13 @@ $$
 P(\bm {y}^{(t)}, ..., \bm {y}^{(τ)}) = \prod_{t=1}^τ P(\bm {y}^{(t)} | \bm {y}^{(t-1)}, \bm {y}^{(t-2)}, ..., \bm {y}^{(1)})
 $$
 
-where the right-hand side of the bar is empty for $t=1$ of course. For example, given a new sentence, say $\bm  y_1^{(t)}$, $\bm y_2^{(t)}$, $\bm y_3^{(t)}$, with just three words for simplicity, we have:
+where the right-hand side of the bar is empty for $t=1$, of course. For example, given a new sentence, say $\bm  y_1^{(t)}$, $\bm y_2^{(t)}$, $\bm y_3^{(t)}$, with just three words for simplicity, we have:
 
 $$
-P(\bm  y^{(t_1)}, \bm  y^{(t_2)}, \bm  y^{(t_3)}) = P(\bm  y^{(t_3)} \; | \; \bm  y^{(t_2)}, \bm  y^{(t_1)}) P(\bm  y^{(t_2)} \;| \;\bm  y^{(t_1)})P(\bm  y^{(t_1)})
+P(\bm  y^{(t_1)}, \bm  y^{(t_2)}, \bm  y^{(t_3)}) = P\big (\bm  y^{(t_3)} \; | \; \bm  y^{(t_2)}, \bm  y^{(t_1)}\big ) \; P\big (\bm  y^{(t_2)} \;| \;\bm  y^{(t_1)}\big )P\big (\bm  y^{(t_1)}\big )
 $$
 
-The first term on the right is the third Softmax, the second one is the second softmax and the third one is the first softmax. That's the basic structure of how you can train a language model using an RNN. 
+The first term on the right is the third Softmax, the second one is the second Softmax and the third one is the first Softmax. That's the basic structure of how you can train a language model using an RNN. 
 
 
 <p align="center">
@@ -1257,59 +1222,48 @@ The first term on the right is the third Softmax, the second one is the second s
 
 The edges in a graphical model indicate which variables depend directly on other variables. Many graphical models aim to achieve statistical and computational eﬃciency by omitting edges that do not correspond to strong interactions. For example, it is common to make the **Markov** assumption that the graphical model should only contain edges from $\bm  y^{(t-k)}, ..., \bm  y^{(t-1)}$ to $\bm y^{(t)}$ rather than containing edges from the entire past history. However, in some cases, we believe that all past inputs should have an influence on the next element of the sequence. RNNs are useful when we believe that the distribution over $\bm  y^{(t)}$ may depend on a value of $\bm  y^{(i)}$ from the distant past in a way that is not captured by the eﬀect of $\bm  y^{(i)}$ on $\bm y^{(t-1)}$. 
 
-It is more interesting to consider the graphical model structure of RNNs that results from regarding the hidden units $\bm  h^{(t)}$ as random variables. Including the hidden units in the graphical model reveals that the RNN provides a very eﬃcient parametrization of the joint distribution over the observations.
+It is more interesting to consider the graphical model structure of RNNs that results from regarding the hidden units $\bm  h^{(t)}$ as random variables. Including the hidden units in the graphical model reveals that the *RNN provides a very efficient parametrization of the joint distribution over the observations*. The parameter sharing used in recurrent networks relies on the assumption that the conditional probability distribution over the variables at time $t+1$ given the variables at time $t$ is **stationary**, meaning that the relationship between the previous time step and the next time step does not depend on $t$. In principle, it would be possible to use $t$ as an extra input at each time step and let the learner discover any time-dependence while sharing as much as it can between different time steps. This would already be much better than using a different conditional probability distribution for each $t$, but the network would then have to $t$ extrapolate when faced with new values of $t$.
 
-The parameter sharing used in recurrent networks relies on the assumption that the same parameters can be used for diﬀerent time steps. Equivalently, the assumption is that the conditional probability distribution over the variables at time $t+1$ given the variables at time $t$ is **stationary**, meaning that the relationship between the previous time step and the next time step does not depend on $t$. In principle, it would be possible to use t as an extra input at each time step and let the learner discover any time-dependence while sharing as much as it can between diﬀerent time steps. This would already be much better than using a diﬀerent conditional probability distribution for each t, but the network would then have to $t$ extrapolate when faced with new values of $t$.
-
-To complete our view of an RNN as a graphical model, we must describe how to draw samples from the model. The main operation that we need to perform is simply to sample from the conditional distribution at each time step. However, there is one additional complication. The RNN must have some mechanism for determining the length of the sequence.
-
-After you train a sequence model, one of the ways you can informally get a sense of what is learned is to have a sample novel sequences. First sample what is the first word you want your model to generate. For that you input the usual $\bm  x_1^{(t)} = 0$. And now your first time stamp will have some softmax probability over possible outputs. So you then randomly sample according to this softmax distribution. You take this vector and use, for example, the numpy command `np.random.choice` to sample according to distribution defined by this vector probabilities, and that lets you sample the first words. You then take the $\bm  y_1^{(t)}$ that you just sampled and pass that as the input to the next timestep and so on. 
-
-<!-- <p align="center">
-    <img src="./assets/seq-models/sampling-seq.png" alt="drawing" width="400" height="200" style="center" />
-</p> -->
-
-The RNN must have some mechanism for determining the length of the sequence. This can be achieved in various ways. If the end of sentence token is part of your vocabulary, you could keep sampling until you generate an `<EOS>` token and then the sampling process stops.  Or alternatively, you can also just decide to sample 20 words or 100 words or something, and then keep going until you've reached that number of time steps. And this particular procedure will sometimes generate an unknown word token. If you want to make sure that your algorithm never generates this token, one thing you could do is just reject any sample that came out as unknown word token and just keep resampling from the rest of the vocabulary until you get a word that's not an unknown word. Or you can just leave it in the output as well if you don't mind having an unknown word output. 
-
-Another way to determine the sequence length $τ$ is to add an extra output to the model that predicts the integer and then sample $τ$ itself. The model can sample a value of $τ$ steps worth of data. This approach requires adding an extra input to the recurrent update at each time step so that the recurrent update is aware of whether it is near the end of the generated sequence. This extra input can either consist of the value of $τ$ or can consist of $τ-t$, the number of remaining time steps. Without this extra input, the RNN might generate sequences that end abruptly, such as a sentence that ends before it is complete. This approach is based on the decomposition
+To complete our view of an RNN as a graphical model, we must describe how to draw samples from the model. The main operation that we need to perform is simply to sample from the conditional distribution at each time step. After you train a sequence model, one of the ways you can informally get a sense of what is learned is to have a sample novel sequences. First sample what is the first word you want your model to generate. For that you input the usual $\bm  x_1^{(t)} = 0$. And now your first time stamp will have some Softmax probability over possible outputs. So you then randomly sample according to this Softmax distribution. You take this vector and use, for example, the `numpy ` command `np.random.choice` to sample according to distribution defined by this vector probabilities, which lets you sample the first words. You then take the $\bm  y_1^{(t)}$ that you just sampled and pass that as the input to the next time step and so on. However, there is one additional complication. The RNN must have some mechanism for determining the length of the sequence. The RNN must have some mechanism for determining the length of the sequence. This can be achieved in various ways. If the end of sentence token is part of your vocabulary, you could keep sampling until you generate an `<EOS>` token and then the sampling process stops.  Or alternatively, you can also just decide to sample 20 words or 100 words or something, and then keep going until you've reached that number of time steps. Another way to determine the sequence length $τ$ is to add an extra output to the model that predicts the integer and then sample $τ$ itself. The model can sample a value of $τ$ steps worth of data. This approach requires adding an extra input to the recurrent update at each time step so that the recurrent update is aware of whether it is near the end of the generated sequence. This extra input can either consist of the value of $τ$ or can consist of $τ-t$, the number of remaining time steps. Without this extra input, the RNN might generate sequences that end abruptly, such as a sentence that ends before it is complete. This approach is based on the decomposition
 
 $$
 P(\bm  x^{(1)}, ..., \bm  x^{(τ)}) = P(τ)P(\bm  x^{(1)}, ..., \bm  x^{(τ)}\; | \;τ)
 $$
 
-### More about Sampling
+### Sampling
 
-As we mentioned, you can think of machine translation as building a conditional language model. In language modeling, the network could be based on a simple RNNs with $\bm x^{(t)} = \bm y^{(t-1)}$. And this model allows you to estimate the probability of a sentence $P(\bm y^{(1)},...,\bm y^{(t_y)})$ as described before. You could also use this model to generate novel sentences. The machine translation model has a encoder-decoder architecture because it needs to generate sequences of diffrent length. The decoder network looks pretty much identical to the language model that we had before. So machine translation model is very similar to the language model, except that instead of always starting with the vector of all zeros, it  with the output of the encoder (called conditioned on the encoder).  
+As we mentioned, you can *think of machine translation as building a conditional language model*. In language modeling, the network could be based on a simple RNNs with $\bm x^{(t)} = \bm y^{(t-1)}$. And this model allows you to estimate the probability of a sentence $P(\bm y^{(1)},...,\bm y^{(t_y)})$ as described before. You could also use this model to generate novel sentences. The machine translation model has a encoder-decoder architecture because it needs to generate sequences of different length. The decoder network looks pretty much identical to the language model that we had before. So machine translation model is very similar to the language model, except that instead of always starting with the vector of all zeros, it starts with the output of the encoder (called **conditioned on the encoder**).  
 
-Now, if you want to apply this model to actually translate a sentence from French into English, the model might tell you what is the probability of difference in corresponding English translations. So, $\bm x$ is the French sentence, "Jane visite l'Afrique en septembre." And, this now tells you what is the probability of different English translations of that French input. And, what you do not want is to sample outputs at random. If you sample words from this distribution, $P(\bm y|\bm x)$ maybe one time you get a pretty good translation, "Jane is visiting Africa in September." But, maybe another time you get a different translation, "Jane is going to be visiting Africa in September. " Which sounds a little awkward but is not a terrible translation, just not the best one. What you would like is to find the English sentence, $\bm y$, that maximizes that conditional probability. So in developing a machine translation system, one of the things you need to do is come up with an algorithm that can actually find the value of y that maximizes this term over here:
+Now, if you want to apply this model to actually translate a sentence from French into English, the model gives you the distribution of English words in the vocabulary at each time step. So, $\bm x$ is the French sentence, `Jane visite l'Afrique en septembre.` The model now tells you what is the probability of different English translations of that French input. You do not want to sample outputs at random at each time step, which is the greedy approach. If you sample words from this distribution, $P(\bm y|\bm x)$ maybe one time you get a pretty good translation, `Jane is visiting Africa in September.` But, maybe another time you get a different translation, `Jane is going to be visiting Africa in September.`, which sounds a little awkward but is not a terrible translation. What you exactly want is to find the English sentence, $\bm y$, that maximizes the conditional probability $P(\bm y^{(1)}, ..., \bm y^{(t_y)}| \bm x)$. So in developing a machine translation system, we need to come up with an algorithm that finds:
 
 $$
 \text{argmax}_{\bm y^{(1)}, ..., \bm y^{(t_y)}}P(\bm y^{(1)}, ..., \bm y^{(t_y)}| \bm x).
 $$
 
-The answer could be **beam search**. This can not be a greedy search. You canot find $\text{argmax}_{\bm y^{(1)}}P(\bm y^{(1)}| \bm x)$ and then $\text{argmax}_{\bm y^{(1)}, \bm y^{(2)}}P(\bm y^{(1)}, \bm y^{(2)}| \bm x)$ and so on. So, it's quite possible that if you just pick the third word based on whatever maximizes the probability of just the first three words, you end up choosing non optimal option . So, if you have just 10,000 words in a dictionary and if you're contemplating translations that are up to ten words long, then there are 10000 to the tenth possible sentences that are ten words long which is just a huge space of possible sentences, and it's impossible to rate them all, which is why the most common thing to do is use an approximate search algorithm. Even though it's not guaranteed to find the value of y that maximizes this, it usually does a good enough job. 
+The answer may not be a greedy search which first finds $\text{argmax}_{\bm y^{(1)}}P(\bm y^{(1)}| \bm x)$ and then finds $\text{argmax}_{\bm y^{(2)}}P(\bm y^{(2)}| \bm y^{(1)}, \bm x)$ and so on. Because it's quite possible that if you just pick the third word based on whatever maximized the probability of just the first two words, you end up choosing non optimal option. If you have just 10,000 words in a dictionary and if you're contemplating translations that are up to ten words long, then there are 10000 to the tenth possible sentences that are ten words long which is just a huge space of possible sentences, and it's impossible to rate them all, which is why it is more common to use an approximate search algorithm. Even though it's not guaranteed to find the value of $\bm y$s that maximizes the conditional probability, it usually does a good enough job such as the following one.
 
 #### Beam Search
 
-Beam search is the most widely used algorithm to get the best output sequence. It's a heuristic (approximate) search algorithm which is an improvement to greedy search algorithm. While greedy search will pick only the one most likely words at each step and move on, Beam Search instead can consider multiple alternatives. It has a parameter called B, which is called the beam width. This means that Beam search will consider not just one possibility but three at the time. 
+**Beam Search** is the most widely used algorithm to get the best output sequence. It's a heuristic (approximate) search algorithm which is an improvement to greedy search algorithm. While greedy search will pick only the one most likely words at each step and move on, Beam Search instead can consider multiple alternatives. It has a parameter called the *beam width* $B$.  To set $B=3$ means that Beam Search will consider not just one possibility but three at the time. Beam Search will keep in memory which were the top three choices from Softmax output of $\bm y^{(1)}$. For each of these three choices, Beam Search will consider what should be the second word. To evaluate the probability of second word, it will use the decoder portion to decide what comes after in. Beam Search will pick 3 of the pairs $\bm y^{(1)}, \bm y^{(2)}$ that maximize $p(\bm y^{(1)}, \bm y^{(2)} | \bm x)$ where $\bm x$ is input from the decoder. And so on. 
 
-Let's say evaluating this probability over different choices the first words, it finds that the choices in, Jane and September are the most likely three possibilities for the first words in the English outputs. Then Beam search will keep in memory which were the top three choices from softmax output of $\bm y^{(1)}$. For each of these three choices, Beam Search will consider what should be the second word. To evaluate the probability of second word, it will use the decoder portion to decide what comes after in. Beam Search will pick 3 of the pairs $\bm y^{(1)}, \bm y^{(2)}$ that maximize $p(\bm y^{(1)}, \bm y^{(2)} | \bm x)$ where $\bm x$ is input from the decoder. And so on ... . Note that 
-$$p(\bm y^{(1)}, \bm y^{(2)} | \bm x) = p(\bm y^{(2)}| \bm y^{(1)}, \bm x)p(\bm y^{(1)}| \bm x).$$
+>Recall that: $$p(\bm y^{(1)}, \bm y^{(2)} | \bm x) = p(\bm y^{(2)}| \bm y^{(1)}, \bm x)p(\bm y^{(1)}| \bm x),$$ where two terms on the right are model outputs. 
 
-The two terms on the right are model outputs. Finally, with $B=1$, Beam search is the same as Greedy search. The larger $B$ give better are results but it will be more computationally expensive. In practice, you might see in the production setting $B=10$. However, $B>100$ is uncommon. In preactice, we should calulate Log probabilities instead of probabilies themselves to **avoid underflow** because $P(\bm y^{(1)}, ..., \bm y^{(t)})$ is the product of many probabilities which might be very small numbers (near zero). 
+<br>
 
-##### Error Abalysis in Beam Search
+Finally, with $B=1$, Beam Search is the same as Greedy search - no effect. The larger $B$ gives better results but it will be more computationally expensive. In practice, you might see in the production setting $B=10$. However, $B>100$ is uncommon. As mentioned before, we should calculate log probabilities instead of probabilities themselves to **avoid underflow** because $P(\bm y^{(1)}, ..., \bm y^{(t)}\mid \bm x)$ is the product of many probabilities which might be very small numbers (near zero). 
 
-Beam Search doesnt always output the most likely sentence. Suppose Beam Search translation of the sentence x = "Jane visite l’Afrique en septembre" is y="Jane visited Africa last September" but the human answer is y*= "Jane visits Africa in September" which is right. So the result of the model is not satisfactory. There are two possible cases:
+#### Error Analysis in Beam Search
 
-- $P(\bm y^*|\bm x) > P(\bm {\hat y}|\bm x)$: means model is perfomring fine but Beam Search is not doing its job. So we need to fix Beam Search part
-- $P(\bm y^*|\bm x) \leq P(\bm {\hat y}|\bm x)$: means model is not performing to its best and its nothign about Beam Search to be fixed. Maybe we need to improve the model
+Beam Search doesnt always output the most likely sentence. Suppose Beam Search translation of the sentence x = `Jane visite l’Afrique en septembre` is y=`Jane visited Africa last September` but the human answer is y*= `Jane visits Africa in September` which is right. So the result of the model is not satisfactory. There are two possible cases:
+
+- $P(\bm y^*|\bm x) > P(\bm {\hat y}|\bm x)$: means model is performing fine but Beam Search is not doing its job. So we need to fix Beam Search part.
+- $P(\bm y^*|\bm x) \leq P(\bm {\hat y}|\bm x)$: means model is not performing to its best and its nothing about Beam Search to be fixed. Maybe we need to improve the model.
 
 It makes sense to collect more of these examples and investigate them before concluding which part is really at fault. 
 
 
 ## Modeling Sequences Conditioned on Context with RNNs
-In the previous section we described how an RNN could correspond to a directed graphical model over a sequence of random variables $\bm  y^{(t)}$ with no inputs $\bm x$. Of course, our development of RNNs included a sequence of inputs $\bm x^{(1)}$, $\bm x^{(2)}$,..., $\bm x^{(1)}$. In general, RNNs allow the extension of the graphical model view to represent not only a joint distribution over the $y$ variables but also a conditional distribution over $y$ given $x$. As discussed in the context of feedforward networks, any model representing a variable $P(\bm y ; \bm θ)$ can be reinterpreted as a model representing a conditional distribution $P(\bm y|\bm ω)$ with $\bm ω = \bm θ$. We can extend such a model to represent a distribution $P(\bm y|\bm x)$ by using the same $P(\bm y|\bm ω)$ as before, but making $\bm ω$ a function of $\bm x$. In the case of an RNN, this can be achieved in diﬀerent ways. We review here the most common and obvious choices. 
+We already described how an RNN could correspond to a directed graphical model over a sequence of random variables $\bm  y^{(t)}$ with no inputs $\bm x$. Of course, our development of RNNs included a sequence of inputs $\bm x^{(1)}$, $\bm x^{(2)}$,..., $\bm x^{(1)}$. In general, RNNs allow the extension of the graphical model view to represent not only a joint distribution over the $\bm y$ variables but also a conditional distribution over $\bm y$ given $\bm x$. As discussed in the context of feedforward networks, any model representing a variable $P(\bm y ; \bm θ)$ can be reinterpreted as a model representing a conditional distribution $P(\bm y|\bm ω)$ with $\bm ω = \bm θ$. We can extend such a model to represent a distribution $P(\bm y|\bm x)$ by using the same $P(\bm y|\bm ω)$ as before, but making $\bm ω$ a function of $\bm x$. In the case of an RNN, this can be achieved in diﬀerent ways. We review here the most common and obvious choices. 
 
 
 Previously, we have discussed RNNs that take a sequence of vectors $\bm x^{(t)}$ for $t= 1,...,τ$ as input. Another option is to take only a single vector $x$ as input. When $\bm x$ is a fixed-size vector, we can simply make it an extra input of the RNN that generates the $\bm y$ sequence. Some common ways of providing an extra input to an RNN are:
@@ -1317,66 +1271,60 @@ Previously, we have discussed RNNs that take a sequence of vectors $\bm x^{(t)}$
 2. as the initial state $\bm h(0)$
 3. both
 
-The interaction between the input $\bm x$ and each hidden unit vector $\bm h^{(t)}$ is parametrized by a newly introduced weight matrix $\bm R$ that was absent from the model of only the sequence of $y$ values. The same product $\bm x^T\bm R$ is added as additional input to the hidden units at every time step. We can think of the choice of $\bm x$ as determining the value of $\bm x^T\bm R$ that is eﬀectively a new bias parameter used for each of the hidden units. The weights remain independent of the input. We can think of this model as taking the parameters $\bm θ$ of the non-conditional model and turning them into ω, where the bias parameters within $\bm ω$ are now a function of the input.
-
-Shown in the picture below, an RNN that maps a fixed-length vector $\bm x$ into a distribution over sequences $Y$. This RNN is appropriate for tasks such as image captioning, where a single image is used as input to a model that then produces a sequence of words describing the image. Each element $\bm y^{(t)}$ of the observed output sequence serves both as input (for the current time step) and, during training, as target (for the previous time step).
-
-Rather than receiving only a single vector $\bm x$ as input, the RNN may receive a sequence of vectors $\bm x^{(t)}$ as input. The RNN described in equations (1) corresponds to a conditional distribution $P(\bm y^{(1)},..., \bm y^{(τ)} \;| \;\bm x^{(1)},..., \bm x^{(τ)})$ that makes a conditional independence assumption that this distribution factorizes as
-
-$$
-P(\bm y^{(1)},..., \bm y^{(τ)} \;| \;\bm x^{(1)},..., \bm x^{(τ)}) = \prod_t P(\bm y^{(t)} \;| \;\bm x^{(1)},..., \bm x^{(t)})
-$$
-
-To remove the conditional independence assumption, we can add connections from the output at time $t$ to the hidden unit at time $t+ 1$, as shown in figure below. The model can then represent arbitrary probability distributions over the y sequence. This kind of model representing a distribution over a sequence given another sequence still has one restriction, which is that the length of both sequences must be the same. We describe how to remove this restriction later.
+The interaction between the input $\bm x$ and each hidden unit vector $\bm h^{(t)}$ is parametrized by a newly introduced weight matrix $\bm R$ that was absent from the model of only the sequence of $\bm y$ values. The same product $\bm x^T\bm R$ is added as additional input to the hidden units at every time step. We can think of the choice of $\bm x$ as determining the value of $\bm x^T\bm R$ that is effectively a new bias parameter used for each of the hidden units. The weights remain independent of the input. We can think of this model as taking the parameters $\bm θ$ of the non-conditional model and turning them into $\bm ω$, where the bias parameters within $\bm ω$ are now a function of the input. Shown in the picture below, an RNN that maps a fixed-length vector $\bm x$ into a distribution over sequences $Y$. This RNN is appropriate for tasks such as image captioning, where a single image is used as input to a model that then produces a sequence of words describing the image. Each element $\bm y^{(t)}$ of the observed output sequence serves both as input (for the current time step) and, during training, as target (for the previous time step).
 
 <p align="center">
     <img src="./assets/seq-models/rnn-conditional.png" alt="drawing" width="400" height="400" style="center" />
 </p>
 
 
-The above RNN shows a conditional recurrent neural network mapping a variable-length sequence of $\bm x$ values into a distribution over sequences of $\bm y$ values of the same length. Compared to RNN in equations (1), this RNN contains connections from the previous output to the current state. These connections allow this RNN to model an _arbitrary distribution over sequences of $\bm y$ given sequences of $\bm x$ of the same length_. The RNN in equations (1) is only able to represent distributions in which they values are conditionally independent from each other given the values.
+Rather than receiving only a single vector $\bm x$ as input, the RNN may receive a sequence of vectors $\bm x^{(t)}$ as input. The RNN described in equations (1) corresponds to a conditional distribution $P(\bm y^{(1)},..., \bm y^{(τ)} \;| \;\bm x^{(1)},..., \bm x^{(τ)})$ that makes a *conditional independence assumption* that this distribution factorizes as
+
+$$
+P(\bm y^{(1)},..., \bm y^{(τ)} \;| \;\bm x^{(1)},..., \bm x^{(τ)}) = \prod_t P(\bm y^{(t)} \;| \;\bm x^{(1)},..., \bm x^{(t)})
+$$
+
+To remove the conditional independence assumption, we can add connections from the output at time $t$ to the hidden unit at time $t+ 1$, as shown in figure above. The model can then represent arbitrary probability distributions over the $\bm y$ sequence. This kind of model representing a distribution over a sequence given another sequence still has one restriction, which is that the length of both sequences must be the same. We describe how to remove this restriction later.
+
+
+<!-- 
+The above RNN shows a conditional recurrent neural network mapping a variable-length sequence of $\bm x$ values into a distribution over sequences of $\bm y$ values of the same length. Compared to RNN in equations (1), this RNN contains connections from the previous output to the current state. These connections allow this RNN to model an _arbitrary distribution over sequences of $\bm y$ given sequences of $\bm x$ of the same length_. The RNN in equations (1) is only able to represent distributions in which they values are conditionally independent from each other given the values. -->
 
 
 ## Bidirectional RNNs
 
-All of the recurrent networks we have considered up to now have a “causal” structure, meaning that the state at time $t$ only captures information from the past, $\bm x^{(1)}, ..., \bm x^{(t-1)}$, and the present input $\bm x^{(t)}$. Some of the models we have discussed also allow information from past $\bm y$ values to aﬀect the current state when the $\bm y$ values are available.
+All of the recurrent networks we have considered up to now have a **Causal Structure**, meaning that the state at time $t$ only captures information from the past, $\bm x^{(1)}, ..., \bm x^{(t-1)}$, and the present input $\bm x^{(t)}$. Some of the models we have discussed also allow information from past $\bm y$ values to aﬀect the current state when the $\bm y$ values are available. However, in many applications we want to output a prediction of $\bm y^{(t)}$ which may depend on the _whole input sequence_. For example, in speech recognition, the correct interpretation of the current sound as a phoneme may depend on the next few phonemes because of co-articulation and potentially may even depend on the next few words because of the linguistic dependencies between nearby words: if there are two interpretations of the current word that are both acoustically plausible, we may have to look far into the future (and the past) to disambiguate them. This is also true of handwriting recognition and many other sequence-to-sequence learning tasks. **Bidirectional recurrent neural networks (or bidirectional RNNs)** were invented to address that need. They have been extremely successful in applications where that need arises, such as handwriting recognition, speech recognition and bioinformatics.
 
-However, in many applications we want to output a prediction of $\bm y^{(t)}$ which may depend on the _whole input sequence_. For example, in speech recognition, the correct interpretation of the current sound as a phoneme may depend on the next few phonemes because of co-articulation and potentially may even depend on the next few words because of the linguistic dependencies between nearby words: if there are two interpretations of the current word that are both acoustically plausible, we may have to look far into the future (and the past) to disambiguate them. This is also true of handwriting recognition and many other sequence-to-sequence learning tasks. **Bidirectional** recurrent neural networks (or bidirectional RNNs) were invented to address that need. They have been extremely successful in applications where that need arises, such as handwriting recognition, speech recognition and bioinformatics.
-
-As the name suggests, bidirectional RNNs combine an RNN that moves forward through time beginning from the start of the sequence with another RNN that moves backward through time beginning from the end of the sequence. Figure below illustrates the typical bidirectional RNN, with $\bm h^{(t)}$ standing for the state of the sub-RNN that moves forward through time and $\bm g^{(t)}$ standing for the state of the sub-RNN that moves backward through time. This allows the output units to compute a representation that depends on both the past and the future but is most sensitive to the input values around time $t$, without having to specify a fixed-size window around $t$ (as one would have to do with a feedforward network, a convolutional network, or a regular RNN with a fixed-size look-ahead buﬀer).
+As the name suggests, bidirectional RNNs combine one RNN that moves forward through time beginning from the start of the sequence with another RNN that moves backward through time beginning from the end of the sequence. Figure below illustrates the typical bidirectional RNN, with $\bm h^{(t)}$ standing for the state of the sub-RNN that moves forward through time and $\bm g^{(t)}$ standing for the state of the sub-RNN that moves backward through time. This allows the output units to compute a representation that depends on both the past and the future but is most sensitive to the input values around time $t$, without having to specify a fixed-size window around $t$ (as one would have to do with a feedforward network, a convolutional network, or a regular RNN with a fixed-size look-ahead buﬀer). Thus at each point $\bm t$, the output units $\bm o(t)$ can benefit from a relevant summary of the past in its $\bm h(t)$ input and from a relevant summary of the future in its $\bm g^{(t)}$ input.
 
 <p align="center">
     <img src="./assets/seq-models/rnn-bidirectional.png" alt="drawing" width="350" height="500" style="center" />
 </p>
 
-Computation of a typical bidirectional recurrent neural network, meant to learn to map input sequences $\bm x$ to target sequences $\bm y$, with loss $L^{(t)}$ at each step $t$. Thus at each point $\bm t$, the output units $\bm o(t)$ can benefit from a relevant summary of the past in its $\bm h(t)$ input and from a relevant summary of the future in its $\bm g^{(t)}$ input.
 
-## The Challenge of Long-Term Dependencies
 
-RNNs allow us to capture dependancies within a short range and they take up less RAM than other n-gram models. However, there is mathematical challenges of learning long-term dependencies in recurrent networks. The basic problem is that gradients propagated over many stages tend to either vanish (most of the time) or explode (rarely, but with much damage to the optimization). Even if we assume that the parameters are such that the recurrent network is stable (can store memories, with gradients not exploding), the diﬃculty with long-term dependencies arises from the exponentially smaller weights given to long-term interactions (involving the multiplication of many Jacobians) compared to short-term ones.
+## The Challenge of Long-Term Dependencies in RNNs
 
-Recurrent networks involve the composition of the same function multiple times, once per time step. These compositions can result in extremely nonlinear behavior. In particular, the function composition employed by recurrent neural networks somewhat resembles matrix multiplication. We can think of the recurrence relation $\bm h^{(t)} = \bm W^T \bm h^{(t-1)}$ as a very simple recurrent neural network lacking a nonlinear activation function, and lacking inputs $\bm x$. This recurrence relation essentially describes the power method. It may be simplified to $\bm h^{(t)} = \bm (W^T)^t \bm h^{(0)}$, and if $\bm W$ admits an eigendecomposition of the form $\bm W = \bm Q \bm \Lambda \bm Q^T$. With orthogonal $\bm Q$, the recurrence may be simplified further to $\bm h^{(t)} = \bm Q \bm \Lambda^t \bm Q^T\bm h^{(0)}$. The eigenvalues are raised to the power of $t$ causing eigenvalues with magnitude less than one to decay to zero and eigenvalues with magnitude greater than one to explode. Any component of $\bm h^{(0)}$ that is not aligned with the largest eigenvector will eventually be discarded. Specifically, whenever the model is able to represent long term dependencies, the gradient of a long term interaction has exponentially smaller magnitude than the gradient of a short term interaction. It does not mean that it is impossible to learn, but that it might take a very long time to learn long-term dependencies, because the signal about these dependencies will tend to be hidden by the smallest fluctuations arising from short-term dependencies. 
+RNNs allow us to capture dependencies within a short range and they take up less RAM than other $n$-gram models. However, there is mathematical challenges of learning long-term dependencies in recurrent networks. The basic problem is that gradients propagated over many stages tend to either **vanish** (most of the time) or **explode** (rarely, but with much damage to the optimization). The difficulty with long-term dependencies arises from the exponentially smaller weights given to long-term interactions (involving the multiplication of many Jacobians) compared to short-term ones. Recurrent networks involve the composition of the same function multiple times, once per time step. These compositions can result in extremely nonlinear behavior. In particular, the function composition employed by recurrent neural networks somewhat resembles matrix multiplication. We can think of the recurrence relation $\bm h^{(t)} = \bm W^T \bm h^{(t-1)}$ as a very simple recurrent neural network lacking a nonlinear activation function, and lacking inputs $\bm x$. This recurrence relation essentially describes the power method. It may be simplified to $\bm h^{(t)} = \bm (W^T)^t \bm h^{(0)}$, and if $\bm W$ admits an eigendecomposition of the form $\bm W = \bm Q \bm \Lambda \bm Q^T$. With orthogonal $\bm Q$, the recurrence may be simplified further to $\bm h^{(t)} = \bm Q \bm \Lambda^t \bm Q^T\bm h^{(0)}$. The eigenvalues are raised to the power of $t$ causing eigenvalues with magnitude less than one to decay to zero and eigenvalues with magnitude greater than one to explode. Any component of $\bm h^{(0)}$ that is not aligned with the largest eigenvector will eventually be discarded. Specifically, whenever the model is able to represent long term dependencies, the gradient of a long term interaction has exponentially smaller magnitude than the gradient of a short term interaction. It does not mean that it is impossible to learn, but that it might take a very long time to learn long-term dependencies, because the signal about these dependencies will tend to be hidden by the smallest fluctuations arising from short-term dependencies. 
 
-In practice, as we increase the span of the dependencies that need to be captured, gradient-based optimization becomes increasingly diﬃcult, with the probability of successful training of a traditional RNN via SGD rapidly reaching 0 for sequences of only length 10 or 20. So it is more difficult for gradient singal to reach the begining of the sequence and then more difficult to reduce the error at each stage. 
+In practice, as we increase the span of the dependencies that need to be captured, gradient-based optimization becomes increasingly difficult, with the probability of successful training of a traditional RNN via SGD rapidly reaching 0 for sequences of only length 10 or 20. So it is more difficult for gradient signal to reach the beginning of the sequence and then more difficult to reduce the error at each stage. 
 
 
 ## The Long Short-Term Memory and Other Gated RNNs
 
-One of first attempts to obtain paths on which the product of derivatives is close to one is to have units with linear self-connections and a weight near one on these connections. When we _accumulate_ a running average $\mu^{(t)}$ of some value $v^{(t)}$ by applying the update $\mu^{(t)} \leftarrow \alpha\mu^{(t-1)} + (1-\alpha)v^{(t)}$ the $\alpha$ parameter is an example of a linear self-connection from $\mu^{(t-1)}$ to $\mu^{(t)}$. When $\alpha$ is near one, the running average remembers information about the past for a long time, and when α is near zero, information about the past is rapidly discarded. Hidden units with linear self-connections can behave similarly to such running averages. Such hidden units are called **leaky units**. The linear self-connection approach allows this eﬀect to be adapted more smoothly and flexibly by adjusting the real-valued α rather than by adjusting the integer-valued skip length.
-
-The most eﬀective sequence models derived from RNNs and used in practical applications are called **gated** RNNs. These include the _long short-term memory_ and networks based on the _gated recurrent unit_. Like leaky units, gated RNNs are based on the idea of creating paths through time that have derivatives that neither vanish nor explode. Leaky units did this with connection weights that were either manually chosen constants or were parameters. Gated RNNs generalize this to connection weights that may change at each time step.
+One of first attempts to obtain paths on which the product of derivatives is close to one is to have units with linear self-connections and a weight near one on these connections. When we _accumulate_ a running average $\mu^{(t)}$ of some value $v^{(t)}$ by applying the update $\mu^{(t)} \leftarrow \alpha\mu^{(t-1)} + (1-\alpha)v^{(t)}$ the $\alpha$ parameter is an example of a linear self-connection from $\mu^{(t-1)}$ to $\mu^{(t)}$. When $\alpha$ is near one, the running average remembers information about the past for a long time, and when α is near zero, information about the past is rapidly discarded. Hidden units with linear self-connections can behave similarly to such running averages. Such hidden units are called **leaky units**. The linear self-connection approach allows this eﬀect to be adapted more smoothly and flexibly by adjusting the real-valued $α$ rather than by adjusting the integer-valued skip length. The most eﬀective sequence models derived from RNNs and used in practical applications are called **Gated RNNs**. These include the _long short-term memory_ and networks based on the _gated recurrent unit_. Like leaky units, gated RNNs are based on the idea of creating paths through time that have derivatives that neither vanish nor explode. Leaky units did this with connection weights that were either manually chosen constants or were parameters. Gated RNNs generalize this to connection weights that may change at each time step.
 
 Leaky units allow the network to accumulate information (such as evidence for a particular feature or category) over a long duration. However, once that information has been used, it might be useful for the neural network to forget the old state. For example, if a sequence is made of sub-sequences and we want a leaky unit to accumulate evidence inside each sub-subsequence, we need a mechanism to forget the old state by setting it to zero. Instead of manually deciding when to clear the state, we want the neural network to learn to decide when to do it. This is what gated RNNs do.
 
-## LSTM
+## Long Short-Term Memory (LSTM)
 
-Introducing self-loops to produce paths where the gradient can flow for long durations is a core contribution of the initial long short-term memory (LSTM) model. A crucial addition has been to make the weight on this self-loop conditioned on the context, rather than fixed. By making the weight of this self-loop gated (controlled by another hidden unit), the time scale of integration can be changed dynamically.  LSTM recurrent networks have “LSTM cells” that have an internal recurrence (a self-loop), in addition to the outer recurrence of the RNN. 
+Introducing **self-loops** to produce paths where the gradient can flow for long durations is a core contribution of the initial **long short-term memory (LSTM)** model. A crucial addition has been to make the weight on this self-loop conditioned on the context, rather than fixed. By making the weight of this self-loop gated (controlled by another hidden unit), the time scale of integration can be changed dynamically.  LSTM recurrent networks have “LSTM cells” that have an internal recurrence (a self-loop), in addition to the outer recurrence of the RNN. 
 
 <p align="center">
     <img src="./assets/seq-models/lstm.png" alt="drawing" width="400" height="400" style="center" />
 </p>
 
-The most important component is the state unit $s_i^{(t)}$ that has a linear self-loop similar to the leaky units. However, here, the self-loop weight is controlled by a **forget gate** unit $f_i^{(t)}$, that sets this weight to a value between 0 and 1 via a sigmoid unit:
+The most important component is the **state unit $s_i^{(t)}$** that has a linear self-loop similar to the leaky units. However, here, the self-loop weight is controlled by a **forget gate unit $f_i^{(t)}$**, that sets this weight to a value between 0 and 1 via a sigmoid unit:
 
 $$
 f_i^{(t)} = \sigma \Big( b_i^f + \sum_j U^f_{i,j} x^{(t)}_j + \sum_j W^f_{i,j}h_j^{(t-1)}\Big)
@@ -1388,18 +1336,18 @@ $$
 s_i^{(t)} = f_i^{(t)} s_i^{(t-1)} + g_i^{(t)} \; \sigma \Big( b_i + \sum_j U_{i,j} x^{(t)}_j + \sum_j W_{i,j}h_j^{(t-1)}\Big)
 $$
 
-where $\bm b$, $\bm U$ and $\bm W$ respectively denote the biases, input weights and recurrent weights into the LSTM cell. Sigmoid can be replaced by `tanh()`. The external **input gate** unit $g_i^{(t)}$ is computed similarly to the forget gate (with a sigmoid unit to obtain a gating value between 0 and 1), but with its own parameters:
+where $\bm b$, $\bm U$ and $\bm W$ respectively denote the biases, input weights and recurrent weights into the LSTM cell. Sigmoid can be replaced by `tanh()`. The external **input gate unit $g_i^{(t)}$** is computed similarly to the forget gate (with a sigmoid unit to obtain a gating value between 0 and 1), but with its own parameters:
 
 $$
 g_i^{(t)} = \sigma \Big( b_i^g + \sum_j U^g_{i,j} x^{(t)}_j + \sum_j W^g_{i,j}h_j^{(t-1)}\Big)
 $$
 
-The output $\bm h_i^{(t)}$ of the LSTM cell can also be shut oﬀ, via the output gate $\bm q_i^{(t)}$ which also uses a sigmoid unit for gating:
+The output $\bm h_i^{(t)}$ of the LSTM cell can also be shut oﬀ, via the **output gate $\bm q_i^{(t)}$** which also uses a sigmoid unit for gating:
 
 \[
 \begin{equation*}
 \begin{split}
-h_i^{(t)} &= \text{tanh}(s_i^{(t)}) \; q_i^{(t)} \\
+h_i^{(t)} &= \text{tanh}(s_i^{(t)}) \; q_i^{(t)}, \\
 q_i^{(t)} &= \sigma \Big( b_i^o + \sum_j U^o_{i,j} x^{(t)}_j + \sum_j W^o_{i,j}h_j^{(t-1)}\Big)
 \end{split}
 \end{equation*}
@@ -1409,22 +1357,21 @@ which has parameters $\bm b^o$, $\bm U^o$, $\bm W^o$ for its biases, input weigh
 
 The LSTM allows your model to remember and forget certain inputs. It consists of a cell state and a hidden state with three gates. The gates allow the gradients to flow unchanged. You can think of the three gates as follows: 
 
-- **Input gate**: tells you how much information to input at any time point. 
-- **Forget gate**: tells you how much information to forget at any time point. 
-- **Output gate**: tells you how much information to pass over at any time point. 
+- **Input gate**: tells you how much of the current input which is exactly the same as what of the vanilla RNN loops into RNN cells every time, that is $\sigma \Big( b_i + \sum_j U_{i,j} x^{(t)}_j + \sum_j W_{i,j}h_j^{(t-1)}\Big)$ -- with `sigmoid` or `tanh` activation functions -- to let in at any time point . 
+- **Forget gate**: tells you how much information about the previous state unit $s_i^{(t-1)}$ to forget at any time point $t$. 
+- **Output gate**: tells you how much of the current state $s_i^{(t)}$ unit goes into next hidden state $h_i^{(t)}$ for the pass at the next time point $t+1$. 
 
 LSTM networks have been shown to learn long-term dependencies more easily than the simple recurrent architectures, first on artificial data sets designed for testing the ability to learn long-term dependencies, then on challenging sequence processing tasks where state-of-the-art performance was obtained.
 
-
 ## Gated Recurrent Units (GRU)
 
-Which pieces of the LSTM architecture are actually necessary? What other successful architectures could be designed that allow the network to dynamically control the time scale and forgetting behavior of diﬀerent units? Some answers to these questions are given with the recent work on gated RNNs, whose units are also known as gated recurrent units or GRUs. The main diﬀerence with the LSTM is that a single gating unit simultaneously controls the forgetting factor and the decision to update the state unit. Gated recurrent units are very similar to vanilla RNNs, except that they have a "relevance" and "update" gate that allow the model to update and get relevant information.
+Which pieces of the LSTM architecture are actually necessary? What other successful architectures could be designed that allow the network to dynamically control the time scale and forgetting behavior of diﬀerent units?  **Gated Recurrent Units (GRUs)** simplified LSTMs. *The main difference with the LSTM is that a single gating unit simultaneously controls the forgetting factor and the decision to update the state unit.* Gated recurrent units are very similar to vanilla RNNs, except that they have a "relevance" and "update" gate that allow the model to update and get relevant information.
 
 $$
 s_i^{(t)} = u_i^{(t-1)} h_i^{(t-1)} + (1-u_i^{(t-1)}) \; \sigma \Big( b_i + \sum_j U_{i,j} x^{(t-1)}_j + \sum_j W_{i,j}r_j^{(t-1)} h_j^{(t-1)}\Big)
 $$
 
-where $\bm u$ stands for “update” gate and $\bm r$ for “relevance” gate. Their value is defined as usual:
+where $\bm u$ stands for **update gate** and $\bm r$ for **relevance gate**. Their value is defined as usual:
 
 \[
 \begin{equation*}
@@ -1435,54 +1382,46 @@ r_i^{(t)} &= \sigma \Big( b^r_i + \sum_j U^r_{i,j} x^{(t+1)}_j + \sum_j W^r_{i,j
 \end{equation*}
 \]
 
-The relevance and updates gates can individually “ignore” parts of the state vector. The update gates act like conditional leaky integrators that can linearly gate any dimension, thus choosing to copy it (at one extreme of the sigmoid) or completely ignore it (at the other extreme) by replacing it by the new “target state” value (towards which the leaky integrator wants to converge). The relevance gates control which parts of the state get used to compute the next target state, introducing an additional nonlinear eﬀect in the relationship between past state and future state. The first gate $u$ allows you to decide how much you want to update the weights by. The second gate $r$, helps you find a relevance score. You can compute the new $h$ by using the relevance gate. Finally you can compute h, using the update gate. GRUs “decide” how to update the hidden state. GRUs help preserve important information.
-
-However, several investigations over architectural variations of the LSTM and GRU found no variant that would clearly beat both of these across a wide range of tasks.
+The relevance and updates gates can individually “ignore” parts of the state vector. The update gates act like conditional leaky integrators that can linearly gate any dimension, thus choosing to copy it (at one extreme of the sigmoid) or completely ignore it (at the other extreme) by replacing it by the new “target state” value (towards which the leaky integrator wants to converge). The relevance gates control which parts of the state get used to compute the next target state, introducing an additional nonlinear eﬀect in the relationship between past state and future state. The first gate $u$ allows you to decide how much you want to update the weights by. The second gate $r$, helps you find a relevance score. You can compute the new $h$ by using the relevance gate. Finally you can compute $h$, using the update gate. GRUs “decide” how to update the hidden state. GRUs help preserve important information. However, several investigations over architectural variations of the LSTM and GRU found no variant that would clearly beat both of these across a wide range of tasks.
 
 ## Clipping Gradients
 
-Strongly nonlinear functions such as those computed by a recurrent net over many time steps tend to have derivatives that can be either very large or very small in magnitude. This is illustrated in the following picture in which we see that the objective function (as a function of the parameters) has a “landscape” in which one finds “cliﬀs”: wide and rather flat regions separated by tiny regions where the objective function changes quickly, forming a kind of cliﬀ.
-
-Gradient descent without gradient clipping overshoots the bottom of this small ravine, then receives a very large gradient from the cliﬀ face. The large gradient catastrophically propels the parameters outside the axes of the plot. Gradient descent with gradient clipping has a more moderate reaction to the cliﬀ. While it does ascend the cliﬀ face, the step size is restricted so that it cannot be propelled away from steep region near the solution.
+Strongly nonlinear functions such as those computed by a recurrent net over many time steps tend to have derivatives that can be either very large or very small in magnitude. This is illustrated in the following picture in which we see that the objective function (as a function of the parameters) has a “landscape” in which one finds “cliffs”: wide and rather flat regions separated by tiny regions where the objective function changes quickly, forming a kind of cliff. Gradient descent without gradient clipping overshoots the bottom of this small ravine, then receives a very large gradient from the cliff face. The large gradient catastrophically propels the parameters outside the axes of the plot. Gradient descent with gradient clipping has a more moderate reaction to the cliff. While it does ascend the cliff face, the step size is restricted so that it cannot be propelled away from steep region near the solution.
 
 <p align="center">
     <img src="./assets/seq-models/grad-clipping.png" alt="drawing" width="400" height="400" style="center" />
 </p>
 
-One optionis to clip the parameter gradient from aminibatch element-wise just before the parameter update. Another is to clip the norm $||\bm g||$ of the gradient $\bm g$ just before the parameter update: if $||\bm g|| > v$ then $\bm g \leftarrow \frac{\bm g v}{||\bm g||}$ where $v$ is the norm threshold and $\bm g$ is used to update parameters. Because the gradient of all the parameters (including diﬀerent groups of parameters, such as weights and biases) is renormalized jointly with a single scaling factor, the latter method has the advantage that it guarantees that each step is still in the gradient direction, but experiments suggest that both forms work similarly.
-
-Traditional stochastic gradient descent uses an unbiased estimate of the gradient, while gradient descent with norm clipping introduces a heuristic bias that we know empirically to be useful. With element-wise clipping, the direction of the update is not aligned with the true gradient or the minibatch gradient, but it is still a descent direction.
+One option is to clip the parameter gradient from  a mini batch element-wise just before the parameter update. Another is to clip the norm $||\bm g||$ of the gradient $\bm g$ just before the parameter update: if $||\bm g|| > v$ then $\bm g \leftarrow \frac{\bm g v}{||\bm g||}$ where $v$ is the norm threshold and $\bm g$ is used to update parameters. Because the gradient of all the parameters (including different groups of parameters, such as weights and biases) is renormalized jointly with a single scaling factor, the latter method has the advantage that it guarantees that each step is still in the gradient direction, but experiments suggest that both forms work similarly. Traditional stochastic gradient descent uses an unbiased estimate of the gradient, while gradient descent with norm clipping introduces a heuristic bias that we know empirically to be useful. With element-wise clipping, the direction of the update is not aligned with the true gradient or the mini batch gradient, but it is still a descent direction.
 
 
 ## Encoder-Decoder Model with RNNs
 
-We have seen how an RNN can map an input sequence to a fixed-size vector. We have seen how an RNN can map an input sequence to an output sequence of the same length. Recall that in the sequence labeling task, we have two sequences, but they are the same length (for example in part-of-speech tagging each token gets an associated tag), each input is associated with a specific output, and the labeling for that output takes mostly local information. Thus deciding whether a word is a verb or a noun, we look mostly at the word and the neighboring words.
+We have seen how an RNN can map an input sequence to a fixed-size vector. We have seen how an RNN can map an input sequence to an output sequence of the same length. Recall that in the sequence labeling task, we have two sequences, but they are the same length (for example in part-of-speech tagging each token gets an associated tag), each input is associated with a specific output, and the labeling for that output takes mostly local information. Thus deciding whether a word is a verb or a noun, we look mostly at the word and the neighboring words. Here we discuss how an RNN model can be trained to map an input sequence to an output sequence which is not necessarily of the same length. **Encoder-decoder networks**, sometimes called **sequence-to-sequence networks**, are models capable of generating contextually appropriate, arbitrary length, output sequences given an input sequence. 
 
-Here we discuss how an RNN model can be trained to map an input sequence to an output sequence which is not necessarily of the same length. **Encoder-decoder networks**, sometimes called **sequence-to-sequence networks**, are models capable of generating contextually appropriate, arbitrary length, output sequences given an input sequence. Encoder-decoder networks have been applied to a very wide range of applications including summarization, question answering, speech recognition and dialogue, but they are particularly popular for machine translation. The key idea underlying these networks is the use of an encoder network that takes an input sequence and creates a contextualized representation of it, often called the **context**. We want to produce a representation of this context $C$ that summarize the input sequence $\bm X = (\bm x^{(1)}, ..., \bm x^{(n_x)})$. This representation is then passed to a decoder which generates a task- specific output sequence.
+Encoder-decoder networks have been applied to a very wide range of applications including summarization, question answering, speech recognition and dialogue, but they are particularly popular for machine translation. The key idea underlying these networks is the use of an encoder network that takes an input sequence and creates a *contextualized representation* of it, often called the **context**. We want to produce a representation of this context $C$ that summarize the input sequence $\bm X = (\bm x^{(1)}, \dots, \bm x^{(n_x)})$. This representation is then passed to a decoder which generates a task- specific output sequence. The idea of encoder-decoder or seq-to-seq architecture is very simple: 
 
-The idea of encoder-decoder or sequence-to-sequence architecture is very simple: 
-
-- An **encoder** or **reader** or **input RNN** that processes the input sequence and emits a sequence of contextualized representations $h_i$s (could be hidden states). LSTMs, CNNs, and transformers can all be employed as encoders.
+- An **encoder** or **reader** or **input RNN** that processes the input sequence $\bm X = (\bm x^{(1)}, ..., \bm x^{(n_x)})$ and emits a sequence of contextualized representations $h_i$s (could be hidden states). LSTMs, CNNs, and transformers can all be employed as encoders.
 
 - A **context vector**, $c$, which is a function of $h_i$s, and conveys the essence of the input to the decoder.
 
 - A **decoder** or **writer** or **output RNN** is conditioned on that fixed-length context vector $c$ to generate the output sequence $\bm Y = (\bm y^{(1)}, ..., \bm y^{(n_y)})$. The innovation of this kind of architecture over those presented in earlier sections of this chapter is that the lengths $n_x$ of input and $n_y$ of the output can vary from each other, while previous architectures constrained $n_x = n_y = τ$. 
 
-Example of an encoder-decoder or sequence-to-sequence RNN architecture, for learning to generate an output sequence $(\bm y^{(1)},...,\bm y^{(n_y)})$ given an input sequence $(\bm x^{(1)},\bm x^{(2)},...,\bm x^{(n_x)})$ is shown below. It is composed of an encoder RNN that reads the input sequence and a decoder RNN that generates the output sequence (or computes the probability of a given output sequence). The final hidden state of the encoder RNN is used to compute a generally fixed-size context variable C which represents a semantic summary of the input sequence and is given as input to the decoder RNN.
+Example of an encoder-decoder or seq-to-seq RNN architecture, for learning to generate an output sequence $(\bm y^{(1)},...,\bm y^{(n_y)})$ given an input sequence $(\bm x^{(1)},...,\bm x^{(n_x)})$ is shown below. 
+
+<!-- The final hidden state of the encoder RNN is used to compute a generally fixed-size context variable $C$ which represents a semantic summary of the input sequence and is given as input to the decoder RNN. -->
 
 <p align="center">
     <img src="./assets/seq-models/encoder-decoder.png" alt="drawing" width="400" height="400" style="center" />
 </p>
 
-In a sequence-to-sequence architecture, the two RNNs are trained jointly to maximize the average of 
+In a seq-to-seq architecture, the two RNNs are trained jointly to maximize the average of log likelihood
 
 $$
 \text{log} \; P(\bm y^{(1)},..., \bm y^{(n_y)} \;| \; \bm x^{(1)},...,\bm x^{(n_x)})
 $$
 
-over all the pairs of $\bm x$, $\bm y$ sequences in the training set. The last  state $\bm h^{(n_x)}$ of the encoder RNN is typically used as a representation $C$ of the input sequence that is provided as input to the decoder RNN. If the context $C$ is a vector, then the decoder RNN is simply a vector-to-sequence RNN as described before. As we have seen, there are at least two ways for a vector-to-sequence RNN to receive input. The input can be provided as the initial state of the RNN, or the input can be connected to the hidden units at each time step. These two ways can also be combined. There is no constraint that the encoder must have the same size of hidden layer as the decoder.
-
-The following figure shows translating a sentence at inference time for the basic RNN-based encoder-decoder architecture. The final hidden state of the encoder RNN, $h^e_n$, serves as the context for the decoder RNN, and is also made available to each decoder hidden state.
+over all the pairs ($\bm x$, $\bm y$) sequences in the training set. The last  state $\bm h^{(n_x)}$ of the encoder RNN is typically used as a representation $C$ of the input sequence that is provided as input to the decoder RNN. If the context $C$ is a vector, then the decoder RNN is simply a vector-to-sequence RNN as described before. As we have seen, there are at least two ways for a vector-to-sequence RNN to receive input. The input can be provided as the initial state of the RNN, or the input can be connected to the hidden units at each time step. These two ways can also be combined. There is no constraint that the encoder must have the same size of hidden layer as the decoder. The following figure shows translating a sentence at inference time for the basic RNN-based encoder-decoder architecture. The final hidden state of the encoder RNN, $h^e_n$, serves as the context for the decoder RNN, and is also made available to each decoder hidden state.
 
 <p align="center">
     <img src="./assets/seq-models/encoder-decoder-rnn.png" alt="drawing" width="600" height="400" style="center" />
@@ -1491,37 +1430,27 @@ The following figure shows translating a sentence at inference time for the basi
 Source: [Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3)
 
 
-One clear limitation of this architecture is when the context encoder RNN has a dimension that is too small to properly summarize a long sequence. Becuase of this flaw, only a fixed amont of information can be passed to decoder no matter how inofrmation exists in the encoder. So the power of seq-to-seq which allows variable sizes of input and output becomes less effective with this bottleneck. The result is lower model performance as the sequence size increases. In other words, one fixed size hidden state from encoder is that it struglles to compress longer sequences and it ends up throttling itself and punishing the decoder. This phenomenon known as **information bottleneck** was observed by Bahdanau et al. 2015 in the context of machine translation. They proposed to make $c$ a variable-length sequence rather than a fixed-size vector. Additionally, they introduced an **attention mechanism** that learns to associate elements of the sequence $C$ to elements of the output sequence.
-
-
-
+One clear limitation of this architecture is when the context encoder RNN has a dimension that is too small to properly summarize a long sequence. Because of this flaw, only a fixed amount of information can be passed to decoder no matter how information exists in the encoder. So the power of seq-to-seq which allows variable sizes of input and output becomes less effective with this bottleneck. The result is lower model performance as the sequence size increases. In other words, one fixed size hidden state from encoder is that it struggles to compress longer sequences and it ends up throttling itself and punishing the decoder. This phenomenon known as **information bottleneck** was observed by Bahdanau et al. 2015 in the context of machine translation. They proposed to make $c$ a _variable-length sequence_ rather than a fixed-size vector. Additionally, they introduced an **attention mechanism** that learns to associate elements of the sequence $C$ to elements of the output sequence.
 
 
 ## Seq-to-Seq Models with Attention Mechanisms
-Recurrent models typically take in a sequence in the order it is written and use that to output a sequence. Each element in the sequence is associated with its step in computation time $t$, i.e. if a word is in the third element, it will be computed at $t_3$. These models generate a sequence of hidden states $\bm h^{(t)}$, as a function of the previous hidden state $h^{(t−1)}$ and the input for position $t$. The sequential nature of models you learned before (RNNs, LSTMs, GRUs) make training slow and increases information loss for longer sequence lengths.
+Recurrent models typically take in a sequence in the order to output a sequence. These models generate a sequence of hidden states $\bm h^{(t)}$, as a function of the previous hidden state $h^{(t−1)}$ and the input at position $t$. The sequential nature of models them (RNNs, LSTMs, GRUs) make training slow and increases information loss for longer sequence lengths. Vanilla RNN Encoder-Decoder architecture passes only the last hidden state from the encoder to the decoder which leads to information loss. Information found early in the sequence tends to be “forgotten” after the entire sequence is processed. The addition of bi-directional layers remedies this for shorter sequences but the problem still persists for long input sequences.  The development of **attention** enables the decoder to attend to the whole sequence and thus use the context of the entire sequence during the decoding step. In 2014, Bahdanau, Cho, and Bengio (2014) proposed attention to fix the information loss problem that the early encoder-decoder architecture faced. 
 
-
-Vanilla RNN Encoder-Decoder architecture passes only the last hidden state from the encoder to the decoder. This leads to the problem that information has to be compressed into a fixed length vector and information can be lost in this compression. Especially information found early in the sequence tends to be “forgotten” after the entire sequence is processed. The addition of bi-directional layers remedies this by processing the input in reversed order. While this helps for shorter sequences, the problem still persists for long input sequences. The development of attention enables the decoder to attend to the whole sequence and thus use the context of the entire sequence during the decoding step.
+Decoders without attention are trained to predict  $(\bm y^{(1)}, ..., \bm y^{(t)})$. The fixed length context vector is computed with $c = q(\bm h^{(1)}, ..., \bm h^{(\tau)})$ are the the hidden states of the encoder for the input sequence $\bm x = (\bm x^{(1)}, ..., \bm x^{(\tau)})$ and $q$ is a non-linear function. Choosing $c = \bm h^{(\tau)}$ as a non-linear transformation remains a popular choice for architectures without attention. It is also commonly used for the initialization of the decoder hidden states. The hidden state  $\bm h^{(t)}$ has a strong focus on the $t$-th word in the input sequence and its surroundings. If a bi-directional encoder is used, each  $\bm h^{(t)}$ is computed by a concatenation of the forward $\overrightarrow{\bm {h^{(t)}}}$ and backward $\overleftarrow{\bm {h^{(t)}}}$ hidden states: $\bm h^{(t)}=[\overrightarrow{\bm {h^{(t)}}}; \overleftarrow{\bm {h^{(t)}}}]$ for $1,..., \tau$. 
 
 <p align="center">
     <img src="./assets/seq-models/flaw-seq-to-seq.png" alt="drawing" width="700" height="300" style="center" />
 </p>
 
-In 2014, Bahdanau, Cho, and Bengio (2014) proposed attention to fix the information problem that the early encoder-decoder architecture faced. Decoders without attention are trained to predict  $(\bm y^{(1)}, ..., \bm y^{(t)})$. The fixed length context vector is computed with $c = q(\bm h^{(1)}, ..., \bm h^{(\tau)})$ are the the hidden states of the encoder for the input sequence $\bm x = (\bm x^{(1)}, ..., \bm x^{(\tau)})$ and $q$ is a non-linear function. Sutskever, Vinyals, and Le (2014) for example used  $c = \bm h^{(\tau)}$ as their non-linear transformation which remains a popular choice for architectures without attention. It is also commonly used for the initialisation of the decoder hidden states. The hidden state  $\bm h^{(t)}$ has a strong focus on the $t$-th word in the input sequence and its surroundings. If a bi-directional encoder is used, each  $\bm h^{(t)}$ is computed by a concatenation of the forward $\overrightarrow{\bm {h^{(t)}}}$ and backward $\overleftarrow{\bm {h^{(t)}}}$ hidden states: $\bm h^{(t)}=[\overrightarrow{\bm {h^{(t)}}}; \overleftarrow{\bm {h^{(t)}}}]$ for $1,..., \tau$. 
-
-Attention was originally developed for machine translation, but it's since being used in many other domains with great success. Here's a comparison of the performance between different models from the Bahdanau paper using the bleu score, a performance metric that you'll learn about later. The dashed lines, they showed the scores for bidirectional seq-to-seq model as the length of the input sentence is increased. The 30 and 50 denotes the maximum sequence length used to train the models. 
+Attention was originally developed for machine translation, but it's since being used in many other domains with great success. Here's a comparison of the performance between different models from the Bahdanau paper using the **BLEU** ( (Bilingual Evaluation Understudy)) score as a performance metric. The dashed lines, they showed the scores for bidirectional seq-to-seq model as the length of the input sentence is increased. The 30 and 50 denotes the maximum sequence length used to train the models. 
 
 <p align="center">
     <img src="./assets/seq-models/seq-to-seq-attention.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
-The seq-to-seq models perform well when sentences have about 10-20 words, but they fall off beyond that. This is expected because seq-to-seq models must store the meaning of the entire input sequence, any single vector. The models developed in the paper, RNN search 13-15, use bidirectional encoders and decoders, but with attention. First, these models perform better than the traditional seq-to-seq models across all sentence length. The RNN search 50 model has basically no fall off in performance as sentence lengths increase. This is because the models are able to focus on specific inputs to predict words in the output translation, instead of having to memorize the entire input sentence. 
+The seq-to-seq models perform well when sentences have about 10-20 words, but they fall off beyond that. This is expected because seq-to-seq models must store the meaning of the entire input sequence, any single vector. The models developed in the paper, RNN search 13-15, use bidirectional encoders and decoders, but with attention. First, these models perform better than the traditional seq-to-seq models across all sentence length. The RNN search 50 model has basically no fall off in performance as sentence lengths increase. This is because the models are able to focus on specific inputs to predict words in the output translation, instead of having to memorize the entire input sentence. *Attention replaces the single context vector $c$ that a decoder uses by a sequence of context vectors $\bm c^{(t)}$s which are weighted sum of the encoder hidden states*. These weights are indications of how important some states are for the next decoder outputs based of the size of them. This way, the context vector holds more information about the most important words and less information about other words. 
 
-As explained before, traditional seq-to-seq models, use the final hidden states of the encoder as the initial hidden state of the decoder. This forces the encoder to store the meaning of the entire input sequence into this one hidden states. Instead of using only the final hidden states, you can pass all the hidden states to the decoder. However, this quickly becomes inefficient as you must retain the hidden states for each input step in memory. _Attention replaces the single context vector $c$ that a decoder uses by a sequence of context vectors $\bm c^{(t)}$s which are weighted sum of the encoder hidden states_. These weights are indications of how important some states are for the next decoder outputs based of the size of them. This way, the context vector holds more information about the most important words and less information about other words. 
-
-But how are these weights calculated to determine which input words are important at each step? The decoders previous hidden states, denoted as $\bm s^{(t'-1)}$, contains information about the previous words in the output translation. This means, you can compare the decoder states with each encoder state to determine the most important inputs. Intuitively, the decoder can set the weights such that if it focuses on only the most important inputs words for the next prediction, it decides which parts of the input sequence to pay attention to. The goal of the attention layer is to return a context vector that contains the relevant information from the encoder states. The first step is to calculate the **alignments**, $e_{tt'} = \text{score}(\bm s^{(t'-1)}, \bm h^{(t)})$, which is a score of how well the inputs around $t$ match the expected output around $t'$. The higher the match, the higher of this score is expected and as a resuult, the next word in the decoder's output will be more strongly influenced by this word than by other words in the sequence. 
-
-The simplest such score, called **dot-product attention**, implements relevance or alignment as similarity: measuring how similar the decoder hidden state $\bm s^{(t'-1)}$ is to an encoder hidden state $\bm h^{(t)}$, by computing the dot product between them:
+But how are these weights calculated to determine which input words are important at each step? The decoders previous hidden states, denoted as $\bm s^{(t'-1)}$, contains information about the previous words in the output translation. This means, you can compare the decoder states with each encoder state to determine the most important inputs. Intuitively, the decoder can set the weights such that if it focuses on only the most important input words for the next prediction, it decides which parts of the input sequence to pay attention to. The goal of the attention layer is to return a context vector that contains the relevant information from the encoder states. The first step is to calculate the **alignments**, $e_{tt'} = \text{score}(\bm s^{(t'-1)}, \bm h^{(t)})$, which is a score of how well the inputs around $t$ match the expected output around $t'$. The higher the match, the higher of this score is expected and as a resuult, the next word in the decoder's output will be more strongly influenced by this word than by other words in the sequence. The simplest such score, called **dot-product attention**, implements relevance or alignment as similarity: measuring how similar the decoder hidden state $\bm s^{(t'-1)}$ is to an encoder hidden state $\bm h^{(t)}$, by computing the dot product between them:
 
 $$\text{score}(\bm s^{(t'-1)}, \bm h^{(t)}) = \bm s^{(t'-1)} \cdot \bm h^{(t)}$$
 
@@ -1531,24 +1460,22 @@ When this scalar is normalized, it indicates how aligned the two vectors are. Th
     <img src="./assets/seq-models/attention-rnns.png" alt="drawing" width="700" height="300" style="center" />
 </p>
 
-It’s also possible to create more sophisticated scoring functions for attention models. Instead of simple dot product attention, we can get a more powerful function that computes the relevance of each encoder hidden state to the decoder hidden state using a feedforward neural network with the encoder and decoder hidden states as inputs, where the weights for the feedforward network are learned along with the rest of the seq-to-seq model. The scores are then normalized using the softmax function into weights $\alpha_{t,t'}$ called **alignment weights** which range from zero to one. This means the weights can be thought of as a probability distribution which sum to one. Finally, each encoder states is multiplied by its respective weights and sum together into one context vector $\bm c^{(t')}$:
+It’s also possible to create more sophisticated scoring functions for attention models. Instead of simple dot product attention, we can get a more powerful function that computes the relevance of each encoder hidden state to the decoder hidden state using a feedforward neural network with the encoder and decoder hidden states as inputs, where the weights for the feedforward network are learned along with the rest of the seq-to-seq model. The scores are then normalized using the Softmax function into weights $\alpha_{t,t'}$ called **alignment weights** which range from zero to one. This means the weights can be thought of as a probability distribution which sum to one. Finally, each encoder states is multiplied by its respective weights and sum together into one context vector $\bm c^{(t')}$:
 
 $$
 \bm c^{(t')} = \sum^{\tau}_{t=1} \alpha_{t,t'}h^{(t)},\\
 \alpha_{t,t'} = \frac{\exp(\text{score}(\bm s^{(t'-1)},\bm h^{(t)}))}{\sum_{t=1}^\tau\exp(\text{score}(\bm s^{(t'-1)},\bm h^{(t)}))},
 $$
 
-with $\bm s^{(t'-1)}$ being the hidden state of the decoder at time-step $t'-1$. Since the weights are the probability distribution, this is equivalent to calculating an expected value across word alignments. 
-
-<p align="center">
-    <img src="./assets/seq-models/seq-to-seq-attention3.png" alt="drawing" width="700" height="300" style="center" />
-</p>
-
-The normalized alignment score $\alpha_{t,t'}$ models how well input $\bm x^{(t)}$ and output $y^{(t)}$ match and assigns the weight to $\bm h^{(t)}$. At time-point $t'$, the decoder hidden state $\bm s^{(t')}$ is computed as $\bm s^{(t')} = f(\bm s^{(t'-1)}, \bm y^{(t'-1)}, \bm c^{(t')})$ is the function resulting from the use of a RNN, LSTM or GRU cell. Bahdanau, Cho, and Bengio (2014) parametrize their alignment score with a single-hidden-layer feed-forward neural network which is jointly trained with the other parts of the architecture. The score function used by Bahdanau et al. is given as
+with $\bm s^{(t'-1)}$ being the hidden state of the decoder at time-step $t'-1$. Since the weights are the probability distribution, this is equivalent to calculating an expected value across word alignments. The normalized alignment score $\alpha_{t,t'}$ models how well input $\bm x^{(t)}$ and output $y^{(t)}$ match and assigns the weight to $\bm h^{(t)}$. At time-point $t'$, the decoder hidden state $\bm s^{(t')}$ is computed as $\bm s^{(t')} = f(\bm s^{(t'-1)}, \bm y^{(t'-1)}, \bm c^{(t')})$ is the function resulting from the use of a RNN, LSTM or GRU cell. Bahdanau, Cho, and Bengio (2014) parametrize their alignment score with a single-hidden-layer feed-forward neural network which is jointly trained with the other parts of the architecture. The score function used by Bahdanau et al. is given as
 
 $$
 \text{score}(\bm s^{(t'-1)},\bm h^{(t)}) = V^T_\alpha\tanh(\bm W_\alpha[\bm s^{(t'-1)};\bm h^{(t)}]).
 $$
+
+<p align="center">
+    <img src="./assets/seq-models/seq-to-seq-attention3.png" alt="drawing" width="700" height="300" style="center" />
+</p>
 
 The attention model proposed by Bahdanau et al. is also called a **global attention model** as it attends to every input in the sequence. Another name this attention model is **soft attention** because the attention is spread thinly/weakly/softly over the input and does not have an inherent hard focus on specific inputs. A nice by-product of attention mechanisms is the matrix of alignment scores which can be visualised to show the correlation between source and target words:
 
@@ -1561,6 +1488,7 @@ Alignment Matrix visualised for a French to English translation. White squares i
 - We expect values along the diaogonal of the attention matrix to be the highest.
 
 See this notebook for a demonstration of training RNN based model with attention: [A mre modern implementation of a seq2seq model (for Spanish-to-English translation) roughly based on Effective Approaches to Attention-based Neural Machine Translation (Luong et al., 2015)](https://www.tensorflow.org/text/tutorials/nmt_with_attention) using TensorFlow.
+
 
 
 <!-- ## Train a RNN Neural Machine Translation with Attention
@@ -1654,54 +1582,65 @@ Also see [A more modern implementation of a seq2seq model (for Spanish-to-Englis
 
 As we saw, the concept of “attention” in deep learning has its roots in the effort to improve Recurrent Neural Networks (RNNs) for handling longer sequences. Remember that with RNNs, it is inevitable to take sequential steps to encode your inputs from the beginning and to make computations at every step until you reach the end. Then you decode the information following a similar sequential procedure in the decoder. The more words you have in the input sentence, the more time and memory it will take to process that sentence. On the other hand, the information tends to get lost within the network and vanishing gradients problems arise related to the length of your input sequences. LSTMs and GRUs help a little with these problems, but even those architectures stop working well when they try to  process very long sequences due to the information bottleneck.
 
-RNNs were, prior to Transformers, the state-of-the-art model for machine translation, language modeling and other NLP tasks. But the sequential nature of a RNN precludes parallelization within training examples. This becomes critical at longer sequence lengths as memory constraints limit batching across examples. While much has been done to minimize these problems, they are inherent in the architecture and thus still remain. RNNs process one token at a time in a sequence. To compute the hidden state at time step $t$, the model needs the hidden state from time step . That means:
+Even with attention mechanism added to seq-to-seq RNNs, they still suffer from another major drawback. The sequential nature of RNNs preclude parallelization within training examples, prevented them from being accelerated on GPUs. This becomes critical at longer sequence lengths as memory constraints limit batching across examples.  RNNs process one token at a time in a sequence. To compute the hidden state at time step $t$, the model needs the hidden state from time step $t-1$ . That means:
 - You must process $x_1$ → $x_2$ → $x_3$ → ... in order, since each depends on the previous.
-- You cannot compute $h_2$, $h_3$, or $h_4$ until h₁ is done.
+- You cannot compute $h_2$, $h_3$, or $h_4$ until $h_1$ is done.
 
-Because of this dependency chain, you can’t process the tokens in parallel for a single training sequence. In contrast, Transformers compute attention over all positions _simultaneously_, since they don’t depend on previous states in the same way. The Transformer is a purely attention based model that was developed at Google to remedy the problems with RNNs. No RNN is needed but Attention is all you need. In 2017, the transformer architecture introduced a standalone self-attention mechanism, eliminating the need for RNNs altogether. The self-attention mechanism enables the model to weigh the importance of different elements in an input sequence and dynamically adjust their influence on the output. This is especially important for language processing tasks, where the meaning of a word can change based on its context within a sentence or document Today, Transformer is the standard architecture for building large language models. RNNs were slow to train on long sequences. They could not fully exploit GPUs/TPUs, which are designed for parallel computation. Transformers replaced RNNs because they scale better thanks to this parallelizable architecture. Transformer-based large language models have completely changed the field of speech and language processing. Indeed, every coming topic from now on will make
-use of them. We’ll focus for now on left-to-right (sometimes called causal or autoregressive) language modeling, in which we are given a sequence of input tokens and predict output tokens one by one by conditioning on the prior context.
+Because of this dependency chain, you can’t process the tokens in parallel for a single training sequence. In contrast, **Transformers** compute attention over all positions _simultaneously_, since they don’t depend on previous states in the same way. The Transformer is a purely attention based model that was developed at Google to remedy the problems with RNNs. Prior to Transformers, RNNs were the state-of-the-art model for machine translation, language modeling and other NLP tasks. 
+
+In 2017, the original (100M-sized) encoder-decoder transformer model was proposed in the "Attention is all you need" paper. At the time, the focus of the research was on improving seq2seq for machine translation, by removing its recurrence to process all tokens in parallel, but preserving its dot-product attention mechanism to keep its text processing performance. This led to the introduction of a multi-head attention model that was easier to parallelize due to the use of independent heads and the lack of recurrence. Its parallelizability was an important factor to its widespread use in large neural networks. The transformer architecture introduced a standalone self-attention mechanism, eliminating the need for RNNs altogether. No RNN is needed. The self-attention mechanism enables the model to weigh the importance of different elements in an input sequence and dynamically adjust their influence on the output. This is especially important for language processing tasks, where the meaning of a word can change based on its context within a sentence or document. Today, Transformer is the standard architecture for building large language models. RNNs were slow to train on long sequences. They could not fully exploit GPUs/TPUs, which are designed for parallel computation. Transformers replaced RNNs because they scale better thanks to this parallelizable architecture. Transformer-based large language models have completely changed the field of speech and language processing. Indeed, every coming topic from now on will make use of them. We’ll focus for now on left-to-right (sometimes called causal or autoregressive) language modeling, in which we are given a sequence of input tokens and predict output tokens one by one by conditioning on the prior context.
 
 <!-- <p align="center">
     <img src="./assets/seq-models/transformer.png" alt="drawing" width="600" height="300" style="center" />
 </p> -->
 
-A transformer has three major components. At the center are columns of stacked transformer blocks. Each block is a multilayer network (a multi-head attention layer, feedforward networks and layer normalization steps) that maps an input vector $x_i$ in column $i$ (corresponding to input token i) to an output vector $h_i$. The set of $n$ blocks maps an entire context window of input vectors $(x_1,...,x_n)$ to a window of output vectors $(h_1,...,h_n)$ of the same length. A column might contain from 12 to 96 or more stacked blocks. The column of blocks is preceded by the input encoding component, which processes an input token into a contextual vector representation, using an embedding matrix $E$ and a mechanism for encoding token position. Each column is followed by a language modeling head, which takes the embedding output by the final transformer block, passes it through an embedding matrix $U$ and a softmax over the vocabulary to generate a single token for that column. 
+A transformer has three major components. At the center are columns of stacked **transformer blocks**. Each block is a multilayer network comprised of a **multi-head attention layer**, **feedforward network** and **layer normalization** steps that maps an input vector $x_i$ in column $i$ (corresponding to input token $i$) to an output vector $h_i$. The set of $n$ blocks maps an entire context window of input vectors $(x_1,...,x_n)$ to a window of output vectors $(h_1,...,h_n)$ of the **same length**. A column might contain from 12 to 96 or more stacked transformer blocks. The column of blocks is preceded by the input encoding component, which processes an input token into a contextual vector representation, using an **embedding matrix** $E$ and a mechanism for encoding **token position**. Each column is followed by a language modeling head, which takes the embedding output by the final transformer block, passes it through an embedding matrix $U$ and a Softmax over the vocabulary to generate a single token for that column. Therefore all transformers have the same primary components:
+
+- Tokenizers, which convert text into tokens.
+- Embedding layer, which converts tokens and positions of the tokens into vector representations.
+- Transformer layers, which carry out repeated transformations on the vector representations, extracting more and more linguistic information. These consist of alternating attention and feedforward layers. There are two major types of transformer layers: encoder layers and decoder layers, with further variants.
+- Un-embedding layer, which converts the final vector representations back to a probability distribution over the tokens.
 
 ## Transformer: Encoder-Decoder Architecture
 
-While the Transformer architecture doesn’t use recurrent or convolutional networks, it retains the popular encoder-decoder architecture. 
+While the original Transformer architecture doesn’t use recurrent or convolutional networks, it retains the popular encoder-decoder architecture like earlier seq2seq models. The encoder consists of encoding layers that process all the input tokens together one layer after another, while the decoder consists of decoding layers that iteratively process the encoder's output and the decoder's output tokens so far.
+
 
 <p align="center">
     <img src="./assets/seq-models/transformer-arch2.png" alt="drawing" width="400" height="500" style="center" />
 </p>
 
+The purpose of each **encoder layer** is to create **contextual representations** of the tokens, where each representation corresponds to a token that "mixes" information from other input tokens via self-attention mechanism. The encoder is composed of a stack of $N = 6$  identical layers. Each of these layers has two sub-layers:  
+- A multi-head self-attention mechanism
+- A position-wise fully connected feed-forward network
 
-
-
-The encoder is composed of a stack of $N = 6$  identical layers.
+Transformers can build contextual representations of word meaning, contextual embeddings, by integrating the meaning of these helpful contextual words. In a transformer, layer by layer, we build up richer and richer contextualized representations of the meanings of input tokens. At each layer, we compute the representation of a token $i$ by combining information about $i$ from the previous layer with information about the neighboring tokens to produce a contextualized representation for each word at each position. Attention is the mechanism in the transformer that weighs and combines the representations from appropriate other tokens in the context from layer $k−1$ to build the representation for tokens in layer $k$. The sub-layers have a **residual connection** around the main components which is followed by a **normalization layer**. The output of each sub-layer is $\text{LayerNorm}(x + \text{Sublayer}(x))$ where $\text{Sublayer}(x)$ is the output of the function of the sublayer itself. 
 
 <p align="center">
     <img src="./assets/seq-models/encoder-layer2.png" alt="drawing" width="300" height="300" style="center" />
 </p>
 
-Each of these layers has two sub-layers: 
-- A multi-head self-attention mechanism
-- A position-wise fully connected feed-forward network
+The **decoder** is composed of a stack of $N=6$ identical layers.  Each decoder layer contains two attention sublayers:
 
-Transformers can build contextual representations of word meaning, contextual embeddings, by integrating the meaning of these helpful contextual words. In a transformer, layer by layer, we build up richer and richer contextualized representations of the meanings of input tokens. At each layer, we compute the representation of a token $i$ by combining information about $i$ from the previous layer with information about the neighboring tokens to produce a contextualized representation for each word at each position. Attention is the mechanism in the transformer that weighs and combines the representations from appropriate other tokens in the context from layer $k−1$ to build the representation for tokens in layer $k$. The sub-layers have a residual connection around the main components which is followed by a normalization layer. The output of each sub-layer is $\text{LayerNorm}(x + \text{Sublayer}(x))$ where $\text{Sublayer}(x)$ is the output of the function of the sublayer itself. All sub-layers and the embedding layer before the encoder/decoder produce outputs of dimension 512 to allow these residual connections to work. The position-wise feed-forward network used in the sublayer is applied to each position separately and identically. This network consists of two linear transformations with a ReLU activation function in between.
+- **cross-attention** for incorporating the output of encoder (contextualized input token representations), and 
+- **masked self-attention** for "mixing" information among the input tokens to the decoder
 
-The decoder is composed of a stack of $N$ identical layers. 
+<!-- <p align="center">
+    <img src="./assets/seq-models/decoder-layer.png" alt="drawing" width="500" height="300" style="center" />
+</p> -->
+
+The **cross attention** sub-layer uses the encoder output as two of its three input values, which will be described in the next part of the chapter, for the multi-head attention. This sub-layer is in its function very close to the before seen attention mechanisms between encoders and decoders. It uses, same as the encoder, residual connections around each of the sub-layers.  
 
 <p align="center">
-    <img src="./assets/seq-models/decoder-layer.png" alt="drawing" width="500" height="300" style="center" />
+    <img src="./assets/seq-models/encoder-decoder2.png" alt="drawing" width="600" height="400" style="center" />
 </p>
 
-It inserts, in addition to the two already known sub-layers from the encoder, a third sub-layer which also performs multihead attention. This third sub-layer uses the encoder output as two of its three input values, which will be described in the next part of the chapter, for the multi-head attention. This sub-layer is in its function very close to the before seen attention mechanisms between encoders and decoders. It uses, same as the encoder, residual connections around each of the sub-layers.  The decoder also uses a modified, **masked self-attention** sub-layer to prevent positions from attending to subsequent positions - Vaswani et al. (2017). This, coupled with the fact that the output embeddings are shifted by one position to the right ensures that the predictions for position $i$ only depend on previous known outputs. The output of this layer become the third input value for the multi-head attention. This attention is called **cross attention** becuase it calulate attention between input (after encoding) and output after masking. 
+The decoder also uses a modified, **masked self-attention** sub-layer to prevent positions from attending to subsequent positions. This, coupled with the fact that the output embeddings are shifted by one position to the right ensures that the predictions for position $i$ only depend on previous known outputs. The output of this layer become the third input value for the multi-head attention. This attention is called **cross attention** because it calculates attention between input (after encoding) and output after masking. All sub-layers and the embedding layer before the encoder/decoder produce outputs of dimension 512 to allow these residual connections to work. The position-wise feed-forward network used in the sub-layer is applied to each position separately and identically. This network consists of two linear transformations with a ReLU activation function in between. 
 
 ## Self-attention: Queries, Keys, Values
 
 
-The follwoing figure shows information flow in **causal self-attention**. When processing each input $x_i$, the model attends to all the inputs up to, and including $x_i$. The arrows shows the inputs to each attention at evry position $i$.
+The following figure shows information flow in **causal self-attention**. When processing each input $x_i$, the model attends to all the inputs up to, and including $x_i$. The arrows shows the inputs to each attention at every position $i$.
 
 
 <p align="center">
@@ -1715,15 +1654,13 @@ The **attention head** allows us to distinctly represent three different roles t
 - And finally, as a **value** of a preceding element that gets weighted and summed up to compute the output for the current element.
 
 
-To capture these three different roles, transformers introduce weight matrices $\bm W_Q$, $\bm W_K$, and $\bm W_V$. These weights will project each input vector xi into a representation of its role as a key, query, or value:
+To capture these three different roles, transformers introduce weight matrices $\bm W_Q$, $\bm W_K$, and $\bm W_V$. These weights will project each input vector $\bm x_i$ into a representation of its role as a key, query, or value:
 
 - Query sequence: $\bm q_i=\bm x_i\bm W_Q$ 
 - Key sequence: $\bm k_i=\bm x_i\bm W_K$ 
 - Query sequence: $\bm v_i=\bm x_i\bm W_V$ 
 
-for every embedding input $\bm x_i$. The index $i$ refers to the token index position in the input sequence. Vectors $q_i$ and $k_i$ are of dimension $d_k$. The projection matrices $\bm W_Q$ and $\bm W_K$ have dimension $d\times d_k$, while $\bm W_V$ is of dimension $d\times d_v$. The embedding dimension $d$ represents the size of each word vector $\bm x_i$ in the embedding space, i.e. embedding dimension. 
-
-Given these projections, when we are computing the similarity of the current element $\bm x_i$ with some prior element $\bm x_j$, we’ll use the dot product between the current element’s query vector $\bm q_i$ and the preceding element’s key vector $\bm k_j$ for $j\leq i$. Furthermore, the result of a dot product can be an arbitrarily large (positive or negative) value, and exponentiating large values can lead to numerical issues and loss of gradients during training. To avoid this, we scale the dot product by a factor related to the size of the embeddings, via dividing by the square root of the dimensionality of the query and key vectors $d_k$. The ensuing softmax calculation resulting in $α_{ij}$ remains the same, but the output calculation for **head**$_i$ is now based on a weighted sum over the value vectors $\bm v$. This will lead to an atttenion type called **scale dot-product attention**.
+for every embedding input $\bm x_i$. The index $i$ refers to the token index position in the input sequence. Vectors $\bm q_i$ and $\bm k_i$ are of dimension $d_k$. The projection matrices $\bm W_Q$ and $\bm W_K$ have dimension $d\times d_k$, while $\bm W_V$ is of dimension $d\times d_v$. The embedding dimension $d$ represents the size of each word vector $\bm x_i$ in the embedding space, i.e. embedding dimension. Given these projections, when we are computing the similarity of the current element $\bm x_i$ with some prior element $\bm x_j$, we’ll use the dot product between the current element’s query vector $\bm q_i$ and the preceding element’s key vector $\bm k_j$ for $j\leq i$. Furthermore, the result of a dot product can be an arbitrarily large (positive or negative) value, and exponentiating large values can lead to numerical issues and loss of gradients during training. To avoid this, we scale the dot product by a factor related to the size of the embeddings, via dividing by the square root of the dimensionality of the query and key vectors $d_k$. The ensuing Softmax calculation resulting in $α_{ij}$ remains the same, but the output calculation for **head**$_i$ is now based on a weighted sum over the value vectors $\bm v$. This will lead to an attenion type called **scale dot-product attention**.
 
 Here’s a final set of equations for computing attention for a single causal attention output vector $\bm a_i$ from a single input vector $\bm x_i$. This version of attention computes $\bm a_i$ by summing the values of the prior elements, each weighted by the similarity of its key to the query from the current element:
 
@@ -1743,14 +1680,12 @@ The figure below shows calculating the value of $\bm a_3$, the third element of 
 <img src="./assets/seq-models/alignment-compute.png" alt="drawing" width="600" height="400" style="center" />
 </p>
 
-At the end, the attention head is multiplied by the matrix $\bm W_O$. This is necessary to reshape the output of the head. The input to attention $\bm x_i$ and the output from attention $\bm a_i$ both have the same dimensionality $[1 \times d]$. We often call $d$ the model dimensionality. Later we see that the output $h_i$ of each transformer block, as well as the intermediate vectors inside the transformer block also have the same dimensionality $[1 \times d]$. Having everything be the same dimensionality makes the transformer very modular.
+At the end, the attention head is multiplied by the matrix $\bm W_O$. This is necessary to reshape the output of the head. The input $\bm x_i$ to the attention and the output $\bm a_i$ from the attention both have the same dimensionality $[1 \times d]$. We often call $d$ the model dimensionality. Later we see that the output $h_i$ of each transformer block, as well as the intermediate vectors inside the transformer block also have the same dimensionality $[1 \times d]$. Having everything be the same dimensionality makes the transformer very modular.
 
 
 ### Multi-head Attention
 
-So far we have described a single attention head. But actually, transformers use multiple attention heads. The intuition is that each head might be attending to the context for different purposes: heads might be specialized to represent different linguistic relationships between context elements and the current token, or to look for particular kinds of patterns in the context. So in **multi-head attention**, we have $n$ separate attention heads that reside in parallel layers at the same depth in a model, each with its own set of parameters that allows the head to model different aspects of the relationships among inputs. Thus each **head**$_h$ in a self-attention layer has its own set of key, query and value matrices: $\bm W^h_{Q}, \bm W^h_{K}, \bm W^h_{V}$. These are used to project the inputs into separate key, value, and query embeddings for each head. 
-
-When using multiple heads the model dimension $d$ is still used for the input and output, the key and query embeddings have dimensionality $d_k$, and the value embeddings are of dimensionality $d_v$ (again, in the original transformer paper $d_k = d_v = 64, A= 8$, and $d= 512$). Thus for each **head**$_h$, we have weight layers $\bm W^h_Q$ of shape $d \times d_k$, $\bm W^h_K$ of shape $d \times d_k$, and $W^h_V$ of shape $d ×d_v$. Each attention head calulates its output the same way as described before: $\text{head}_h = \sum_{j\leq i} \alpha_{ij} \bm v_j$. 
+So far we have described a single attention head. But actually, transformers use multiple attention heads. The intuition is that each head might be attending to the context for different purposes: *each head might be specialized to represent different linguistic relationships between context elements and the current token, or to look for particular kinds of patterns in the context*. So in **multi-head attention**, we have $n$ separate attention heads that reside in parallel layers at the same depth in a model, each with its own set of parameters that allows the head to model different aspects of the relationships among inputs. Thus each **head**$_h$ in a self-attention layer has its own set of key, query and value matrices: $\bm W^h_{Q}, \bm W^h_{K}, \bm W^h_{V}$. These are used to project the inputs into separate key, value, and query embeddings for each head. When using multiple heads the model dimension $d$ is still used for the input and output, the key and query embeddings have dimensionality $d_k$, and the value embeddings are of dimensionality $d_v$ (again, in the original transformer paper $d_k = d_v = 64, A= 8$, and $d= 512$). Thus for each **head**$_h$, we have weight layers $\bm W^h_Q$ of shape $d \times d_k$, $\bm W^h_K$ of shape $d \times d_k$, and $W^h_V$ of shape $d ×d_v$. Each attention head calulates its output the same way as described before: $\text{head}_h = \sum_{j\leq i} \alpha_{ij} \bm v_j$. 
 
 $$
 \bm a_i = (\text{head}_1 \oplus \dots \oplus \text{head}_n) \bm W_o
@@ -1769,7 +1704,7 @@ The attention calculation lies at the core of what’s called a **transformer bl
 
 - A feedforward layer
 - Residual connections
-- Normalizing layers (colloquially called **layer norm**).
+- Normalizing layers (colloquially called layer norm).
 
 In the Transformer architecture, the Transformer blocks are stacked sequentially, layer by layer. Each block (also called a layer) takes the output of the previous layer as its input. That means:
 
@@ -1797,7 +1732,7 @@ Input Embeddings
 Final Output
 ```
 
-The input $\bm x_i$ at the bottom of the stream is an embedding for a token, which has dimensionality $d$. This initial embedding gets passed up (by **residual connections**), and is progressively added to by the other components of the transformer: the attention layer and a feedforward layer. Before the attention and feedforward layer is a computation called the **layer norm**. Thus the initial vector is passed through a layer norm and attention layer, and the result is added back into the stream, in this case to the original input vector $\bm x_i$. And then this summed vector is again passed through another layer norm and a feedforward layer, and the output of those is added back into the residual, and we’ll use $h_i$ to refer to the resulting output of the transformer block for token $i$. Residual connections were first successfully used in the CNNs architecture **ResNet** in form of skip connections which allowed training much deeper nets of stacked layers (strengthened backprop signals). 
+The input $\bm x_i$ at the bottom of the stream is an embedding for a token, which has dimensionality $d$. This initial embedding gets passed up (by **residual connections**), and is progressively added to by the other components of the transformer: the attention layer and a feedforward layer. Before the attention and feedforward layer is a computation called the **layer norm**. Thus the initial vector is passed through a layer norm and attention layer, and the result is added back into the stream, the original input vector $\bm x_i$. And then this summed vector is again passed through another layer norm and a feedforward layer, and the output of those is added back into the residual, and we’ll use $h_i$ to refer to the resulting output of the transformer block for token $i$. Residual connections were first successfully used in the CNNs architecture **ResNet** in form of skip connections which allowed training much deeper nets of stacked layers (strengthened backprop signals). 
 
 The **feedforward layer** is a fully-connected 2-layer network, i.e., one hidden layer, two weight matrices. The weights are the same for each token position $i$, but are different from layer to layer. It is common to make the dimensionality $dff$ of the hidden layer of the feedforward network be larger than the model dimensionality $d$. For example, in the original transformer model, $d= 512$ and $dff= 2048$.
 
@@ -1812,7 +1747,7 @@ $$
 
 That’s why it’s called _position-wise_ — it applies the same MLP to each token’s vector, independently of others. The FFN injects non-linearity with ReLU or GELU, allowing deeper function approximation. After attention mixes info across tokens, FFN lets each token transform its own representation independently. While attention mixes across time/position, FFN mixes across embedding dimensions (like a 1x1 conv).
 
-At two stages in the transformer block, we normalize the vector. This process, called **layer norm** (short for layer normalization), is one of many forms of normalization that can be used to improve training performance in deep neural networks by keeping the values of a hidden layer in a range that facilitates gradient-based training. Layer norm is a variation of the $z$-score from statistics, applied to _a single vector_ in a hidden layer. That is, the term layer norm is a bit confusing; layer norm is **not** applied to an entire transformer layer or over all tokens, but just to the embedding vector of a single token. Thus the input to layer norm is a single vector of dimensionality $d$ and the output is that vector normalized, again of dimensionality $d$. The first step in layer normalization is to calculate the mean, $\mu$, and standard deviation, $\sigma$ , over the elements of the vector to be normalized. Given an embedding vector $x$ of dimensionality $d$, these values are calculated as follows:
+At two stages in the transformer block, we normalize the vector. This process, called **layer norm** (short for layer normalization), is one of many forms of normalization that can be used to *improve training performance* in deep neural networks by keeping the values of a hidden layer in a range that facilitates gradient-based training. Layer norm is a variation of the $z$-score from statistics, applied to _a single vector_ in a hidden layer. That is, the term layer norm is a bit confusing; layer norm is **not** applied to an entire transformer layer or over all tokens, but just to the embedding vector of a single token. Thus the input to layer norm is a single vector of dimensionality $d$ and the output is that vector normalized, again of dimensionality $d$. The first step in layer normalization is to calculate the mean, $\mu$, and standard deviation, $\sigma$, over the elements of the vector to be normalized. Given an embedding vector $x$ of dimensionality $d$, these values are calculated as follows:
 
 $$
 \begin{align*}
@@ -1824,19 +1759,24 @@ $$
 Given these values, the vector components are normalized by subtracting the mean from each and dividing by the standard deviation. The result of this computation is a new vector with zero mean and a standard deviation of one:
 
 $$
-\hat x= \frac{\bm x - \bm \mu}{\bm \sigma}
+\hat x= \frac{ x -  \mu}{\sigma}
 $$
 
 Finally, in the standard implementation of layer normalization, two learnable parameters, $\gamma$ and $\beta$, representing gain and offset values, are introduced: 
 
 $$
-\text{LayerNorm}(\bm x) = \gamma \frac{\bm x - \bm \mu}{\bm \sigma} +\beta
+\text{LayerNorm}(\bm x) = \gamma \frac{ x -  \mu}{ \sigma} +\beta
 $$
 
-LayerNorm is position-agnostic and batch-agnostic, making it ideal for variable-length sequences for training transformers.
+LayerNorm is **position-agnostic** and **batch-agnostic**, making it ideal for variable-length sequences for training transformers.
 
-The function computed by a transformer block can be expressed by breaking it down with one equation for each component computation,
-using $t$ (of shape $1 ×d$) to stand for transformer and superscripts to demarcate each computation inside the block:
+<p align="center">
+<img src="./assets/seq-models/transformer_full_arc.png" alt="drawing" width="700" height="600" style="center" />
+</p>
+
+Source: [Wikipedia](https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)#) - This architecture uses the pre-LN convention, which is different from the post-LN convention used in the original 2017 Transformer. A 2020 paper found that using layer normalization *before* (instead of after) multihead attention and feedforward layers stabilizes training, not requiring learning rate warmup
+
+The function computed by a transformer block can be expressed by breaking it down with one equation for each component computation, using $t$ (of shape $1 ×d$) to stand for transformer and superscripts to demonstrate each computation inside the block:
 
 $$
 \begin{align*}
@@ -1849,15 +1789,11 @@ $$
 \end{align*}
 $$
 
-Notice that the only component that takes as input information from other tokens (other residual streams) is multi-head attention, which looks at all the neighboring tokens in the context. The output from attention, however, is then added into this token’s embedding stream. In fact, Elhage et al. (2021) show that we can view attention heads as literally moving information from the residual stream of a neighboring token into the current stream. The high-dimensional embedding space at each position thus contains information about the current token and about neighboring tokens, albeit in different subspaces of the vector space. 
-
-Crucially, the input and output dimensions of transformer blocks are matched so they can be stacked. Each token vector $x_i$ at the input to the block has dimensionality $d$, and the output $h_i$ also has dimensionality $d$. Transformers for large language models stack many of these blocks, from 12 layers (used for the T5 or GPT-3-small language models) to 96 layers (used for GPT-3 large), to even more for more recent models. 
+*Notice that the only component that takes as input information from other tokens (other residual streams) is multi-head attention*, which looks at all the neighboring tokens in the context. The output from attention, however, is then added into this token’s embedding stream. In fact, Elhage et al. (2021) show that we can view attention heads as literally moving information from the residual stream of a neighboring token into the current stream. The high-dimensional embedding space at each position thus contains information about the current token and about neighboring tokens, albeit in different subspaces of the vector space. Crucially, *the input and output dimensions of transformer blocks are matched so they can be stacked*. Each token vector $x_i$ at the input to the block has dimensionality $d$, and the output $h_i$ also has dimensionality $d$. Transformers for large language models stack many of these blocks, from 12 layers (used for the T5 or GPT-3-small language models) to 96 layers (used for GPT-3 large), to even more for more recent models. 
 
 #### Matrix Form of Computation
 
-This description of multi-head attention and the rest of the transformer block has been from the perspective of computing a single output at a single time step $i$ in a single residual stream. But as we pointed out earlier, the attention computation performed for each token to compute $\bm a_i$ is independent of the computation for each other token, and that’s also true for all the computation in the transformer block computing $\bm h_i$ from the input $\bm x_i$. That means we can easily parallelize the entire computation by taking advantage of efficient matrix multiplication  routines.
-
-Data enters the transformer block in the form of an input matrix $\bm X$ of dimension $N \times d$ whose rows are the embeddings for the N tokens of the input sequence. Each row of $\bm X$ is the embedding of one token of the input. Transformers for large language models commonly have an input length $N$ from 1K to 32K; much longer contexts of 128K or even up to millions of tokens can also be achieved with architectural changes like special long-context mechanisms. 
+So far the description of multi-head attention and the rest of the transformer block has been from the perspective of computing a single output at a single time step $i$ in a single residual stream. But as we pointed out earlier, the attention computation performed for each token to compute $\bm a_i$ is independent of the computation for each other token, and that’s also true for all the computation in the transformer block computing $\bm h_i$ from the input $\bm x_i$. That means we can easily parallelize the entire computation by taking advantage of efficient matrix multiplication  routines. Data enters the transformer block in the form of an input matrix $\bm X$ of dimension $N \times d$ whose rows are the embeddings for the N tokens of the input sequence. Each row of $\bm X$ is the embedding of one token of the input. Transformers for large language models commonly have an input length $N$ from 1K to 32K; much longer contexts of 128K or even up to millions of tokens can also be achieved with architectural changes like special long-context mechanisms. 
 
 For every head $i$, we multiply $\bm X$ by the key, query, and value matrices $\bm W_{Q_i}$ of shape $d \times d_k$, $\bm W_{K_i}$ of shape $d \times d_k$, and $W_{V_i}$ of shape $d \times d_v$, to produce matrices $\bm Q_i$ of shape $N \times d_k$, $\bm K_i$ of shape $N \times d_k$, and $\bm V_i$ of shape $N \times d_v$, containing all the key, query, and value vectors:
 
@@ -1869,13 +1805,12 @@ Given these matrices we can compute all the requisite query-key comparisons simu
 
 $$
 \begin{align*}
-\text{\bf head}_i &= \text{Attention}(\bm Q_i, \bm K_i, \bm V_i) = \text{softmax} \Big( \text{mask}\big(\frac{\bm Q_i \bm K_i^T}{\sqrt{d_k}} \big)\bm V_i \Big)
+\text{\bf head}_i &= \text{Attention}(\bm Q_i, \bm K_i, \bm V_i)  \\
+& = \text{softmax} \Big( \text{mask}\big(\frac{\bm Q_i \bm K_i^T}{\sqrt{d_k}} \big)\Big )\bm V_i
 \end{align*}
 $$
 
-The **mask** function is used for causal attention only. It just adds a mask matrix $\bm M$ in which $\bm M_{i j}=−\infty$,  $\forall j >i$ (i.e. for the upper-triangular portion) and $\bm M_{i j}= 0$ otherwise.  The elements in the upper-triangular portion of the matrix are set to $-\infty$, which the softmax will turn to zero, thus eliminating any knowledge of words that follow in the sequence. For self-attention, $\bm M= \bm 0$ so mask has no effect.
-
-Finally, we use a final linear projection $\bm W_O$ of shape $nd_v\times d$ (for $n$ heads), that reshape its input to the original dimension of the input data $\bm X$. Multiplying the concatenated $N \times nd_v$ matrix output by $\bm W^O$ of shape $nd_v \times d$ yields the attention output of shape $N \times d$:
+The **mask** function is used for causal attention only. It just adds a mask matrix $\bm M$ in which $\bm M_{i j}=−\infty$,  $\forall j >i$ (i.e. for the upper-triangular portion) and $\bm M_{i j}= 0$ otherwise.  The elements in the upper-triangular portion of the matrix are set to $-\infty$, which the softmax will turn to zero, thus eliminating any knowledge of words that follow in the sequence. For self-attention, $\bm M= \bm 0$ so mask has no effect. Finally, we use a final linear projection $\bm W_O$ of shape $nd_v\times d$ (for $n$ heads), that reshape its input to the original dimension of the input data $\bm X$. Multiplying the concatenated $N \times nd_v$ matrix output by $\bm W^O$ of shape $nd_v \times d$ yields the attention output of shape $N \times d$:
 
 $$
 \begin{align*}
@@ -1898,26 +1833,26 @@ $$
 
 ### Input Embeddings
 
-Given a sequence of $N$ tokens ($N$ is the context length in tokens), the matrix $\bm X$ of shape $N \times d$ has an embedding for each word in the context. The transformer does this by separately computing two embeddings: an input token embedding, and an input positional embedding. A token embedding is a vector of dimension $d$ that will be our initial representation for the input token. As we pass vectors up through the transformer layers in the residual stream, this embedding representation will change and grow, incorporating context and playing a different role depending on the kind of language model we are building. The set of initial embeddings are stored in the embedding matrix $\bm E$, which has a row for each of the $|V|$ tokens in the vocabulary. Thus each word is a row vector of $d$ dimensions, and $\bm E$ has shape $|V |\times d$. Given an input token string like `Thanks for all the`, we first convert the tokens into vocabulary indices (these were created when we first tokenized the input using BPE or SentencePiece). So the representation of thanks for all the might be $w = [5,4000,10532,2224]$. Next we use indexing to select the corresponding rows from $\bm E$, (row 5, row 4000, row 10532, row 2224). Another way to think about selecting token embeddings from the embedding matrix is to represent tokens as one-hot vectors of shape $1 ×|V |$, i.e., with one dimension for each word in the vocabulary. Recall that in a one-hot vector all the elements are 0 except one, the element whose dimension is the word’s index in the vocabulary, which has value 1. Multiplying by a one-hot vector simply selects out the relevant row vector for word $i$, resulting in the embedding for word $i$.
+Given a sequence of $N$ tokens ($N$ is the context length in tokens), the matrix $\bm X$ of shape $N \times d$ has an embedding for each word in the context. The transformer does this by separately computing two embeddings: an input **token embedding**, and an input **positional embedding**. A token embedding is a vector of dimension $d$ that will be our initial representation for the input token. As we pass vectors up through the transformer layers in the residual stream, this embedding representation will change and grow, incorporating context and playing a different role depending on the kind of language model we are building. The set of initial embeddings are stored in the **embedding matrix** $\bm E$, which has a row for each of the $|V|$ tokens in the vocabulary. Thus each word is a row vector of $d$ dimensions, and $\bm E$ has shape $|V |\times d$. Given an input token string like `Thanks for all the`, we first convert the tokens into vocabulary indices (these were created when we first tokenized the input using BPE or SentencePiece). So the representation of thanks for all the might be $w = [5,4000,10532,2224]$. Next we use indexing to select the corresponding rows from $\bm E$, (row 5, row 4000, row 10532, row 2224). Another way to think about selecting token embeddings from the embedding matrix is to represent tokens as one-hot vectors of shape $1 ×|V |$, i.e., with one dimension for each word in the vocabulary. Recall that in a one-hot vector all the elements are 0 except one, the element whose dimension is the word’s index in the vocabulary, which has value 1. Multiplying by a one-hot vector simply selects out the relevant row vector for word $i$, resulting in the embedding for word $i$. These token embeddings are not position-dependent. Transformers also incorporate a positional encoding stage which encodes each input position in the sequence. This is necessary because transformers do not use recurrent or convolutional neural networks which have order naturally built-in or respect the order. However, the word order is relevant for any word language. 
 
-
-These token embeddings are not position-dependent. Transformers also incorporate a positional encoding stage which encodes each input position in the sequence. This is necessary because transformers dont use recurrent or convolutional neural networks but the word order is relevant for any word language. To this end, some _positional encodings_ will be added to the input embeddings at the bottoms of the encoder and decoder stack. They have the same dimension $d$ as embedding.   To represent the position of each token in the sequence, we combine these token embeddings with positional embeddings specific to each position in an input sequence. Where do we get these positional embeddings? The simplest method, called *absolute position*, is to start with randomly initialized embeddings corresponding to each possible input position up to some maximum length. For example, just as we have an embedding for the word `fish`, we’ll have an embedding for the position 3. As with word embeddings, these positional embeddings are _learned_ along with other parameters during training. We can store them in a matrix $\bm E_{pos}$ of shape $N \times d$. To produce an input embedding that captures positional information, we just add the word embedding for each input to its corresponding positional embedding. The individual token and position embeddings are both of size $1 \times d$, so their sum is also $1 \times d$. This new embedding serves as the input for further processing. 
-
-
-A potential problem with the simple position embedding approach is that there will be plenty of training examples for the initial positions in our inputs and correspondingly fewer at the outer length limits. These latter embeddings may be poorly trained and may not generalize well during testing. An alternative is to choose a static function that maps integer inputs to real-valued vectors in a way that better handle sequences of arbitrary length. A combination of sine and cosine functions with differing frequencies was used in the original transformer work. Sinusoidal position embeddings may also help in capturing the inherent relationships among the positions, like the fact that position 4 in an input is more closely related to position 5 than it is to position 17.
-
-Among the choices for positional encodings (learned or fixed), Vaswani et al. (2017) chose the `sine` and `cosine` function of different frequencies for positional encodings:
+A positional encoding is a fixed-size vector representation of the relative positions of tokens within a sequence: it provides the transformer model with information about where the words are in the input sequence. This induces a bias towards the order of the input sequence, so that, for example, the input sequence `man bites dog` is processed differently from `dog bites man`.  The positional encoding is defined as a function of type $f:\mathbb {R} \to \mathbb {R} ^{d}$ where $d$ is a positive even integer. In the original paper, $f = \big(PE(t,2i), PE(t, 2i+1)\big)_{\{i=0,1,..., d/2-1\}}$, $\;$ where
 
 \[
 \begin{equation*}
 \begin{split}
-PE(pos, 2i) = \sin\Big(\frac{pos}{10000^{\frac{2i}{d}}}\Big),\\
-PE(pos, 2i+1) = \cos\Big(\frac{pos}{10000^{\frac{2i}{d}}}\Big),
+PE(t, 2i) = \sin\Big(\frac{t}{10000^{\frac{2i}{d}}}\Big),\\
+PE(t, 2i+1) = \cos\Big(\frac{t}{10000^{\frac{2i}{d}}}\Big),
 \end{split}
 \end{equation*}
 \]
 
-where $pos$ is the position 0, 1, 2, 3, ... and $i$ is the index of token $0,1,...,d$ in the embedding matrix. Note that for any fixed offset $k$, $PE(pos+k)$ is a linear function of $PE(pos)$.
+where $t$ is the position 0, 1, 2, 3, ... of token in the sequence and $i= 0,1,...,d/2-1$ in the embedding matrix. Number 10000 is chosen to be just significantly larger than the biggest $i$. Note that for any fixed offset $k$, $PE(t+k)$ is a linear function of $PE(t)$. This is the main reason for using this positional encoding function. The positional encodings will be added to the input embeddings at the bottoms of the encoder and decoder stack. They have the same dimension $d$ as embedding.  
+
+<!-- Where do we get these positional embeddings? The simplest method, called *absolute position*, is to start with randomly initialized embeddings corresponding to each possible input position up to some maximum length. For example, just as we have an embedding for the word `fish`, we’ll have an embedding for the position 3. As with word embeddings, these positional embeddings are _learned_ along with other parameters during training. We can store them in a matrix $\bm E_{pos}$ of shape $N \times d$. To produce an input embedding that captures positional information, we just add the word embedding for each input to its corresponding positional embedding. The individual token and position embeddings are both of size $1 \times d$, so their sum is also $1 \times d$. This new embedding serves as the input for further processing. A potential problem with the simple position embedding approach is that there will be plenty of training examples for the initial positions in our inputs and correspondingly fewer at the outer length limits. These latter embeddings may be poorly trained and may not generalize well during testing. An alternative is to choose a static function that maps integer inputs to real-valued vectors in a way that better handle sequences of arbitrary length. A combination of sine and cosine functions with differing frequencies was used in the original transformer work. Sinusoidal position embeddings may also help in capturing the inherent relationships among the positions, like the fact that position 4 in an input is more closely related to position 5 than it is to position 17. Among the choices for positional encodings (learned or fixed), Vaswani et al. (2017) chose the `sine` and `cosine` function of different frequencies for positional encodings:
+ -->
+
+
+
 
 All these features make transformer architecture easy to parallelize compared to RNN models so that it can be trained much more efficiently with multiple GPUs. It can also scale to learn multiple tasks on large datasets.
 
@@ -1931,14 +1866,7 @@ The last component of the transformer is the language modeling head. The job of 
 </p>
 
 Sources: [Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3)
- 
-
 See [Neural machine translation with a Transformer and Keras](https://www.tensorflow.org/text/tutorials/transformer) for a minimal but full implementation of Transformer architecture in TensorFLow.
-
-
-
-
-
 
 
 
@@ -1947,7 +1875,7 @@ See [Neural machine translation with a Transformer and Keras](https://www.tensor
 
 # Generative AI: Large Language Models
 
-Here is a collection of **foundation models**, sometimes called **base models** and their relative size in terms of #parameters which are based on transformers. Either using these models as they are or by applying fine tuning techniques to adapt them to your specific use case, you can rapidly build customize solutions without the need to train a model from scratch. _The input to LLM is called prompt and the output is called completion_.
+Here is a collection of some **foundation models**, sometimes called **base models** and their relative size in terms of #parameters which are based on transformers. Either using these models as they are or by applying fine tuning techniques to adapt them to your specific use case, you can rapidly build customize solutions without the need to train a model from scratch. _The input to LLM is called prompt and the output is called completion_.
 
 <p align="center">
     <img src="./assets/llm/llm-models.png" alt="drawing" width="600" height="300" style="center" />
