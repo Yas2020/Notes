@@ -1,0 +1,27 @@
+{
+    "workbench.editor.limit.value": 3,
+    "workbench.editor.pinnedTabSizing": "normal",
+    "markdown.extension.completion.enabled": true,
+    "markdown.extension.preview.autoShowPreviewToSide": false,
+    "markdown.extension.tableFormatter.normalizeIndentation": true,
+    "markdown-pdf.breaks": true,
+    "editor.fontSize": 14,
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+    "editor.fontFamily": "Arial, Menlo, Monaco, 'Courier New', monospace",
+    "editor.wordWrap": "on",
+    "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+    "markdown-preview-enhanced.hideDefaultVSCodeMarkdownPreviewButtons": true,
+    "markdown.preview.doubleClickToSwitchToEditor": false,
+    "markdown.preview.markEditorSelection": false,
+    "markdown.preview.scrollEditorWithPreview": false,
+    "markdown.preview.scrollPreviewWithEditor": false
+} // {
+//     "markdown.validate.enabled": false,
+//     "markdown.styles": [
+//         "css/style.css"
+//     ],
+//     "markdown-pdf.styles": [
+//         "css/style.css"
+//     ],
+//     "markdown-pdf.stylesRelativePathFile": true
+// }
