@@ -1620,7 +1620,7 @@ $$
 \mathbb E[L] = \int\int L(t, y(\bm x)) p(\bm x, t) d\bm xdt
 $$
 
-A common choice of loss function in regression problems is the squared loss given by $L(t, y(\bm x)) =\big( {y(\bm x)− t}\big) ^2$:
+A common choice of loss function in regression problems is the **squared loss** given by $L(t, y(\bm x)) =\big( {y(\bm x)− t}\big) ^2$:
 
 $$
 \mathbb E[L] = \int\int \big(y(\bm x)− t)^2 p(\bm x, t\big) d\bm xdt
@@ -1668,12 +1668,12 @@ $$
 \end{align*}
 $$
 
-The function $y(\bm x)$ we seek to determine enters only in the first term, which will be minimized when $y(\bm x)= \mathbb E[ t|\bm x]$, in which case this term will vanish. rgets, and is called the Bayes error. The estimator $y(\bm x)= \mathbb E_t[ t|\bm x]$ is the best we can ever hope to do with any learning algorithm. This is simply the result that we derived previously and that shows that the optimal least squares predictor is given by the conditional mean. The second term (called Bayes error) is the variance of the distribution of $t$, averaged over $\bm x$:
+The function $y(\bm x)$ we seek to determine enters only in the first term, which will be minimized when $y(\bm x)= \mathbb E[ t|\bm x]$, in which case this term will vanish. rgets, and is called the Bayes error. The estimator $y(\bm x)= \mathbb E_t[ t|\bm x]$ is the best we can ever hope to do with any learning algorithm. This is simply the result that we derived previously and that shows that the optimal least squares predictor is given by the conditional mean. The second term (called **Bayes error**) is the **variance of the distribution of $t$**, averaged over $\bm x$:
 \[
 \int \text{Var}(t \mid \bm x)  p(\bm x)d\bm x
 \]
 
-It represents the intrinsic variability of the target data and can be regarded as **noise**. Because it is independent of $y(\bm x)$, it represents the irreducible minimum value of the loss function. 
+It represents the intrinsic variability of the target data and can be regarded as **noise**. *Because it is independent of $y(\bm x)$, it represents the irreducible minimum value of the loss function*. 
 
 
 ## Entropy
@@ -2221,7 +2221,7 @@ This assumes that all labels are equally important, which may not be the case. O
 ### Performance Measures for Classification
 Evaluating a classifier is often significantly trickier than evaluating a regressor. 
 - **Accuracy**: Generally not the preferred performance measure for classifiers, especially when you are dealing with imbalanced dataset.
-- **Confusion Matrix**:  Counts the number of times instances of class A are classified as class B. Each row in a confusion matrix represents an actual class, while each column represents a predicted class. The confusion matrix  for a perfect classifier would have nonzero values only on its main diagonal! Confusion matrix is descriptive and does not provide a metric by its own. Analyzing the confusion matrix can often give you insights on ways to improve your classifier by analyzing the types of errors your model makes. (Diagnosis Tool)
+- **Confusion Matrix**:  Counts the number of times instances of class A are classified as class B. Each row in a confusion matrix represents an actual class, while each column represents a predicted class. *The confusion matrix  for a perfect classifier would have nonzero values only on its main diagonal! Confusion matrix is descriptive and does not provide a metric by its own. Analyzing the confusion matrix can often give you insights on ways to improve your classifier by analyzing the types of errors your model makes*.(Diagnosis Tool)
    
     ```python
     conf_mx = confusion_matrix(y_train, y_train_pred)
@@ -2296,13 +2296,11 @@ However, problems with least squares can be more severe than simply lack of robu
     <img src="./assets/machine-learning/ls-lr-classification.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
-The failure of least squares should not surprise us when we recall that it corresponds to maximum likelihood under the assumption of a Gaussian conditional distribution, whereas binary or one-hot target vectors clearly have a distribution that is far from Gaussian. By adopting more appropriate probabilistic models, we shall obtain classification techniques with much better properties than least squares. From historical point of view, there is another linear discriminant model called  **perceptron algorithm**. See p.192 in [Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf) for more. 
+The failure of least squares should not surprise us when we recall that it corresponds to maximum likelihood under the assumption of a Gaussian conditional distribution of the target $\bm t \mid \bm x$, whereas binary or one-hot target vectors clearly have a distribution that is far from Gaussian. By adopting more appropriate probabilistic models, we shall obtain classification techniques with much better properties than least squares. From historical point of view, there is another linear discriminant model called  **perceptron algorithm**. See p.192 in [Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf) for more. 
 
 ## Probabilistic Generative Models
 
-Here we shall adopt a generative approach in which we model the **class-conditional densities** $p(\bm x\mid C_k)$, as well as the class priors $p(C_k)$, and then use these to compute posterior probabilities $p(C_k \mid \bm x)$ through Bayes’ theorem. 
-
-First consider the case of two classes. The posterior probability for class $C_1$ can be written as
+Here we shall adopt a generative approach in which we model the **class-conditional densities** $p(\bm x\mid C_k)$, as well as the class priors $p(C_k)$, and then use these to compute posterior probabilities $p(C_k \mid \bm x)$ through Bayes’ theorem. First consider the case of two classes. The posterior probability for class $C_1$ can be written as
 
 $$
 \begin{align*}
@@ -2333,7 +2331,7 @@ which is known as the normalized exponential and can be regarded as a multiclass
 
 $$a_k = \ln p(\bm x \mid C_k)p(C_k)$$ 
 
-which are the unnormalized log probabilities called **logits**. To extract posterior probabilites from logits, we find their exponential followed by normalizationg which is what softmax does. We now investigate the consequences of choosing specific forms for the class-conditional densities, looking first at continuous input variables $\bm x$ and then discussing briefly the case of discrete inputs.
+which are the *unnormalized log probabilities* called **logits**. To extract posterior probabilites from logits, we find their exponential followed by normalizationg which is what softmax does. We now investigate the consequences of choosing specific forms for the class-conditional densities, looking first at continuous input variables $\bm x$ and then discussing briefly the case of discrete inputs.
 
 ### Continuous Inputs
 
@@ -2364,7 +2362,7 @@ w_0 & =  -\frac{1}{2} \bm \mu_1^T \Sigma^{-1} \bm \mu_1 + \frac{1}{2} \bm \mu_2^
 \end{align*}
 $$
 
-This result is illustrated for the case of a two-dimensional input space $x$ in the following figure. The left-hand plot shows the class-conditional densities for two classes, denoted red and blue. On the right is the corresponding posterior probability $p(C_1\mid \bm x)$, which is given by a logistic sigmoid of a linear function of $\bm x$. The surface in the right-hand plot is coloured using a proportion of red ink given by $p(C_1 \mid \bm x)$ and a proportion of blue ink given by $p(C_2\mid \bm x) = 1 − p(C_1 \mid \bm x)$.
+This result is illustrated for the case of a two-dimensional input space $\bm x$ in the following figure. The left-hand plot shows the class-conditional densities for two classes, denoted red and blue. On the right is the corresponding posterior probability $p(C_1\mid \bm x)$, which is given by a logistic sigmoid of a linear function of $\bm x$. The surface in the right-hand plot is coloured using a proportion of red ink given by $p(C_1 \mid \bm x)$ and a proportion of blue ink given by $p(C_2\mid \bm x) = 1 − p(C_1 \mid \bm x)$.
 
 <p align="center">
     <img src="./assets/machine-learning/generative-models-linear.png" alt="drawing" width="500" height="300" style="center" />
@@ -2392,7 +2390,7 @@ $$
 p(\bm x \mid C_k) = \prod_{j=1}^D p(x_j \mid C_k)
 $$
 
-The probabilities $p(x_j \mid C_k)$ could be modeled as 
+The probabilities $p(x_j \mid C_k)$ could be modeled as: 
 - Guassians (diagonal covariance matrix) for continous features:
     $$p(x_j \mid C_k) = \mathcal N(x_j \mid \mu_{jk}, \sigma_{jk}^2)$$
 
@@ -2486,7 +2484,7 @@ a_k(\bm x) = \ln p(C_k) + \sum_{i=1}^D (x_i\ln \mu_{ki} + (1-x_i) \ln(1-\mu_{ki}
 $$
 
 which again are linear functions of the input features $x_i$. Analogous results are obtained for discrete variables each of which can take M > 2 states. For both Gaussian distributed and discrete inputs, the posterior class probabilities are given by generalized linear models with logistic sigmoid (K=2 classes) or softmax (K 2 classes) activation functions. These are particular cases of a more general result obtained by assuming that the class-conditional densities $p(\bm x|C_k)$ are members of the exponential family of distributions. Many techniques are based on models for the class densities:
-- linear and quadratic discriminant analysis use Gaussian densities;
+- linear and quadratic discriminant analysis use Gaussian densities
 - more flexible mixtures of Gaussians allow for nonlinear decision boundaries
 - general nonparametric density estimates for each class density allow the most flexibility 
 - Naive Bayes models are a variant of the previous case, and assume that each of the class densities are products of marginal densities; that is, they assume that the features are conditionally independent in each class
@@ -2511,7 +2509,7 @@ $$
 p(\bm t \mid \bm w) = \prod_{n=1}^N  y_n^{t_n} (1-y_n )^{1-t_n}
 $$
 
-where $\bm t = (t_1, . . . , t_N )^T$ and $y_n = p(C_1 \mid φ_n) = \sigma(\bm w^T \phi_n)$. As usual, we can define an error function by taking the negative logarithm of the likelihood, which gives the **cross-entropy** error function in the form
+where $\bm t = (t_1, . . . , t_N )^T$ and $y_n = p(C_1 \mid \phi_n) = \sigma(\bm w^T \phi_n)$. As usual, we can define an error function by taking the negative logarithm of the likelihood, which gives the **cross-entropy** error function in the form
 
 $$
 E(\bm w) =− \ln p(\bm t\mid \bm w) =− \sum_{n=1}^N (t_n \ln y_n + (1− t_n) \ln(1− y_n) )
@@ -2523,7 +2521,7 @@ $$
 ∇_wE(\bm w) = \sum_{n=1}^N (y_n− t_n)\phi_n
 $$
 
-It is worth noting that maximum likelihood can exhibit severe overfitting for datasets that are linearly separable. This arises because the maximum likelihood solution occurs when the hyperplane corresponding to $σ = 0.5$, equivalent to $\bm w^T \phi=0$, separates the two classes and the magnitude of $\bm w$ goes to infinity to maximize the likelihood. In this case, the logistic sigmoid function becomes infinitely steep in feature space, corresponding to a Heaviside step function, so that every training point from each class $k$ is assigned a posterior probability $p(C_k|\bm x) = 1$ which is unstable and overfitting effect (not good generalizable). Note that the problem will arise even if the number of data points is large compared with the number of parameters in the model, so long as the training data set is linearly separable. The singularity can be avoided by inclusion of a prior and finding a MAP solution for $\bm w$, or equivalently by adding a regularization term to the error function. In general, MLE will try to maximize the likelihood at all costs, even if:
+It is worth noting that maximum likelihood can exhibit severe overfitting for datasets that are linearly separable. This arises because the maximum likelihood solution occurs when the hyperplane corresponding to $σ = 0.5$, equivalent to $\bm w^T \phi=0$, separates the two classes and the magnitude of $\bm w$ goes to infinity to maximize the likelihood. In this case, the logistic sigmoid function becomes infinitely steep in feature space, corresponding to a Heaviside step function, so that every training point from each class $k$ is assigned a posterior probability $p(C_k|\bm x) = 1$ which is unstable and overfitting effect (not good generalizable). Note that the problem will arise even if the number of data points is large compared with the number of parameters in the model, so long as the training data set is linearly separable. *The singularity can be avoided by inclusion of a prior and finding a MAP solution for $\bm w$, or equivalently by adding a regularization term to the error function*. In general, MLE will try to maximize the likelihood at all costs, even if:
 - It memorizes training data patterns
 - It leads to large weight magnitudes (sharp decision boundary)
 - Generalization to unseen data suffers
@@ -2642,7 +2640,7 @@ One major problem with trees is their high variance. Often a small change in the
 
 ## Bagging
 
-The simplest way to construct a ensemble is to average the predictions of a set of individual independent models. A common approach is to use the same training algorithm for every model, but to *train them on different random subsets of the training set*. Given we have only a single dataset, this allows us to introduce variability between the different models within the committee. One approach is to use *bootstrap datasets*. Consider a regression problem in which we are trying to predict the value of a single continuous variable, and suppose we generate $M$ bootstrap datasets and then use each to train a separate copy $y_m(\bm x)$ of a model where $m = 1, . . . , M$. The committee prediction is given by
+The simplest way to construct a ensemble is to average the predictions of a set of individual independent models. A common approach is to use the same training algorithm for every model, but to *train them on different random subsets of the training set*. Given we have only a single dataset, this allows us to introduce variability between the different models within the committee. One approach is to use **bootstrap datasets**. Consider a regression problem in which we are trying to predict the value of a single continuous variable, and suppose we generate $M$ bootstrap datasets and then use each to train a separate copy $y_m(\bm x)$ of a model where $m = 1, . . . , M$. The committee prediction is given by
 
 $$
 y_{\text{COM}} = \frac{1}{M}\sum_{m=1}^M y_m(\bm x)
@@ -2710,7 +2708,7 @@ AdaBoost reduces bias by making each classifier focus on previous mistakes. Frie
 
 ### Gradient Boosting Trees (XGBoost)
 
-**Gradient Boosting** works by sequentially adding predictors to an ensemble, each one correcting its predecessor. However, instead of tweaking the instance weights at every iteration like AdaBoost does, this method tries to _fit the new predictor to the residual errors made by the previous predictor_. Boosting trees also have extra parameters to induce more variability in predictors. Parameters like `subsample` hyperparameter, which specifies the fraction of training instances to be used for training each tree. For example, if `subsample=0.25`, then each tree is trained on 25% of the training instances, selected randomly. As you can probably guess by now, this trades a higher bias for a lower variance. An optimized implementation of Gradient Boosting is available in the popular python library **XGBoost**, which stands for _Extreme Gradient Boosting_. XGBoost aims at being extremely fast, scalable and portable. 
+**Gradient Boosting** works by sequentially adding predictors to an ensemble, each one correcting its predecessor. However, instead of tweaking the instance weights at every iteration like AdaBoost does, this method tries to **fit the new predictor to the residual errors made by the previous predictor**. Boosting trees also have extra parameters to induce more variability in predictors. Parameters like `subsample` hyperparameter, which specifies the fraction of training instances to be used for training each tree. For example, if `subsample=0.25`, then each tree is trained on 25% of the training instances, selected randomly. As you can probably guess by now, this trades a higher bias for a lower variance. An optimized implementation of Gradient Boosting is available in the popular python library **XGBoost**, which stands for _Extreme Gradient Boosting_. XGBoost aims at being extremely fast, scalable and portable. 
 
 XGBoost is a boosting algorithm where each training step will add one entirly new tree from scratch, so that at step $t$ the ensemble contains  $K=t$ trees. Mathematically, we can write our model in the form
 $$
@@ -2868,7 +2866,7 @@ $$
 \end{cases}
 $$
 
-where $t_i \in \{ -1, 1\}$.  Because the left side is not dependent on the length of $||\bm w||_2$, whatever the optimal value of $C$ is, we can write $C = \frac{1}{||\bm w||_2}$ for some $||\bm w||_2$. Therefore the above optimization objective is equivalent to 
+where $t_i \in \{ -1, 1\}$.  Because the left side is NOT dependent on the length of $||\bm w||_2$, whatever the optimal value of $C$ is, we can write $C = \frac{1}{||\bm w||_2}$ for some $||\bm w||_2$. Therefore the above optimization objective is equivalent to 
 
 $$
 \begin{cases}
@@ -2877,7 +2875,7 @@ $$
 \end{cases}
 $$
 
-Note that distant points $x^{(i)}$ to the line do not affect the solution of this problem so, we could remove them from the training set and the optimal $\bm w$ would be the same. The important training examples are the ones with algebraic margin 1, and are called _support vectors_. Hence, this algorithm is called the hard Support Vector Machine (SVM) (or Support Vector Classifier). SVM-like algorithms are often called max-margin or large-margin. The support vectors in hard SVM lie exactly on the margin boundaries:
+Note that distant points $\bm x^{(i)}$ to the line do not affect the solution of this problem so, we could remove them from the training set and the optimal $\bm w$ would be the same. The important training examples are the ones with algebraic margin 1, and are called _support vectors_. Hence, this algorithm is called the hard Support Vector Machine (SVM) (or Support Vector Classifier). SVM-like algorithms are often called max-margin or large-margin. The support vectors in hard SVM lie exactly on the margin boundaries:
 
 $$
 t^{(i)}(\bm w^T\bm x^{(i)}+b) = 1
@@ -3004,11 +3002,11 @@ f(x) = \bm w^T h(\bm x) + b & = \sum_i \hat \alpha_i t^{(i)} h(\bm x^{(i)})^Th(\
 \end{align*} 
 $$
 
-In fact, we need not specify the transformation $h(\bm x)$ at all, but require only knowledge of the kernel function $K(\bm x^{(i)}, \bm x^{(j)}) = \left< h(\bm x^{(i)}), h(\bm x^{(j)})\right>$ that computes inner products in the transformed space. $K$ should be a symmetric positive (semi-) definite function. Three popular choices for $K$ in the SVM literature are:
+In fact, we need not specify the transformation $h(\bm x)$ at all, but require only knowledge of the kernel function $K(\bm x^{(i)}, \bm x^{(j)}) = \left< h(\bm x^{(i)}), h(\bm x^{(j)})\right>$ that computes inner products in the transformed space. $K$ should be a **symmetric positive (semi-) definite** function. Three popular choices for $K$ in the SVM literature are:
 
-- $d$th-Degree polynomial: $K(x,x') = (1 + ⟨x,x'⟩)^d$
-- Radial basis: $K(x,x') = \exp(−γ∥x−x'∥^2)$,
-- Neural network: $K(x,x') = \tanh(κ_1⟨x,x'⟩+ κ_2)$
+- d-th degree polynomial: $K(x,x') = (1 + ⟨x,x'⟩)^d$
+- Radial Basis: $K(x,x') = \exp(−γ∥x−x'∥^2)$,
+- Neural Network: $K(x,x') = \tanh(κ_1⟨x,x'⟩+ κ_2)$
 
 
 
