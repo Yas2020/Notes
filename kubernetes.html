@@ -1,15 +1,16 @@
 <!DOCTYPE html><html><head>
-      <title>Kubernetes and Applications</title>
+      <title>kubernetes</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
       
       
       
       
       
       <style>
+
         body::after {
           content: "Created by Yas2020";
           position: fixed;
@@ -48,41 +49,41 @@
   font-family: 'Tangerine';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/tangerine/v17/IurY6Y5j_oScZZow4VOxCZZJ.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/tangerine/v18/IurY6Y5j_oScZZow4VOxCZZJ.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Ubuntu Mono';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/ubuntumono/v17/KFOjCneDtsqEr0keqCMhbCc6CsE.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/ubuntumono/v19/KFOjCneDtsqEr0keqCMhbCc6CsE.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;
   font-stretch: normal;
-  src: url(https://fonts.gstatic.com/s/opensans/v43/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4gaVc.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/opensans/v44/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4gaVc.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Kode Mono';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/kodemono/v2/A2BLn5pb0QgtVEPFnlYkkaoBgw4qv9odq5myxD2ZbA.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/kodemono/v4/A2BLn5pb0QgtVEPFnlYkkaoBgw4qv9odq5myxD2ZbA.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Cutive Mono';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/cutivemono/v21/m8JWjfRfY7WVjVi2E-K9H6RCTms.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/cutivemono/v23/m8JWjfRfY7WVjVi2E-K9H6RCTms.ttf) format('truetype');
 }
 .markdown-preview.markdown-preview {
   font-family: UbuntuMono, Open Sans, Fira Sans, serif;
-  font-size: 16px;
+  font-size: 18px;
 }
 .markdown-preview.markdown-preview.prince {
   font-family: UbuntuMono, Open Sans, Fira Sans, serif;
   line-height: 1.4;
-  font-size: 10pt;
+  font-size: 12pt;
   color: #000;
 }
 @page {
@@ -137,20 +138,26 @@
   /* Ensure title is on its own page */
 }
 .markdown-preview.markdown-preview h1 {
-  font-size: 30pt;
+  font-size: 50pt;
   color: #1a4fcc;
+  font-family: Open Sans;
+  text-shadow: 2px 2px 3px #aaa;
+  text-align: center;
   border-bottom-width: 1px;
 }
 .markdown-preview.markdown-preview h2 {
-  font-weight: 700;
+  font-size: 30pt;
+  font-weight: 500;
   color: #3f77e0;
 }
 .markdown-preview.markdown-preview h3 {
-  font-weight: 700;
+  font-size: 25pt;
+  font-weight: 500;
   color: #6da2f2;
 }
 .markdown-preview.markdown-preview h4 {
-  font-weight: 700;
+  font-size: 20pt;
+  font-weight: 500;
   color: #a9c8f8;
 }
 .markdown-preview.markdown-preview ul li {
@@ -447,14 +454,11 @@
 <li><a href="#rewriting-and-redirecting-traffic">Rewriting and Redirecting Traffic</a></li>
 </ul>
 </li>
-</ul>
-</li>
 <li><a href="#security-1">Security</a>
 <ul>
 <li><a href="#access-control">Access Control</a>
 <ul>
-<li><a href="#authentication-authn">Authentication (authn)</a>
-<ul>
+<li><a href="#authentication-authn">Authentication (authn)</a></li>
 <li><a href="#mutual-tls">Mutual TLS</a>
 <ul>
 <li><a href="#provisioning-identities-at-runtime">Provisioning Identities at Runtime</a></li>
@@ -481,12 +485,9 @@
 </li>
 </ul>
 </li>
-</ul>
-</li>
 <li><a href="#authenticating-users">Authenticating Users</a>
 <ul>
-<li><a href="#authorization-authz">Authorization (authz)</a>
-<ul>
+<li><a href="#authorization-authz">Authorization (authz)</a></li>
 <li><a href="#authorization-policies">Authorization Policies</a>
 <ul>
 <li><a href="#sources-identities-from-field">Sources Identities ("from" field)</a></li>
@@ -508,9 +509,9 @@
 <li><a href="#gateway-and-auth">Gateway and Auth</a></li>
 </ul>
 </li>
+<li><a href="#policy-storage">Policy storage</a></li>
 </ul>
 </li>
-<li><a href="#policy-storage">Policy storage</a></li>
 </ul>
 </li>
 <li><a href="#advanced-topics-for-istio">Advanced Topics for Istio</a>
@@ -604,14 +605,20 @@
 </li>
 </ul>
 </li>
-<li><a href="#kubernetes-on-linux">Kubernetes on Linux</a><br>
-- <a href="#metallb-installation">MetalLB Installation</a><br>
-- <a href="#installation---manifest">Installation - Manifest</a><br>
-- <a href="#configuration">Configuration</a><br>
-- <a href="#install-helm">Install Helm</a><br>
-- <a href="#useful-commands-for-kubernetes">Useful commands for Kubernetes:</a><br>
-- <a href="#kubectl-exec-syntax">kubectl exec Syntax</a>
+<li><a href="#kubernetes-on-linux">Kubernetes on Linux</a>
 <ul>
+<li><a href="#metallb-installation-load-balancer">MetalLB Installation (Load Balancer)</a>
+<ul>
+<li><a href="#installation---manifest">Installation - Manifest</a></li>
+<li><a href="#configuration">Configuration</a></li>
+</ul>
+</li>
+<li><a href="#install-helm">Install Helm</a></li>
+<li><a href="#useful-commands-for-kubernetes">Useful commands for Kubernetes:</a>
+<ul>
+<li><a href="#kubectl-exec-syntax">kubectl exec Syntax</a></li>
+</ul>
+</li>
 <li><a href="#how-to-find-unused-ip-address-on-my-network">How to find unused IP address on my network?</a></li>
 </ul>
 </li>
@@ -2344,7 +2351,7 @@ spec:
 </code></pre><p>The redirect and destination fields are mutually exclusive. If we use the redirect, there is no need to set the destination.</p>
 <hr>
 <hr>
-<h1 id="security-1">Security </h1>
+<h2 id="security-1">Security </h2>
 <p>Security in Istio involves multiple components:</p>
 <ul>
 <li>A Certificate Authority (CA) for key and certificate management</li>
@@ -2359,14 +2366,14 @@ spec:
 <li>A set of Envoy proxy extensions to manage telemetry and auditing.</li>
 </ul>
 <p>The control plane handles configuration from the API server and configures the PEPs in the data plane. The PEPs are implemented using Envoy.</p>
-<h2 id="access-control">Access Control </h2>
+<h3 id="access-control">Access Control </h3>
 <p>The question access control tries to answer is: can a principal perform an action on an object? For example, consider the following two questions:</p>
 <ul>
 <li>Can a user delete a file?</li>
 <li>Can a user execute a script?</li>
 </ul>
 <p>The user in the above example is the principal, actions are deleting and executing, and an object is a file and a script. If we stated a similar example using Kubernetes and Istio, we would ask: "Can service A perform an action on service B?" The key terms are <strong>authentication</strong> and <strong>authorization</strong> when discussing security and answering the access control question.</p>
-<h3 id="authentication-authn">Authentication (authn) </h3>
+<h4 id="authentication-authn">Authentication (authn) </h4>
 <p>Authentication is all about the principal or, in our case, about services and their identities. It’s an act of validating a credential and ensuring the credential is valid and authentic. Once the authentication is performed, we can say that we have an authenticated principal.</p>
 <p>In Kubernetes, each workload automatically gets assigned a unique identity. This identity is used when workloads communicate. The identity in Kubernetes takes the form of a Kubernetes <strong>service account</strong>. The pods in Kubernetes use the service account as their identity and present it at runtime. Specifically, Istio uses the <strong>X.509 certificate</strong> from the service account, creating a new identity according to the specification called <strong>SPIFFE</strong> (Secure Production Identity Framework For Everyone). SPIFFE&nbsp; defines a universal naming scheme that’s based on a URI. For example <code>spiffe://cluster.local/ns/default/sa/my-service-account</code>. The spec describes how to take the identity and encode it into different documents. The document we care about in this case is the X.509 certificate.</p>
 <p>Based on the SPIFFE specification, when we create an X.509 certificate and fill out the <strong>Subject Alternative Name</strong> (SAN) field based on the naming scheme above and check that name during the certificate validation, we can authenticate the identity encoded in the certificate. We get a valid SPIFFE identity which is an authenticated principal.</p>
@@ -2680,7 +2687,7 @@ $ <span class="token keyword keyword-while">while</span> <span class="token bool
 $ kubectl delete svc customers web-frontend
 $ kubectl delete vs customers web-frontend
 $ kubectl delete gateway gateway
-</code></pre><h2 id="authenticating-users">Authenticating Users </h2>
+</code></pre><h3 id="authenticating-users">Authenticating Users </h3>
 <p>While the PeerAuthentication resource is used to control service authentication, the <strong>RequestAuthentication</strong> resource is used for end-user authentication. The authentication is done per request and verifies the credentials attached to the request in JSON Web Tokens (JWTs). Just like we used the SPIFFE identity to identify services, we can use JWT to authenticate users.</p>
 <p>Request authentication policies specify the values needed to validate a JSON Web Token (JWT). These values include, among others, the following:</p>
 <ul>
@@ -2703,7 +2710,7 @@ $ kubectl delete gateway gateway
  <span class="token punctuation">-</span> <span class="token key atrule">issuer</span><span class="token punctuation">:</span> <span class="token string">"issuer@tetrate.io"</span>
    jwksUri<span class="token punctuation">:</span> <span class="token string">"someuri"</span>
 </code></pre><p>The above resource applies to all workloads in the default namespace that match the selector labels. The resource is saying that any requests made to those workloads will need a JWT attached to the request. The RequestAuthentication resource configures how the token and its signature are authenticated using the settings in the jwtRules field. If the request doesn’t have a valid JWT attached, the request will be rejected because the token doesn’t conform to JWT rules. The request will not be authenticated if we do not provide a token. If the token is valid, then we have an authenticated principal. We can use the principal to configure authorization policies.</p>
-<h3 id="authorization-authz">Authorization (authz) </h3>
+<h4 id="authorization-authz">Authorization (authz) </h4>
 <p>Authorization is answering the access control question. Is a principal allowed to perform an action on an object? Even though we might have an authenticated principal, we still might not be able to perform a certain action.&nbsp;For example, you can be an authenticated user, but you won’t be able to perform administrative actions if you are not authorized. Similarly, a service can be authenticated but is not allowed to make POST requests to other services, for example.</p>
 <p>To properly enforce access control, we need both authentication and authorization. <em>If we only authenticate the principles without authorizing them, the principals can perform any action on any objects.</em> Similarly, if we only authorize the actions or requests, a principal can pretend to be someone else and perform all actions again.</p>
 <p>Istio’s authorization features provide mesh-, namespace-, and workload-wide access control for your workloads in the mesh. This level of control provides the following benefits:</p>
@@ -3079,7 +3086,7 @@ EOF</span>
 </code></pre></li>
 </ol>
 <p>For more info see <a href="https://istio.io/latest/docs/tasks/security/authentication/authn-policy/">auth policies</a> and <a href="https://istio.io/latest/docs/tasks/security/authentication/jwt-route/">jwt-route</a>.</p>
-<h2 id="policy-storage">Policy storage </h2>
+<h3 id="policy-storage">Policy storage </h3>
 <p>Istio stores mesh-scope policies in the <strong>root namespace</strong> (default: istio-system). These policies have an empty selector apply to all workloads in the mesh. Policies that have a namespace scope are stored in the corresponding namespace. They only apply to workloads within their namespace.</p>
 <p>If you configure a selector field, the authentication policy only applies to workloads matching the conditions you configured. Peer and request authentication policies are stored separately by kind, PeerAuthentication and RequestAuthentication respectively. Peer and request authentication policies use selector fields to specify the label of the workloads to which the policy applies. If you don’t provide a value for the selector field, Istio matches the policy to all workloads in the storage scope of the policy. Thus, the selector fields help you specify the scope of the policies:</p>
 <ul>
@@ -4406,7 +4413,7 @@ To enable communication between pods in the cluster, you need a network plugin. 
 <pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>$ kubectl get pods <span class="token parameter variable">-n</span> kube-system
 $ kubectl get nodes
 </code></pre><p>Now your cluster is ready to deploy your pods!</p>
-<h4 id="metallb-installation">MetalLB Installation </h4>
+<h3 id="metallb-installation-load-balancer">MetalLB Installation (Load Balancer) </h3>
 <p><a href="https://metallb.universe.tf/installation/">Ref</a></p>
 <p><strong>MetalLB</strong> provides a network load-balancer implementation for Kubernetes clusters that do not run on a supported cloud provider, effectively allowing the usage of LoadBalancer Services within any cluster. In the case of bare metal installation of Kubernetes on premise, one needs a load balancer to make applications easily available out of Kubernetes cluster through a single endpoint. MetalLB is one of the popular options that works inside Kubernetes cluster as opposed to cloud LB that operate outside. Then ingress-nginx will be installed as another layer to for routing traffic based on domain or path. It is a good idea to install MetalLB.</p>
 <p>Preparation<br>
@@ -4419,12 +4426,12 @@ $ kubectl get configmap kube-proxy <span class="token parameter variable">-n</sp
 $ kubectl get configmap kube-proxy <span class="token parameter variable">-n</span> kube-system <span class="token parameter variable">-o</span> yaml <span class="token operator">|</span> <span class="token punctuation">\</span>
 $ <span class="token function">sed</span> <span class="token parameter variable">-e</span> <span class="token string">"s/strictARP: false/strictARP: true/"</span> <span class="token operator">|</span> <span class="token punctuation">\</span>
 $ kubectl apply <span class="token parameter variable">-f</span> - <span class="token parameter variable">-n</span> kube-system
-</code></pre><h5 id="installation---manifest">Installation - Manifest </h5>
+</code></pre><h4 id="installation---manifest">Installation - Manifest </h4>
 <p>To install MetalLB, apply the manifest:</p>
 <pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>$ kubectl apply <span class="token parameter variable">-f</span> https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
 </code></pre><p>Wait until both pods in the metallb-system namespace are Running. Check:</p>
 <pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>$ kubectl get pod <span class="token parameter variable">-n</span> metallb-system
-</code></pre><h5 id="configuration">Configuration </h5>
+</code></pre><h4 id="configuration">Configuration </h4>
 <p>Setting up the load balancing policy of MetalLB can be done by deploying a configmap containing the related configuration information. There are two modes that can be configured in MetalLB:</p>
 <ul>
 <li>Layer 2 Mode</li>
@@ -4458,7 +4465,7 @@ $ kubectl expose deploy my-nginx <span class="token parameter variable">--port</
 $ kubectl get all
 $ <span class="token function">curl</span> http://<span class="token variable">$EXTERNAL_IP</span>
 </code></pre><p>This show show you the nginx welcome page.</p>
-<h4 id="install-helm">Install Helm </h4>
+<h3 id="install-helm">Install Helm </h3>
 <p><a href="https://helm.sh/docs/intro/install/">Installing Helm</a><br>
 Helm&nbsp;is a package management for Kubernetes</p>
 <p>From Apt (Debian/Ubuntu)<br>
@@ -4470,7 +4477,7 @@ Members of the Helm community have contributed a Helm package for Apt. This pack
 $ <span class="token function">sudo</span> <span class="token function">apt</span> update
 
 $ <span class="token function">sudo</span> <span class="token function">apt</span> <span class="token function">install</span> helm
-</code></pre><h4 id="useful-commands-for-kubernetes">Useful commands for Kubernetes: </h4>
+</code></pre><h3 id="useful-commands-for-kubernetes">Useful commands for Kubernetes: </h3>
 <pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>$ kubectl get pods <span class="token parameter variable">-n</span> <span class="token operator">&lt;</span>namespace<span class="token operator">&gt;</span> <span class="token parameter variable">-o</span> wide
 $ kubectl get svc  <span class="token parameter variable">-n</span> <span class="token operator">&lt;</span>namespace<span class="token operator">&gt;</span> <span class="token parameter variable">-o</span> wide
 $ kubectl logs <span class="token operator">&lt;</span>pod name<span class="token operator">&gt;</span> n <span class="token operator">&lt;</span>namespace<span class="token operator">&gt;</span>
@@ -4503,7 +4510,7 @@ $ <span class="token function">sudo</span> systemctl restart kubelet.service
 </code></pre><p>Delete pod:</p>
 <pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>$ kubectl delete pod <span class="token operator">&lt;</span>PODNAME<span class="token operator">&gt;</span> --grace-period<span class="token operator">=</span><span class="token number">0</span> <span class="token parameter variable">--force</span> <span class="token parameter variable">--namespace</span> <span class="token operator">&lt;</span>NAMESPACE<span class="token operator">&gt;</span>
 
-</code></pre><h5 id="kubectl-exec-syntax">kubectl exec Syntax </h5>
+</code></pre><h4 id="kubectl-exec-syntax">kubectl exec Syntax </h4>
 <p>You can use <code>kubectl exec</code> to connect to a running container and then execute single commands. Connecting to a container is useful to view logs, inspect processes, mount points, environment variables, and package versions, amongst other things. <code>kubectl exec</code> will give you full shell access to the container, so modifying it and installing packages that are not part of the container image is possible but is not recommended unless for temporary troubleshooting purposes. If extra modifications or packages are required permanently for the container, the image should be modified, and the new version should be deployed to maintain immutability and reproducibility.</p>
 <p>Let’s take a look at the syntax of the kubectl exec command with an example.</p>
 <pre data-role="codeBlock" data-info="sh" class="language-bash sh"><code>$ kubectl <span class="token builtin class-name">exec</span> <span class="token parameter variable">--stdin</span> <span class="token parameter variable">--tty</span> aks-helloworld-one-56c7b8d79d-xqx5t -- /bin/bash
@@ -4514,8 +4521,7 @@ $ kubectl <span class="token builtin class-name">exec</span> <span class="token 
 <p>The advantage of this approach is that it uses the Address Resolution Protocol to detect if IP addresses are assigned to machines. Any machine that wants to be found on a network needs to answer the ARP, so this approach works where ping scans, broadcast pings and port scans don't (due to firewalls, OS policy, etc.).</p>
 
       </div>
-      
-      
+
      <button id="backToHomeBtn" onclick="goToHome()">Back to Profile</button>
     
   </body>
@@ -4524,5 +4530,6 @@ $ kubectl <span class="token builtin class-name">exec</span> <span class="token 
        window.location.href = 'https://Yas2020.github.io/#portfolio';  // Replace with your home page URL
    }
  </script>
-     
-  </html>
+    
+  
+   </html>
