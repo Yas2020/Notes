@@ -97,9 +97,9 @@
       - [Where to Route the Traffic?](#where-to-route-the-traffic)
     - [Advanced Traffic Routing](#advanced-traffic-routing)
     - [Rewriting and Redirecting Traffic](#rewriting-and-redirecting-traffic)
-- [Security](#security-1)
-  - [Access Control](#access-control)
-    - [Authentication (authn)](#authentication-authn)
+  - [Security](#security-1)
+    - [Access Control](#access-control)
+      - [Authentication (authn)](#authentication-authn)
       - [Mutual TLS](#mutual-tls)
         - [Provisioning Identities at Runtime](#provisioning-identities-at-runtime)
         - [Certificate issuance flow in Istio](#certificate-issuance-flow-in-istio)
@@ -115,8 +115,8 @@
         - [Observing the Traffic in Kiali](#observing-the-traffic-in-kiali)
         - [Enabling "STRICT" mode](#enabling-strict-mode)
           - [Cleanup](#cleanup)
-  - [Authenticating Users](#authenticating-users)
-    - [Authorization (authz)](#authorization-authz)
+    - [Authenticating Users](#authenticating-users)
+      - [Authorization (authz)](#authorization-authz)
       - [Authorization Policies](#authorization-policies)
         - [Sources Identities ("from" field)](#sources-identities-from-field)
         - [Request Operation ("to" field)](#request-operation-to-field)
@@ -127,7 +127,7 @@
       - [Enabling Requests from Ingress to “web-frontend"](#enabling-requests-from-ingress-to-web-frontend)
         - [Enabling Requests from "web-frontend" to “customers"](#enabling-requests-from-web-frontend-to-customers)
       - [Gateway and Auth](#gateway-and-auth)
-  - [Policy storage](#policy-storage)
+    - [Policy storage](#policy-storage)
 - [Advanced Topics for Istio](#advanced-topics-for-istio)
   - [External Authorization](#external-authorization)
   - [Deployment Models for Serice Mesh](#deployment-models-for-serice-mesh)
@@ -178,12 +178,12 @@
         - [Prometheus](#prometheus)
         - [Workload-level aggregation via recording rules](#workload-level-aggregation-via-recording-rules)
 - [Kubernetes on Linux](#kubernetes-on-linux)
-      - [MetalLB Installation](#metallb-installation)
-        - [Installation - Manifest](#installation---manifest)
-        - [Configuration](#configuration)
-      - [Install Helm](#install-helm)
-      - [Useful commands for Kubernetes:](#useful-commands-for-kubernetes)
-        - [kubectl exec Syntax](#kubectl-exec-syntax)
+    - [MetalLB Installation (Load Balancer)](#metallb-installation-load-balancer)
+      - [Installation - Manifest](#installation---manifest)
+      - [Configuration](#configuration)
+    - [Install Helm](#install-helm)
+    - [Useful commands for Kubernetes:](#useful-commands-for-kubernetes)
+      - [kubectl exec Syntax](#kubectl-exec-syntax)
     - [How to find unused IP address on my network?](#how-to-find-unused-ip-address-on-my-network)
 
 
@@ -2542,7 +2542,7 @@ The redirect and destination fields are mutually exclusive. If we use the redire
 ---------------------------
 ---------------------
 
-# Security
+## Security
 
 Security in Istio involves multiple components:
 - A Certificate Authority (CA) for key and certificate management
@@ -2557,14 +2557,14 @@ The control plane handles configuration from the API server and configures the P
 
 
 
-## Access Control
+### Access Control
 The question access control tries to answer is: can a principal perform an action on an object? For example, consider the following two questions:
 - Can a user delete a file?
 - Can a user execute a script?
 
 The user in the above example is the principal, actions are deleting and executing, and an object is a file and a script. If we stated a similar example using Kubernetes and Istio, we would ask: "Can service A perform an action on service B?" The key terms are **authentication** and **authorization** when discussing security and answering the access control question.
 
-### Authentication (authn)
+#### Authentication (authn)
 
 Authentication is all about the principal or, in our case, about services and their identities. It’s an act of validating a credential and ensuring the credential is valid and authentic. Once the authentication is performed, we can say that we have an authenticated principal.
 
@@ -3010,7 +3010,7 @@ $ kubectl delete vs customers web-frontend
 $ kubectl delete gateway gateway
 ```
 
-## Authenticating Users
+### Authenticating Users
 
 While the PeerAuthentication resource is used to control service authentication, the **RequestAuthentication** resource is used for end-user authentication. The authentication is done per request and verifies the credentials attached to the request in JSON Web Tokens (JWTs). Just like we used the SPIFFE identity to identify services, we can use JWT to authenticate users.
 
@@ -3041,7 +3041,7 @@ spec:
 
 The above resource applies to all workloads in the default namespace that match the selector labels. The resource is saying that any requests made to those workloads will need a JWT attached to the request. The RequestAuthentication resource configures how the token and its signature are authenticated using the settings in the jwtRules field. If the request doesn’t have a valid JWT attached, the request will be rejected because the token doesn’t conform to JWT rules. The request will not be authenticated if we do not provide a token. If the token is valid, then we have an authenticated principal. We can use the principal to configure authorization policies.
 
-### Authorization (authz)
+#### Authorization (authz)
 Authorization is answering the access control question. Is a principal allowed to perform an action on an object? Even though we might have an authenticated principal, we still might not be able to perform a certain action. For example, you can be an authenticated user, but you won’t be able to perform administrative actions if you are not authorized. Similarly, a service can be authenticated but is not allowed to make POST requests to other services, for example.
 
 To properly enforce access control, we need both authentication and authorization. _If we only authenticate the principles without authorizing them, the principals can perform any action on any objects._ Similarly, if we only authorize the actions or requests, a principal can pretend to be someone else and perform all actions again. 
@@ -3510,7 +3510,7 @@ The Istio ingress gateway supports routing based on authenticated JWT, which is 
     ```
 For more info see [auth policies](https://istio.io/latest/docs/tasks/security/authentication/authn-policy/) and [jwt-route](https://istio.io/latest/docs/tasks/security/authentication/jwt-route/).
 
-## Policy storage
+### Policy storage
 Istio stores mesh-scope policies in the **root namespace** (default: istio-system). These policies have an empty selector apply to all workloads in the mesh. Policies that have a namespace scope are stored in the corresponding namespace. They only apply to workloads within their namespace. 
 
 If you configure a selector field, the authentication policy only applies to workloads matching the conditions you configured. Peer and request authentication policies are stored separately by kind, PeerAuthentication and RequestAuthentication respectively. Peer and request authentication policies use selector fields to specify the label of the workloads to which the policy applies. If you don’t provide a value for the selector field, Istio matches the policy to all workloads in the storage scope of the policy. Thus, the selector fields help you specify the scope of the policies:
@@ -5323,7 +5323,7 @@ $ kubectl get nodes
 ```
 Now your cluster is ready to deploy your pods!
 
-#### MetalLB Installation
+### MetalLB Installation (Load Balancer)
 [Ref](https://metallb.universe.tf/installation/)
 
 **MetalLB** provides a network load-balancer implementation for Kubernetes clusters that do not run on a supported cloud provider, effectively allowing the usage of LoadBalancer Services within any cluster. In the case of bare metal installation of Kubernetes on premise, one needs a load balancer to make applications easily available out of Kubernetes cluster through a single endpoint. MetalLB is one of the popular options that works inside Kubernetes cluster as opposed to cloud LB that operate outside. Then ingress-nginx will be installed as another layer to for routing traffic based on domain or path. It is a good idea to install MetalLB.
@@ -5345,7 +5345,7 @@ $ sed -e "s/strictARP: false/strictARP: true/" | \
 $ kubectl apply -f - -n kube-system
 ```
 
-##### Installation - Manifest
+#### Installation - Manifest
 
 To install MetalLB, apply the manifest:
 ```sh
@@ -5356,7 +5356,7 @@ Wait until both pods in the metallb-system namespace are Running. Check:
 $ kubectl get pod -n metallb-system
 ```
 
-##### Configuration
+#### Configuration
 Setting up the load balancing policy of MetalLB can be done by deploying a configmap containing the related configuration information. There are two modes that can be configured in MetalLB:
 - Layer 2 Mode
 - BGP Mode
@@ -5400,7 +5400,7 @@ $ curl http://$EXTERNAL_IP
 ```
 This show show you the nginx welcome page.
 
-#### Install Helm
+### Install Helm
 [Installing Helm](https://helm.sh/docs/intro/install/)
 Helm is a package management for Kubernetes
 
@@ -5416,7 +5416,7 @@ $ sudo apt update
 $ sudo apt install helm
 ```
 
-#### Useful commands for Kubernetes:
+### Useful commands for Kubernetes:
 ```sh
 $ kubectl get pods -n <namespace> -o wide
 $ kubectl get svc  -n <namespace> -o wide
@@ -5466,7 +5466,7 @@ Delete pod:
 $ kubectl delete pod <PODNAME> --grace-period=0 --force --namespace <NAMESPACE>
 
 ```
-##### kubectl exec Syntax
+#### kubectl exec Syntax
 You can use `kubectl exec` to connect to a running container and then execute single commands. Connecting to a container is useful to view logs, inspect processes, mount points, environment variables, and package versions, amongst other things. `kubectl exec` will give you full shell access to the container, so modifying it and installing packages that are not part of the container image is possible but is not recommended unless for temporary troubleshooting purposes. If extra modifications or packages are required permanently for the container, the image should be modified, and the new version should be deployed to maintain immutability and reproducibility.
 
 Let’s take a look at the syntax of the kubectl exec command with an example.
