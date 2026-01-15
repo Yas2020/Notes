@@ -1,4 +1,6 @@
-“One part of the project was a multi-label classification task on Stack Overflow questions. Each question can have multiple tags, so I formulated it as a One-vs-Rest problem using scikit-learn’s OneVsRestClassifier. I trained around 100 binary classifiers using linear models like Logistic Regression, Ridge Regression, and linear SVMs, and compared Bag-of-Words and TF-IDF representations. The goal was to build a fast, interpretable baseline that could later be used as part of a larger chatbot system.”
+## Classic NLP Pipelines
+
+“This was a baseline NLP project where I built a preprocessing and feature engineering pipeline for StackOverflow question tags. Each question can have multiple tags, so I formulated it as a One-vs-Rest problem and  trained around 100 binary classifiers (one per tag) using Logistic Regression (and other linear models such as Ridge Regression, and linear SVMs) . I compared Bag of Words and TF-IDF representations, trained One-vs-Rest logistic regression for multi-label prediction, and evaluated with F1-score (macro/micro/weighted averaging), ROC-AUC, and PR-AUC. The key insight was that TF-IDF with n-grams captured more discriminative features than plain BoW. While linear models are simple, they remain strong baselines for text classification and helped me understand the tradeoffs between vocabulary size, sparsity, and interpretability.
 
 
 We’ll go through 5 stages.
@@ -25,13 +27,13 @@ This is not trivial classification because:
 - Tags are human-generated, not clean labels
 
 ##### Task type
-Already, this tells an interviewer you understood a real NLP problem, not a toy one. Formally, this is:
+Formally, this is:
 - Input: unstructured text (question title)
 - Output: a binary vector of length k (k ≈ 100 tags)
 - Task: multi-label text classification
 
 Key properties (important later):
-- Labels are not mutually exclusive
+-  Labels are not mutually exclusive
 - Label distribution is highly imbalanced
 - Vocabulary is technical and domain-specific
 
@@ -286,18 +288,11 @@ text = BAD_SYMBOLS_RE.sub('', text)
 ```
 
 Your preprocessing intent was:
-- Normalize casing
+- Normalize casing: **Lower case** the text, use regex `re.compile('[/(){}\[\]\|@,;]')` to replace brackets etc. by space, **remove bad symbols** `re.compile('[^0-9a-z #+_]')` 
 - Remove structural punctuation / symbols using regex
 - Tokenize
 - Remove stopwords
 - Produce clean text for BoW / TF-IDF
-
-That intent is correct for:
-- title-only text
-- sparse linear models
-- technical vocabulary
-  
-So architecturally: ✅
 
 You kept:
 - alphanumerics
@@ -310,7 +305,7 @@ You kept:
 Many people over-clean and destroy signal. This is actually smart for Stack Overflow (c#, c++). Many people miss that.
 
 ##### Vocabulary & feature construction — this is solid
-Your stats
+Your stats for BoW:
 - Tokens (raw): 31,497
 - Tags: 100
 - Vocabulary cap: 5,000
@@ -319,7 +314,7 @@ That’s very reasonable for:
 - linear models
 - sparse matrices
 - 100k samples
-
+  
 Your manual vocab construction:
 - sorted by frequency
 - training-set only
@@ -357,6 +352,30 @@ That reduction is:
 
 Interview line
 “TF-IDF with frequency thresholds reduced the vocabulary significantly while retaining the most informative unigrams and bigrams.”
+
+
+Bag of words representation for sentences is simple: a vector of 0s and 1s at index $i$th depending on on whether token with index $i$ in the vocabulary occurs in the sentence or not. Think of it as one-hot encoding vectors for single tokens added up for all the tokens in the sentence. 
+
+The second approach extends the bag-of-words framework by taking into account total frequencies of words in the corpora. It helps to penalize too frequent words and provide better features space - implemented in Scikit-Learn `TfidfVectorizer`. Also, we filter out too rare words (occur less than in 5 titles), too frequent words (occur more than in 90% of the titles) and use bigrams along with unigrams in your vocabulary. 
+
+```python
+def tfidf_features(X_train, X_val, X_test):
+    """
+        X_train, X_val, X_test — samples        
+        return TF-IDF vectorized representation of each sample and vocabulary
+    """
+      
+    tfidf_vectorizer = TfidfVectorizer(min_df=0.0005, max_df=0.9, ngram_range=(1,2), token_pattern='(\S+)')
+    X_train = sp_sparse.csr_matrix(tfidf_vectorizer.fit_transform(X_train))
+    X_val = sp_sparse.csr_matrix(tfidf_vectorizer.transform(X_val))
+    X_test = sp_sparse.csr_matrix(tfidf_vectorizer.transform(X_test))
+    
+    return X_train, X_val, X_test, tfidf_vectorizer.vocabulary_
+```
+TF_IDF created a vocabulary of size 1954. Also create the reverse vocab:
+```python
+tfidf_reversed_vocab = {i:word for word,i in tfidf_vocab.items()}
+```
 
 ##### 1️⃣ Lemmatization — your instinct was correct
 “I didn’t lemmatize because it might over/under generalize and hurt discrimination.”
@@ -452,17 +471,6 @@ You did that.
 This is textbook correct.
 
 
-
-
-Goal: justify why One-vs-Rest was reasonable.
-We’ll challenge:
-- Why OvR and not Label Powerset?
-- What assumptions OvR makes
-- What it ignores (label correlation)
-- When OvR breaks
-
-This is where interviewer skepticism often starts.
-
 #### Stage 4 — Models & Optimization
 Goal: understand why certain models worked.
 We’ll cover:
@@ -471,6 +479,19 @@ We’ll cover:
 - Linear SVM intuition
 - Regularization
 - Why linear models shine in text
+
+##### Training
+
+```python
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.linear_model import LogisticRegression, RidgeClassifier
+
+classifier = OneVsRestClassifier(LogisticRegression(random_state=0, C=1, solver='liblinear', penalty='l1'),n_jobs = -1)
+
+classifier.fit(X_train, y_train)
+```
+Remeber that `y_train` is a one-hot vector with length $k$. Trained these using both BOW and TF-IDF representaion.
+
 
 ##### Why LR / SVM + L1 + TF-IDF won (this is important)
 Let’s connect the dots causally.
@@ -585,6 +606,12 @@ You evaluated with:
 
 That is strong classical ML discipline.
 
+```python
+accuracy_score(y_val, predicted)
+
+f1_score(y_val, predicted,average='macro'),f1_score(y_val, predicted,average='micro'),f1_score(y_val, predicted,average='weighted'))
+```
+
 ###### Why accuracy is bad here (and you knew it)
 In multi-label classification:
 - Exact match accuracy requires all tags to be correct
@@ -615,6 +642,51 @@ Interview-ready phrasing:
 “I primarily optimized micro-averaged F1 and average precision for overall performance, while monitoring macro scores to ensure rare tags weren’t collapsing.”
 
 That’s exactly what interviewers want to hear.
+
+In the case of multicalss/multilabel (more than 2 classes in y_val), you must explicitly specify the average: `{'binary', 'micro', 'macro', 'samples', 'weighted', None}`. The default='binary' is only for bianry classification.
+
+- `average='macro'`:
+    - Computes the F1 score independently for each class
+    - Then takes the unweighted mean of all F1 scores.
+    - Each class contributes equally, regardless of how frequent it is in the data.
+    - Useful when:
+        - You have a multi-class classification problem.
+        - You want to treat all classes equally, even if the class distribution is imbalanced.
+- `average='micro'`: computes a global F1 score instead of per class:
+  $$ 
+  \text{Micro F1} = 2 \; \frac{\text{Overall Precision . Overall Recall}}{\text{Overall Precison + Overall Recall}}
+  $$
+
+    - Use it when you care more about overall performance rather than per-class performance.
+    - Useful in multi-class or multi-label classification with imbalanced classes, but where common classes should dominate the metric.
+    - Each instance contributes equally, rather than each class.
+
+✅ Example
+Let’s say you have:
+3 classes: A (90%), B (5%), C (5%)
+Your model performs well on A but poorly on B and C
+- micro F1 will be high — because A dominates.
+- macro F1 will be low — because it averages over all classes equally.
+- weighted F1 will be somewhere in between — weighting by class frequency.
+
+You might also want to plot some generalization of the `ROC curve` for the case of multi-label classification. Provided function roc_auc can make it for you. The input parameters of this function are:
+
+- true labels
+- decision functions scores
+- number of classes
+
+```python
+from metrics import roc_auc
+
+n_classes = len(tags_counts)
+roc_auc(y_val, y_val_predicted_scores, n_classes)
+```
+Which produces a picture as the following:
+
+<p align="center">
+<img src="./assets/interview-projects/roc.png" alt="drawing" width="700" height="400" style="center" />
+</p>
+
 
 ##### “~78%” is actually very reasonable (context matters)
 For 100 tags, short titles, multi-label, no deep models, classic NLP:
@@ -655,6 +727,23 @@ This part elevates the project. You inspected:
 Example for c:
 - Top positive: linux, gcc, printf, malloc, c
 - Top negative: php, javascript, java, objective c, python
+
+After some expriments with:
+
+- Compare the quality of the bag-of-words and TF-IDF approaches and chose one of them
+- For the chosen one, try L1 and L2-regularization techniques in Logistic Regression with different coefficients (e.g. C equal to 0.1, 1, 10, 100)
+- Scaling features using `sklearn.preprocessing.StandardScaler`
+
+Finally it might be useful to analyze the most important features: the features (words or n-grams) that are used with the largest weigths in your logistic regression model:
+
+```python
+tag_idx = tags_classes.index(tag)
+tag_est = classifier.estimators_[tag_idx]
+tag_coef = tag_est.coef_[0]
+
+top_positive_words = [index_to_words[i] for i in tag_coef.argsort()[-5:]] # top-5 words sorted by the coefficiens.
+top_negative_words = [index_to_words[i] for i in tag_coef.argsort()[:5]]# bottom-5 words  sorted by the coefficients.
+```
 
 ###### Why this matters
 This demonstrates:
@@ -781,6 +870,74 @@ We’ll decide at the end which version stays, once we see how Parts 2–4 compl
 #### INTERVIEW STORY — SHORT VERSION (30–45 seconds)
 “Before working on LLMs, I built a classic NLP system for multi-label tag prediction on Stack Overflow titles. I treated it as a one-vs-rest problem over 100 tags, using TF-IDF features and linear models like Logistic Regression and SVM with L1 regularization. Performance was around 79% micro-F1, which was reasonable given short, ambiguous titles. I validated the model by inspecting feature weights and doing error analysis, which showed the model learned meaningful technical distinctions rather than spurious correlations.”
 This is confident, grounded, and non-defensive.
+
+### Questions
+Careful: Logistic regression won’t suffer from “curse of dimensionality” in the same way as kNN
+
+Preprocessing
+1. Why did you lowercase, remove punctuation, and remove stopwords?
+   - Ans. Lowercasing prevents increasing the size of vocabulary unneccesarily so that feature are discreminated. For the same reason we might want to do lemmtization. Two words only different in casing are not signigicantly different for classification porpuses.  Removing punctuations as they dont carry significant meaning or discriminative in classification task. Removing stopwords is task-dependent — sometimes they matter (e.g., sentiment ‘not good’), but for this multi-tag classification they were mostly noise and they are not discriminative as they are usually high frequency words. 
+2. Did you try stemming or lemmatization? What would be the effect? 
+   - Ans. they collapse variants (‘running’, ‘runs’ → ‘run’), reduce the vocabulary size and decrease noise level,  and help generalization
+3. How does dictionary size (5k tokens vs. 20k) affect accuracy and runtime?
+   - Ans. Larger vocabularies increase dimensionality and sparsity, making training slower and inference heavier. It may also introduce more noise words, which can hurt generalization if not regularized. The real tradeoff is computational cost + risk of overfitting
+  
+4. Why filter out words that appear in >90% or <5 documents?
+   - Ans. They are not descriminative enough for classification task as they appear very often or very rare. Rare words don’t generalize, frequent words don’t discriminate — filtering improves both efficiency and predictive power.
+
+Feature Representation
+1. Explain the difference between Bag of Words and TF-IDF in terms of weighting.
+   - Ans. Bag of words is the simplest way to encode documents into arrays of numbers. Every document is maaped into a 0s, 1s vector of size of the vocablary, if a word appears in the doc, its corresponding position in the vecor has value 1 otherwise zero. Think of it as sum of one-hot vectos for cat variables. It doesnt preserve the order of words or doesnt carry any semantic interrelation between words. TF-IDF is a frequency-base encoding so that every document is mapped to a vecotor of vocab size so that its corresponding component is TF-IDF  for that word: frequecy of the word in corpus times inverse of log of freq of the word across documents. TF-IDF downweights very common words and highlights terms that are relatively unique to a document.
+2. Why did TF-IDF produce better features than BoW? When might BoW actually work better?
+   - Ans. TF-IDF tends to produce better signal-to-noise ratio because it reduces the weight of ubiquitous words that BoW treats equally. BOW could do better for smaller vocab size.
+3. What’s the tradeoff in using unigrams vs. bigrams?
+   - Ans. Bigrams help capture short context (‘machine learning’ ≠ ‘machine’ + ‘learning’). But they explode feature space, making it sparser
+4. Did you consider word embeddings (Word2Vec, GloVe)? Why or why not for this baseline project?
+   - Yes, i did. I trained a word embedding model on the data to use word embeddings as features. Embeddings capture semantic similarity but require more compute and tuning. Since this was a linear-model baseline, TF-IDF was more appropriate.
+
+Modeling
+9. Why One-vs-Rest instead of Softmax multinomial logistic regression?
+  - Ans. One-vs_all is a wrapper  around any binary classification to turn it  into mlticlass classifier. My base model was SVM, so I use sklearn wrapper to create multiclass classifier which I got better results than multinomial logistic regression which is basically a verion of one-vs-all for LR 
+  
+10. What challenges come from multi-label classification compared to single-label?
+    - Ans. We need to train several models per label. We need to choose a threshold carefully to capture multilables. Evaluation is harder: accuracy is less meaningful, so metrics like micro/macro F1 are more useful.
+  
+11. Logistic Regression assumes linear separability — why is it still effective for text classification? 
+    - Ans. Because text BoW/TF-IDF vectors are extremely high-dimensional and sparse, documents often become linearly separable. Logistic regression with regularization can find effective separating hyperplanes.
+    
+12. How do you deal with correlated tags (e.g., "python" and "django")?
+- Ans. You can model tag correlations with classifier chains or by using embeddings. In One-vs-Rest LR, each tag is predicted independently, but correlations can be captured by adding features like co-occurrence statistics or using multi-output models. 
+
+Evaluation
+13.  Why did you choose accuracy, F1, ROC-AUC, and PR-AUC? Which is most informative for imbalanced multi-label data?
+  - Ans. F1, ROC-AUC, and PR-AUC are standard metrics for classification tasks. ROC-AUC is adapted for multilabel one ROC curve per label. Precision Recall curve is very useful for multilabel and imbalance data. 
+    
+14. How does micro vs macro F1-score differ, and which did you use?
+  - Ans. Macro F1-score takes average of F1 scores for one-vs-all classifiers per label. So labels are treated equal weight. in case of imbalance data it shows lower score. Micro case calculate precision and recall for entire predictions regardless of classes... so poor performance for minor classes  is overshadowed by high score in bigger classes.
+  
+15. Did you evaluate per-label performance? Were some tags much harder to predict?
+    - Ans. Yes i did. Some tags had smaller data for them. 
+
+Extensions / Improvements
+16.  If you wanted to improve beyond logistic regression, what would be your next step? (hint: linear SVM, or embeddings + deep learning) 
+   - Ans. use word embeddings instead of BOW or TFIDF, use non-linear models or ven bigger models such as neural nets. Or large language models smaller one such as BERT
+
+17.  Could you use dimensionality reduction (e.g., Truncated SVD, PCA) to make features more efficient?
+    - Ans. Yes, it expect it to be an improvement - linear models could suffer from high dim data. Dimensionality reduction can be helpful instead of sparse feature space
+
+18.  How would this pipeline change for larger text (full post bodies vs. titles)?
+    - Ans. For larger text, bag-of-words or TF-IDF features become very high-dimensional and sparse, which may hurt generalization and efficiency. I would:
+    Move toward embeddings (e.g., averaging Word2Vec, GloVe, or transformer embeddings like BERT) instead of raw sparse features.
+    Possibly use hierarchical models (e.g., CNNs or RNNs) to capture local + global context.
+    Add dimensionality reduction (e.g., Truncated SVD) if sticking with TF-IDF, to keep feature space manageable.
+    Revisit preprocessing (handling stopwords, rare words, n-grams differently) since longer text provides more noise as well as signal.
+    Expect evaluation metrics to shift — longer text may improve recall (more words to catch tags) but hurt precision (more irrelevant words).
+
+Alternative model:
+- OneVsRest sigmoid LR: this outputs k sigmoids, then put a threshold to get multilabel classifier (multiple binary classifier). This is not the same as multinomial LR which uses softmax to get only one class as predictions (forces only one with higher logit).  
+
+
+
 
 
 ### Recall
