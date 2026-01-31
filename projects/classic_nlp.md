@@ -1,15 +1,14 @@
+ 
 ## Classic NLP Pipelines
 
-“This was a baseline NLP project where I built a preprocessing and feature engineering pipeline for StackOverflow question tags. Each question can have multiple tags, so I formulated it as a One-vs-Rest problem and  trained around 100 binary classifiers (one per tag) using Logistic Regression (and other linear models such as Ridge Regression, and linear SVMs) . I compared Bag of Words and TF-IDF representations, trained One-vs-Rest logistic regression for multi-label prediction, and evaluated with F1-score (macro/micro/weighted averaging), ROC-AUC, and PR-AUC. The key insight was that TF-IDF with n-grams captured more discriminative features than plain BoW. While linear models are simple, they remain strong baselines for text classification and helped me understand the tradeoffs between vocabulary size, sparsity, and interpretability.
+“This was a baseline NLP project where I built a preprocessing and feature engineering pipeline for StackOverflow question tags. Each question can have multiple tags, so I formulated it as a One-vs-Rest problem and  trained around 100 binary classifiers (one per tag) using Logistic Regression (and other linear models such as Ridge Regression, and linear SVMs) . I compared Bag of Words and TF-IDF representations, trained One-vs-Rest logistic regression for multi-label prediction, and evaluated with F1-score (macro/micro weighted averaging), ROC-AUC, and PR-AUC. The key insight was that TF-IDF with n-grams captured more discriminative features than plain BoW. While linear models are simple, they remain strong baselines for text classification and helped me understand the tradeoffs between vocabulary size, sparsity, and interpretability.
 
 
-We’ll go through 5 stages.
-Each stage is small. Each can take multiple turns if needed.
+We’ll go through 5 stages. Each stage is small. Each can take multiple turns if needed.
 
 #### Stage 1 — Problem & Data (Foundations)
-Goal: absolute clarity on what problem you were solving.
+Goal: absolute clarity on what problem you solved.
 We’ll examine:
-
 - what multi-label means formally
 - why Stack Overflow is hard
 - label distribution & imbalance
@@ -20,6 +19,7 @@ If this isn’t solid, nothing else matters.
 ##### What problem were you actually solving?
 At its core, the problem was:
 > Given a natural-language Stack Overflow question, predict which technical topics (tags) it belongs to.
+#####
 
 This is not trivial classification because:
 - A question can belong to multiple topics
@@ -37,7 +37,7 @@ Key properties (important later):
 - Label distribution is highly imbalanced
 - Vocabulary is technical and domain-specific
 
-Pause here for a second — this already justifies why linear + sparse methods were reasonable.
+This already justifies why linear + sparse methods were reasonable.
 
 ##### Dataset 
 - Stack Overflow question titles only (not body)
@@ -50,7 +50,6 @@ y_i = [0, 0, 1, 0, ..., 0]   # where index corresponds to tag
   -  ~100,000 samples
   - 2 columns: (title, tags)
 -  This is a large-enough dataset for classical NLP and exactly the kind of setup where linear models shine.
-- Using titles only is not a weakness — it’s a design choice.
 
 Where:
 - Most entries in `y_i` are 0
@@ -72,7 +71,7 @@ Bodies:
 - Include code, stack traces, formatting
 - Require heavier preprocessing
 
-This is a reasonable engineering decision, especially for a first-stage classifier used in routing.
+This is a reasonable engineering decision, especially for a first-stage classifier used in **routing**.
 
 Let’s articulate the difficulty — this is confidence-building:
 - Multi-label output → no single “correct” class
@@ -91,12 +90,12 @@ Without realizing it, the dataset encodes assumptions:
 - Language in questions correlates strongly with tags
 - The same word can mean different things across tags
 
-This matters later when we talk about:
+<!-- This matters later when we talk about:
 - model choice
 - evaluation
 - failure modes
 
-But for now, we just acknowledge it.
+But for now, we just acknowledge it. -->
 
 Even today, this dataset is valuable and a good choice because:
 - It forces you to handle multi-label outputs
@@ -109,8 +108,7 @@ So when interviewers push here, they’re not doubting the dataset — they’re
 
 
 #### Stage 2 — Formulation Choices
-This stage is about defensibility, not correctness.
-Interviewers probe here to see whether choices were intentional or accidental.
+This stage is about defensibility, not correctness. Interviewers probe here to see whether choices were intentional or accidental.
 ##### 1️⃣ Restating your formulation (cleanly)
 You framed the task as:
 - Multi-label classification
@@ -118,38 +116,41 @@ You framed the task as:
 - Implemented via `OneVsRestClassifier`
 - With ~100 independent binary classifiers
 - Each predicting:
-    - “Does tag t apply to this question?”
+    - “Does tag `t` apply to this question?”
+  
 This is a valid, standard baseline for large-scale text tagging.
 
 ##### 2️⃣ Why One-vs-Rest was a reasonable first choice
 Let’s articulate this carefully.
-a) Scalability
-- Training cost grows linearly with number of labels
-- Easy to parallelize
-- No combinatorial explosion
-With ~100 tags, this matters.
+- **Scalability**
+  - Training cost grows linearly with number of labels
+  - Easy to parallelize
+  - No combinatorial explosion
 
-b) Simplicity & Interpretability
-- Each classifier corresponds to one tag
-- Feature weights can be inspected per tag
-- Easy to debug:
-    - “Why did this model predict java?”
+  With ~100 tags, this matters.
 
-This is important in real systems.
+- **Simplicity & Interpretability**
+  - Each classifier corresponds to one tag
+  - Feature weights can be inspected per tag
+  - Easy to debug:
+      - “Why did this model predict java?”
 
-c) Independence assumption (made explicit)
+  This is important in real systems.
+
+- **Independence assumption** (made explicit)
 You assumed:
-- Tags can be predicted independently
-- Correlations exist, but are not required for a strong baseline
-This is a conscious simplification, not ignorance.
+    - Tags can be predicted independently
+    - Correlations exist, but are not required for a strong baseline
+    
+    This is a conscious simplification, not ignorance.
 
 ##### 3️⃣ What One-vs-Rest ignores (and that’s okay)
 This is where confidence comes from — knowing limitations.
 OvR does not model:
 
-- Tag co-occurrence explicitly (php ↔ mysql)
-- Hierarchies (java → spring)
-- Mutual exclusion (when applicable)
+- **Tag co-occurrence** explicitly (php ↔ mysql)
+- **Hierarchies** (java → spring)
+- **Mutual exclusion** (when applicable)
 
 So yes:
 - It may miss correlated tags
@@ -161,7 +162,7 @@ But:
 That’s the balanced view.
 
 ##### 4️⃣ Another valid formulation
-###### A. Your original solution (Classical OvR)
+###### A. *Your original solution (Classical OvR)*
 - Feature extraction: BoW / TF-IDF
 - Model: Linear classifiers (LogReg / SVM)
 - Strategy: One-vs-Rest
@@ -169,15 +170,15 @@ That’s the balanced view.
 Output:
 - One independent binary classifier per tag
 - Each classifier answers:
-    - “Does tag t apply to this question?”
+    - “Does tag `t` apply to this question?”
 
 This is a purely linear, sparse, high-bias model.
 
-###### B. Neural multi-label model (shared representation + k sigmoids)
+###### B. *Neural multi-label model (shared representation + k sigmoids)*
 - Feature extraction: learned (via embeddings / hidden layers)
 - Model: Neural network
 - Output layer: k sigmoid units
-- Loss: Binary cross-entropy per tag: 
+- Loss = Binary cross-entropy per tag: 
   For each label 
   \[
 \mathcal L_i = - [y_i \log\hat y_i + (1-y_i) \log(1 - \hat y_i)]
@@ -192,7 +193,8 @@ This is a purely linear, sparse, high-bias model.
 - Prediction: threshold each sigmoid
 
 Each output still answers:
-   -  “Does tag t apply?”
+   -  “Does tag `t` apply?”
+
 But now:
 - The representation is shared
 - Feature interactions can be nonlinear
@@ -258,24 +260,24 @@ Choosing not to use these was reasonable given:
 
 ##### 5️⃣ Short interview framing (optional, for later)
 When asked “Why One-vs-Rest?”, a calm answer is:
-“Because it scales well with many labels, works naturally with sparse text features, and gives strong, interpretable baselines. I was aware it ignores label correlations, but that tradeoff was acceptable for this stage of the system.”
-No defensiveness. No apology.
+“Because it scales well with many labels, works naturally with sparse text features, and gives strong, interpretable baselines. I was aware it ignores **label correlations**, but that tradeoff was acceptable for this stage of the system.”
 
-We’ve now:
+No defensiveness. No apology. We’ve now:
 - justified the formulation
 - acknowledged limitations
 - positioned the choice as intentional
 
 #### Stage 3: Features (Text → Vectors) 
 This is where classic NLP credibility is really tested.
+
 Goal: rebuild intuition for BoW & TF-IDF.
 We’ll go through:
-
 - vocabulary construction
 - sparsity
 - n-grams
 - TF-IDF math (light, intuitive)
-what information is lost
+- what information is lost
+
 This is foundational NLP literacy.
 
 
@@ -298,9 +300,9 @@ You kept:
 - alphanumerics
 - #, +, _
 - numbers → good for versions, errors
-- Preserved c++, c# → very good
+- Preserved `c++`, `c#` → very good
 - Used titles only → reduces noise
-- Did not lemmatize aggressively → good for technical terms
+- Did not lemmatize aggressively → *good for technical terms*
 
 Many people over-clean and destroy signal. This is actually smart for Stack Overflow (c#, c++). Many people miss that.
 
@@ -322,7 +324,7 @@ Your manual vocab construction:
 
 This is good ML hygiene.
 
-#####  TF-IDF configuration — let’s interpret it
+#####  TF-IDF configuration 
 `tfidf_vectorizer = TfidfVectorizer(
     min_df=0.0005,
     max_df=0.9,
@@ -330,9 +332,8 @@ This is good ML hygiene.
     token_pattern='(\S+)'
 )`
 
-What this means:
 - min_df=0.0005
-  - word must appear in ≥0.05% of docs
+  - word must appear in ≥ 0.05% of docs
   - removes extremely rare noise
 - max_df=0.9
   - removes near-stopwords
@@ -457,9 +458,8 @@ Here’s the full menu (not all should be used):
 
 - Classic NLP ≠ maximal preprocessing
 
-Classic NLP means:
+  Classic NLP means:
 - Choosing the minimal preprocessing that supports the model.
-You did that.
 
 ##### Best-fit preprocessing:
 ✅ Lowercase
@@ -469,7 +469,6 @@ You did that.
 ✅ Stopword removal
 ✅ n-grams (1–2)
 This is textbook correct.
-
 
 #### Stage 4 — Models & Optimization
 Goal: understand why certain models worked.
@@ -490,6 +489,7 @@ classifier = OneVsRestClassifier(LogisticRegression(random_state=0, C=1, solver=
 
 classifier.fit(X_train, y_train)
 ```
+
 Remeber that `y_train` is a one-hot vector with length $k$. Trained these using both BOW and TF-IDF representaion.
 
 
@@ -509,7 +509,6 @@ This directly benefits:
 
 
 L1 regularization (why it helped)
-L1:
 - Induces sparsity in weights
 - Performs implicit feature selection
 - Removes noisy or redundant tokens
@@ -517,7 +516,7 @@ L1:
 In NLP:
 - vocabulary is large
 - many features are irrelevant per label
-- This matches your feature inspection results.
+- this matches your feature inspection results.
 
 ##### Interview phrasing:
 “L1 regularization helped by selecting a small, interpretable subset of discriminative words per tag.”
@@ -532,7 +531,7 @@ Both are:
 
 Differences:
 - LR gives calibrated probabilities (useful for thresholding)
--SVM often slightly better margins
+- SVM often slightly better margins
 
 So saying:
 “Both performed similarly with Logistic Regression performed best”
@@ -548,9 +547,8 @@ In your setup:
 - ~2k–5k features
 - each document activates ~5–10 features
 - vectors are mostly zeros
-This is the sweet spot for linear models.
 
-In text:
+This is the sweet spot for linear models. In text:
 - each word votes for or against a label
 - rare, high-IDF words carry strong votes
 
@@ -562,6 +560,7 @@ Example for tag c:
 - php
 - java
 ```
+
 This is:
 - interpretable
 - stable
@@ -585,16 +584,18 @@ Interview line:
 “For keyword-driven tasks with sparse features, linear models often outperform more complex architectures.”
 
 ##### Short version (what you say in interviews)
-“For multi-label tag prediction, linear models with TF-IDF features performed best. Logistic Regression (and linear SVM) with L1 regularization achieved around 79% micro-averaged performance, which was reasonable given the ambiguity of short titles and the large tag space. Feature inspection confirmed that the models learned meaningful technical distinctions.”
+“For multi-label tag prediction, linear models with TF-IDF features performed best. Logistic Regression (and linear SVM) with L1 regularization achieved around 78% micro-averaged performance, which was reasonable given the ambiguity of short titles and the large tag space. Feature inspection confirmed that the models learned meaningful technical distinctions.”
 
 #### Stage 5 — Evaluation & Failure Modes
 Goal: be able to defend results calmly.
+
 We’ll explore:
 
 - multi-label metrics (micro vs macro F1)
 - thresholds
 - rare labels
 - concrete error examples
+
 This is where confidence usually collapses — we’ll reinforce it.
 
 You evaluated with:
@@ -635,11 +636,11 @@ Macro
 - Measures fairness across labels
 
 Weighted
-- Like macro, but weighted by label frequency
+- Like macro, but weighted by **label frequency**
 - Compromise between the two
 
 Interview-ready phrasing:
-“I primarily optimized micro-averaged F1 and average precision for overall performance, while monitoring macro scores to ensure rare tags weren’t collapsing.”
+“I primarily optimized **micro-averaged F1** and average precision for overall performance, while monitoring macro scores to ensure rare tags weren’t collapsing.”
 
 That’s exactly what interviewers want to hear.
 
@@ -684,7 +685,7 @@ roc_auc(y_val, y_val_predicted_scores, n_classes)
 Which produces a picture as the following:
 
 <p align="center">
-<img src="./assets/interview-projects/roc.png" alt="drawing" width="700" height="400" style="center" />
+<img src="../assets/interview-projects/roc.png" alt="drawing" width="700" height="400" style="center" />
 </p>
 
 
@@ -724,7 +725,7 @@ This part elevates the project. You inspected:
 - top negative weights
 - per tag
 
-Example for c:
+Example for `c`:
 - Top positive: linux, gcc, printf, malloc, c
 - Top negative: php, javascript, java, objective c, python
 
@@ -782,11 +783,13 @@ Problems:
 
 ##### Better strategies (what you can say)
 1️⃣ Per-label thresholds
-- tune threshold per tag using validation data
+- tune threshold per tag *using validation data*
 - especially important for imbalanced labels
+
 2️⃣ Top-K tags
 - predict top 1–3 tags regardless of probability
 - mimics Stack Overflow UI
+
 3️⃣ Hybrid
 - top-K OR probability > τ
 
@@ -795,10 +798,10 @@ Problems:
 
 That’s excellent.
 
-##### Error analysis (this is where maturity shows)
+#### Error analysis (this is where maturity shows)
 Now the most important part.
 
-Rare labels — why they fail
+##### Rare labels — why they fail
 Rare tags suffer from:
 - few training examples
 - poor weight estimates
@@ -856,87 +859,78 @@ Option A:
 
 Engineered classic NLP pipelines including tokenization, stopword handling, vocabulary construction, BoW and TF-IDF representations; trained and evaluated Logistic Regression and SVM models for multi-label text classification
 
-Option B:
-
-Built a multi-label NLP classifier for Stack Overflow questions using TF-IDF features and linear models (Logistic Regression, SVM), achieving ~75% micro-F1 across 100 tags; validated results via feature interpretability and error analysis.
 
 Option B (more classic-NLP-forward):
 
 Engineered classic NLP pipelines (tokenization, TF-IDF, n-grams) and trained one-vs-rest linear classifiers for multi-label tag prediction on 100k Stack Overflow questions, with interpretable feature analysis.
 
-👉 Do not choose yet.
-We’ll decide at the end which version stays, once we see how Parts 2–4 complement it.
 
 #### INTERVIEW STORY — SHORT VERSION (30–45 seconds)
-“Before working on LLMs, I built a classic NLP system for multi-label tag prediction on Stack Overflow titles. I treated it as a one-vs-rest problem over 100 tags, using TF-IDF features and linear models like Logistic Regression and SVM with L1 regularization. Performance was around 79% micro-F1, which was reasonable given short, ambiguous titles. I validated the model by inspecting feature weights and doing error analysis, which showed the model learned meaningful technical distinctions rather than spurious correlations.”
+“Before working on LLMs, I built a classic NLP system for multi-label tag prediction on Stack Overflow titles. I treated it as a one-vs-rest problem over 100 tags, using TF-IDF features and linear models like Logistic Regression and SVM with L1 regularization. Performance was around 78% micro-F1, which was reasonable given short, ambiguous titles. I validated the model by inspecting feature weights and doing error analysis, which showed the model learned meaningful technical distinctions rather than spurious correlations.”
+
 This is confident, grounded, and non-defensive.
 
 ### Questions
 Careful: Logistic regression won’t suffer from “curse of dimensionality” in the same way as kNN
 
-Preprocessing
+##### Preprocessing
 1. Why did you lowercase, remove punctuation, and remove stopwords?
    - Ans. Lowercasing prevents increasing the size of vocabulary unneccesarily so that feature are discreminated. For the same reason we might want to do lemmtization. Two words only different in casing are not signigicantly different for classification porpuses.  Removing punctuations as they dont carry significant meaning or discriminative in classification task. Removing stopwords is task-dependent — sometimes they matter (e.g., sentiment ‘not good’), but for this multi-tag classification they were mostly noise and they are not discriminative as they are usually high frequency words. 
 2. Did you try stemming or lemmatization? What would be the effect? 
    - Ans. they collapse variants (‘running’, ‘runs’ → ‘run’), reduce the vocabulary size and decrease noise level,  and help generalization
 3. How does dictionary size (5k tokens vs. 20k) affect accuracy and runtime?
-   - Ans. Larger vocabularies increase dimensionality and sparsity, making training slower and inference heavier. It may also introduce more noise words, which can hurt generalization if not regularized. The real tradeoff is computational cost + risk of overfitting
+   - Ans. Larger vocabularies increase dimensionality and sparsity, making training slower and inference heavier. It may also introduce more noise words, which can hurt generalization if not regularized. The real tradeoff is **computational cost + risk of overfitting**
   
 4. Why filter out words that appear in >90% or <5 documents?
-   - Ans. They are not descriminative enough for classification task as they appear very often or very rare. Rare words don’t generalize, frequent words don’t discriminate — filtering improves both efficiency and predictive power.
+   - Ans. They are not descriminative enough for classification task as they appear very often or very rare. *Rare words don’t generalize, frequent words don’t discriminate* — filtering improves both efficiency and predictive power.
 
-Feature Representation
+##### Feature Representation
 1. Explain the difference between Bag of Words and TF-IDF in terms of weighting.
    - Ans. Bag of words is the simplest way to encode documents into arrays of numbers. Every document is maaped into a 0s, 1s vector of size of the vocablary, if a word appears in the doc, its corresponding position in the vecor has value 1 otherwise zero. Think of it as sum of one-hot vectos for cat variables. It doesnt preserve the order of words or doesnt carry any semantic interrelation between words. TF-IDF is a frequency-base encoding so that every document is mapped to a vecotor of vocab size so that its corresponding component is TF-IDF  for that word: frequecy of the word in corpus times inverse of log of freq of the word across documents. TF-IDF downweights very common words and highlights terms that are relatively unique to a document.
 2. Why did TF-IDF produce better features than BoW? When might BoW actually work better?
-   - Ans. TF-IDF tends to produce better signal-to-noise ratio because it reduces the weight of ubiquitous words that BoW treats equally. BOW could do better for smaller vocab size.
+   - Ans. TF-IDF tends to produce better signal-to-noise ratio because it reduces the weight of ubiquitous words that BoW treats equally. *BOW could do better for smaller vocab size*.
 3. What’s the tradeoff in using unigrams vs. bigrams?
-   - Ans. Bigrams help capture short context (‘machine learning’ ≠ ‘machine’ + ‘learning’). But they explode feature space, making it sparser
+   - Ans. Bigrams help *capture short context* (‘machine learning’ ≠ ‘machine’ + ‘learning’). But they explode feature space, making it sparser
 4. Did you consider word embeddings (Word2Vec, GloVe)? Why or why not for this baseline project?
-   - Yes, i did. I trained a word embedding model on the data to use word embeddings as features. Embeddings capture semantic similarity but require more compute and tuning. Since this was a linear-model baseline, TF-IDF was more appropriate.
+   - Yes, I did. I trained a word embedding model on the data to use word embeddings as features. Embeddings capture semantic similarity but require more compute and tuning. Since this was a linear-model baseline, TF-IDF was more appropriate.
 
-Modeling
-9. Why One-vs-Rest instead of Softmax multinomial logistic regression?
+##### Modeling
+1. Why One-vs-Rest instead of Softmax multinomial logistic regression?
   - Ans. One-vs_all is a wrapper  around any binary classification to turn it  into mlticlass classifier. My base model was SVM, so I use sklearn wrapper to create multiclass classifier which I got better results than multinomial logistic regression which is basically a verion of one-vs-all for LR 
   
-10. What challenges come from multi-label classification compared to single-label?
+2. What challenges come from multi-label classification compared to single-label?
     - Ans. We need to train several models per label. We need to choose a threshold carefully to capture multilables. Evaluation is harder: accuracy is less meaningful, so metrics like micro/macro F1 are more useful.
   
-11. Logistic Regression assumes linear separability — why is it still effective for text classification? 
-    - Ans. Because text BoW/TF-IDF vectors are extremely high-dimensional and sparse, documents often become linearly separable. Logistic regression with regularization can find effective separating hyperplanes.
+3. Logistic Regression assumes linear separability — why is it still effective for text classification? 
+    - Ans. Because text BoW/TF-IDF vectors are *extremely high-dimensional and sparse*, documents often become linearly separable. Logistic regression with regularization can find effective separating hyperplanes.
     
-12. How do you deal with correlated tags (e.g., "python" and "django")?
+4. How do you deal with correlated tags (e.g., "python" and "django")?
 - Ans. You can model tag correlations with classifier chains or by using embeddings. In One-vs-Rest LR, each tag is predicted independently, but correlations can be captured by adding features like co-occurrence statistics or using multi-output models. 
 
-Evaluation
-13.  Why did you choose accuracy, F1, ROC-AUC, and PR-AUC? Which is most informative for imbalanced multi-label data?
-  - Ans. F1, ROC-AUC, and PR-AUC are standard metrics for classification tasks. ROC-AUC is adapted for multilabel one ROC curve per label. Precision Recall curve is very useful for multilabel and imbalance data. 
+##### Evaluation
+1.  Why did you choose accuracy, F1, ROC-AUC, and PR-AUC? Which is most informative for imbalanced multi-label data?
+  - Ans. `F1`, `ROC-AUC`, and `PR-AUC` are standard metrics for classification tasks. ROC-AUC is adapted for multilabel one ROC curve per label. Precision Recall curve is very useful for multilabel and imbalance data. 
     
-14. How does micro vs macro F1-score differ, and which did you use?
+2. How does micro vs macro F1-score differ, and which did you use?
   - Ans. Macro F1-score takes average of F1 scores for one-vs-all classifiers per label. So labels are treated equal weight. in case of imbalance data it shows lower score. Micro case calculate precision and recall for entire predictions regardless of classes... so poor performance for minor classes  is overshadowed by high score in bigger classes.
   
-15. Did you evaluate per-label performance? Were some tags much harder to predict?
+3. Did you evaluate per-label performance? Were some tags much harder to predict?
     - Ans. Yes i did. Some tags had smaller data for them. 
 
-Extensions / Improvements
-16.  If you wanted to improve beyond logistic regression, what would be your next step? (hint: linear SVM, or embeddings + deep learning) 
-   - Ans. use word embeddings instead of BOW or TFIDF, use non-linear models or ven bigger models such as neural nets. Or large language models smaller one such as BERT
+##### Extensions / Improvements
+1.  If you wanted to improve beyond logistic regression, what would be your next step? (hint: linear SVM, or embeddings + deep learning) 
+   - Ans. use word embeddings instead of BOW or TFIDF, use non-linear models or even bigger models such as neural nets. Or large language models smaller one such as BERT
 
-17.  Could you use dimensionality reduction (e.g., Truncated SVD, PCA) to make features more efficient?
+2.  Could you use dimensionality reduction (e.g., Truncated SVD, PCA) to make features more efficient?
     - Ans. Yes, it expect it to be an improvement - linear models could suffer from high dim data. Dimensionality reduction can be helpful instead of sparse feature space
 
-18.  How would this pipeline change for larger text (full post bodies vs. titles)?
+3.  How would this pipeline change for larger text (full post bodies vs. titles)?
     - Ans. For larger text, bag-of-words or TF-IDF features become very high-dimensional and sparse, which may hurt generalization and efficiency. I would:
-    Move toward embeddings (e.g., averaging Word2Vec, GloVe, or transformer embeddings like BERT) instead of raw sparse features.
-    Possibly use hierarchical models (e.g., CNNs or RNNs) to capture local + global context.
-    Add dimensionality reduction (e.g., Truncated SVD) if sticking with TF-IDF, to keep feature space manageable.
-    Revisit preprocessing (handling stopwords, rare words, n-grams differently) since longer text provides more noise as well as signal.
-    Expect evaluation metrics to shift — longer text may improve recall (more words to catch tags) but hurt precision (more irrelevant words).
-
-Alternative model:
-- OneVsRest sigmoid LR: this outputs k sigmoids, then put a threshold to get multilabel classifier (multiple binary classifier). This is not the same as multinomial LR which uses softmax to get only one class as predictions (forces only one with higher logit).  
-
-
+      - Move toward embeddings (e.g., averaging Word2Vec, GloVe, or transformer embeddings like BERT) instead of raw sparse features.
+      - Possibly use hierarchical models (e.g., CNNs or RNNs) to capture local + global context.
+      - Add dimensionality reduction (e.g., Truncated SVD) if sticking with TF-IDF, to keep feature space manageable.
+      - Revisit preprocessing (handling stopwords, rare words, n-grams differently) since longer text provides more noise as well as signal.
+      - Expect evaluation metrics to shift — longer text may improve recall (more words to catch tags) but hurt precision (more irrelevant words).
 
 
 
@@ -947,7 +941,7 @@ TF-IDF answers one simple question:
 whole corpus?”
 
 It has two parts.
-- Term Frequency (TF)
+- **Term Frequency (TF)**
 TF measures:
     - How often does a word appear in this document?
     
@@ -963,7 +957,7 @@ TF measures:
     - use → TF = 1
     
      TF alone is basically BoW.
-- Inverse Document Frequency (IDF)
+- **Inverse Document Frequency (IDF)**
 IDF measures:
     - How rare is this word across all documents?
     
@@ -979,13 +973,14 @@ IDF measures:
     | “malloc” | 2%         | high      |
     | “gcc”    | 1%         | very high |
 
-- TF × IDF = TF-IDF
+- **TF × IDF = TF-IDF**
 A word gets a high score if:
-- it appears in the document
-- it’s rare in the corpus
-So:
-- malloc → strong signal for c
-- how → almost ignored
+  - it appears in the document
+  - it’s rare in the corpus
+
+  So:
+  - malloc → strong signal for c
+  - how → almost ignored
 
 That’s why TF-IDF beats raw BoW.
 
@@ -1007,9 +1002,8 @@ That is exactly the right formulation.  You did:
 Interview-safe framing:
 
 “I treated duplicate detection as a semantic similarity and retrieval problem, where true duplicates should rank highly among nearest neighbors.”
+
 This already sounds senior.
-
-
 
 ##### 2️⃣ Sentence embeddings — simple, intentional, defensible
 Your pipeline
@@ -1020,7 +1014,7 @@ Your pipeline
 
 This is classic, clean, and correct for its time.
 
-Why averaging is OK here
+###### Why averaging is OK here:
 Averaging:
 - is fast
 - works well for short texts
@@ -1059,13 +1053,14 @@ This means:
 
 Key point:
 
-StarSpace learns embeddings that are task-aligned, not just linguistically meaningful.
-
+> StarSpace learns embeddings that are task-aligned, not just linguistically meaningful.
+##### 
 That’s the entire reason this experiment matters.  You did not compare models. You compared embedding spaces. That’s subtle and impressive.
 
 Interview phrasing:
 
 “I evaluated different embedding spaces by fixing the similarity function and measuring retrieval quality.”
+
 Excellent.
 
 ##### 4️⃣ Evaluation — hit@k and DCG@k (this is very good)
@@ -1105,6 +1100,7 @@ Together, they form a natural progression, not two random projects.
 
 ##### PART 2 — FINAL RESUME BULLET (≤ 2 lines)
 Recommended version (balanced, strong, safe)
+
 Implemented duplicate question detection for Stack Overflow using semantic embeddings, comparing pretrained Word2Vec with task-trained StarSpace models via cosine similarity, evaluated using hit@k and DCG@k retrieval metrics.
 
 Alternative (slightly more compact)
@@ -1116,9 +1112,6 @@ Built a semantic duplicate-detection system for Stack Overflow questions using a
 ## PART 3 — ChatBot Integration 
 
 #### 1️⃣ Clean restatement of your chatbot system (ground truth)
-Here is your system, restated precisely and neutrally.
-
-Tell me if anything is wrong or missing.
 
 ##### A. Intent recognition (routing layer)
 - Task: binary classification
@@ -1145,8 +1138,8 @@ This is a control-flow decision, not “AI magic”.
 - Features:
     - Same TF-IDF vectorizer
     - Vectorizer reused via pickle
-Purpose:
-- Narrow the search space before similarity search.
+- Purpose:
+  - Narrow the search space before similarity search.
 
 This is a critical scalability decision.
 
@@ -1189,8 +1182,6 @@ https://api.telegram.org/bot{token}/
 ```
 - Embeddings stored locally
 - Real-time inference
-If this is accurate, say “Yes, that’s correct.”
-(We lock this mental model before compressing.)
 
 #### 2️⃣ Why these design choices are good (important)
 Let’s validate — not glorify.
@@ -1244,17 +1235,19 @@ This was the right design choice in 2020, and still defensible today.
 
 🎤 INTERVIEW STORY — SHORT VERSION (30–45 seconds)
 “I integrated my NLP models into an end-to-end chatbot. A logistic regression intent classifier first routed queries into either dialogue or technical flows. For technical queries, I predicted the programming tag using a TF-IDF classifier, then retrieved the closest Stack Overflow thread using StarSpace embeddings and cosine similarity. The system was deployed as a Telegram bot with a simple dialogue manager coordinating the components.”
+
 This shows:
-ownership
-clarity
-no exaggeration
+- ownership
+- clarity
+- no exaggeration
 
 🧠 INTERVIEW STORY — LONG VERSION (backup)
 Use this only if they probe system design.
+
 Architecture logic
-- Intent recognition prevents noisy technical processing
-- Tag prediction narrows the search space
-- Semantic similarity retrieves authoritative answers
+- **Intent recognition** prevents noisy technical processing
+- **Tag prediction** narrows the search space
+- **Semantic similarity** retrieves authoritative answers
 
 Engineering decisions
 - Reused the same preprocessing and TF-IDF vectorizer across training and inference
@@ -1265,6 +1258,7 @@ Chitchat component
 - Off-the-shelf ChatterBot corpus
 - Clearly separated from technical pipeline
 - Not the focus of the system
+
 “The goal was not to build a conversational AI, but a practical assistant that routes users to reliable technical resources.”
 
 This part adds system-level credibility:
@@ -1276,76 +1270,75 @@ This part adds system-level credibility:
 This is very attractive to interviewers.
 
 
-## Modern Perspective (Optional, last)
+## Modern Perspective (Optional, last part)
 Goal: contextualize without apologizing.
-We’ll discuss:
 
 ### Modern Perspective: Classical NLP → Transformers
 
-#### 1. What Transformers Changed (Fundamentally)
-a) Feature Engineering → Representation Learning
-Then (your project):
-- Manual preprocessing
-- Explicit vocabulary construction
-- BoW / TF-IDF
-- Averaging word embeddings
-- Linear classifiers on sparse features
+#### What Transformers Changed (Fundamentally)
+-  **a)** Feature Engineering → Representation Learning
+    Then (your project):
+    - Manual preprocessing
+    - Explicit vocabulary construction
+    - BoW / TF-IDF
+    - Averaging word embeddings
+    - Linear classifiers on sparse features
 
-Now:
-- Tokenization + minimal normalization
-- Dense contextual embeddings learned end-to-end
-- No manual feature engineering
-- One model learns syntax, semantics, and task structure
+    Now:
+    - Tokenization + minimal normalization
+    - Dense contextual embeddings learned end-to-end
+    - No manual feature engineering
+    - One model learns syntax, semantics, and task structure
 
-Key shift:
-- We stopped designing features and started designing objectives and data.
+    Key shift:
+    - We stopped designing features and started designing objectives and data.
+    ######
+    This is not a weakness of your project — it shows you understand what was removed and why.
 
-This is not a weakness of your project — it shows you understand what was removed and why.
-
-b) Pipeline Explosion → Unified Models
+- **b)** Pipeline Explosion → Unified Models
 Your pipeline:
-- Intent classifier
-- Tag classifier
-- Embedding similarity search
-- Rule-based dialogue manager
-- External chatbot module
+  - Intent classifier
+  - Tag classifier
+  - Embedding similarity search
+  - Rule-based dialogue manager
+  - External chatbot module
 
-Modern approach:
-- Single transformer (or small set)
-- Multi-task learning
-- Retrieval-augmented generation (RAG)
-- Instruction following replaces intent routing
+   Modern approach:
+    - Single transformer (or small set)
+    - Multi-task learning
+    - Retrieval-augmented generation (RAG)
+    - Instruction following replaces intent routing
 
-Key shift:
-- Control logic moved from code to the model.
+  Key shift:
+  - Control logic moved from code to the model.
 
-But this comes with tradeoffs (we’ll get to that).
+  But this comes with tradeoffs (we’ll get to that).
 
-c) Similarity Search Becomes Native
+- **c)** Similarity Search Becomes Native
 Then:
-- Train embeddings
-- Average word vectors
-- Cosine similarity
-- Manual evaluation (Hit@K, DCG)
+  - Train embeddings
+  - Average word vectors
+  - Cosine similarity
+  - Manual evaluation (Hit@K, DCG)
 
-Now:
-- Sentence / document embeddings (SBERT, E5, OpenAI, etc.)
-- Vector databases
-- Learned similarity aligned with tasks
+  Now:
+    - Sentence / document embeddings (SBERT, E5, OpenAI, etc.)
+    - Vector databases
+    - Learned similarity aligned with tasks
 
-But note:
-Your evaluation metrics and intuition did not change.
+But note: your evaluation metrics and intuition did not change.
 
-1. What Stayed the Same (This Is the Important Part)
+What Stayed the Same (This Is the Important Part)
 a) Problem Decomposition Still Matters
 Even with transformers, you still ask:
 - Is this classification, retrieval, or generation?
 - What is the failure mode?
 - Where does latency matter?
 - What can be cached?
-- What needs supervision?
+ - What needs supervision?
 
 Your chatbot architecture is structurally identical to modern RAG systems:
+
 | Your System          | Modern RAG         |
 | -------------------- | ------------------ |
 | Intent classifier    | Query router       |
@@ -1365,7 +1358,7 @@ Transformers didn’t remove:
 
 In fact, many teams now reintroduce simpler baselines because:
 - They’re faster
-- Easier to debugOnly the implementation changed, not the thinking.
+- Easier to debug. Only the implementation changed, not the thinking.
 - Easier to monitor
 - More stable under drift
 
@@ -1389,7 +1382,7 @@ This validates your modeling choices — they weren’t naïve, they were approp
 You should be able to say this confidently:
     -  “If I rebuilt this today, I’d collapse most of the pipeline into a transformer-based RAG system, but I’d keep the same decomposition and evaluation mindset.”
 
-Concrete mapping:
+#### Concrete mapping:
 ##### Multi-label Classification
 - Then: OvR + TF-IDF
 - Now: Transformer encoder + sigmoid head
@@ -1406,18 +1399,19 @@ Concrete mapping:
 - Now: LLM + retrieval + guardrails
 - Same routing logic, different substrate
 
-1. Why This Project Still Has Value (Your Narrative)
-This is the sentence you keep in your head, not on your resume:
+#### Why This Project Still Has Value (Your Narrative)
+This is the sentence you keep in your head:
+
 “This project gave me a first-principles understanding of NLP pipelines, which is why I don’t treat transformers as magic. I understand what they replaced, what they improved, and what they didn’t.”
 
 That’s a senior-level statement.
 
-Final Closure Statement (for you)
+## Final Closure Statement (for you)
 Write this once and move on:
 
 This project represents my foundation in NLP before transformers. It covers text classification, embeddings, retrieval, and end-to-end system design. While the tools have changed, the core modeling and evaluation principles remain the same. I now apply these principles using modern transformer-based systems.
 
 
-Appendix:
-- [Data for all parts](https://github.com/hse-aml/natural-language-processing/releases)
-- [Github page for the archived specialization including other courses](https://github.com/hse-aml)
+#### Appendix:
+- [Data for all parts of this project](https://github.com/hse-aml/natural-language-processing/releases)
+- [Github page for the archived specialization - including other courses](https://github.com/hse-aml)
