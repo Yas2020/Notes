@@ -799,7 +799,7 @@ We learn the parametes $\bm w_i$ by applying **Stochastic Gradient Descent Algor
 
 
 
-# Vector Semantics and Word Embeddings
+# Vector Semantics and Embeddings
 
 Vector semantics is the standard way to represent word meaning in NLP. The proposal by linguists like Joos (1950), Harris (1954), and Firth (1957) to define the meaning of a word by its distribution in language use, meaning its neighboring words or grammatical environments. _Their idea was that two words that occur in very similar distributions (whose neighboring words are similar) have similar meanings_. The idea of vector semantics is to represent a word as a point in a multi dimensional semantic space that is derived from the distributions of the word neighbors. Vectors for representing words are called **embeddings** although the term is sometimes more strictly applied only to dense vectors like word2vec, rather than sparse tf-idf. 
 
@@ -840,6 +840,20 @@ In short, the pros for word embedding are:
 - Allow you to encode meaning
 
 ## How to Create Word Embeddings?
+
+In the traditional setup, you define a vocabulary (which words are allowed), and then each word in this vocabulary has an assigned embedding. Words not in the vocabulary are mapped to a special token, usually called "unknown" `<UKW>` (a standard placeholder for words not found during training).
+
+ In practice, the *embeddings are learned*. This is the main idea of methods such as Word2Vec and GloVe. They learn the embeddings of the words in a corpus in such a way that words that appear in similar contexts have similar embeddings. For example, the embeddings of “king” and “queen” are similar because they appear in similar contexts.
+ 
+- Word2Vec is trained by passing a very large corpus and training a shallow neural network to predict the surrounding words. Later alternatives predict the center word given the surrounding words.
+
+- GloVe is trained by looking at the co-occurrence matrix of words (how often words appear together within a certain distance) and then using that matrix to obtain the embeddings.
+
+Word2Vec and GloVe are trained with objectives that ensure that words appearing in similar contexts have similar embeddings.
+
+ Some open-source libraries, such as Gensim and fastText, allow you to obtain pre-trained Word2Vec and GloVe embeddings quickly. In the good ol’ days of NLP (2013), people used these models to compute word embeddings, which were helpful as inputs to other models. For example, you can compute the word embeddings of each word in a sentence and then pass that as input to a scikit learn classifier to classify the sentiment of the sentence. But Word2vec and GloVe will struggle with words that have multiple meanings.
+
+ Transformers are state-of-the-art in many NLP tasks and can capture contextual information that word2vec and GloVe cannot capture, thanks to a mechanism called attention. Attention allows the model to weigh other words’ importance and capture contextual information. For example, in the sentence “I went to the bank to deposit money”, the word “bank” is ambiguous. Is it a river bank or a savings bank? The model can use the word “deposit” to understand that it’s a savings bank. These are contextualized embeddings - their word embedding can differ based on their surrounding words.
 
 To create word embeddings you always need a corpus of text, and an embedding method. The context of a word tells you what type of words tend to occur near that specific word. The context is important as this is what will give meaning to each word embedding. There are many types of possible methods that allow you to learn the word embeddings *but mainly they involve a machine learning model performs a learning task, and the main by-products of this task are the word embeddings*. The task could be to learn to predict a word based on the surrounding words in a sentence of the corpus. These vectors capture information about the meaning of the word based on the surrounding words. 
 
@@ -946,7 +960,7 @@ A simple idea is we could instead just approximate the loss function. For every 
 
 ## Visualizing Embeddings
 
-The simplest way to visualize the meaning of a word $w$ embedded in a space is to list the most similar words to $w$ by sorting the vectors for all words in the vocabulary by their _cosine_ with the vector for $w$. For example the 7 closest words to frog using a particular embeddings computed with the GloVe algorithm are: _frogs_, _toad_, _litoria_, _leptodactylidae_, _rana_, _lizard_, and _eleutherodactylus_.
+The simplest way to visualize the meaning of a word (or a sentence) $w$ embedded in a space is to list the most similar words to $w$ by sorting the vectors for all words in the vocabulary by their _cosine_ with the vector for $w$. For example the 7 closest words to frog using a particular embeddings computed with the GloVe algorithm are: _frogs_, _toad_, _litoria_, _leptodactylidae_, _rana_, _lizard_, and _eleutherodactylus_.
 
  
 Yet another visualization method is to use a clustering algorithm to show a hierarchical representation of which words are similar to others in the embedding space. Probably the most common visualization method, however, is to project the 100 dimensions of a word down into 2 dimensions using a projection method called **t-SNE**. Recent research focuses on ways to try to remove these kinds of biases, for example by developing a transformation of the embedding space that removes gender stereotypes but preserves definitional gender or changing the training procedure. However, although these sorts of debiasing may reduce bias in embeddings, they do not eliminate it, and this remains an open problem.
@@ -956,6 +970,95 @@ Yet another visualization method is to use a clustering algorithm to show a hier
 - **Sentiment Analysis**: use well-know word embeddings to train RNNs for sentiment analysis - many-to-one RNNs... takes a sentence which is a sequence of word embeddings and outputs a a fix number of class prediction (positive/negative) 
 - **Debiasing Word Embeddings**: Modify word embedding so they are less bias -->
 
+## Sentence Embeddings
+Just as word embeddings are vector representations of words, sentence embeddings are vector representations of a sentence. There are three approaches we can take: `[CLS]` pooling, max pooling and mean pooling.
+
+- Mean pooling means averaging all the word embeddings of the sentence.
+- Max pooling means taking the maximum value of each dimension of the word embeddings.
+- `[CLS]` pooling means using the embedding corresponding to the `[CLS]` token as the sentence embedding. This is an output of BERT which is used for next-sentence prediction. We can obtain it like this:
+
+    ```python
+    encoded_input = tokenizer("This is an example sentence", return_tensors="pt")
+    model_output = model(**encoded_input)
+    sentence_embedding = model_output["last_hidden_state"][:, 0, :]
+    ```
+    On top of `[CLS]` token, a linear FC layer with `tanh` activation function is applied to get the representation that is used to train a binary classification. The idea is that the linear layer and the tanh activation function will learn a better representation of the `[CLS]` token. This is the *pooler component* of the BERT model and is used to obtain the `model_output.pooler_output`. This makes processing the `[CLS]` token more meaningful than the raw `[CLS]` embedding. It can be obtained like this:
+    ```python
+    model.pooler(model_output["last_hidden_state"])[0][:10] 
+    # Or, equivalently:
+    model_output["pooler_output"][0][:10]
+    ```
+    `[CLS]` token is not trained to be a good sentence embedding. It’s trained to be a good sentence embedding for next-sentence prediction! **Sentence Transformers** (also known as SBERT) have a special training technique focusing on yielding high-quality sentence embeddings.
+
+When to use each pooling strategy? It depends on the task.
+
+- `[CLS]` pooling is usually used when the transformer model has been fine-tuned on a specific downstream task that makes the `[CLS]` token very useful.
+- Mean pooling is usually more effective on models that have not been fine-tuned on a downstream task. It ensures that all parts of the sentence are represented equally in the embedding and can work for long sentences where the influence of all tokens should be captured.
+- Max pooling can be useful to capture the most important features in a sentence. This can be very useful if particular keywords are very informative, but it might miss the subtler context.
+
+In practice, a pooling method will be stored with the model, and you won’t have to worry about it. If there’s no method specified, mean pooling is usually a good default.
+
+### Sentence Transformers
+
+The sentence-transformers library makes it even easier for us to do all of this!
+
+```python
+from sentence_transformers import SentenceTransformer
+
+# We load the model
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+
+query_embedding = model.encode("Today is a sunny day")
+embeddings = model.encode(sentences)
+
+for embedding, sentence in zip(embeddings, sentences):
+    similarity = util.pytorch_cos_sim(query_embedding, embedding)
+    print(similarity, sentence)
+```
+### Embedding dimensions
+Embedding size is a hyperparameter of the model and can be changed. The larger the embedding size, the more information the embedding can capture. However, larger embeddings are more expensive to compute and store.
+
+The embeddings of popular open-source models go from 384 to 1024. The best current model, as of the time of writing, has embedding dimensions of 4096 values, but the model is much larger (7 billion parameters) compared to other models. In the closed-sourced world, Cohere has APIs that go from 384 to 4096 dimensions, OpenAI has embeddings of 1536, and so on. Embedding dimension is a trade-off. If you use very large embeddings, you will potentially get better results, but you will also have to pay more for hosting and inference. If you use vector databases, you will also have to pay more for storage.
+
+### Sequence length
+One of the limitations of transformer models is that they have a maximum sequence length. This means that they can only process a certain number of tokens. For example, BERT has a maximum context length of 512 tokens. This means that if you want to encode a sentence with more than 512 tokens, you will have to find ways to work around this limitation. For example, you could split the sentence into multiple sentences of 512 tokens and then average the embeddings. This is not ideal because the model will not be able to capture the context of the entire sentence.
+
+This is not a problem for most use cases, but it can be a problem for long documents. For example, if you want to encode a 1000-word document, you will have to split it into multiple sentences of 512 tokens. This is not ideal because the model will not be able to capture the context of the entire document. Another approach can be to first generate a summary of the text and then encode the summary. This is a good approach if you want to encode long documents, but will require a good summarization model that might be too slow. Alternatively, you might know if a specific part of the document is good (such as abstracts, introductions, conclusions, etc.) and only encode that part if that’s the most meaningful part for your task.
+
+### Selecting and Evaluating Models
+
+There are several ways to evaluate embeddings:
+##### Intrinsic Evaluation (Structural Properties)
+These metrics measure the geometry of the embedding space without needing a specific task. 
+- Semantic Similarity: Uses datasets like `WordSim-353` to check if the Cosine Similarity between words matches human-judged scores.
+
+- Visualization: Tools like t-SNE or UMAP project high-dimensional vectors into 2D or 3D to see if similar items cluster together visually.
+- Clustering Quality: Uses the **Silhouette Score** to quantify how well-defined and separated the clusters are. 
+
+##### Extrinsic Evaluation (Task-Specific Performance)
+This assesses how embeddings perform within a specific application, such as search or recommendation. 
+- Retrieval Metrics: In RAG systems, use Recall@k to see how often the correct document appears in the top results, or NDCG to measure the quality of the ranked order.
+- Downstream Accuracy: Measuring the final performance of a classifier or chatbot that uses these embeddings.
+- Frameworks: Tools like **Ragas** allow you to compare different embedding models on your own data by evaluating the relevance of retrieved content. 
+
+##### Industry Benchmarks
+If you aren't testing on custom data yet, use established leaderboards: 
+
+- MTEB (Massive Text Embedding Benchmark): The gold standard on Hugging Face, ranking models across categories like 
+    - retrieval
+    - reranking
+    - semantic simialirtiy
+    - clustering
+    - summarization
+    - classification. 
+
+  MTEB provides a benchmark of 56 datasets across eight tasks and contains 112 languages. It’s easily extensible to add your datasets and models to the leaderboard. Overall, it’s a straightforward tool to find the suitable speed-accuracy trade-off for your use case.
+
+- BEIR (Benchmark Information Retrieval): Focuses specifically on how well models perform in search and retrieval tasks.
+
+#####  Operational Considerations
+- Dimensionality: More dimensions (e.g., 1536) can capture finer nuances but may introduce noise and increase latency.
+- Efficiency: Measure inference speed and memory usage to ensure the model scales for production environments. 
 
 
 # Recurrent Neural Nets (RNNs)
@@ -3192,7 +3295,7 @@ Based on these texts, answer this question: Q: Who wrote the book ‘‘The Orig
 Or more formally,
 
 $$
-p(x_1,\dots, x_n) = \prod^n_{i=1}p(x_i | \;R(q);\text{propmt};[Q:];q;[A:];x_{<i})
+p(x_1,\dots, x_n) = \prod^n_{i=1}p(x_i | \;R(q);\text{prompt};[Q:];q;[A:];x_{<i})
 $$
 
 As with the span-based extraction reader, successfully applying the retrieval- augmented generation algorithm for QA requires a successful retriever, and often a two-stage retrieval algorithm is used in which the retrieval is reranked. Some complex questions may require multi-hop architectures, in which a query is used to retrieve documents, which are then appended to the original query for a second stage of retrieval. Details of prompt engineering also have to be worked out, like deciding whether to demarcate passages, for example with `[SEP]` tokens, and so on. Combinations of private data and public data involving an externally hosted large language model may lead to privacy concerns that need to be worked out. Much research in this area also focuses on ways to more tightly integrate the retrieval and reader stages.
@@ -3213,9 +3316,1334 @@ MRR = \frac{1}{|Q|}\sum^{|Q|}_{i=1}\frac{1}{rank_i}
 $$
 
 
+## RAG Components
 
 
-<br><br><br>
+### Retriever - embeddings 🗂️
+
+Your RAG is as good as your retrieval engine. Although there is not perfect solution but there are some best practices to make retrieval pipeline effective. 
+
+The retriever acts like an **internal search engine**: given the user query, it returns a few relevant snippets from your knowledge base. These snippets will then be fed to the Reader Model to help it generate its answer. So our objective here is, given a user question, to find the most relevant snippets from our knowledge base to answer that question.
+
+This is a wide objective, it leaves open some questions. How many snippets should we retrieve? This parameter will be named **top_k**. How long should these snippets be? This is called the **chunk size**. There's no one-size-fits-all answers, but here are a few elements:
+
+Your chunk size is allowed to vary from one snippet to the other. Since there will always be some noise in your retrieval, increasing the top_k increases the chance to get relevant elements in your retrieved snippets.  If our chunks are too small or too large, it may lead to imprecise search results or missed opportunities to surface relevant content. As a rule of thumb, if the chunk of text makes sense without the surrounding context to a human, it will make sense to the language model as well. Therefore, finding the optimal chunk size for the documents in the corpus is crucial to ensuring that the search results are accurate and relevant.
+
+Meanwhile, the summed length of your retrieved documents should not be too high: for instance, for most current models 16k tokens will probably drown your Reader model in information due to Lost-in-the-middle phenomenon. 🎯 Give your reader model only the most relevant insights, not a huge pile of books!
+
+In this notebook, we use **Langchain** library since it offers a huge variety of options for vector databases and allows us to keep document metadata throughout the processing.
+
+#### Split the documents into chunks
+Ref: [Notebook](https://github.com/FullStackRetrieval-com/RetrievalTutorials/blob/main/tutorials/LevelsOfTextSplitting/5_Levels_Of_Text_Splitting.ipynb) by by Greg Kamradt
+
+In this part, we split the documents from our knowledge base into smaller chunks which will be the snippets on which the reader LLM will base its answer. The goal is to prepare a collection of semantically relevant snippets. So their size should be adapted to precise ideas: too small will truncate ideas, and too large will dilute them. Many options exist for text splitting splitting on words, on sentence boundaries, recursive chunking that processes documents in a tree-like way to preserve structure information... 
+
+##### Character Splitting
+
+Character splitting is the most basic form of splitting up your text. It is the process of simply dividing your text into N-character sized chunks regardless of their content or form. *This method isn't recommended for any applications* - but it's a great starting point for us to understand the basics.
+
+- Pros: Easy & Simple
+- Cons: Very rigid and doesn't take into account the structure of your text
+
+Concepts to know:
+
+- **Chunk Size** - The number of characters you would like in your chunks. 50, 100, 100,000, etc.
+- **Chunk Overlap** - The amount you would like your sequential chunks to overlap. This is to try to avoid cutting a single piece of context into multiple pieces. This will create duplicate data across chunks.
+
+For a given text, we split it into pieces `text[i:i + chunk_size]` of character length `chunk_size`:
+
+```python
+from langchain.text_splitter import CharacterTextSplitter
+
+text_splitter = CharacterTextSplitter(chunk_size = 35, chunk_overlap=0, separator='', strip_whitespace=False)
+
+text = "This is the text I would like to chunk up. It is the example text for this exercise"
+# Now split the text
+text_splitter.create_documents([text])
+```
+<br>
+
+```o
+[Document(page_content='This is the text I would like to ch'),
+ Document(page_content='unk up. It is the example text for '),
+ Document(page_content='this exercise')]
+```
+
+Separators are character(s) sequences you would like to split on. Say you wanted to chunk your data at `ch`, you can specify it.
+
+##### Recursive Character Text Splitting
+
+With Recursive Character Text Splitter, we'll specify a *series of separators* which will be used to split our docs. If you don't know which splitter to start with, this is a good first bet. 
+
+Recursive chunking breaks down the text into smaller parts step by step using a given list of separators sorted from the most important to the least important separator. If the first split doesn't give the right size or shape of chunks, the method repeats itself on the new chunks using a different separator. You can see the default separators for LangChain here. Let's take a look at them one by one.
+
+- `\n\n` - Double new line, or most commonly paragraph breaks
+- `\n` - New lines
+- ` ` - Spaces
+- "" - Characters
+
+Once paragraphs are split using double line space `\n\n`, then it looks at the chunk size, if a chunk is too big, then it'll split by the next separator. If the chunk is still too big, then it'll move onto the next one and so forth. With this method, the global structure is well preserved, at the expense of getting slight variations in chunk size.
+
+
+```python
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+text = """
+One of the most important things I didn't understand about the world when I was a child is the degree to which the returns for performance are superlinear.
+
+Teachers and coaches implicitly told us the returns were linear. "You get out," I heard a thousand times, "what you put in." They meant well, but this is rarely true. If your product is only half as good as your competitor's, you don't get half as many customers. You get no customers, and you go out of business.
+"""
+text_splitter = RecursiveCharacterTextSplitter(chunk_size = 65, chunk_overlap=0)
+
+text_splitter.create_documents([text])
+```
+<br>
+
+```o
+[Document(page_content="One of the most important things I didn't understand about the"),
+ Document(page_content='world when I was a child is the degree to which the returns for'),
+ Document(page_content='performance are superlinear.'),
+ Document(page_content='Teachers and coaches implicitly told us the returns were linear.'),
+ Document(page_content='"You get out," I heard a thousand times, "what you put in." They'),
+ Document(page_content='meant well, but this is rarely true. If your product is only'),
+ Document(page_content="half as good as your competitor's, you don't get half as many"),
+ Document(page_content='customers. You get no customers, and you go out of business.')]
+```
+
+The `RecursiveCharacterTextSplitter` doesnt take in account the required token length limit that we may impose so some documents length might go above the limit and be lost in truncation by the embedding model! So we should change the RecursiveCharacterTextSplitter class to count length in number of tokens instead of number of characters:
+
+```python
+text_splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(
+        AutoTokenizer.from_pretrained(tokenizer_name),
+        chunk_size=chunk_size,
+        chunk_overlap=int(chunk_size / 10),
+        add_start_index=True,
+        strip_whitespace=True,
+        separators=MARKDOWN_SEPARATORS,
+    )
+```
+This helps with the chunk length distribution!
+
+##### Document Specific Splitting
+
+Let's start to handle document types other than normal prose in a .txt. What if you have pictures? or a PDF? or code snippets?
+
+Our first two strategies of chunking wouldn't work great for this so we'll need to find a different tactic.
+
+This level is all about making your chunking strategy fit your different data formats. Let's run through a bunch of examples of this in action
+
+The Markdown, Python, and JS splitters will basically be similar to Recursive Character, but with different separators.
+
+See all of LangChains document splitters here and Llama Index (HTML, JSON, Markdown)
+
+###### Markdown
+
+You can see the separators here.
+
+Separators:
+
+- \n#{1,6} - Split by new lines followed by a header (H1 through H6)
+- "```"\n - Code blocks
+- \n\\*\\*\\*+\n - Horizontal Lines
+- \n---+\n - Horizontal Lines
+- \n___+\n - Horizontal Lines
+- \n\n Double new lines
+- \n - New line
+- " " - Spaces
+- "" - Character
+
+```python
+from langchain.text_splitter import MarkdownTextSplitter
+
+splitter = MarkdownTextSplitter(chunk_size = 40, chunk_overlap=0)
+
+markdown_text = """
+# Fun in California
+
+## Driving
+
+Try driving on the 1 down to San Diego
+
+### Food
+
+Make sure to eat a burrito while you're there
+
+## Hiking
+
+Go to Yosemite
+"""
+
+splitter.create_documents([markdown_text])
+```
+<br>
+
+```o
+[Document(page_content='# Fun in California\n\n## Driving'),
+ Document(page_content='Try driving on the 1 down to San Diego'),
+ Document(page_content='### Food'),
+ Document(page_content="Make sure to eat a burrito while you're"),
+ Document(page_content='there'),
+ Document(page_content='## Hiking\n\nGo to Yosemite')]
+```
+
+However, it's still not perfect. Check out how there is a chunk with just "there" in it. You'll run into this at low-sized chunks. 
+
+
+##### Python
+
+See the python splitters here
+
+- \nclass - Classes first
+- \ndef - Functions next
+- \n\tdef - Indented functions
+- \n\n - Double New lines
+- \n - New Lines
+- " " - Spaces
+- "" - Characters
+
+```python
+from langchain.text_splitter import PythonCodeTextSplitter
+
+python_text = """
+class Person:
+  def __init__(self, name, age):
+    self.name = name
+    self.age = age
+
+p1 = Person("John", 36)
+
+for i in range(10):
+    print (i)
+"""
+
+python_splitter = PythonCodeTextSplitter(chunk_size=100, chunk_overlap=0)
+
+python_splitter.create_documents([python_text])
+```
+<br>
+
+```o
+[Document(page_content='class Person:\n  def __init__(self, name, age):\n    self.name = name\n    self.age = age'),
+ Document(page_content='p1 = Person("John", 36)\n\nfor i in range(10):\n    print (i)')]
+```
+
+Notice how the class stays together in a single document (good), then the rest of the code is in a second document (ok). It's necessary to play with the chunk size to get a clean result like that. You'll likely need to do the same for yours which is why using evaluations to determine optimal chunk sizes is crucial.
+
+
+##### PDFs w/ tables
+
+PDFs are an extremely common data type for language model work. Often they'll contain tables that contain information. This could be financial data, studies, academic papers, etc.
+
+Trying to split tables by a character based separator isn't reliable. For a deep dive on this I recommend checking out [Lance Martin's tutorial](https://x.com/RLanceMartin/status/1721942636364456336) w/ LangChain.
+
+I'll be going through a text based methods. [Mayo](https://x.com/mayowaoshin) has also outlined a GPT-4V method which tries to pulls tables via vision rather than text. You can check out here.
+
+A very convenient way to do this is with [Unstructured](https://unstructured.io), a library dedicated to making your data LLM ready.
+
+
+```python
+import os
+from unstructured.partition.pdf import partition_pdf
+from unstructured.staging.base import elements_to_json
+
+filename = "static/SalesforceFinancial.pdf"
+
+# Extracts the elements from the PDF
+elements = partition_pdf(
+    filename=filename,
+
+    # Unstructured Helpers
+    strategy="hi_res", 
+    infer_table_structure=True, 
+    model_name="yolox"
+)
+
+```
+
+`elements` is a list of unstructured objects. We could look at them to see how the table it parsed.
+
+```python
+elements[-4].metadata.text_as_html
+```
+<br>
+
+```o
+'<table><thead><th>Revenue)</th><th>Guidance $7.69 - $7.70 Billion</th><th>Guidance $31.7 - $31.8 Billion</th></thead><tr><td>Y/Y Growth</td><td>~21%</td><td>~20%</td></tr><tr><td>FX Impact?)</td><td>~($200M) y/y FX</td><td>~($600M) y/y FX®</td></tr><tr><td>GAAP operating margin</td><td></td><td>~3.8%</td></tr><tr><td>Non-GAAP operating margin)</td><td></td><td>~20.4%</td></tr><tr><td>GAAP earnings (loss) per share</td><td>($0.03) - ($0.02)</td><td>$0.38 - $0.40</td></tr><tr><td>Non-GAAP earnings per share</td><td>$1.01 - $1.02</td><td>$4.74 - $4.76</td></tr><tr><td>Operating Cash Flow Growth (Y/Y)</td><td></td><td>~21% - 22%</td></tr><tr><td>Current Remaining Performance Obligation Growth (Y/Y)</td><td>~15%</td><td></td></tr></table>'
+```
+That table may look messy, but because it's in HTML format, the LLM is able to parse it much more easily than if it was tab or comma separated. You can copy and paste that html into a html viewer online to see it reconstructed. Unstructured was able to pull out the tables for us. It's not perfect, but the team is upgrading their toolset all the time.
+
+Later on when we are doing semantic search over our chunks, trying to match on embeddings from the table directly will be difficult. A common practice that developers do is to summarize the table after you've extracted it. Then get an embedding of that summary. If the summary embedding matches what you're looking for, then pass the raw table to your LLM.
+
+Similary there are chunk methods implemented for  `LaTeX`  or other types/languages as well.
+
+##### Multi-Modal (text + images)
+
+Next we'll dive into the world of multi-modal text splitting. This is a very active field and best practices are evolving. I'll show you a method that was made popular by [Lance Martin of LangChain](https://github.com/langchain-ai/langchain/blob/master/cookbook/Semi_structured_and_multi_modal_RAG.ipynb). 
+
+
+```python
+from unstructured.partition.pdf import partition_pdf
+
+filepath = "static/VisualInstruction.pdf"
+
+# Get elements
+raw_pdf_elements = partition_pdf(
+    filename=filepath,
+    
+    # Using pdf format to find embedded image blocks
+    extract_images_in_pdf=True,
+    
+    # Use layout model (YOLOX) to get bounding boxes (for tables) and find titles
+    # Titles are any sub-section of the document
+    infer_table_structure=True,
+    
+    # Post processing to aggregate text once we have the title
+    chunking_strategy="by_title",
+    # Chunking params to aggregate text blocks
+    # Attempt to create a new chunk 3800 chars
+    # Attempt to keep chunks > 2000 chars
+    # Hard max on chunks
+    max_characters=4000,
+    new_after_n_chars=3800,
+    combine_text_under_n_chars=2000,
+    image_output_dir_path="static/pdfImages/",
+)
+```
+If you head over to `static/pdfImages/`, you can find the images that were parsed. Now the common tactics either use a multi-modal model to generate summaries of these images or use the image itself for your task. Others get embeddings of images (like [CLIP](https://openai.com/index/clip/)).
+
+Use  GPT-4V to generate summaries. We'll use Check out other models here.
+
+```python
+from langchain.chat_models import ChatOpenAI
+from langchain.schema.messages import HumanMessage
+import os
+from dotenv import load_dotenv
+from PIL import Image
+import base64
+import io
+
+load_dotenv()
+```
+<br>
+
+```o
+True
+```
+
+```python
+# Function to convert image to base64
+def image_to_base64(image_path):
+    with Image.open(image_path) as image:
+        buffered = io.BytesIO()
+        image.save(buffered, format=image.format)
+        img_str = base64.b64encode(buffered.getvalue())
+        return img_str.decode('utf-8')
+
+image_str = image_to_base64("static/pdfImages/figure-15-6.jpg")
+```
+pass our image to the LLM
+
+```python
+chat = ChatOpenAI(model="gpt-4-vision-preview",
+                  max_tokens=1024)
+
+msg = chat.invoke(
+    [
+        HumanMessage(
+            content=[
+                {"type": "text", "text" : "Please give a summary of the image provided. Be descriptive"},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/jpeg;base64,{image_str}"
+                    },
+                },
+            ]
+        )
+    ]
+)
+```
+Then the summary returned is what we will put into our vector database. Then when it comes time to do our retrieval process, we'll use these embeddings for semantic search.
+
+```python
+msg.content
+```
+<br>
+
+```o
+'The image shows a baking tray with pieces of fried chicken arranged to roughly mimic the continents on Earth as seen from space. The largest piece in the center is ...'
+```
+
+#### Semantic Chunking
+
+Embeddings represent the semantic meaning of a string. They don't do much on their own, but when compared to embeddings of other texts you can start to infer the relationship between chunks. I want to lean into this property and explore using embeddings to find clusters of semantically similar texts.
+
+The hypothesis is that semantically similar chunks should be held together.
+
+##### Find break points between sequential sentences 
+I started at the first sentence, got the embedding, then compared it to sentence #2, then compared #2 and #3 and so on. I was looking for "break points" where embedding distance was large. If it was above a threshold, then I considered it the start of a new semantic section. I originally tried taking embeddings of every sentence, but this turned out to be too noisy. So I ended up taking groups of 3 sentences (a window), then got an embedding, then dropped the first sentence, and added the next one (sliding window). This worked out a bit better.
+
+<p align="center">
+<img src="./assets/rag/semantic-chunk.png" alt="drawing" width=500" height="300" style="center" />
+</p>
+
+After the breaking points found (ex. [23, 40, ...]), we can chunk the document into groups. A breakpoint is inserted if the semantic distance between two consecutive sentences exceeds a thredshold, meaning a significant topic change. At this point, we are not worried about chunk sizes.You could recursively split large chunks if you needed to. 
+
+[This](https://arxiv.org/abs/2410.13070) resource claims that the computational costs associated with semantic chunking are not justified by consistent performance gains! These findings challenge the previous assumptions about semantic chunking and highlight the need for more efficient chunking strategies in RAG systems.
+
+
+#### Agentic Chunking
+
+Can we instruct an LLM to do the chunking task like a human would? How does a human even go about chunking in the first place?
+
+Agentic chunking makes use of AI-based text-splitting methods, recursive chunking, and chunk overlap methods, which work concurrently to polish chunking ability, preserving links between notable ideas while optimizing contextual windows in real time. With agentic chunking, each chunk is enriched with metadata to deepen retrieval accuracy and overall model efficiency. This is particularly important in RAG applications applications, where segmentation of data can directly impact retrieval quality and coherence of the response. Meaningful context is preserved in all chunks, making this approach incredibly important to chatbots, knowledge bases, and generative ai use cases.
+
+##### Advantages of Agentic Chunking Over Traditional Methods
+
+- Retains Context – Maintains crucial information without unnecessary breaks
+- Smart Sizing – Adjusts chunk boundaries according to meaning and significance
+- Efficient Retrieval – Improves search and RAG by minimizing unnecessary fragmentation
+
+
+We pass our text to an LLM asking it to chunk this text into parts. Do this using an appropriate prompt template such as [this](https://smith.langchain.com/hub/wfh/proposal-indexing?organizationId=50995362-9ea0-4378-ad97-b4edae2f9f22) which starts by:
+
+"SYSTEM
+
+Decompose the "Content" into clear and simple propositions, ensuring they are interpretable out of
+context.  [continued ... ]"
+
+Then you get the chunks of the text changed in a way that are more self-explanatory and useful for embeddings. For example, one of the sentences in the raw text is "They meant well, but this is rarely true." is chucked as 
+
+```python
+['Teachers and coaches meant well.',,
+ "The statement that 'You get out what you put in' is rarely true."]
+ ```
+ If you were to chunk that on it's own, the LLM would have no idea who you're talking about. Who meant well? What is rarely true? But those have been covered by the propositions. These chunks can be accompanied by summaries and chunk ids to facilitate retrieval even more.
+
+### More Chunking/Indexing
+But what if your raw text isn't the best way to represent your data for your task? For example, if you're doing semantic search on **chat messages**, raw chat messages may lack the context to make a successful embedding. Maybe actually trying to semantic search of a summary of a conversation would do better. Or maybe hypothetical questions that the chat would answer?
+
+This is where the world of chunking/splitting starts to dive into the world of *indexing*. When you index, you're making a choice about how you want to represent your data in your data base or knowledge base. This is more of a retrieval topic, but it's worth talking about with chunking.
+
+Let's quickly go through a few popular alternative ways developers like to represent their data. There are unlimited methods to try. We'll review 4 of them
+
+- Multi-Vector Indexing - This is when you do semantic search for a vector that is derived from something other than your raw text
+- Summaries - A summary of your chunk
+- Hypothetical questions - Good for chat messages used as knowledge base
+- Child Documents - Parent Document Retriever
+- Graph Based Chunking - Transposing your raw text into a graph structure
+
+See the source for more info.
+
+---------------------------------------
+
+### RAG Evaluation
+
+Traditional evaluation metrics based on the similarity between outputs and reference answers (e.g., ROUGE, BLEU) are also ineffective for evaluating RAG systems. A powerful solution to assess outputs in a human way, without requiring costly human time, is **LLM-as-a-judge**. The idea is simple: ask an LLM to do the grading for you.
+
+There are several evaluation metrics available for measuring the performance of our RAG pipeline. These metrics can be split into two parts:
+
+- **Generation evaluation**
+    - **Faithfulness** measures if all generated answers can be inferred from the retrieved context.
+    - **Answer relevancy** measures the relevancy of the generated response to the question.
+
+- **Retrieval evaluation**
+    - **Context precision** measures the ranking of ground-truth relevant entities in the context. Higher context precision means ground-truth relevant items are ranked higher than “noise.”
+    - **Context recall** measures the extent to which the LLM’s generated answers to user queries can be found in the retrieved context.
+
+These metrics are meant to be subjective proxies for how well a RAG pipeline retrieves relevant information from its knowledge base to form a response. It is important to note, there is no ideal for data, prompts or LLMs.  Even context that has a low scoring context_relevance is not necessarily bad context. The low score might be due to some amount of "noise," or less relevant information, or simply because the task itself is open to multiple interpretations. Noise is not necessarily bad either. We, as humans, produce a certain amount of noise in our responses while also being intelligible in answering questions. There are also biases that affect the evaluation of a RAG pipeline such as preference for either shorter or longer responses, otherwise known as length bias. This type of bias can lead to one response being evaluated higher than another because of its length and not its substance.
+
+For these reasons, it is best practice to perform multiple evaluations. This exercise can be accomplished through changing the LLM's prompt template, metrics, sequence of evaluation, and more. If you are creating your own data set for your RAG pipeline, it is also recommended to use different models for the LLM generating the responses and the LLM critiquing the responses. If the same model is used for both, then there is greater potential for **self-evaluation bias**. Because these evaluation metrics are subjective, the results produced by these frameworks should also be checked by human judges.
+
+#### Evaluating RAG Performance
+
+This notebook demonstrates how you can evaluate your RAG (Retrieval Augmented Generation), by building a synthetic evaluation dataset and using LLM-as-a-judge to compute the accuracy of your system. Since there are so many moving parts to tune with a big impact on performance, benchmarking the RAG system is crucial.
+
+It turns out, we can use LLMs as evaluators to help us all along the way!
+
+- The evaluation dataset will be synthetically generated by an LLM, and questions will be filtered out by other LLMs
+- An LLM-as-a-judge agent will then perform the evaluation on this synthetic dataset.
+
+
+##### Build a Synthetic Evaluation Dataset
+
+We first build a synthetic dataset of questions and associated contexts. The method is to get elements from our knowledge base, and ask an LLM to generate questions based on these documents.
+
+Then we setup other LLM agents to act as quality filters for the generated QA couples: each of them will act as the filter for a specific flaw.
+
+```python
+from tqdm.auto import tqdm
+```
+
+```python
+from huggingface_hub import notebook_login
+notebook_login()
+```
+
+##### Load the knowledge base
+```python
+import datasets
+ds = datasets.load_dataset("m-ric/huggingface_doc", split="train")
+```
+
+######  Prepare source documents
+
+```python
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.docstore.document import Document as LangchainDocument
+
+langchain_docs = [
+    LangchainDocument(page_content=doc["text"], metadata={"source": doc["source"]})
+    for doc in tqdm(ds)
+]
+
+
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=2000,
+    chunk_overlap=200,
+    add_start_index=True,
+    separators=["\n\n", "\n", ".", " ", ""],
+)
+
+docs_processed = []
+for doc in langchain_docs:
+    docs_processed += text_splitter.split_documents([doc])
+```
+
+##### Setup agents for question generation
+
+We use [Mixtral](https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1) for QA couple generation because it it has excellent performance in leaderboards such as Chatbot Arena.
+
+```python
+from huggingface_hub import InferenceClient
+
+
+repo_id = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+
+llm_client = InferenceClient(
+    model=repo_id,
+    timeout=120,
+)
+
+def call_llm(inference_client: InferenceClient, prompt: str):
+    response = inference_client.post(
+        json={
+            "inputs": prompt,
+            "parameters": {"max_new_tokens": 1000},
+            "task": "text-generation",
+        },
+    )
+    return json.loads(response.decode())[0]["generated_text"]
+
+
+call_llm(llm_client, "This is a test context")
+```
+
+Prepare the prompt:
+
+```python
+
+QA_generation_prompt = """
+Your task is to write a factoid question and an answer given a context.
+Your factoid question should be answerable with a specific, concise piece of factual information from the context.
+Your factoid question should be formulated in the same style as questions users could ask in a search engine.
+This means that your factoid question MUST NOT mention something like "according to the passage" or "context".
+
+Provide your answer as follows:
+
+Output:::
+Factoid question: (your factoid question)
+Answer: (your answer to the factoid question)
+
+Now here is the context.
+
+Context: {context}\n
+Output:::"""
+```
+
+But for your specific knowledge base, given that you want to get at least ~100 test samples, and accounting for the fact that we will filter out around half of these with our critique agents on the next step, you should generate much more, in the >200 samples.
+
+```python
+import random
+
+N_GENERATIONS = 10  # We intentionally generate only 10 QA couples here for cost and time considerations
+
+print(f"Generating {N_GENERATIONS} QA couples...")
+
+outputs = []
+for sampled_context in tqdm(random.sample(docs_processed, N_GENERATIONS)):
+    # Generate QA couple
+    output_QA_couple = call_llm(
+        llm_client, QA_generation_prompt.format(context=sampled_context.page_content)
+    )
+
+    question = output_QA_couple.split("Factoid question: ")[-1].split("Answer: ")[0]
+    answer = output_QA_couple.split("Answer: ")[-1]
+    if len(answer) < 300:
+        outputs.append(
+            {
+                "context": sampled_context.page_content,
+                "question": question,
+                "answer": answer,
+                "source_doc": sampled_context.metadata["source"],
+            }
+        )
+```
+
+##### Setup critique agents
+
+It is a good idea to check the quality of the generated questions for 
+
+- **Groundedness**: can the question be answered from the given context?
+- **Relevance**: is the question relevant to users? For instance, "What is the date when transformers 4.29.1 was released?" is not relevant for ML practitioners.
+- **Stand-alone**: is the question understandable free of any context, for someone with domain knowledge/Internet access? The opposite of this would be "What is the function used in this article?" for a question generated from a specific blog article.
+
+We systematically score functions with all these agents, and whenever the score is too low for any one of the agents, we eliminate the question from our eval dataset.
+
+💡 When asking the agents to output a score, we first ask them to produce its rationale. This will help us verify scores, but most importantly, asking it to first output rationale gives the model more tokens to think and elaborate an answer before summarizing it into a single score token.
+
+
+We now build and run these critique agents.
+
+```python
+question_groundedness_critique_prompt = """
+You will be given a context and a question.
+Your task is to provide a 'total rating' scoring how well one can answer the given question unambiguously with the given context.
+Give your answer on a scale of 1 to 5, where 1 means that the question is not answerable at all given the context, and 5 means that the question is clearly and unambiguously answerable with the context.
+
+Provide your answer as follows:
+
+Answer:::
+Evaluation: (your rationale for the rating, as a text)
+Total rating: (your rating, as a number between 1 and 5)
+
+You MUST provide values for 'Evaluation:' and 'Total rating:' in your answer.
+
+Now here are the question and context.
+
+Question: {question}\n
+Context: {context}\n
+Answer::: """
+
+question_relevance_critique_prompt = """
+You will be given a question.
+Your task is to provide a 'total rating' representing how useful this question can be to machine learning developers building NLP applications with the Hugging Face ecosystem.
+Give your answer on a scale of 1 to 5, where 1 means that the question is not useful at all, and 5 means that the question is extremely useful.
+
+Provide your answer as follows:
+
+Answer:::
+Evaluation: (your rationale for the rating, as a text)
+Total rating: (your rating, as a number between 1 and 5)
+
+You MUST provide values for 'Evaluation:' and 'Total rating:' in your answer.
+
+Now here is the question.
+
+Question: {question}\n
+Answer::: """
+
+question_standalone_critique_prompt = """
+You will be given a question.
+Your task is to provide a 'total rating' representing how context-independent this question is.
+Give your answer on a scale of 1 to 5, where 1 means that the question depends on additional information to be understood, and 5 means that the question makes sense by itself.
+For instance, if the question refers to a particular setting, like 'in the context' or 'in the document', the rating must be 1.
+The questions can contain obscure technical nouns or acronyms like Gradio, Hub, Hugging Face or Space and still be a 5: it must simply be clear to an operator with access to documentation what the question is about.
+
+For instance, "What is the name of the checkpoint from which the ViT model is imported?" should receive a 1, since there is an implicit mention of a context, thus the question is not independent from the context.
+
+Provide your answer as follows:
+
+Answer:::
+Evaluation: (your rationale for the rating, as a text)
+Total rating: (your rating, as a number between 1 and 5)
+
+You MUST provide values for 'Evaluation:' and 'Total rating:' in your answer.
+
+Now here is the question.
+
+Question: {question}\n
+Answer::: """
+```
+
+```python
+print("Generating critique for each QA couple...")
+for output in tqdm(outputs):
+    evaluations = {
+        "groundedness": call_llm(
+            llm_client,
+            question_groundedness_critique_prompt.format(
+                context=output["context"], question=output["question"]
+            ),
+        ),
+        "relevance": call_llm(
+            llm_client,
+            question_relevance_critique_prompt.format(question=output["question"]),
+        ),
+        "standalone": call_llm(
+            llm_client,
+            question_standalone_critique_prompt.format(question=output["question"]),
+        ),
+    }
+    try:
+        for criterion, evaluation in evaluations.items():
+            score, eval = (
+                int(evaluation.split("Total rating: ")[-1].strip()),
+                evaluation.split("Total rating: ")[-2].split("Evaluation: ")[1],
+            )
+            output.update(
+                {
+                    f"{criterion}_score": score,
+                    f"{criterion}_eval": eval,
+                }
+            )
+    except Exception as e:
+        continue
+```
+Now filter out bad questions based on our critique agent scores and only keep high quality data (score $\geq$ 4):
+
+
+```python
+import pandas as pd
+
+pd.set_option("display.max_colwidth", None)
+
+generated_questions = pd.DataFrame.from_dict(outputs)
+
+print("Evaluation dataset before filtering:")
+display(
+    generated_questions[
+        [
+            "question",
+            "answer",
+            "groundedness_score",
+            "relevance_score",
+            "standalone_score",
+        ]
+    ]
+)
+generated_questions = generated_questions.loc[
+    (generated_questions["groundedness_score"] >= 4)
+    & (generated_questions["relevance_score"] >= 4)
+    & (generated_questions["standalone_score"] >= 4)
+]
+print("============================================")
+print("Final evaluation dataset:")
+display(
+    generated_questions[
+        [
+            "question",
+            "answer",
+            "groundedness_score",
+            "relevance_score",
+            "standalone_score",
+        ]
+    ]
+)
+
+eval_dataset = datasets.Dataset.from_pandas(
+    generated_questions, split="train", preserve_index=False
+)
+```
+
+Now our synthetic evaluation dataset is ready! We can evaluate different RAG systems on this evaluation dataset.
+
+#### Build a RAG System
+
+##### Load and chunk your knowledge base
+2.1. Preprocessing documents to build our vector database
+
+In this part, we split the documents from our knowledge base into smaller chunks: these will be the snippets that are picked by the Retriever, to then be ingested by the Reader LLM as supporting elements for its answer. The goal is to build semantically relevant snippets: not too small to be sufficient for supporting an answer, and not too large to avoid diluting individual ideas.
+
+Put your data in a Document container so its metadata is preserved while chunking:
+
+```python
+from langchain.docstore.document import Document as LangchainDocument
+
+RAW_KNOWLEDGE_BASE = [
+    LangchainDocument(page_content=doc["text"], metadata={"source": doc["source"]})
+    for doc in tqdm(ds)
+]
+```
+
+Chunk the data:
+
+```python
+# This list is taken from LangChain's MarkdownTextSplitter class
+MARKDOWN_SEPARATORS = [
+    "\n#{1,6} ",
+    "```\n",
+    "\n\\*\\*\\*+\n",
+    "\n---+\n",
+    "\n___+\n",
+    "\n\n",
+    "\n",
+    " ",
+    "",
+]
+```
+
+```python
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from transformers import AutoTokenizer
+
+
+def split_documents(
+    chunk_size: int,
+    knowledge_base: List[LangchainDocument],
+    tokenizer_name: str,
+) -> List[LangchainDocument]:
+    """
+    Split documents into chunks of size `chunk_size` characters and return a list of documents.
+    """
+    text_splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(
+        AutoTokenizer.from_pretrained(tokenizer_name),
+        chunk_size=chunk_size,
+        chunk_overlap=int(chunk_size / 10),
+        add_start_index=True,
+        strip_whitespace=True,
+        separators=MARKDOWN_SEPARATORS,
+    )
+
+    docs_processed = []
+    for doc in knowledge_base:
+        docs_processed += text_splitter.split_documents([doc])
+
+    # Remove duplicates
+    unique_texts = {}
+    docs_processed_unique = []
+    for doc in docs_processed:
+        if doc.page_content not in unique_texts:
+            unique_texts[doc.page_content] = True
+            docs_processed_unique.append(doc)
+
+    return docs_processed_unique
+```
+
+### Retriever: building the vector database
+
+We want to compute the embeddings for all the chunks of our knowledge base. Once the chunks are all embedded, we store them in a vector database. When the user types in a query, it gets embedded by the same embedding model previously used, and a similarity search returns the closest documents from the vector database.
+
+The technical challenge is thus, given a query vector, to quickly find the nearest neighbors of this vector in the vector database. To do this, we need to choose two things: a **distance**, and a **search algorithm** to find the nearest neighbors quickly within a database of thousands of records.
+
+##### Nearest Neighbor search algorithm
+
+There are plentiful choices for the nearest neighbor search algorithm: we go with Facebook's FAISS since FAISS is performant enough for most use cases, and it is well known and thus widely implemented.
+
+##### Distances
+
+Regarding distances, you can find a good guide here. In short:
+
+- Cosine similarity computes the similarity between two vectors as the cosinus of their relative angle: it allows us to compare vector directions regardless of their magnitude. Using it requires normalizing all vectors, to rescale them into unit norm.
+- Dot product takes into account magnitude, with the sometimes undesirable effect that increasing a vector's length will make it more similar to all others.
+- Euclidean distance is the distance between the ends of vectors.
+
+If vectors are normalized, the choice of a specific distance does not matter. Our particular model works well with cosine similarity, so choose this distance, and we set it up both in the Embedding model, and in the distance_strategy argument of our FAISS index. With cosine similarity, we have to normalize our embeddings.
+
+```python
+
+from langchain.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores.utils import DistanceStrategy
+import os
+
+
+def load_embeddings(
+    langchain_docs: List[LangchainDocument],
+    chunk_size: int,
+    embedding_model_name: Optional[str] = "thenlper/gte-small",
+) -> FAISS:
+    """
+    Creates a FAISS index from the given embedding model and documents. Loads the index directly if it already exists.
+
+    Args:
+        langchain_docs: list of documents
+        chunk_size: size of the chunks to split the documents into
+        embedding_model_name: name of the embedding model to use
+
+    Returns:
+        FAISS index
+    """
+    # load embedding_model
+    embedding_model = HuggingFaceEmbeddings(
+        model_name=embedding_model_name,
+        multi_process=True,
+        model_kwargs={"device": "cuda"},
+        encode_kwargs={
+            "normalize_embeddings": True
+        },  # set True for cosine similarity
+    )
+
+    # Check if embeddings already exist on disk
+    index_name = (
+        f"index_chunk:{chunk_size}_embeddings:{embedding_model_name.replace('/', '~')}"
+    )
+    index_folder_path = f"./data/indexes/{index_name}/"
+    
+    if os.path.isdir(index_folder_path):
+        return FAISS.load_local(
+            index_folder_path,
+            embedding_model,
+            distance_strategy=DistanceStrategy.COSINE,
+        )
+
+    else:
+        print("Index not found, generating it...")
+        docs_processed = split_documents(
+            chunk_size,
+            langchain_docs,
+            embedding_model_name,
+        )
+        knowledge_index = FAISS.from_documents(
+            docs_processed, embedding_model, distance_strategy=DistanceStrategy.COSINE
+        )
+        knowledge_index.save_local(index_folder_path)
+        return knowledge_index
+```
+
+####  Reader - LLM 💬
+the LLM Reader reads the retrieved documents to formulate its answer. There are sub steps that can all be tuned:
+
+- Switch reranking on/off
+- Change the reader model
+
+The content of the retrieved documents is aggregated together into the "context", with many processing options like prompt compression. The context and the user query are aggregated into a prompt and then given to the LLM to generate its answer.
+
+##### Reader model
+
+The choice of a reader model is important in a few aspects:
+
+- Reader model's max_seq_length must accommodate our prompt, which includes the context output by the retriever call: the context consists of 5 documents of 512 tokens each, so we aim for a context length of 4k tokens at least.
+
+For this example, we chose `HuggingFaceH4/zephyr-7b-beta`, a small but powerful model. With many models being released every week, you may want to substitute this model to the latest and greatest. The best way to keep track of open source LLMs is to check the **Open-source LLM leaderboard**.
+
+```python
+from langchain_community.llms import HuggingFaceHub
+
+repo_id = "HuggingFaceH4/zephyr-7b-beta"
+READER_MODEL_NAME = "zephyr-7b-beta"
+HF_API_TOKEN = ""
+
+READER_LLM = HuggingFaceHub(
+    repo_id=repo_id,
+    task="text-generation",
+    huggingfacehub_api_token=HF_API_TOKEN,
+    model_kwargs={
+        "max_new_tokens": 512,
+        "top_k": 30,
+        "temperature": 0.1,
+        "repetition_penalty": 1.03,
+    },
+)
+```
+
+If you want to make inference faster or cheaper deployment, we can load the quantized version of the model:
+
+```python
+from transformers import pipeline
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+
+READER_MODEL_NAME = "HuggingFaceH4/zephyr-7b-beta"
+
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_use_double_quant=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch.bfloat16,
+    )
+
+model = AutoModelForCausalLM.from_pretrained(
+    READER_MODEL_NAME, quantization_config=bnb_config
+    )
+
+tokenizer = AutoTokenizer.from_pretrained(READER_MODEL_NAME)
+
+READER_LLM = pipeline(
+    model=model,
+    tokenizer=tokenizer,
+    task="text-generation",
+    do_sample=True,
+    temperature=0.2,
+    repetition_penalty=1.1,
+    return_full_text=False,
+    max_new_tokens=500,
+    )
+
+# To test
+READER_LLM("What is 4+4? Answer:")
+```
+
+##### Prompt
+
+The RAG prompt template below is what we will feed to the Reader LLM: it is important to have it formatted in the Reader LLM's chat template. We give it our context and the user's question.
+
+```python
+RAG_PROMPT_TEMPLATE = """
+<|system|>
+Using the information contained in the context,
+give a comprehensive answer to the question.
+Respond only to the question asked, response should be concise and relevant to the question.
+Provide the number of the source document when relevant.
+If the answer cannot be deduced from the context, do not give an answer.</s>
+<|user|>
+Context:
+{context}
+---
+Now here is the question you need to answer.
+
+Question: {question}
+</s>
+<|assistant|>
+"""
+```
+
+#### Reranking
+
+A good option for RAG is to retrieve more documents than you want in the end, then rerank the results with a more powerful retrieval model before keeping only the top_k.
+
+For example, `Colbertv2` is a great choice: instead of a bi-encoder like our classical embedding models, it is a cross-encoder that computes more fine-grained interactions between the query tokens and each document's tokens. It is easily usable thanks to the `RAGatouille library`.
+
+```python
+from ragatouille import RAGPretrainedModel
+
+RERANKER = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
+```
+
+#### Put it altogether
+
+```python
+from ragatouille import RAGPretrainedModel
+from langchain_core.vectorstores import VectorStore
+from langchain_core.language_models.llms import LLM
+
+
+def answer_with_rag(
+    question: str,
+    llm: LLM,
+    knowledge_index: VectorStore,
+    reranker: Optional[RAGPretrainedModel] = None,
+    num_retrieved_docs: int = 30,
+    num_docs_final: int = 7,
+) -> Tuple[str, List[LangchainDocument]]:
+    """Answer a question using RAG with the given knowledge index."""
+    # Gather documents with retriever
+    print("=> Retrieving documents...")
+    relevant_docs = knowledge_index.similarity_search(
+        query=question, k=num_retrieved_docs
+    )
+    relevant_docs = [doc.page_content for doc in relevant_docs]  # keep only the text
+
+    # Optionally rerank results
+    if reranker:
+        relevant_docs = reranker.rerank(question, relevant_docs, k=num_docs_final)
+        relevant_docs = [doc["content"] for doc in relevant_docs]
+
+    relevant_docs = relevant_docs[:num_docs_final]
+
+    # Build the final prompt
+    context = "\nExtracted documents:\n"
+    context += "".join(
+        [f"Document {str(i)}:::\n" + doc for i, doc in enumerate(relevant_docs)]
+    )
+
+    final_prompt = RAG_PROMPT_TEMPLATE.format(question=question, context=context)
+
+    # Redact an answer
+    answer = llm(final_prompt)
+
+    return answer, relevant_docs
+```
+
+### Benchmarking the RAG system
+
+The RAG system and the evaluation datasets are now ready. The last step is to judge the RAG system’s output on this evaluation dataset.
+
+To this end, we setup a judge agent. Out of the different RAG evaluation metrics, we choose to focus only on **Answer Correctness** since it is the best end-to-end metric of our system’s performance.
+
+We use GPT4 as a judge for its empirically good performance, but you could try with other models such as `kaist-ai/prometheus-13b-v1.0` or `BAAI/JudgeLM-33B-v1.0`.
+
+💡 In the evaluation prompt, we give a detailed description each metric on the scale 1-5, as is done in Prometheus’s prompt template: this helps the model ground its metric precisely. If instead you give the judge LLM a vague scale to work with, the outputs will not be consistent enough between different examples.
+
+💡 Again, prompting the LLM to output rationale before giving its final score gives it more tokens to help it formalize and elaborate a judgement.
+
+```python
+from langchain_core.language_models import BaseChatModel
+
+def run_rag_tests(
+    eval_dataset: datasets.Dataset,
+    llm,
+    knowledge_index: VectorStore,
+    output_file: str,
+    reranker: Optional[RAGPretrainedModel] = None,
+    verbose: Optional[bool] = True,
+    test_settings: Optional[str] = None,  # To document the test settings used
+):
+    """Runs RAG tests on the given dataset and saves the results to the given output file."""
+    try:  # load previous generations if they exist
+        with open(output_file, "r") as f:
+            outputs = json.load(f)
+    except:
+        outputs = []
+
+    for example in tqdm(eval_dataset):
+        question = example["question"]
+        if question in [output["question"] for output in outputs]:
+            continue
+
+        answer, relevant_docs = answer_with_rag(
+            question, llm, knowledge_index, reranker=reranker
+        )
+        if verbose:
+            print("=======================================================")
+            print(f"Question: {question}")
+            print(f"Answer: {answer}")
+            print(f'True answer: {example["answer"]}')
+        result = {
+            "question": question,
+            "true_answer": example["answer"],
+            "source_doc": example["source_doc"],
+            "generated_answer": answer,
+            "retrieved_docs": [doc for doc in relevant_docs],
+        }
+        if test_settings:
+            result["test_settings"] = test_settings
+        outputs.append(result)
+
+        with open(output_file, "w") as f:
+            json.dump(outputs, f)
+```
+
+```python
+EVALUATION_PROMPT = """###Task Description:
+An instruction (might include an Input inside it), a response to evaluate, a reference answer that gets a score of 5, and a score rubric representing a evaluation criteria are given.
+1. Write a detailed feedback that assess the quality of the response strictly based on the given score rubric, not evaluating in general.
+2. After writing a feedback, write a score that is an integer between 1 and 5. You should refer to the score rubric.
+3. The output format should look as follows: \"Feedback: {{write a feedback for criteria}} [RESULT] {{an integer number between 1 and 5}}\"
+4. Please do not generate any other opening, closing, and explanations. Be sure to include [RESULT] in your output.
+
+###The instruction to evaluate:
+{instruction}
+
+###Response to evaluate:
+{response}
+
+###Reference Answer (Score 5):
+{reference_answer}
+
+###Score Rubrics:
+[Is the response correct, accurate, and factual based on the reference answer?]
+Score 1: The response is completely incorrect, inaccurate, and/or not factual.
+Score 2: The response is mostly incorrect, inaccurate, and/or not factual.
+Score 3: The response is somewhat correct, accurate, and/or factual.
+Score 4: The response is mostly correct, accurate, and factual.
+Score 5: The response is completely correct, accurate, and factual.
+
+###Feedback:"""
+
+from langchain.prompts.chat import (
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+)
+from langchain.schema import SystemMessage
+
+
+evaluation_prompt_template = ChatPromptTemplate.from_messages(
+    [
+        SystemMessage(content="You are a fair evaluator language model."),
+        HumanMessagePromptTemplate.from_template(EVALUATION_PROMPT),
+    ]
+)
+```
+
+```python
+
+from langchain.chat_models import ChatOpenAI
+
+OPENAI_API_KEY = ""
+
+eval_chat_model = ChatOpenAI(model="gpt-4-1106-preview", temperature=0, openai_api_key=OPENAI_API_KEY)
+evaluator_name = "GPT4"
+
+
+def evaluate_answers(
+    answer_path: str,
+    eval_chat_model,
+    evaluator_name: str,
+    evaluation_prompt_template: ChatPromptTemplate,
+) -> None:
+    """Evaluates generated answers. Modifies the given answer file in place for better checkpointing."""
+    answers = []
+    if os.path.isfile(answer_path):  # load previous generations if they exist
+        answers = json.load(open(answer_path, "r"))
+
+    for experiment in tqdm(answers):
+        if f"eval_score_{evaluator_name}" in experiment:
+            continue
+
+        eval_prompt = evaluation_prompt_template.format_messages(
+            instruction=experiment["question"],
+            response=experiment["generated_answer"],
+            reference_answer=experiment["true_answer"],
+        )
+        eval_result = eval_chat_model.invoke(eval_prompt)
+        feedback, score = [
+            item.strip() for item in eval_result.content.split("[RESULT]")
+        ]
+        experiment[f"eval_score_{evaluator_name}"] = score
+        experiment[f"eval_feedback_{evaluator_name}"] = feedback
+
+        with open(answer_path, "w") as f:
+            json.dump(answers, f)
+
+```
+Let’s run the tests and evaluate answers!👇
+
+```python
+if not os.path.exists("./output"):
+    os.mkdir("./output")
+
+for chunk_size in [200]:  # Add other chunk sizes (in tokens) as needed
+    for embeddings in ["thenlper/gte-small"]:  # Add other embeddings as needed
+        for rerank in [True, False]:
+            settings_name = f"chunk:{chunk_size}_embeddings:{embeddings.replace('/', '~')}_rerank:{rerank}_reader-model:{READER_MODEL_NAME}"
+            output_file_name = f"./output/rag_{settings_name}.json"
+
+            print(f"Running evaluation for {settings_name}:")
+
+            print("Loading knowledge base embeddings...")
+            knowledge_index = load_embeddings(
+                RAW_KNOWLEDGE_BASE,
+                chunk_size=chunk_size,
+                embedding_model_name=embeddings,
+            )
+
+            print("Running RAG...")
+            reranker = (
+                RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
+                if rerank
+                else None
+            )
+            run_rag_tests(
+                eval_dataset=eval_dataset,
+                llm=READER_LLM,
+                knowledge_index=knowledge_index,
+                output_file=output_file_name,
+                reranker=reranker,
+                verbose=False,
+                test_settings=settings_name,
+            )
+
+            print("Running evaluation...")
+            evaluate_answers(
+                output_file_name,
+                eval_chat_model,
+                evaluator_name,
+                evaluation_prompt_template,
+            )
+```
+Inspect results
+
+```python
+import glob
+
+outputs = []
+for file in glob.glob("./output/*.json"):
+    output = pd.DataFrame(json.load(open(file, "r")))
+    output["settings"] = file
+    outputs.append(output)
+result = pd.concat(outputs)
+```
+
+
+
+<p align="center">
+<img src="./assets/rag/rag-evaluation.png" alt="drawing" width=600" height="400" style="center" />
+</p>
+
+As you can see, these had varying impact on performance. In particular, tuning the chunk size is both easy and very impactful.
+
+Sources:
+- [HuggingFace: RAG Evaluation](https://huggingface.co/learn/cookbook/en/rag_evaluation)
+- [HuggingFace: Advanced RAG](https://github.com/huggingface/cookbook/blob/main/notebooks/en/advanced_rag.ipynb)
+
+
+
+<br>
+<br>
+
+
+<br>
+
+
+### Less great option: Generate an evaluation with Ragas 
+
+[Ragas](https://docs.ragas.io/en/stable/) evaluation requires a 
+- dataset containing:
+    - the questions, 
+    - the expected answers known as "ground truths," 
+    - the answers produced by the RAG
+    - the list of context pieces retrieved by the RAG pipeline to generate answers to each question. 
+    
+Of course, you need to create your own end-to-end dataset to evaluate your RAG. But as an example, we are using one available on Hugging Face. Let's load the dataset.
+
+```python
+%pip install -q "ragas==0.2.1"
+%pip install -q langchain_community
+%pip install -q langchain_core
+```
+
+```python
+from datasets import load_dataset
+
+amnesty_qa = load_dataset("explodinggradients/amnesty_qa", "english_v2", trust_remote_code=True)
+amnesty_qa
+```
+```o
+DatasetDict({
+    eval: Dataset({
+        features: ['question', 'ground_truth', 'answer', 'contexts'],
+        num_rows: 20
+    })
+})
+```
+The data is loaded as a DatasetDict and the features we are interested in are within the "eval" split.
+
+```python
+dataset = amnesty_qa["eval"]
+dataset
+```
+```o
+Dataset({
+    features: ['question', 'ground_truth', 'answer', 'contexts'],
+    num_rows: 20
+})
+```
+
+The content of the dataset might have been created end-to-end or by using a synthetic data generation approach such as Ragas' `TestsetGenerator`. Using `TestsetGenerator` requires the loaded documents, a generator LLM, a critic LLM and an embedding model.
+
+Finally, we can now run the Ragas evaluation on the dataset. Here, we pass in the dataset, the metrics for evaluation, the LLM and the embedding model used in the RAG system.
+
+```python
+result = evaluate(
+    amnesty_qa["eval"],
+    metrics=[
+        context_precision,
+        faithfulness,
+        answer_relevancy,
+        context_recall,
+    ],
+    llm=your_llm,
+    embeddings=your_embedding_model)
+```
+The `result` will be like the following:
+
+```O
+{'context_precision': 0.9208, 'faithfulness': 0.6667, 'answer_relevancy': 0.9574, 'context_recall': 0.9167}
+```
+
+
+
 
 # Model Optimizations for Deployment
 Now that you've explored the work required to adapt and align large language models to your tasks, let's talk about the things you'll have to consider to integrate your model into applications. There are a number of important questions to ask at this stage. The first set is related to how your LLM will function in deployment. 
