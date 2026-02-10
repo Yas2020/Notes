@@ -8,6 +8,7 @@
 		"vscode": {
 			"extensions": [
 				"VisualStudioExptTeam.vscodeintellicode",
+				"Google.colab",
 				"bierner.github-markdown-preview",
 				"hnw.vscode-auto-open-markdown-preview",
 				// "DavidAnson.vscode-markdownlint",
