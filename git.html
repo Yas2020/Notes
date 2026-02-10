@@ -1,12 +1,17 @@
 <!DOCTYPE html><html><head>
-      <title>Distributed Version Control</title>
+      <title>git</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
+      
+      
+      
+      
       
       <style>
-        body::after {
+
+         body::after {
           content: "Created by Yas2020";
           position: fixed;
           bottom: 10px;
@@ -34,6 +39,8 @@
         #backToHomeBtn:hover {
             background-color: #45a049; /* Darker green on hover */
         }
+
+
       code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
 /* Please visit the URL below for more information: */
 /*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
@@ -44,41 +51,72 @@
   font-family: 'Tangerine';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/tangerine/v17/IurY6Y5j_oScZZow4VOxCZZJ.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/tangerine/v18/IurY6Y5j_oScZZow4VOxCZZJ.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Ubuntu Mono';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/ubuntumono/v17/KFOjCneDtsqEr0keqCMhbCc6CsE.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/ubuntumono/v19/KFOjCneDtsqEr0keqCMhbCc6CsE.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;
   font-stretch: normal;
-  src: url(https://fonts.gstatic.com/s/opensans/v43/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4gaVc.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/opensans/v44/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4gaVc.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Kode Mono';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/kodemono/v2/A2BLn5pb0QgtVEPFnlYkkaoBgw4qv9odq5myxD2ZbA.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/kodemono/v4/A2BLn5pb0QgtVEPFnlYkkaoBgw4qv9odq5myxD2ZbA.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Cutive Mono';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/cutivemono/v21/m8JWjfRfY7WVjVi2E-K9H6RCTms.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/cutivemono/v23/m8JWjfRfY7WVjVi2E-K9H6RCTms.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: normal;
+  src: url(https://fonts.gstatic.com/s/merriweather/v33/u-4D0qyriQwlOrhSvowK_l5UcA6zuSYEqOzpPe3HOZJ5eX1WtLaQwmYiScCmDxhtNOKl8yDr3icaFF3w.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Georgia';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/l/font?kit=-zkl91Ksy8U47Wnsfmm8xA&skey=ca45512e77838097&v=v18) format('truetype');
+}
+@font-face {
+  font-family: 'Verdana';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/l/font?kit=dFa_ZfqA86A4lLhf7qRHeg&skey=28f652d19e80fbde&v=v15) format('truetype');
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787weuxJBkqg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Hw5aX8.ttf) format('truetype');
 }
 .markdown-preview.markdown-preview {
-  font-family: UbuntuMono, Open Sans, Fira Sans, serif;
-  font-size: 16px;
+  font-family: Lora, Georgia,  Arial, Helvetica, Verdana, Open Sans, Roboto;
+  font-size: 18px;
 }
 .markdown-preview.markdown-preview.prince {
   font-family: UbuntuMono, Open Sans, Fira Sans, serif;
   line-height: 1.4;
-  font-size: 10pt;
+  font-size: 12pt;
   color: #000;
 }
 @page {
@@ -119,6 +157,14 @@
   margin-bottom: 5px;
   margin-top: 5px;
 }
+.markdown-preview.markdown-preview h1 {
+  font-size: 60pt;
+  color: #1a4fcc;
+  font-family: Montserrat;
+  text-shadow: 2px 2px 3px #aaa;
+  text-align: center;
+  line-height: 1.3;
+}
 .markdown-preview.markdown-preview .title {
   font-size: 100pt;
   font-family: 'Tangerine';
@@ -132,22 +178,29 @@
   page-break-after: always;
   /* Ensure title is on its own page */
 }
-.markdown-preview.markdown-preview h1 {
-  font-size: 30pt;
-  color: #1a4fcc;
-  border-bottom-width: 1px;
-}
 .markdown-preview.markdown-preview h2 {
-  font-weight: 700;
-  color: #3f77e0;
+  font-size: 40pt;
+  font-family: Montserrat;
+  font-weight: 500;
+  color: #313bbf;
 }
 .markdown-preview.markdown-preview h3 {
-  font-weight: 700;
-  color: #6da2f2;
+  font-size: 32pt;
+  font-family: Montserrat;
+  font-weight: 500;
+  color: #286cbe;
 }
 .markdown-preview.markdown-preview h4 {
-  font-weight: 700;
-  color: #a9c8f8;
+  font-size: 27pt;
+  font-family: Montserrat;
+  font-weight: 500;
+  color: #34abd2;
+}
+.markdown-preview.markdown-preview h5 {
+  font-size: 20pt;
+  font-family: Montserrat;
+  font-weight: 500;
+  color: #34d29d;
 }
 .markdown-preview.markdown-preview ul li {
   /* list-style-type: ; */
@@ -315,6 +368,7 @@
 </li>
 </ul>
 <p><strong>Git</strong> is a distributed source code management tool used by developers worldwide. It was invented by Linus Torvalds in 2005 for Linux kernel development and is now the most widely used version control system. Code can be completely local, or it can be kept in a remote repository so that developers can collaborate. Every developer also has a full copy of the code. Git is the current standard for version control software. It completely changed how developers do their job, allowing them greater control over their code, and the ability to roll back changes precisely if needed.</p>
+<h3 id="basic-commands">Basic Commands </h3>
 <p>Start a local git repository by running:</p>
 <ul>
 <li>
@@ -322,15 +376,17 @@
 <ul>
 <li>Turns a directory into a Git repository</li>
 <li>Creates a hidden direcotry called <em>.git</em> where Git store all<br>
-its revision information or metadata with each commit including<br>
-log message and author of the change</li>
+its revision information or metadata with each commit including log message and author of the change</li>
 </ul>
 </li>
 <li>
 <p><code>git add &lt;filename&gt;</code>: add a file to the reposiroty</p>
 </li>
 <li>
-<p><code>git add  .</code> : Git adds all the files in a direcotry and all subdirecotries</p>
+<p><code>git add  .</code> : Git adds all the files in a direcotry and all subdirecotries in the curren directory</p>
+</li>
+<li>
+<p><code>git add -A</code>: to add all the chages in the entire working tree, from the root of the repository, regardless of where you are in the directory structure</p>
 </li>
 <li>
 <p><code>git add -p</code>: begin an interactive staging session that lets you choose portions of a file to add to the next commit. This will present you with a chunk of changes and prompt you for a command. Use y to stage the chunk, n to ignore the chunk, s to split it into smaller chunks, e to manually edit the chunk, and q to exit</p>
@@ -343,7 +399,10 @@ log message and author of the change</li>
 </ul>
 </li>
 <li>
-<p><code>git commit &lt;filename&gt; &lt;options&gt;</code>:  useful when you want to commits new changes when the file is already added to the repository using <code>git add</code>. Using a generic git commit without naming the file would not have worked in this case</p>
+<p><code>git commit</code>: To save the changes, you should <em>commit</em> the code. This tracks files (not directories); it tracks paths, permissions, contents. Each commit has an identifier (a random number). <strong>HEAD</strong> points at the latest commit in the current branch (tip of the branch). Another way of thinking of a commit is that it is just a <strong>diff</strong>; an individual change compared to the previous commit. Every commit contains its history which is about the commits that came before it</p>
+</li>
+<li>
+<p><code>git commit &lt;filename&gt; &lt;options&gt;</code>:  useful when you want to commits new changes when the file is already added to the repository after using <code>git add</code>. Using a generic git commit without naming the file would not have worked in this case</p>
 </li>
 <li>
 <p><code>git status</code>: shows the status of changes in the repository</p>
@@ -362,10 +421,34 @@ log message and author of the change</li>
 The new Git repositories now contain exactly the same objects, files, and directories. You are able to modify the cloned version, make new commits, inspect its logs and history, and so on. It is a complete repository with full history</p>
 </li>
 <li>
-<p><code>git stash</code>: temporarily shelves (or stashes) changes you've made to your working copy so you can work on something else, and then come back and re-apply them later on. Stashing is handy if you need to quickly switch context and work on something else</p>
+<p><code>git stash</code>:  Often, when you’ve been working on part of your project, things are in a messy state and you want to switch branches for a bit to work on something else. The problem is, you don’t want to do a commit of half-done work just so you can get back to this point later. The answer to this issue is the git stash command. Temporarily shelves (or stashes) changes you've made to your working copy so you can work on something else, and then come back and re-apply them later on. Stashing is handy if you need to quickly switch context and work on something else</p>
 </li>
 <li>
 <p><code>git submodule add &lt;url_of_repository&gt;</code>: repository inside a repository; It often happens that while working on one project, you need to use another project from within it. For example, <code>git submodule add https://github.com/chaconinc/DbConnector</code>. Submodules will add the subproject into a directory named the same as the repository. Although DbConnector is a subdirectory in your working directory, Git sees it as a submodule and doesn’t track its contents when you’re not in that directory. Instead, Git sees it as a particular commit from that repository. Now stage and commit the submodule to your repository. When cloning, you need to run: <code>git submodule init</code> and <code>git submodule update</code> to download the submodules as well. Also when we want to make a separate repository out of a change we make a submodule.</p>
+</li>
+<li>
+<p><code>git version</code>: displays the current Git version install on your system</p>
+</li>
+<li>
+<p><code>git remote</code>: lists all the names of all remote repositories associated with your local repo. Adding flag<code>-v</code> will list the URLs of the associated repositories as well</p>
+</li>
+<li>
+<p><code>git remote add origin &lt;URL&gt;</code>: adds a remote repository named "origin" with the specified URL</p>
+</li>
+<li>
+<p><code>git remote rename &lt;original_name&gt; &lt;new_name&gt;</code>: changes the name of the remote associated repo</p>
+</li>
+<li>
+<p><code>git request-pull &lt;origin_branch&gt; &lt;another_branch&gt;</code>: it generates a summary of pending changes for an eamil request. It helps communicate the cnahges made in a branch or fork to the upstream repository maintainer.</p>
+</li>
+</ul>
+<h3 id="git-commit">git commit </h3>
+<ul>
+<li>
+<p>The -a or --all option to git commit causes it to automatically stage all unstaged, tracked file changes—including removals of tracked files from the working copy— before it performs the commit.</p>
+</li>
+<li>
+<p>If you run <code>git commit --all</code>, Git recursively traverses the entire repository; stages all known, modified files and commits those. In this case, when your editor presents the commit message template, it should indicate that the modified and known file not yet will, in fact, be committed as well</p>
 </li>
 </ul>
 <h2 id="configuration-files">Configuration Files </h2>
@@ -430,7 +513,8 @@ The new Git repositories now contain exactly the same objects, files, and direct
 <li>If two separate files have exactly the same content, whether in the same or different directories, Git stores a single copy of that content as a blob within the object store. Git computes the hash code of each file according solely to its content.</li>
 <li>Git does not really care about the file names. Git merely records each pathname and makes sure it can accurately reproduce the files and directories from its content, which is indexed by a hash value</li>
 <li>Git’s internal database efficiently stores every version of every file—not their differences—as files go from one revision to the next. Because Git uses the hash of a file’s complete content as the name for that file, it must operate on each complete copy of the file</li>
-<li>Git computes the history as a set of changes between different blobs with varying hashes, rather than storing a file name and set of differences directly<p align="center">
+<li>Git computes the history as a set of changes between different blobs with varying hashes, rather than storing a file name and set of differences directly<br>
+<br><p align="center">
 <img src="./assets/git/git-how-store-data.png" alt="drawing" width="500" height="150" style="center">
 </p>
 </li>
@@ -477,7 +561,7 @@ referenced only by tree objects</li>
 <p>Suppose you create a file hello.txt in the repository containing string "Hello World". Git performs a few operations on this blob (content of the file), calculates its SHA1 hash, and enters it into the object store as a file named after the hexadecimal representation of the hash.</p>
 </li>
 <li>
-<p>The hash in this case is 3b18e512dba79e4c8300dd08aeb37f8e728b8dad. The 160 bits of an SHA1 hash correspond to 20 bytes, which takes 40 bytes of hexadecimal to display, so the content is stored as .git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad. Git inserts a / after the first two digits to improve filesystem efficiency</p>
+<p>The hash in this case is <code>3b18e512dba79e4c8300dd08aeb37f8e728b8dad</code>. The 160 bits of an SHA1 hash correspond to 20 bytes, which takes 40 bytes of hexadecimal to display, so the content is stored as .git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad. Git inserts a / after the first two digits to improve filesystem efficiency</p>
 </li>
 <li>
 <p>Now you can use the hash to pull it back out of the object store any time you want to see its content:</p>
@@ -511,15 +595,6 @@ have Git ignore a file within a directory, simply add that file’s name to the 
 </li>
 <li>
 <p><code>.gitignore</code> is treated as a regular file within your repository, it is copied during clone operations and applies to all copies of your repository.</p>
-</li>
-</ul>
-<h3 id="some-notes-on-using-git-commit">Some Notes on Using <code>git commit</code> </h3>
-<ul>
-<li>
-<p>The -a or --all option to git commit causes it to automatically stage all unstaged, tracked file changes—including removals of tracked files from the working copy— before it performs the commit.</p>
-</li>
-<li>
-<p>If you run <code>git commit --all</code>, Git recursively traverses the entire repository; stages all known, modified files and commits those. In this case, when your editor presents the commit message template, it should indicate that the modified and known file not yet will, in fact, be committed as well</p>
 </li>
 </ul>
 <h3 id="a-detailed-view-of-gits-object-model-and-files">A Detailed View of Git’s Object Model and Files </h3>
@@ -615,6 +690,7 @@ have Git ignore a file within a directory, simply add that file’s name to the 
 </ul>
 <hr>
 <h1 id="branches">Branches </h1>
+<p>Branch stores the files in GitHub. The main branch stores the deployable code which is created by default. When you plan to create new things, you make a new branch which starts as an exact copy of the new branch.</p>
 <p>A branch is the fundamental means of launching a separate line of development within a software project.</p>
 <p>A branch is a split from a kind of unified, primal state, allowing development to continue in multiple directions simultaneously and, potentially, to produce different versions of the project.</p>
 <h3 id="reasons-for-using-branches">Reasons for Using Branches </h3>
@@ -626,7 +702,7 @@ have Git ignore a file within a directory, simply add that file’s name to the 
 <p>A branch can encapsulate a development phase, such as the prototype, beta, stable, or bleeding-edge release. You can think of the version 1.1 release as a separate phase, too; the maintenance release</p>
 </li>
 <li>
-<p>A branch can isolate the development of a single feature or research into a particularly complex bug. You can introduce a branch for a well-defined and conceptually isolated task or to facilitate a merge of several branches prior to a release</p>
+<p>A branch can isolate the development of a single feature or research into a particularly complex bug. You can introduce a branch for a well-defined and conceptually isolated task or to facilitate a merge of several branches prior to a release. Progress starts from a common base. From there, code is branched while new features are being built.When two streams of work are ready to merge, each branch code is identified as a feature tip. Two tips are merged into a third branch.</p>
 </li>
 <li>
 <p>The default branch in a repository is named <em>main</em>. If you prefer, you can rename or  even delete the main branch</p>
@@ -667,7 +743,7 @@ have Git ignore a file within a directory, simply add that file’s name to the 
 <p><code>git branch -m &lt;old_name&gt; &lt;new_name&gt;</code>: change branch name</p>
 </li>
 <li>
-<p>Your working directory can reflect only one branch at a time. Start working on a different branch, issue the git checkout command: <code>git checkout &lt;another_branch_name&gt;</code> switches to another branch, that is, it moves the HEAD pointer to another branch in the tree.</p>
+<p>Your working directory can reflect only one branch at a time. To start working on a different branch, issue the git checkout command: <code>git checkout &lt;another_branch_name&gt;</code> switches to another branch, that is, it moves the HEAD pointer to another branch in the tree and every time you commit, it updates inside that branch.</p>
 </li>
 <li>
 <p>Your local modifications to NewStuff in your working directory would be overwritten by the version from dev</p>
@@ -692,8 +768,7 @@ Switched to branch <span class="token string">"dev"</span>
 </code></pre><p>It does not introduce a merge commit on any branch. Although it may look like the merge was performed cleanly and all is well, Git has simply modified the file and left the merge conflict indicators within it. You must still resolve any conflicts that are present</p>
 </li>
 <li>
-<p><code>git checkout &lt;commit&gt; &lt;file&gt;</code>:<br>
-Check out a previous version of a file (not a branch!). This turns the <code>file</code> that resides in the working directory into an exact copy of the one from <commit> and adds it to the staging area. You can now commit this old version of that file. You can get back by doing <code>git checkout HEAD &lt;file&gt;</code>. If you omit the file in git checkout commit, the entire dir is updated (downdated?) to match that commit here, your state is preserved and not affected. You can change files when the head is detached (and you are in an old commit), and if you wish to save that work, you can create a new branch for it</commit></p>
+<p><code>git checkout &lt;commit&gt; &lt;file&gt;</code>: Check out a previous version of a file (not a branch!). This turns the <code>file</code> that resides in the working directory into an exact copy of the one from <commit> and adds it to the staging area. You can now commit this old version of that file. You can get back by doing <code>git checkout HEAD &lt;file&gt;</code>. If you omit the file in git checkout commit, the entire dir is updated (downdated?) to match that commit here, your state is preserved and not affected. You can change files when the head is detached (and you are in an old commit), and if you wish to save that work, you can create a new branch for it</commit></p>
 </li>
 </ul>
 <h3 id="createdelete-new-branches">Create/delete new branches </h3>
@@ -705,7 +780,7 @@ Check out a previous version of a file (not a branch!). This turns the <code>fil
 <h1 id="diff">diff </h1>
 <ul>
 <li>
-<p>A diff is a compact summary of the differences (hence the name “diff”) between two items. Unix and Linux diff command compares the files line by line and summarizes the deviations in a diff</p>
+<p>A diff is a compact summary of the differences (hence the name “diff”) between two items (commits, commit and working tree, branches etc.). Unix and Linux diff command compares the files line by line and summarizes the deviations in a diff</p>
 </li>
 <li>
 <p><code>diff -u &lt;original_file&gt; &lt;new_file&gt;</code>: -u option produces a unified diff, a standardized format used widely to share modifications</p>
@@ -824,7 +899,7 @@ Your <em>index contents are also modified</em> to align with the tree structure 
 </ul>
 </li>
 <li>
-<p><code>git reset --hard &lt;commit&gt;</code>: This variant changes the HEAD ref to point to  the given commit. The contents of your index are also modified to  agree with the tree structure named by the named commit. Furthermore, your working directory contents are changed to reflect the state of the tree represented by the given commit. When changing your working directory, the complete directory structure is altered to correspond to the given commit. Modifications are lost and new files are removed. Files that are in the given commit but no longer exist in your working directory are reinstated.</p>
+<p><code>git reset --hard &lt;commit&gt;</code>: It resets changes in the current working directory. This variant changes the HEAD ref to point to  the given commit. The contents of your index are also modified to agree with the tree structure named by the named commit. For example,  <code>git reset --hard HEAD</code> disregard all changes made to the working directory and staging area and resets the repository to the last commit (HEAD) . Furthermore, your working directory contents are changed to reflect the state of the tree represented by the given commit. When changing your working directory, the complete directory structure is altered to correspond to the given commit. Modifications are lost and new files are removed. Files that are in the given commit but no longer exist in your working directory are reinstated.</p>
 </li>
 <li>
 <p>You might want to use <code>git clean -f</code> to remove all untracked files from your working directory</p>
@@ -871,7 +946,7 @@ $ <span class="token function">git</span> cherry-pick X<span class="token punctu
 </li>
 </ul>
 <h2 id="using-git-revert">Using 'git revert' </h2>
-<p>This command is used to introduce a new commit that reverses the effects of a given commit. A common application for git revert is to “undo” the effects of a commit that is buried, perhaps deeply, in the history of a branch.</p>
+<p>This command is used to introduce a new commit that reverses the effects of a given commit.  It creates inverse of the bad commits (inverse diffs) and applies them on top of bad mistakes to undo them. Note that bad commits still remain in the commit history. So the questions is why not using reset which actually removes this changes from commit chain? The answer is that <em>you can not share git resets but you can share git reverts</em>. If someone pushes a bad code, it is simplest to push a revert then everybody pulls that and undo the mistake. <code>git revert</code> is there to “undo” the effects of a commit that is buried, perhaps deeply, in the history of a branch.</p>
 <p>For some reason, perhaps through testing, commit<br>
 D has been deemed faulty.</p>
 <p align="center">
@@ -906,11 +981,8 @@ D has been deemed faulty.</p>
 <p>This command is used to move the starting point of a sequence of commits in one branch to a specific commit in another branch as if you'd created your branch from a different commit. Git accomplishes this by creating new commits and applying them to the specified base. It's very important to understand that even though the branch looks the same, it's composed of entirely new commits. The primary reason for rebasing is to maintain a linear project history. This gives the later benefit of a clean merge of your feature branch back into the main&nbsp;branch, so you get a much cleaner project history. Also it eliminates the unnecessary merge commits required by <code>git merge</code>. You can follow the tip of feature all the way to the beginning of the project without any forks. This makes it easier to navigate your project with commands like git log, git bisect, and gitk.</p>
 </li>
 <li>
-<p><code>git rebase</code> allows you to literally rewrite history — automatically applying commits in your current working branch to the passed branch head. Since your new commits will be replacing the old, it's important to not use git rebase on commits that have been pushed public, or it will appear that your project history disappeared.</p>
+<p><code>git rebase</code> allows you to literally rewrite history — automatically applying commits in your current working branch to the passed branch head. Since your new commits will be replacing the old, it's important to not use git rebase on commits that have been pushed public, or it will appear that your project history disappeared. This command requires at least the name of the other branch onto which your commits will be relocated. By default, the commits from the current branch that are not already on the other branch are rebased</p>
 </li>
-</ul>
-<p>This command requires at least the name of the other branch onto which your commits will be relocated. By default, the commits from the current branch that are not already on the other branch are rebased</p>
-<ul>
 <li>
 <p>A common use for <code>git rebase</code> is to keep a series of commits that you are developing up-to-date with respect to another branch, usually a <em>main</em> branch or a tracking branch from another repository. In the follwoing, the <em>topic</em> branch started on the <em>main</em> branch when it was at commit B. In the meantime, it has progressed to commit E.</p>
 <p align="center">
@@ -1117,7 +1189,7 @@ $ <span class="token function">git</span> show-branch
 <p>You get the updates from remote repo and refresh your clone of the repository, run <code>git pull</code>. If the repository is not specified on the command line, either as a Git URL or indirectly through a remote name, then the default remote origin is used.</p>
 </li>
 <li>
-<p>You may want to fetch updates into your repository to inspect them but not necessarily merge immediately. In this case, you can simply perform the fetch, and then perform other operations on the remote-tracking branch such as <code>git log</code>, <code>git diff</code> etc.. Later, when you are ready (if ever!), you may perform the merge at your convenience using <code>git merge origin/main</code></p>
+<p>You may want to fetch updates into your repository to inspect them but not necessarily merge immediately. In this case, you can simply perform the <code>git fetch</code>. Now if you do a pull, git will merge new changes into our local develop branch and both develop and remotes/origin/develop are synced. In other words, <code>pull = fetch + merge</code>.  So remotes/origin/develop will merge into local develop. <code>git fetch</code> is used to perform other operations on the remote-tracking branch such as <code>git log</code>, <code>git diff</code> etc. before merging. Later, when you are ready (if ever!), you may perform the merge at your convenience using <code>git merge origin/main</code></p>
 </li>
 <li>
 <p><code>git pull --rebase</code> will cause Git to rebase (rather than merge) your local-tracking branch onto the remote-tracking branch instead of merging. To make rebase the normal operation for a branch, set the <code>branch.branch_name.rebase</code> configuration variable to <code>true</code>. If you want more control, use <code>fetch</code> and <code>rebase -i</code>:</p>
@@ -1193,14 +1265,11 @@ Jekyll provide exactly that, and can even be mapped to a Domain Name System (DNS
 
       </div>
       
-      
-     <button id="backToHomeBtn" onclick="goToHome()">Back to Profile</button>
+       <button id="backToHomeBtn" onclick="goToHome()">Back to Profile</button>
     
   </body>
   <script>
    function goToHome() {
        window.location.href = 'https://Yas2020.github.io/#portfolio';  // Replace with your home page URL
    }
- </script>
-     
-  </html>
+ </script></html>

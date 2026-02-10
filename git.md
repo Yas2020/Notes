@@ -32,15 +32,16 @@
 
 **Git** is a distributed source code management tool used by developers worldwide. It was invented by Linus Torvalds in 2005 for Linux kernel development and is now the most widely used version control system. Code can be completely local, or it can be kept in a remote repository so that developers can collaborate. Every developer also has a full copy of the code. Git is the current standard for version control software. It completely changed how developers do their job, allowing them greater control over their code, and the ability to roll back changes precisely if needed.
 
+### Basic Commands
 Start a local git repository by running:
 
 - `git init <dirname>`:
   - Turns a directory into a Git repository
   - Creates a hidden direcotry called _.git_ where Git store all
-  its revision information or metadata with each commit including
-  log message and author of the change
+ its revision information or metadata with each commit including log message and author of the change
 - `git add <filename>`: add a file to the reposiroty
-- `git add  .` : Git adds all the files in a direcotry and all subdirecotries
+- `git add  .` : Git adds all the files in a direcotry and all subdirecotries in the curren directory
+- `git add -A`: to add all the chages in the entire working tree, from the root of the repository, regardless of where you are in the directory structure
 
 - `git add -p`: begin an interactive staging session that lets you choose portions of a file to add to the next commit. This will present you with a chunk of changes and prompt you for a command. Use y to stage the chunk, n to ignore the chunk, s to split it into smaller chunks, e to manually edit the chunk, and q to exit
 
@@ -48,7 +49,8 @@ Start a local git repository by running:
   - `git config user.name "Jon Loeliger"`
   - `git config user.email "jdl@example.com"`
 
-- `git commit <filename> <options>`:  useful when you want to commits new changes when the file is already added to the repository using `git add`. Using a generic git commit without naming the file would not have worked in this case
+- `git commit`: To save the changes, you should *commit* the code. This tracks files (not directories); it tracks paths, permissions, contents. Each commit has an identifier (a random number). **HEAD** points at the latest commit in the current branch (tip of the branch). Another way of thinking of a commit is that it is just a **diff**; an individual change compared to the previous commit. Every commit contains its history which is about the commits that came before it  
+- `git commit <filename> <options>`:  useful when you want to commits new changes when the file is already added to the repository after using `git add`. Using a generic git commit without naming the file would not have worked in this case
 - `git status`: shows the status of changes in the repository
 - `git rm -f <filename>`: forcefully removes the staged file from both the index and the working directory. Flag -f can be dropped if file is not staged yet
 - `git rm --cached <filename>`: removes the file from the index but leaves it in the working directory and untracked
@@ -56,9 +58,20 @@ Start a local git repository by running:
 - `git clone <repository_name> <new_repository_name>`: makes a copy of a repository.
 The new Git repositories now contain exactly the same objects, files, and directories. You are able to modify the cloned version, make new commits, inspect its logs and history, and so on. It is a complete repository with full history
 
-- `git stash`: temporarily shelves (or stashes) changes you've made to your working copy so you can work on something else, and then come back and re-apply them later on. Stashing is handy if you need to quickly switch context and work on something else
+- `git stash`:  Often, when you’ve been working on part of your project, things are in a messy state and you want to switch branches for a bit to work on something else. The problem is, you don’t want to do a commit of half-done work just so you can get back to this point later. The answer to this issue is the git stash command. Temporarily shelves (or stashes) changes you've made to your working copy so you can work on something else, and then come back and re-apply them later on. Stashing is handy if you need to quickly switch context and work on something else
 
 - `git submodule add <url_of_repository>`: repository inside a repository; It often happens that while working on one project, you need to use another project from within it. For example, `git submodule add https://github.com/chaconinc/DbConnector`. Submodules will add the subproject into a directory named the same as the repository. Although DbConnector is a subdirectory in your working directory, Git sees it as a submodule and doesn’t track its contents when you’re not in that directory. Instead, Git sees it as a particular commit from that repository. Now stage and commit the submodule to your repository. When cloning, you need to run: `git submodule init` and `git submodule update` to download the submodules as well. Also when we want to make a separate repository out of a change we make a submodule.  
+- `git version`: displays the current Git version install on your system
+- `git remote`: lists all the names of all remote repositories associated with your local repo. Adding flag`-v` will list the URLs of the associated repositories as well
+- `git remote add origin <URL>`: adds a remote repository named "origin" with the specified URL
+- `git remote rename <original_name> <new_name>`: changes the name of the remote associated repo
+- `git request-pull <origin_branch> <another_branch>`: it generates a summary of pending changes for an eamil request. It helps communicate the cnahges made in a branch or fork to the upstream repository maintainer. 
+
+###  git commit
+
+- The -a or --all option to git commit causes it to automatically stage all unstaged, tracked file changes—including removals of tracked files from the working copy— before it performs the commit.
+
+- If you run `git commit --all`, Git recursively traverses the entire repository; stages all known, modified files and commits those. In this case, when your editor presents the commit message template, it should indicate that the modified and known file not yet will, in fact, be committed as well
 
 ## Configuration Files
 
@@ -99,6 +112,7 @@ The new Git repositories now contain exactly the same objects, files, and direct
 - Git does not really care about the file names. Git merely records each pathname and makes sure it can accurately reproduce the files and directories from its content, which is indexed by a hash value
 - Git’s internal database efficiently stores every version of every file—not their differences—as files go from one revision to the next. Because Git uses the hash of a file’s complete content as the name for that file, it must operate on each complete copy of the file
 - Git computes the history as a set of changes between different blobs with varying hashes, rather than storing a file name and set of differences directly
+  <br>
   <p align="center">
   <img src="./assets/git/git-how-store-data.png" alt="drawing" width="500" height="150" style="center" />
   </p>
@@ -138,7 +152,7 @@ Let’s leave the original two files as is, adding a new subdirectory with one f
 
 - Suppose you create a file hello.txt in the repository containing string "Hello World". Git performs a few operations on this blob (content of the file), calculates its SHA1 hash, and enters it into the object store as a file named after the hexadecimal representation of the hash.
 
-- The hash in this case is 3b18e512dba79e4c8300dd08aeb37f8e728b8dad. The 160 bits of an SHA1 hash correspond to 20 bytes, which takes 40 bytes of hexadecimal to display, so the content is stored as .git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad. Git inserts a / after the first two digits to improve filesystem efficiency
+- The hash in this case is `3b18e512dba79e4c8300dd08aeb37f8e728b8dad`. The 160 bits of an SHA1 hash correspond to 20 bytes, which takes 40 bytes of hexadecimal to display, so the content is stored as .git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad. Git inserts a / after the first two digits to improve filesystem efficiency
 
 - Now you can use the hash to pull it back out of the object store any time you want to see its content:
 
@@ -163,11 +177,7 @@ Let’s leave the original two files as is, adding a new subdirectory with one f
 have Git ignore a file within a directory, simply add that file’s name to the special file `.gitignore`. It is managed just like any other normal file within your repository. Until `.gitignore` is added so index is updated (`git add .gitignore`), Git considers it untracked
 - `.gitignore` is treated as a regular file within your repository, it is copied during clone operations and applies to all copies of your repository.
 
-### Some Notes on Using `git commit`
 
-- The -a or --all option to git commit causes it to automatically stage all unstaged, tracked file changes—including removals of tracked files from the working copy— before it performs the commit.
-
-- If you run `git commit --all`, Git recursively traverses the entire repository; stages all known, modified files and commits those. In this case, when your editor presents the commit message template, it should indicate that the modified and known file not yet will, in fact, be committed as well
 
 ### A Detailed View of Git’s Object Model and Files
 
@@ -245,6 +255,8 @@ ______________________________________________
 
 # Branches
 
+Branch stores the files in GitHub. The main branch stores the deployable code which is created by default. When you plan to create new things, you make a new branch which starts as an exact copy of the new branch. 
+
 A branch is the fundamental means of launching a separate line of development within a software project.
 
 A branch is a split from a kind of unified, primal state, allowing development to continue in multiple directions simultaneously and, potentially, to produce different versions of the project.
@@ -255,7 +267,7 @@ A branch is a split from a kind of unified, primal state, allowing development t
 
 - A branch can encapsulate a development phase, such as the prototype, beta, stable, or bleeding-edge release. You can think of the version 1.1 release as a separate phase, too; the maintenance release
 
-- A branch can isolate the development of a single feature or research into a particularly complex bug. You can introduce a branch for a well-defined and conceptually isolated task or to facilitate a merge of several branches prior to a release
+- A branch can isolate the development of a single feature or research into a particularly complex bug. You can introduce a branch for a well-defined and conceptually isolated task or to facilitate a merge of several branches prior to a release. Progress starts from a common base. From there, code is branched while new features are being built.When two streams of work are ready to merge, each branch code is identified as a feature tip. Two tips are merged into a third branch.
 
 - The default branch in a repository is named _main_. If you prefer, you can rename or  even delete the main branch
 
@@ -289,7 +301,8 @@ A branch is a split from a kind of unified, primal state, allowing development t
 
 - `git branch -m <old_name> <new_name>`: change branch name
 
-- Your working directory can reflect only one branch at a time. Start working on a different branch, issue the git checkout command: `git checkout <another_branch_name>` switches to another branch, that is, it moves the HEAD pointer to another branch in the tree.
+- Your working directory can reflect only one branch at a time. To start working on a different branch, issue the git checkout command: `git checkout <another_branch_name>` switches to another branch, that is, it moves the HEAD pointer to another branch in the tree and every time you commit, it updates inside that branch.
+
 
 - Your local modifications to NewStuff in your working directory would be overwritten by the version from dev
 
@@ -317,8 +330,7 @@ A branch is a split from a kind of unified, primal state, allowing development t
 
   It does not introduce a merge commit on any branch. Although it may look like the merge was performed cleanly and all is well, Git has simply modified the file and left the merge conflict indicators within it. You must still resolve any conflicts that are present
 
-- `git checkout <commit> <file>`:
-Check out a previous version of a file (not a branch!). This turns the `file` that resides in the working directory into an exact copy of the one from <commit> and adds it to the staging area. You can now commit this old version of that file. You can get back by doing `git checkout HEAD <file>`. If you omit the file in git checkout commit, the entire dir is updated (downdated?) to match that commit here, your state is preserved and not affected. You can change files when the head is detached (and you are in an old commit), and if you wish to save that work, you can create a new branch for it
+- `git checkout <commit> <file>`: Check out a previous version of a file (not a branch!). This turns the `file` that resides in the working directory into an exact copy of the one from <commit> and adds it to the staging area. You can now commit this old version of that file. You can get back by doing `git checkout HEAD <file>`. If you omit the file in git checkout commit, the entire dir is updated (downdated?) to match that commit here, your state is preserved and not affected. You can change files when the head is detached (and you are in an old commit), and if you wish to save that work, you can create a new branch for it
 
 ### Create/delete new branches
 
@@ -338,7 +350,7 @@ ______________________________________________
 
 # diff
 
-- A diff is a compact summary of the differences (hence the name “diff”) between two items. Unix and Linux diff command compares the files line by line and summarizes the deviations in a diff
+- A diff is a compact summary of the differences (hence the name “diff”) between two items (commits, commit and working tree, branches etc.). Unix and Linux diff command compares the files line by line and summarizes the deviations in a diff
 
 - `diff -u <original_file> <new_file>`: -u option produces a unified diff, a standardized format used widely to share modifications
 
@@ -446,7 +458,7 @@ It has has three main options: --soft, --mixed, and --hard
 
   - After `git reset` you can use `git restore <commit> <filename>` to recover working direcotry to that commit as well. If you want to do both at the same time, use `git reset --hard`
 
-- `git reset --hard <commit>`: This variant changes the HEAD ref to point to  the given commit. The contents of your index are also modified to  agree with the tree structure named by the named commit. Furthermore, your working directory contents are changed to reflect the state of the tree represented by the given commit. When changing your working directory, the complete directory structure is altered to correspond to the given commit. Modifications are lost and new files are removed. Files that are in the given commit but no longer exist in your working directory are reinstated.
+- `git reset --hard <commit>`: It resets changes in the current working directory. This variant changes the HEAD ref to point to  the given commit. The contents of your index are also modified to agree with the tree structure named by the named commit. For example,  `git reset --hard HEAD` disregard all changes made to the working directory and staging area and resets the repository to the last commit (HEAD) . Furthermore, your working directory contents are changed to reflect the state of the tree represented by the given commit. When changing your working directory, the complete directory structure is altered to correspond to the given commit. Modifications are lost and new files are removed. Files that are in the given commit but no longer exist in your working directory are reinstated.
 
 - You might want to use `git clean -f` to remove all untracked files from your working directory
 
@@ -508,7 +520,7 @@ The command git cherry-pick is typically used to introduce particular commits fr
 
 ## Using 'git revert'
 
-This command is used to introduce a new commit that reverses the effects of a given commit. A common application for git revert is to “undo” the effects of a commit that is buried, perhaps deeply, in the history of a branch.
+This command is used to introduce a new commit that reverses the effects of a given commit.  It creates inverse of the bad commits (inverse diffs) and applies them on top of bad mistakes to undo them. Note that bad commits still remain in the commit history. So the questions is why not using reset which actually removes this changes from commit chain? The answer is that *you can not share git resets but you can share git reverts*. If someone pushes a bad code, it is simplest to push a revert then everybody pulls that and undo the mistake. `git revert` is there to “undo” the effects of a commit that is buried, perhaps deeply, in the history of a branch.
 
 For some reason, perhaps through testing, commit
 D has been deemed faulty.
@@ -548,9 +560,7 @@ If another developer has cloned your repository or fetched some of your commits,
 
 - This command is used to move the starting point of a sequence of commits in one branch to a specific commit in another branch as if you'd created your branch from a different commit. Git accomplishes this by creating new commits and applying them to the specified base. It's very important to understand that even though the branch looks the same, it's composed of entirely new commits. The primary reason for rebasing is to maintain a linear project history. This gives the later benefit of a clean merge of your feature branch back into the main branch, so you get a much cleaner project history. Also it eliminates the unnecessary merge commits required by `git merge`. You can follow the tip of feature all the way to the beginning of the project without any forks. This makes it easier to navigate your project with commands like git log, git bisect, and gitk.
 
-- `git rebase` allows you to literally rewrite history — automatically applying commits in your current working branch to the passed branch head. Since your new commits will be replacing the old, it's important to not use git rebase on commits that have been pushed public, or it will appear that your project history disappeared.
-
-This command requires at least the name of the other branch onto which your commits will be relocated. By default, the commits from the current branch that are not already on the other branch are rebased
+- `git rebase` allows you to literally rewrite history — automatically applying commits in your current working branch to the passed branch head. Since your new commits will be replacing the old, it's important to not use git rebase on commits that have been pushed public, or it will appear that your project history disappeared. This command requires at least the name of the other branch onto which your commits will be relocated. By default, the commits from the current branch that are not already on the other branch are rebased
 
 - A common use for `git rebase` is to keep a series of commits that you are developing up-to-date with respect to another branch, usually a _main_ branch or a tracking branch from another repository. In the follwoing, the _topic_ branch started on the _main_ branch when it was at commit B. In the meantime, it has progressed to commit E.
 
@@ -793,7 +803,7 @@ Once you have established an authoritative repository, it’s easy to add a new 
 
 - You get the updates from remote repo and refresh your clone of the repository, run `git pull`. If the repository is not specified on the command line, either as a Git URL or indirectly through a remote name, then the default remote origin is used.
 
-- You may want to fetch updates into your repository to inspect them but not necessarily merge immediately. In this case, you can simply perform the fetch, and then perform other operations on the remote-tracking branch such as `git log`, `git diff` etc.. Later, when you are ready (if ever!), you may perform the merge at your convenience using `git merge origin/main`
+- You may want to fetch updates into your repository to inspect them but not necessarily merge immediately. In this case, you can simply perform the `git fetch`. Now if you do a pull, git will merge new changes into our local develop branch and both develop and remotes/origin/develop are synced. In other words, `pull = fetch + merge`.  So remotes/origin/develop will merge into local develop. `git fetch` is used to perform other operations on the remote-tracking branch such as `git log`, `git diff` etc. before merging. Later, when you are ready (if ever!), you may perform the merge at your convenience using `git merge origin/main`
 
 - `git pull --rebase` will cause Git to rebase (rather than merge) your local-tracking branch onto the remote-tracking branch instead of merging. To make rebase the normal operation for a branch, set the `branch.branch_name.rebase` configuration variable to `true`. If you want more control, use `fetch` and `rebase -i`:
 
