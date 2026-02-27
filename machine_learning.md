@@ -1969,7 +1969,7 @@ We showed that the expected squared loss can be written in the form
 $$
 \begin{align*}
 \mathbb E[L] = \int  \Big(y(\bm x) −  h(\bm x) \Big)^2 p(\bm x)d\bm x  + \int \Big(h(\bm x) - t \Big)^2 p(\bm x, t)d\bm x dt
-\end{align*}
+\end{align*}\tag{*}
 $$
 
 Recall that the second term, which is independent of $y(\bm x)$, arises from the intrinsic noise on the data and represents the minimum achievable value of the expected loss. The first term depends on our choice for the function $y(\bm x)$, and we will seek a solution for $y(\bm x)$ which makes this term a minimum. Because it is nonnegative, the smallest that we can hope to make this term is zero.  However, in practice we have a dataset $\mathcal D$ containing only a finite number N of data points not unlimited amount of data, and consequently we try to estimate the regression function $h(\bm x)$. If we model the $h(\bm x)$ using a parametric function $y(\bm x, \bm w)$ governed by a parameter vector $\bm w$, then from a Bayesian perspective the uncertainty in our model is expressed through a posterior distribution over $\bm w$. 
@@ -1978,19 +1978,19 @@ A frequentist treatment, however, involves making a point estimate of $\bm w$ ba
 
 $$
 \begin{align*}
-\mathbb E_{ \mathcal D} & \Big[ \Big( y(\bm x; \mathcal D) − h(t) \Big)  ^2 \Big] = \\
- & = \mathbb E_{ \mathcal D} \Big[ \Big ( y(\bm x; \mathcal D) −  \mathbb E_{ \mathcal D}[ y(\bm x; \mathcal D)] +  \mathbb E_{\mathcal D} [ y(\bm x; \mathcal D)] - h(t) \Big )^2\Big]  \\ 
+\mathbb E_{ \mathcal D} & \Big[ \Big( y(\bm x; \mathcal D) − h(\bm x) \Big)  ^2 \Big] = \\
+ & = \mathbb E_{ \mathcal D} \Big[ \Big ( y(\bm x; \mathcal D) −  \mathbb E_{ \mathcal D}[ y(\bm x; \mathcal D)] +  \mathbb E_{\mathcal D} [ y(\bm x; \mathcal D)] - h(\bm x) \Big )^2\Big]  \\ 
  &= \mathbb E_{\mathcal D} \Big[ \Big( y(\bm x; \mathcal D) −  \mathbb E_{ \mathcal D}[ y(\bm x; \mathcal D)]  \Big )^2 \Big] + \\
-& +  \cancel {\mathbb E_{ \mathcal D} \Big[ 2 \big( y(\bm x; \mathcal D) - \mathbb E_{ \mathcal D}[ y(\bm x; \mathcal D)]  \big)  \big (\mathbb E_{ \mathcal D}[ y(\bm x; \mathcal D)] - h(t) \big) \Big ] }\\ 
-&+ \mathbb E_{ \mathcal D}\Big [  \big ( \mathbb E_{\mathcal D} [ y(\bm x; \mathcal D)]- h(t) \big ) ^2 \Big ] = \\
-& =  \big ( \mathbb E_{\mathcal D} [ y(\bm x; \mathcal D)]- h(t) \big ) ^2  +  
+& +  \cancel {\mathbb E_{ \mathcal D} \Big[ 2 \big( y(\bm x; \mathcal D) - \mathbb E_{ \mathcal D}[ y(\bm x; \mathcal D)]  \big)  \big (\mathbb E_{ \mathcal D}[ y(\bm x; \mathcal D)] - h(\bm x) \big) \Big ] }\\ 
+&+ \mathbb E_{ \mathcal D}\Big [  \big ( \mathbb E_{\mathcal D} [ y(\bm x; \mathcal D)]- h(\bm x) \big ) ^2 \Big ] = \\
+& =  \big ( \mathbb E_{\mathcal D} [ y(\bm x; \mathcal D)]- h(\bm x) \big ) ^2  +  
 \mathbb E_{\mathcal D} \Big[ \Big( y(\bm x; \mathcal D) −  \mathbb E_{ \mathcal D}[ y(\bm x; \mathcal D)]  \Big )^2 \Big]
 \end{align*}
 $$
 
 We see that the expected squared difference between $y(\bm x; \mathcal D)$ and the regression function $h(\bm x)$ can be expressed as the sum of two terms. The first term, called the _squared bias_, represents the extent to which the average prediction over all datasets differs from the desired regression function. The second term, called the _variance_, measures the extent to which the solutions for individual datasets vary around their average, and hence this measures the extent to which the function $y(\bm x; \mathcal D)$ is sensitive to the particular choice of dataset.
 
-So far, we have considered a single input value $\bm x$. If we substitute this expansion back into (2), we obtain the following decomposition of the expected squared loss:
+So far, we have considered a single input value $\bm x$. If we substitute this expansion back into Equation (*), we obtain the following decomposition of the expected squared loss:
 
 >  $\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\text{expected loss} = (\text{bias})^2 + \text{variance} + \text{noise}$
 
@@ -2000,7 +2000,7 @@ where:
 
 $$
 \begin{align*}
-\text{(bias)}^2 &=  \int   \big ( \mathbb E_{\mathcal D} [ y(\bm x; \mathcal D)]- h(t) \big ) ^2 p(\bm x) d\bm x \\
+\text{(bias)}^2 &=  \int   \big ( \mathbb E_{\mathcal D} [ y(\bm x; \mathcal D)]- h(\bm x) \big ) ^2 p(\bm x) d\bm x \\
 \text{variance of $y$} &= \int \mathbb E_{\mathcal D} \Big[ \Big( y(\bm x; \mathcal D) −  \mathbb E_{ \mathcal D}[ y(\bm x; \mathcal D)]  \Big )^2 \Big] p(\bm x) d\bm x \\
 \text{noise (Bayes error)} &=  \int \Big(h(\bm x) - t \Big)^2 p(\bm x, t)d\bm x dt
 \end{align*}
