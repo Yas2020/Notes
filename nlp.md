@@ -2,7 +2,7 @@
 
 <h1 class='title'>Natural Language Processing</h1>
 
-### Table of Conten
+### Table of Content
 - [Regular Expressions](#regular-expressions)
     - [Substitution, Capture Groups](#substitution-capture-groups)
     - [Lookahead Assertions](#lookahead-assertions)
