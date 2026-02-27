@@ -10,7 +10,8 @@
       
       
       <style>
-         body::after {
+
+        body::after {
           content: "Created by Yas2020";
           position: fixed;
           bottom: 10px;
@@ -109,7 +110,7 @@
 }
 .markdown-preview.markdown-preview {
   font-family: Lora, Georgia,  Arial, Helvetica, Verdana, Open Sans, Roboto;
-  font-size: 18px;
+  font-size: 15pt;
 }
 .markdown-preview.markdown-preview.prince {
   font-family: UbuntuMono, Open Sans, Fira Sans, serif;
@@ -183,13 +184,13 @@
   color: #313bbf;
 }
 .markdown-preview.markdown-preview h3 {
-  font-size: 32pt;
+  font-size: 35pt;
   font-family: Montserrat;
   font-weight: 500;
   color: #286cbe;
 }
 .markdown-preview.markdown-preview h4 {
-  font-size: 27pt;
+  font-size: 30pt;
   font-family: Montserrat;
   font-weight: 500;
   color: #34abd2;
@@ -197,7 +198,12 @@
 .markdown-preview.markdown-preview h5 {
   font-size: 20pt;
   font-family: Montserrat;
-  font-weight: 500;
+  font-weight: 300;
+  color: #34d29d;
+}
+.markdown-preview.markdown-preview h6 {
+  font-size: 16pt;
+  font-family: Montserrat;
   color: #34d29d;
 }
 .markdown-preview.markdown-preview ul li {
@@ -208,10 +214,12 @@
   text-align: justify;
 }
 .markdown-preview.markdown-preview ol {
-  list-style-type: upper-roman;
-  /* or decimal, lower-alpha, upper-alpha, etc. */
+  list-style-type: decimal;
+  /* upper-roman or decimal, lower-alpha, upper-alpha, etc. */
   list-style-position: outside;
   /* or inside */
+  color: #0f1d68;
+  font-family: Georgia, Serif;
 }
 .markdown-preview.markdown-preview table {
   justify-items: center;
@@ -252,12 +260,10 @@
 }
 .markdown-preview.markdown-preview code {
   font-family: Monospace, Menlo, Monaco, Consolas;
-  font-size: 12pt;
   color: #c15211;
 }
 .markdown-preview.markdown-preview pre.language-python.python code {
   font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
-  font-size: 12pt;
   line-height: 1.357em;
   color: #14c111;
   white-space: pre-wrap;
@@ -269,7 +275,6 @@
 }
 .markdown-preview.markdown-preview pre.language-text code {
   font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
-  font-size: 10pt;
   line-height: 1.357em;
   color: #14c111;
   white-space: pre-wrap;
@@ -283,7 +288,6 @@
 }
 .markdown-preview.markdown-preview pre.language-o.o code {
   font-family: Cutive Mono, Kode Mono, Monaco, "Droid Sans Fallback";
-  font-size: 11pt;
   font-weight: 800;
   line-height: 1.357em;
   color: #93a293;
@@ -314,7 +318,7 @@
       <div class="crossnote markdown-preview  ">
       
 <h1 class="title">Natural Language Processing</h1>
-<h3 id="table-of-content">Table of Content </h3>
+<h3 id="table-of-conten">Table of Conten </h3>
 <ul>
 <li><a href="#regular-expressions">Regular Expressions</a>
 <ul>
@@ -374,7 +378,7 @@
 </li>
 </ul>
 </li>
-<li><a href="#vector-semantics-and-word-embeddings">Vector Semantics and Word Embeddings</a>
+<li><a href="#vector-semantics-and-embeddings">Vector Semantics and Embeddings</a>
 <ul>
 <li><a href="#word-embeddings">Word Embeddings</a></li>
 <li><a href="#how-to-create-word-embeddings">How to Create Word Embeddings?</a>
@@ -389,6 +393,21 @@
 </ul>
 </li>
 <li><a href="#visualizing-embeddings">Visualizing Embeddings</a></li>
+<li><a href="#sentence-embeddings">Sentence Embeddings</a>
+<ul>
+<li><a href="#sentence-transformers">Sentence Transformers</a></li>
+<li><a href="#embedding-dimensions">Embedding dimensions</a></li>
+<li><a href="#sequence-length">Sequence length</a></li>
+<li><a href="#selecting-and-evaluating-models">Selecting and Evaluating Models</a>
+<ul>
+<li><a href="#intrinsic-evaluation-structural-properties">Intrinsic Evaluation (Structural Properties)</a></li>
+<li><a href="#extrinsic-evaluation-task-specific-performance">Extrinsic Evaluation (Task-Specific Performance)</a></li>
+<li><a href="#industry-benchmarks">Industry Benchmarks</a></li>
+<li><a href="#operational-considerations">Operational Considerations</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#recurrent-neural-nets-rnns">Recurrent Neural Nets (RNNs)</a>
@@ -551,6 +570,76 @@
 <li><a href="#information-retrieval-with-dense-vectors">Information Retrieval with Dense Vectors</a></li>
 <li><a href="#answering-questions-with-rag">Answering Questions with RAG</a></li>
 <li><a href="#evaluating-question-answering">Evaluating Question Answering</a></li>
+</ul>
+</li>
+<li><a href="#rag-components">RAG Components</a>
+<ul>
+<li><a href="#retriever---embeddings-%EF%B8%8F">Retriever - embeddings 🗂️</a>
+<ul>
+<li><a href="#split-the-documents-into-chunks">Split the documents into chunks</a>
+<ul>
+<li><a href="#character-splitting">Character Splitting</a></li>
+<li><a href="#recursive-character-text-splitting">Recursive Character Text Splitting</a></li>
+<li><a href="#document-specific-splitting">Document Specific Splitting</a>
+<ul>
+<li><a href="#markdown">Markdown</a></li>
+</ul>
+</li>
+<li><a href="#python">Python</a></li>
+<li><a href="#pdfs-w-tables">PDFs w/ tables</a></li>
+<li><a href="#multi-modal-text--images">Multi-Modal (text + images)</a></li>
+</ul>
+</li>
+<li><a href="#semantic-chunking">Semantic Chunking</a>
+<ul>
+<li><a href="#find-break-points-between-sequential-sentences">Find break points between sequential sentences</a></li>
+</ul>
+</li>
+<li><a href="#agentic-chunking">Agentic Chunking</a>
+<ul>
+<li><a href="#advantages-of-agentic-chunking-over-traditional-methods">Advantages of Agentic Chunking Over Traditional Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#more-chunkingindexing">More Chunking/Indexing</a></li>
+<li><a href="#rag-evaluation">RAG Evaluation</a>
+<ul>
+<li><a href="#evaluating-rag-performance">Evaluating RAG Performance</a>
+<ul>
+<li><a href="#build-a-synthetic-evaluation-dataset">Build a Synthetic Evaluation Dataset</a></li>
+<li><a href="#load-the-knowledge-base">Load the knowledge base</a>
+<ul>
+<li><a href="#prepare-source-documents">Prepare source documents</a></li>
+</ul>
+</li>
+<li><a href="#setup-agents-for-question-generation">Setup agents for question generation</a></li>
+<li><a href="#setup-critique-agents">Setup critique agents</a></li>
+</ul>
+</li>
+<li><a href="#build-a-rag-system">Build a RAG System</a>
+<ul>
+<li><a href="#load-and-chunk-your-knowledge-base">Load and chunk your knowledge base</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#retriever-building-the-vector-database">Retriever: building the vector database</a>
+<ul>
+<li><a href="#nearest-neighbor-search-algorithm">Nearest Neighbor search algorithm</a></li>
+<li><a href="#distances">Distances</a></li>
+<li><a href="#reader---llm-">Reader - LLM 💬</a>
+<ul>
+<li><a href="#reader-model">Reader model</a></li>
+<li><a href="#prompt">Prompt</a></li>
+</ul>
+</li>
+<li><a href="#reranking">Reranking</a></li>
+<li><a href="#put-it-altogether">Put it altogether</a></li>
+</ul>
+</li>
+<li><a href="#benchmarking-the-rag-system">Benchmarking the RAG system</a></li>
+<li><a href="#less-great-option-generate-an-evaluation-with-ragas">Less great option: Generate an evaluation with Ragas</a></li>
 </ul>
 </li>
 </ul>
@@ -4727,7 +4816,7 @@ fill_mask<span class="token punctuation">(</span><span class="token string">"Jen
 
       </div>
 
-      <button id="backToHomeBtn" onclick="goToHome()">Back to Profile</button>
+       <button id="backToHomeBtn" onclick="goToHome()">Back to Profile</button>
     
   </body>
   <script>
@@ -4735,6 +4824,4 @@ fill_mask<span class="token punctuation">(</span><span class="token string">"Jen
        window.location.href = 'https://Yas2020.github.io/#portfolio';  // Replace with your home page URL
    }
  </script>
-      
-      
-</html>
+  </html>
