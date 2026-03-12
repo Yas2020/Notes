@@ -191,12 +191,12 @@ The project was not a toy example — it was built intentionally as a training g
 
 #### 1.2 Constraints
 The system was designed under several practical and architectural constraints:
-- Low cost — fully serverless or managed components only; no persistent servers
-- Auto-scaling and high availability — must scale on demand and remain reliable without manual maintenance
-- Multi-model support — ability to easily switch between LLM providers (Bedrock, OpenAI, local models on SageMaker, etc.)
-- CDK-driven IaC — entire infrastructure must be reproducible, deployable, and version-controlled via AWS CDK
-- Minimal maintenance — operational simplicity was a priority; monitoring and logging should be built-in
-- No strict latency requirements — goal was architectural learning, not optimization
+- **Low cost** — fully serverless or managed components only; no persistent servers
+- **Auto-scaling and high availability** — must scale on demand and remain reliable without manual maintenance
+- **Multi-model support** — ability to easily switch between LLM providers (Bedrock, OpenAI, local models on SageMaker, etc.)
+- **CDK-driven IaC** — entire infrastructure must be reproducible, deployable, and version-controlled via AWS CDK
+- **Minimal maintenance** — operational simplicity was a priority; monitoring and logging should be built-in
+- **No strict latency requirements** — goal was architectural learning, not optimization
 - Single-tenant scope — the project explored system design, RAG, orchestration, and deployment, not full multi-tenant isolation
 - No built-in LLM evaluation logic (yet) — planned as a future extension, allowing experimentation with hallucination detection and multi-model agreement
 
@@ -211,10 +211,12 @@ Success for this system was defined by whether it behaves like a real, practical
 - Ability to run multiple LLMs or switch between providers for experimentation or cost/performance tuning
 - Ease of iteration, allowing new components (evaluation, reranking, multi-model routing) to be added incrementally
 - Operational readiness, including logging, monitoring, tracing, and fault tolerance
-If the system was cheap, scalable, secure, reproducible, and flexible enough for real-world experimentation, the project was considered successful.
+
+If the system was **cheap**, **scalable**, **secure**, **reproducible**, and **flexible** enough for real-world experimentation, the project was considered successful.
 
 This section will make your project sound like a real production-grade backend that you architected intentionally, instead of a “learning project.”
-## ✅ SECTION 2 — System Requirements (FINAL VERSION)
+
+##  SECTION 2 — System Requirements
 #### 2.1 Intended Users
 The primary user of the system was myself, as the project was built to simulate a real-world LLM production backend and to explore architectural patterns, orchestration, and AWS-managed services. However, the codebase and architecture were designed intentionally so that:
 - ML engineers could reuse components (RAG pipeline, Step Functions orchestration, LLM routing, ingestion pipeline).
@@ -230,7 +232,7 @@ The system implemented the following functional capabilities:
   - Pluggable vector databases
     - DynamoDB (key-value store with embeddings)
     - Kendra search
-    - Any vector DB from LangChain integrations
+    - **Any vector DB from LangChain integrations**
 
 - **Document Processing & Ingestion**
   - Document ingestion pipeline
@@ -241,17 +243,17 @@ The system implemented the following functional capabilities:
 - **Orchestration & Messaging**
   - Serverless orchestration with AWS Step Functions
   - API entrypoint using API Gateway + Lambda
-  - WebSocket API to maintain a continuous chat stream
-  - SQS for message decoupling and buffering
-  - SNS for notifications and fan-out messaging
+  - **WebSocket API to maintain a continuous chat stream**
+  - **SQS for message decoupling and buffering**
+  - **SNS for notifications and fan-out messaging**
 
 - **Security & Authentication**
   - Full authentication using Cognito
   - Frontend authenticated via AWS Amplify and connected to backend authorizers
-  - Lambda authorizer for fine-grained API access control
+  - **Lambda authorizer for fine-grained API access control**
 
 - **Frontend**
-  - React-based frontend for chat UI
+  - **React-based frontend for chat UI**
   - Clean integration with backend endpoints and WebSocket channels
 
 - **Infrastructure-as-Code**
@@ -263,48 +265,42 @@ The system implemented the following functional capabilities:
     - No central logging/monitoring layer (CloudWatch default only)
     - No advanced error-handling, retries, or custom failure recovery
     - No evaluation layer or hallucination detection (planned as extension)
+
 These omissions are important because they show you understand production features, even if the MVP did not require them.
 
 #### 2.3 Non-Functional Requirements
 The architectural principles guiding the system were:
-- Scalability
+- **Scalability**
     - Fully serverless components that scale automatically
     - No long-running servers or fixed capacity
-    - Event-driven messaging (SQS/SNS) for balanced workloads
-  - Low Cost
+    - **Event-driven messaging** (SQS/SNS) for balanced workloads
+  - **Low Cost**
     - Pay-per-use compute (Lambda, Step Functions)
     - No GPU instances unless explicitly required
     - Cheap storage and vector DB options (DynamoDB)
-- Reliability
+- **Reliability**
   - Multi-service architecture with managed AWS components
-  - Decoupled compute (SQS) to handle bursts
+  - Decoupled compute (SQS) to **handle bursts**
   - Stateless Lambdas for resiliency
-- Maintainability
+- **Maintainability**
   - Clear CDK constructs
-  - Separation of frontend, backend, RAG pipeline, and ingestion pipeline
+  - **Separation** of frontend, backend, RAG pipeline, and ingestion pipeline
   - Component-level abstraction for easy modification (swap model, DB, embedder)
-- Version-Controlled Infrastructure
+- **Version-Controlled Infrastructure**
   - CDK code stored in Git
   - Reproducible deployments
   - Infrastructure changes traceable via Git history
 
 
 -----------------------------------------------------
-CDK Stack:
+### CDK Stack:
 - **Shared**
-    - Inititalize VPC: number of nat gateways needed, configure subnets (public, private, isolated)
+    - Inititalize VPC: number of NAT gateways needed, configure subnets (public, private, isolated)
     - Create gateway endpoints and interface endpoints for S3, DynamoDB - only interface endpoints for Sagemaker, SecretManager
     - Place the app config file `config.json` as Parameter String in System Manager
-    - Create Lambda layers for powerTools Python (AWS native Python module to help with logging, tracing serverless Lambda), Python SDK/genai_core (containing our utility Python code related Aurora(create, delete,etc), LangChain(chucnking, embeddings, semantic search), cross-encoder, upload documents) etc. Becaue these are performed by AWS Lambda
-    - Create secret manager secret to prevent from direct contact with ApiGateway endpoints (only allows requests fron CDN)
+    - Create Lambda layers for powerTools Python (AWS native Python module to help with logging, tracing serverless Lambda), Python SDK/genai_core (containing our utility Python code related Aurora(create, delete,etc), LangChain(chunking, embeddings, semantic search), cross-encoder, upload documents etc. Becaue these are performed by AWS Lambda
+    - Create Secret Manager secret to prevent from direct contact with ApiGateway endpoints (only allows requests fron CDN)
     - Create sectet for external API keys, for example for OpenAI key
-
-
-- Shared Resources: 
-    - VPC, # nat gateways, subnets (public, private, isolated), gateway endpoints and interface endpoints for S3, DynamoDB, Sagemaker, SecretManager
-    - Create Lambda layers for AWS powerTools  to help with logging, tracing serverless Lambda function, utility code for Aurora(create, delete,etc), LangChain(chunking, embeddings, semantic search), cross-encoder, upload documents) etc. All these are performed by AWS Lambda
-      - Create secret in secret manager for external API keys, example: OpenAI key- create secret to prevent from direct invoke of ApiGateway endpoints (only allows requests from CDN)
-
 
 - **Authentication**
     - Create Cognito user pool with a client
@@ -312,9 +308,9 @@ CDK Stack:
 - **SageMaker**: 3 options for deploying LLMs
     - Create IAM Service Principal role with SageMaker full access
     - 3 options to deploy LLMs:
-        - Provide your container image ID in AWS ECR or use HuggingFace TGI Inference containers in ECR given the closest region. FalconLite is deployed on `ml.g5.12xlarge`  using this method.
-        - Provide ARN of the image (AWS JumpStart) and model ID. LLamaV2_13B_Base and LLamaV2_13B_Chat are deployed using this method.
-        - Package your local HuggingFace models give their path, S3 build bucket and thier model ID. A AWS CodeBuild project downloads a snapshot of every model from HuggingFace Hub, compress it and then upload it to S3. A Lambda function invokes this CodeBuild project on event, waits for it to complete and then reports if it succeded on completion. This Lambda function itsself is invoked by Custom Resource Provider.  After this completes, a SageMaker CdfnModel deploys this model in HF TGI container given the `modelDataUrl` as an S3 bucket.   
+        - Provide your container image ID in AWS ECR or use HuggingFace TGI Inference containers in ECR given the closest region. `FalconLite` is deployed on `ml.g5.12xlarge`  using this method.
+        - Provide ARN of the image (AWS JumpStart) and model ID of your LLM. `LLamaV2_13B_Base` and `LLamaV2_13B_Chat` are deployed using this method.
+        - Package your local HuggingFace models give their path, S3 build bucket and thier model ID. A AWS CodeBuild project downloads a snapshot of every model from HuggingFace Hub, compress it and then upload it to S3. An Lambda function invokes this CodeBuild project on event, waits for it to complete and then reports if it succeded on completion. This Lambda function itsself is invoked by Custom Resource Provider.  After this completes, a SageMaker CdfnModel deploys this model in HF TGI container given the `modelDataUrl` as an S3 bucket.   
     - Return Sagemaker model endpoint
 
 -  **RAG System**: 
@@ -334,41 +330,41 @@ CDK Stack:
                -  SortKey: `compound_sort_key`
     
     - **SageMaker RAG Models**:
-      -  Find Embedding Models and Cross-Embedding Models Name/Ids from Config.json of the whole app
+      -  Find Embedding Models and Cross-Embedding Models Name/Ids from Config.json of the app
       -  Deploy them to SageMaker like other LLMs described before using one of the 3 options on `ml.g4dn.xlarge` machines. In this case, it was deployed using custom script HuggingFace model that loads the models from HF Hub, the script manupulate the prompt (adds "query:" to it for example). It directly tokenizes iput, pases it throught the model, mean pool of input and output decoded to become response using `with torch.inference_mode()` clause. For cross-encoders, it returns a list of scores. This is a custome inference accept by HF if its put in a file called `inference.py` and possible `requirements.txt` file.
     - **Vector DBs**:
-      - Aurora-pgvector
-        - Initialize a database cluster with Aurora-pgvector engine with the shared VPC in a isolated subnet
-        - A Lambda fucntion sets up the cluster: obtains credentials from secret manager to have databse extenstion of vector and reads the rows in it and send success message using `cfnresponse`. This Lambda function is invoked by curom resource provider.
-        - Step Fucntion to create workspace table in Aurora:
-          - Task1: in DynamoDB workspace table, change the status attribute of item with workspace_id to `creating`
-          - Task2: A lambda function that first finds workspace given workspace_id, then creates a workspace table with fields such as: chunk_id, workspace_id, document_id, document_sub_id, title, content, content_complement, content_embeddings vector, metadata JSONB. Then it creates index on `document_id`. And depending on the metrics () `cosine`, `l2`, `inner`), executes a command to create index on content_embeddings
-          - Task3:change the status attribute of item with workspace_id to `ready`
+      - **Aurora-pgvector**
+        - Initialize a database cluster with Aurora-pgvector engine with the shared VPC in a **isolated subnet**
+        - A Lambda fucntion sets up the cluster: obtains credentials from Secret Manager to have databse extenstion of vector and reads the rows in it and send success message using `cfnresponse`. This Lambda function is invoked by a curom resource provider.
+        - Create Aurora workspace Workflow: Step Fucntion to create workspace table in Aurora:
+          - Task1: Given `workspace_id`,  change the status attribute of the workspace item with  to `creating` in the workspace DynamoDB table,
+          - Task2: A lambda function first finds the workspace item in DynamoDB table given its `workspace_id` and `"object_type": WORKSPACE_OBJECT_TYPE` to pull out embeddings_model_dimensions, hybrid_search, languages, has_index, metric etc. Then creates an Aurora workspace table with fields such as: `chunk_id`, `workspace_id`, `document_id`, `document_sub_id`, `title`, `content`, `content_complement`, `content_embeddings` vector, metadata JSON. Then it creates Aurora index on `document_id` and one on `document_sub_id`. And depending on the metrics (`cosine`, `l2`, `inner`), executes a command to create Aurora index on `content_embeddings`
+          - Task3: change the status attribute of item with `workspace_id` to `ready`
           - Task4: In case of error, return fail by state machine  
       - OpenSearch: done in a simialr manner to Aurora - skipped
     - **Data Import Workflow**
-        - Injestion Queue and its dead letter queue (AWS SQS)
-        - Upload bucket (S3) with event notification for SQS as destination, processing bucket S3
-        - Define a Lambda function with this SQS as its event source which processes requestes in SQS once their are created in S3. Create a record in document table for this document. Upload documents to S3 processing bucket. 
+        - **Injestion Queue** and its dead letter queue (AWS SQS)
+        - Upload **S3 bucket with event notification for SQS** as destination, processing bucket S3
+        - Define a Lambda function with this SQS as its event source which processes requestes in SQS once their are created in S3. Creates a record in DynamoDB Document table for this document. Upload documents to S3 processing bucket. 
             - If doument type is text, invoke step function workflow `File Import Workflow`
             - If doument type is website, invoke step functin workflow `Website Crawling Workflow` 
-        - File Import Workflow (Step Functions ):
+        - **File Import Workflow** (Step Functions ):
             - Task1: Set the status field for document_id to `processing`
-            - Task2: `sfn.CustomState` which defines a AWS BatchJob to process documents: 
+            - Task2: `sfn.CustomState` which defines a **AWS BatchJob** to process documents: 
               - Define ec2-ecs compute 
               - BatchJob queue
-              - ECS container definition including docket contianer defining the jobs, all needed env variables such as DynamoDB meta tables (documnt table, workspace table), S3 processing bucket, external API credentials
+              - ECS container definition including docker contianer defining the jobs, all needed env variables such as DynamoDB meta tables (documnt table, workspace table), S3 processing bucket, external API credentials
                   - Dockerfile: base layer is `quay.io/unstructured-io/unstructured:0.10.19`
-                  - Find workspace and document metadata given workspace_id and document_id
+                  - Find workspace and document metadata given `workspace_id` and `document_id`
                   - Read the content of the file in S3, place it in processing bucket
                   - Find the chunking strategy, chunk size, overlap from workspace table and then split the text and return the chunks. Only support for **recursive** chunking strategy. Store the chunks with their is as `chunk_id.txt` in processing S3 bucket
                   - Find embedding models, generate embeddings for each chunk and store them in the vector store with fields such as workspace_id, document_id, document_sub_id, document_type, path, chunk_ids, chunk_embeddings, chunks
-            - Task3: Set the status field for document_id to `processed`
-        - Website Crawling Workflow: A Step Function with
+            - Task3: Set the status field for `document_id` to `processed`
+        - **Website Crawling Workflow**: A Step Function with
             - In document table, set status to `processing`
             - Invoke a lambda function that does website crawling 
-               -  Reads a configuration file from a S3 bucket indicating the url of the pages processed, priority queue data is in, workspace and document table metadata for this crawling job etc. 
-               -  Start processing priority queue by reading urls, parse url using an html parser, internal links and then  store the content in a S3 bucket
+               -  Reads a configuration file from a S3 bucket indicating the URL of the pages processed, priority queue data is in, workspace and document table metadata for this crawling job etc. 
+               -  Start processing priority queue by reading URLs, parse URL using an html parser, internal links and then  store the content in a S3 bucket
                -  Chunk the content and add it to vector db
                -  If internal links need to be parsed, do so and store them as `subdocument` of the same documnt in vector db
             - Set status to processed
@@ -378,35 +374,36 @@ CDK Stack:
   - **ChatBot API**
     - **DynamoDB table**:  a session table with `session_id` and `user_id` as partition key and sort key. In addition, it has a global secondary index by `user_id`
     - **REST API**:
-        - A Lamabda fucntion (called `api handler`) handling all requests to the REST API. It has permission to access RAG services (its DynamoDB tables, vector dbs (aurora/opensearch), Embedding LLMs endpoints, to start execustion of file import workflows andwebsite crawl worflow, Access to chat LLM endpoints, credentials/secrets ). Before it resolves a request, Lambda checks `X-Origin-Verify` header to make sure the request is coming from CDN not direct contact.This lambda function acts as router using `APIGatewayRestResolver` from `aws_lambda_powertools`. 
+        - A Lambda fucntion (called `api handler`) handling all requests to the REST API. It has permission to access RAG services (its DynamoDB tables, vector dbs (aurora/opensearch), Embedding LLMs endpoints, to start execustion of file import workflows and website crawl worflow, Access to chat LLM endpoints, credentials/secrets ). Before it resolves a request, Lambda checks `X-Origin-Verify` header to make sure the request is coming from CDN not direct contact. This lambda function acts as **router** using `APIGatewayRestResolver` from `aws_lambda_powertools`. 
             - `/health`: returns `OK`
             - `/llms`: returns a list of LLMs available
-            - `/rang/engines`: returns available rang engines (Aurora, OpenSearch, Kendra)
+            - `/rag/engines`: returns available rang engines (Aurora, OpenSearch, Kendra)
             - `/embeddings`: returns the embeddings for the input data
             - `/cross_encoders`: Given input data, finds the selected encoder model and ranks the passages
             - `/workspaces/<workspace_id>/documents/file-upload`: If file the extension is among the supported, it uploads the file to S3 bucket and generates presigned post and a link to S3 
             - `/workspaces/<workspace_id>/documents/<document_type>`: returns documents on GET, creats documents on POST etc.
             - `/semantic-search`: returns semantic search result given query, engine etc.
-            - `/sessions`: check authenticity of the user and finds user_id, then  (GET) list all sessions for this user_id. It can delete a user's session
+            - `/sessions`: check authenticity of the user and finds `user_id`, then  (GET) list all sessions for this `user_id`. It can delete a user's session
             - `workspaces`: it can creates a workspace aurora/opensearch
-        This Lamabda fucntion is traced and loged by powertools. 
+        
+          This Lamabda fucntion is traced and logged by powertools. 
            
-        - A REST API endpoint accessible by all origins, all methods, allows headers "Content-Type", "Authorization", "X-Amz-Date" 
+        - REST API endpoint accessible by all origins, all methods, allows headers "Content-Type", "Authorization", "X-Amz-Date" 
             - It has an authorizer that verifies users using Cognito
             - Integrates Lambda function `api handler` as proxy
     
     - **WebSocket API**:
         - SNS topic as message bus for incoming and outgoing messages
-        - DynamoDB table to record connections metadata, partition key: connection_id. Second global index with partition key: user_id
-        - Lambda function as Lambda Authorizer checking request.querystring.token. If token is issing from incoming request, it generagtes a Deny policy. If the token is verified through Cognito client for the user `cognito_client.get_user(AccessToken=id_token)`, then Allow policy on a specific method to invoke REST API is genrated for the user and returned
-        - Lambda function as connection handler can write to dynamo connection table. If `event_type` is `Connect`, it adds connection_id, user_id to table otherwise, it deletes the connection record for the current user 
+        - DynamoDB table to record connections metadata, partition key: `connection_id`. Second global index with partition key: `user_id`
+        - Lambda function as **Lambda Authorizer** checking `request.querystring.token`. If token is missing from incoming request, it generagtes a Deny policy. If the token is verified through Cognito client for the user `cognito_client.get_user(AccessToken=id_token)`, then Allow policy on a specific method to invoke REST API is generated for the user and returned
+        - Lambda function as connection handler can write to DynamoDB connection table. If `event_type` is `Connect`, it adds `connection_id`, `user_id` to table otherwise, it deletes the connection record for the current user 
         - WebSocket API that has the previous lambda functions as Lambda authorizer and integrated the Lambda connection handler 
-        - Lambda function called `incomingMessageHandler` allowed to publish to SNS message topic with `"direction": "IN"`. Websocket api routes to this Lamabda function by default (its Default Integration). If `event_type == "MESSAGE"`, this function writes the message to sns topic otherwise sends status 400.
-        - Lambda fucntion called `outgoingMessageHandler` that can read connection table and allowed to invoke websocket api (`execute-api:ManageConnections`). It uses batch processing records from an outgoing SQS (with dead letter) to post outgoing messages to the connection_id in websocket api. This sqs is subscribed to SNS message topic with `"direction": "OUT"` and is the event source to outgoingMessageHandler lambda fucntion
+        - Lambda function called `incomingMessageHandler` allowed to publish to SNS message topic with `"direction": "IN"`. Websocket API routes to this Lamabda function by default (its **Default Integration**). If `event_type == "MESSAGE"`, this function writes the message to SNS topic otherwise sends status 400.
+        - Lambda fucntion called `outgoingMessageHandler` that can read connection table and allowed to invoke Websocket api (`execute-api:ManageConnections`). It uses batch processing records from an outgoing SQS (with dead letter) to post outgoing messages to the `connection_id` in Websocket API. This sqs is subscribed to SNS message topic with `"direction": "OUT"` and is the event source to outgoingMessageHandler lambda fucntion
   
   - **LangChain Interface**:
-    - SQS with dead letter subscribe to SNS topic message (from websocket api) filtered with `"direction": "IN"`
-    - Lambda function that batch processes this sqs records as its event source. Takes a record (containing model keywords: provider (of the model: bedrock, openai, sagemaker, etc.), model_id, mode, prompt, workspace_id, session_id). Creates a model object from a base adapter with some of its methods to be overwrriten depending on model providers. Examples such as `get_llm`, `get_prompt`. It uses LangChain methods such as 
+    - SQS with dead letter subscribed to SNS topic message (from Websocket api) filtered with `"direction": "IN"`
+    - Lambda function that batch processes this SQS records as its event source. Takes a record (containing model keywords: provider (of the model: bedrock, openai, sagemaker, etc.), model_id, mode, prompt, workspace_id, session_id). Creates a **model object** from a base adapter with some of its methods to be overwrriten depending on model providers. Examples such as `get_llm`, `get_prompt`. It uses LangChain methods such as 
         - `get_chat_history` using `DynamoDBChatMessageHistory`, 
         - `get_memory` using `ConversationBufferMemory`
         - `run_with_chain` using `ConversationalRetrievalChain.from_llm` if mode is `chain`. This LangChain module uses `WorkspaceRetriever` to access history  (when workspace_id is provided) and a memory to chain conversation into LLMs. Then it adds 
@@ -429,7 +426,7 @@ CDK Stack:
   - CloudFront distribution whose default behaviour is S3 bucket. Additional behaviour is 
       - `/api/*`: a HTTP origin which is the API Gateway REST API endpoint
       - `/socket`: a HTTP origin which is the API Gateway WebSocket API endpoint
-      - Both endpoints are with custom header including value for key "X-Origin-Verify", all methods allowed, cach diabled, `originRequestPolicy: ALL_VIEWER_EXCEPT_HOST_HEADER`
+      - Both endpoints are with custom header including value for key "X-Origin-Verify", all methods allowed, cache diabled, `originRequestPolicy: ALL_VIEWER_EXCEPT_HOST_HEADER`
   - S3 bucket deployment for the following:
       - `aws-exports.json` config file as s3deploy including 
           - `aws_user_pools_web_client_id` for Auth
@@ -443,9 +440,9 @@ It's a React App composed of  `components`.
 
 - RAG system starts with creating a workspace item in the UI. It has two main pages: 
     - `/chat`: 
-          - make a call to rest api endpoint `/llms` to fetch available LLMs and display it in a table
-          - Generates a `session_id` if not already created, otherwise queries a session_id for the user from session dynamodb table
-          - Lets user select the model, presents ChatBot configuration:
+        - make a call to rest api endpoint `/llms` to fetch available LLMs and display it in a table
+        - Generates a `session_id` if not already created, otherwise queries a `session_id` for the user from session dynamodb table
+        - Lets user select the model, presents ChatBot configuration:
                 ```typescript
                 streaming: true,
                 showMetadata: false,
@@ -453,7 +450,7 @@ It's a React App composed of  `components`.
                 temperature: 0.1,
                 topP: 1.0,
                 ```
-            - Present Chat input state:
+        - Present Chat input state:
                 ```typescript
                 value: "",
                 selectedModel: null,
@@ -461,8 +458,8 @@ It's a React App composed of  `components`.
                 modelsStatus: "loading",
                 workspacesStatus: "loading",
                 ``` 
-            - Select workspace 
-            - Uses a WebSocket hook to collect chat input, updates the chat history and sent the request to websocket api with the auth JWT token:  
+        - Select workspace 
+        - Uses a WebSocket hook to collect chat input, updates the chat history and sent the request to Websocket API with the auth JWT token:  
                   ```typescript
                     const request: ChatBotRunRequest = {
                           action: ChatBotAction.Run,
@@ -513,7 +510,6 @@ It's a React App composed of  `components`.
               - Cross-Encoder models employ a classification approach for data pairs rather than generating vector embeddings for the data. Cross-encoders are used for re-ranking.
           - `/semantic-search`: sends a post request ro rest api `/semantic-search` passing workspace_id and the query
               
-- 
 - The item has the follwoing form:
   
 ```typscript
@@ -591,7 +587,7 @@ Flow:
 - Requests presigned URL
 - Uploads to S3 upload bucket
 - Backend later moves it to processing bucket
-- Triggers FILE_IMPORT_WORKFLOW
+- Triggers `FILE_IMPORT_WORKFLOW`
 This is exactly how production systems do it.
 - ✔ avoids Lambda payload limits
 - ✔ keeps frontend thin
@@ -602,7 +598,7 @@ Flow:
 - REST call creates document metadata
 - Workspace counters updated
 - Content uploaded to: `s3://processing/{workspace_id}/{document_id}/content.txt`
-- FILE_IMPORT_WORKFLOW started
+- `FILE_IMPORT_WORKFLOW` started
 - Important insight:
   - You unified file and text ingestion downstream. That’s a very good design decision.
 
@@ -618,21 +614,23 @@ Flow:
 - URLs discovered (with optional link following)
 - Metadata serialized to JSON
 - Uploaded to processing bucket
-- WEBSITE_CRAWLING_WORKFLOW triggered
+- `WEBSITE_CRAWLING_WORKFLOW` triggered
 This is:
-- Asynchronous
-- Bounded (limits)
-- Decoupled from UI
+  - Asynchronous
+  - Bounded (limits)
+  - Decoupled from UI
+
 Exactly right.
 
 ###### Step Functions — quiet strength
 You didn’t just use Step Functions randomly. You used them where they make sense:
-- Long-running jobs
-- Fan-out ingestion
-- Failure isolation
-- Retry semantics
+- **Long-running jobs**
+- **Fan-out ingestion**
+- **Failure isolation**
+- **Retry semantics**
 - Interview phrase:
 “I used Step Functions to decouple ingestion complexity from request latency and to make workflows observable and retryable.”
+
 That’s gold.
 
 ###### 3️⃣ Experimental / diagnostics routes (very smart)
@@ -677,10 +675,11 @@ You demonstrated:
 ✅ Cloud-native security patterns (presigned URLs)
 ✅ Decoupled compute
 ✅ ML evaluation thinking (even if not fully implemented yet)
+
 This is not beginner, not “hopeful”, not “academic”. This is industry-grade engineering literacy.
 
 
-## SECTION 3 — High-Level System Architecture (interview version)
+## SECTION 3 — High-Level System Architecture 
 Below is how you should tell this story verbally or in notes.
 This is not removing detail — it’s organizing it.
 ### 3.1 High-Level RAG Backend Architecture
@@ -697,7 +696,7 @@ Two DynamoDB tables manage system state:
   - Stores retrieval configuration and lifecycle state
   - Indexed by creation time and type to support UI listing
 - Document Table
-  - Tracks ingestion state (created → processing → processed → error)
+  - Tracks ingestion state (`created → processing → processed → error`)
   - Supports compound sort keys to track subdocuments (e.g., crawled pages)
 👉 DynamoDB is used here for fast state transitions and scalability, not vector storage.
 - Model Layer (Embeddings & Reranking)
@@ -742,7 +741,8 @@ Ingestion is fully asynchronous:
     - Parses internal links as subdocuments
     - Chunks, embeds, and stores content
     - Maintains document lineage via metadata
-Failures propagate via Step Functions and update document state.
+
+  Failures propagate via Step Functions and update document state.
 
 ###### Security & Access
 - IAM-scoped roles for:
@@ -756,14 +756,15 @@ Failures propagate via Step Functions and update document state.
 #### Key Architectural Choice
 This system separates:
 - Control plane (DynamoDB + Step Functions)
-- Data plane (vector DB + embeddings)
+- Data plane (Vector DB + embeddings)
 - Compute plane (Lambda, Batch, SageMaker)
+
 That separation is intentional and critical for scalability and maintainability.
 
 #### High-leverage questions (answering these will level you up)
 ###### Q1. Why did you choose Batch + ECS for ingestion instead of Lambda?
 
-I chose AWS Batch with ECS because document ingestion is a long-running, resource-intensive, and dependency-heavy workload. Lambda is optimized for short, stateless tasks, but ingestion involves large files, complex parsing (e.g. Unstructured), custom chunking logic, and embedding generation, which can exceed Lambda’s runtime, memory, and packaging constraints.
+I chose AWS Batch with ECS because document ingestion is a **long-running**, **resource-intensive**, and d**ependency-heavy workload**. Lambda is optimized for short, stateless tasks, but ingestion involves large files, complex parsing (e.g. Unstructured), custom chunking logic, and embedding generation, which can exceed Lambda’s runtime, memory, and packaging constraints.
 
 Batch + ECS gives me:
 - Deterministic CPU/memory allocation
@@ -771,25 +772,26 @@ Batch + ECS gives me:
 - Better control over retries and failure isolation
 - Cost efficiency for bursty but long-running jobs
 Lambda is still used for orchestration and control-plane logic, while Batch handles the data-plane processing.
+
 👉 This answer signals architectural maturity.
  
-Note that lambda has runtime limit of 15 min. Lambda runtime has size limit too. Large dependecies must be deployed as Lambda layers. 
+Note that Lambda has runtime limit of 15 min. Lambda runtime has size limit too. Large dependecies must be deployed as Lambda layers. 
 
 ###### Q2. Why does each workspace get its own vector table instead of one global table?
-Each workspace has its own vector table to enforce isolation, performance predictability, and simpler query semantics.
+Each workspace has its own vector table to **enforce isolation**, **performance predictability**, and **simpler query semantics**.
 
 A single global vector table would:
 - Grow very large, increasing index maintenance cost
-- Require filtering by workspace_id on every similarity query
+- Require filtering by `workspace_id` on every similarity query
 - Make per-workspace experimentation and tuning difficult
 
 By isolating vector tables:
-- Indexes stay smaller and faster
-- Retrieval queries are simpler and more reliable
+- **Indexes stay smaller and faster**
+- **Retrieval queries are simpler and more reliable**
 - One workspace’s workload cannot degrade others
-- Different similarity metrics or schema changes can be tested independently
+- **Different similarity metrics or schema changes can be tested independently**
 
-DynamoDB is used separately for metadata because it handles state transitions and UI queries efficiently, while the vector DB is optimized purely for similarity search.
+DynamoDB is used separately for metadata because it handles state transitions and UI queries efficiently, while the **vector DB is optimized purely for similarity search**.
 
 
 ###### Q3. What happens if embedding generation fails mid-document?
@@ -801,6 +803,7 @@ Ideally, this could be improved by:
 - Chunk-level status tracking
 - Partial ingestion with idempotent retries
 - Automatic re-enqueueing via DLQs
+
 I intentionally kept the first version simpler to focus on correctness and observability before adding fine-grained recovery logic.
 
 ###### Q4. Why is ingestion asynchronous but retrieval synchronous?
@@ -815,12 +818,12 @@ Go for incremental, low-risk optimizations first.
 
 If latency suddenly became critical, my first two changes would be:
 1. Optimize retrieval path:
-- Reduce candidate set size
-- Improve indexing strategy
-- Cache embeddings and frequent queries
+   - Reduce candidate set size
+   - Improve indexing strategy
+   - Cache embeddings and frequent queries
 2. Warm critical components:
-- Provisioned concurrency for Lambdas
-- Keep SageMaker endpoints warm
+   - Provisioned concurrency for Lambdas
+   - Keep SageMaker endpoints warm
 
 Only after exhausting these would I consider moving synchronous paths to ECS or EKS, since that increases operational complexity. This shows cost awareness + discipline.
 
@@ -839,15 +842,16 @@ When a user sends a message:
 5. Retrieval is performed if a workspace is selected
 6. The LLM response is generated and published back to SNS
 7. An outgoing handler pushes the response to the correct WebSocket connection
+
 This explanation alone signals senior-level system design.
 
 ###### Design choices that are genuinely GOOD (and you should own)
 
 - ✅ WebSocket + SNS + SQS
-      - Decouples UI from LLM execution
-      - Smooths bursts
-      - Enables retries and backpressure
-      - Supports future fan-out (analytics, logging, eval)
+    - **Decouples UI from LLM execution**
+    - **Smooths bursts**
+    - **Enables retries and backpressure**
+    - **Supports future fan-out** (analytics, logging, eval)
 - ✅ Adapter-based LLM abstraction
     - Clean provider isolation
     - Supports Bedrock, OpenAI, SageMaker
@@ -856,20 +860,21 @@ This explanation alone signals senior-level system design.
     - Shows framework understanding
     - Not just “calling LangChain blindly”
     - You extended BaseRetriever and BaseChatMessageHistory
+
 This matters a lot.
 
 ######  5️⃣ Where you can critically improve (this is GOOD news)
 You asked me to argue critically — here are high-signal improvements, not nitpicks.
 - 🔧 1. Streaming granularity
-**Current**: Likely response-level streaming
+  **Current**: Likely response-level streaming
 
-**Ideal**: Token-level streaming via:
-   - generator pattern
-   - chunked WebSocket sends
-   - backpressure handling
+  **Ideal**: Token-level streaming via:
+    - generator pattern
+    - chunked WebSocket sends
+    - backpressure handling
 
-Interview framing:
-“Streaming is implemented at response granularity today; token-level streaming would be the next optimization.”
+  Interview framing:
+  “Streaming is implemented at response granularity today; token-level streaming would be the next optimization.”
 
 - 🔧 2. Observability gap
 You already noticed this yourself earlier. Add later:
@@ -877,24 +882,26 @@ You already noticed this yourself earlier. Add later:
   - Model latency metrics
   - Retrieval hit/miss stats
 
-Say:
-“This version focused on correctness and architecture; observability would be the next iteration.”
-That’s a perfect answer.
+  Say:
+  “This version focused on correctness and architecture; observability would be the next iteration.”
+  That’s a perfect answer.
 
-- 🔧 3. Memory strategy
+- 🔧 3. **Memory strategy**
 You’re using:
   - ConversationBufferMemory
 You can say:
-“For longer sessions, I’d switch to windowed or summarized memory to control token growth.”
+“For longer sessions, I’d switch to **windowed or summarized memory** to control token growth.”
 Again — senior thinking.
 
 - 🔧 4. Backpressure protection
 Right now:
   - SQS buffers help
-But future:
-  - Rate-limit per user
-  - Max concurrent sessions
+
+  But future:
+  - **Rate-limit per user**
+  - **Max concurrent sessions**
   - Priority queues
+
 You don’t need to implement — just acknowledge.
 
 ### Section 3.3: Failure Modes & Tradeoffs
@@ -919,7 +926,7 @@ You don’t need to implement — just acknowledge.
 - No partial-response reconciliation
 
 ###### Ideal evolution
-- Client-generated message_id
+- Client-generated `message_id`
 - Server-side deduplication
 - Resume from last acknowledged token
 
@@ -1013,7 +1020,7 @@ Ideal
 ##### Event-driven vs synchronous
 - Chosen: Event-driven
 - Cost: Complexity, latency
-- Benefit: Scalability, resilience, burst tolerance
+- Benefit: **Scalability**, **resilience**, **burst tolerance**
 
 ##### Lambda vs ECS/EKS
 - Chosen: Lambda
@@ -1041,17 +1048,17 @@ These are acknowledged, not ignored — critical distinction.
 (Clean, confident, senior-level)
 ####  What failure cases did you consider in this system?
 I designed the system assuming partial failure is the norm.
-WebSocket connections can drop, messages can be duplicated due to at-least-once delivery, and LLM providers can throttle or timeout.
+**WebSocket connections can drop**, **messages can be duplicated** due to at-least-once delivery, and **LLM providers can throttle** **or timeout**.
 To handle this, the architecture is fully decoupled using SNS and SQS, chat state is persisted independently of connections, and failures in retrieval or generation degrade gracefully rather than hard-failing user requests.
 #### What tradeoffs did you make?
-I intentionally chose an event-driven, serverless design over a synchronous API.
+I intentionally chose an **event-driven, serverless design over a synchronous API**.
 That increases architectural complexity but gives me elasticity, backpressure handling, and provider isolation — which is important for LLM workloads that are unpredictable in latency and cost.
 
 #### What would you improve next?
 The next improvements would be:
-- Token-level streaming with acknowledgements
-- Windowed or summarized memory to control context growth
-- Better observability around retrieval quality and model latency
+- **Token-level streaming** with acknowledgements
+- **Windowed or summarized memory** to control context growth
+- **Better observability around retrieval quality and model latency**
 - The current version prioritizes correctness and scalability; these would be optimization layers.
 
 ### Section 3.4 — Scalability & Cost Control
@@ -1122,7 +1129,7 @@ Potential bottleneck
 Mitigation ideas
 - Read replicas
 - Sharding by workspace
-- Switch to OpenSearch for larger scale
+- **Switch to OpenSearch for larger scale**
 
 #### 3.4.2 Cost Drivers (Where Money Leaks)
 Primary Cost Centers
@@ -1350,9 +1357,9 @@ Why
 
 #### 🎤 DOC B — INTERVIEW VERSION
 #### “How do you handle security?”
-Authentication is handled via Amazon Cognito with JWT verification on both REST and WebSocket APIs.
+**Authentication** is handled via **Amazon Cognito with JWT verification on both REST and WebSocket APIs**.
 
-Authorization is enforced through IAM least-privilege roles and user-scoped metadata checks.
+**Authorization** is enforced through **IAM least-privilege roles and user-scoped metadata checks**.
 
 #### “How is data isolated?”
 Data is isolated at multiple layers — DynamoDB partitioning by workspace, separate vector tables per workspace, workspace-prefixed S3 keys, and session-scoped chat history.
@@ -1752,7 +1759,7 @@ While it’s not optimized for extreme low latency like ChatGPT, it closely mirr
 🎯 Senior-level answer
 
 #### 🎯 30-Second Version
-I built a production-style, multi-LLM chatbot with a full RAG pipeline on AWS to learn real-world LLM system design. The system supports asynchronous data ingestion, workspace-isolated vector stores, and real-time chat via WebSockets. It integrates multiple LLM providers through a unified interface and uses LangChain for conversational retrieval. The architecture emphasizes scalability, fault tolerance, and cost control, and closely mirrors how enterprise LLM systems are deployed in practice.
+I built a production-style, multi-LLM chatbot with a full RAG pipeline on AWS to learn real-world LLM system design. The system supports asynchronous data ingestion, workspace-isolated vector stores, and real-time chat via WebSockets. It integrates multiple LLM providers through a unified interface and uses LangChain for conversational retrieval. The architecture emphasizes **scalability**, **reliablity**, and **cost control**, and closely mirrors how enterprise LLM systems are deployed in practice.
 
 ⏱️ ~25–30 seconds
 📞 Perfect for recruiter screens
@@ -1893,7 +1900,7 @@ Dense embeddings miss exact matches:
 - Rare terms
 
 #### Hybrid retrieval:
-  - Combine dense (semantic) and sparse (BM25, TF-IDF) retrieval results to cover both meaning and exact match.  Score combination or rerank fusion.
+  - **Combine dense (semantic) and sparse (BM25, TF-IDF) retrieval results to cover both meaning and exact match.**  Score combination or rerank fusion.
   - Why: Sometimes, embeddings miss proper nouns, codes, or numbers.
         → Strong signal of practical ML understanding.
   -  Hybrid retrieval (semantic + BM25 or keyword matching) yields dramatically better recall and grounding for factual QA and RAG.

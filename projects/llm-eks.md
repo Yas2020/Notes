@@ -61,16 +61,16 @@ These are the stories interviewers actually remember.
 
 #### ⭐ STAR #1 — “Designing a Multi-Tenant LLM Platform”
 ##### Situation
-I wanted to build a production-grade LLM platform rather than a single chatbot, focusing on tenant isolation, security, and operability.
+I wanted to **build a production-grade LLM platform** rather than a single chatbot, focusing on tenant isolation, security, and operability.
 
 ##### Task
-Design a system where multiple tenants could safely share infrastructure while keeping auth, data, and workflows isolated.
+Design a system where multiple tenants could **safely share infrastructure** while **keeping auth, data, and workflows isolated**.
 
 ##### Action
-- Used EKS with Istio to enforce mTLS and traffic policies
-- Isolated tenants using namespaces, JWT claims, and authorization policies
+- Used EKS with Istio to enforce **mTLS and traffic policies**
+- Isolated tenants using **namespaces**, **JWT claims**, and **authorization policies**
 - Routed traffic via a shared ingress gateway but enforced tenant-specific auth flows
-- Ensured each tenant had its own RAG pipeline and private documents
+- Ensured **each tenant had its own RAG pipeline** and private **documents**
 
 ##### Result
 - Achieved strong isolation without duplicating infrastructure
@@ -84,18 +84,18 @@ Signal sent: system-level thinking + security maturity
 Rolling out LLM changes is risky — failures are expensive and user-visible.
 
 ##### Task
-Build a deployment pipeline that could release updates safely and automatically across tenants.
+**Build a deployment pipeline that could release updates safely and automatically across tenants.**
 
 ##### Action
-- Implemented GitOps using FluxCD with image automation
-- Used Kustomize overlays per tenant
-- Integrated Flagger for canary deployments with Prometheus metrics
-- Automated rollback on latency or error-rate regressions
+- **Implemented GitOps using FluxCD with image automation**
+- Used **Kustomize overlays per tenant**
+- Integrated **Flagger for canary deployments with Prometheus metrics**
+- **Automated rollback on latency or error-rate regressions**
 
 ##### Result
-- Zero-downtime deployments
-- No manual intervention needed for rollouts
-- Clear audit trail of what version each tenant was running
+- **Zero-downtime deployments**
+- **No manual intervention needed for rollouts**
+- **Clear audit trail of what version each tenant was running**
 
 Signal sent: you understand real production risk
 
@@ -130,13 +130,13 @@ This is how you explain it without diagrams, under pressure.
 ##### Gateway & Auth
 - Istio Ingress Gateway terminates TLS
 - OAuth2 flow redirects to tenant-specific Cognito
-- JWT returned with tenant claims
+- **JWT returned with tenant claims**
 
 ##### Authorization
 - Envoy + Istio policies enforce:
-  - Valid JWT
-  - Correct tenant claim
-  - Allowed source workload
+  - **Valid JWT**
+  - **Correct tenant claim**
+  - **Allowed source workload**
 
 ##### Tenant Workloads
 - Requests routed to tenant namespace
@@ -146,9 +146,9 @@ This is how you explain it without diagrams, under pressure.
 - DynamoDB for session memory
 
 ##### Observability & Safety
-- Prometheus scrapes mesh metrics
-- Flagger controls canary rollout
-- Grafana visualizes health
+- **Prometheus scrapes mesh metrics**
+- **Flagger controls canary rollout**
+- **Grafana visualizes health**
 
 “The key idea is shared infrastructure with identity-based isolation.”
 
@@ -193,24 +193,27 @@ You are not using “multi-tenant” loosely. You implemented **hard multi-tenan
 
 Let’s decompose it:
 ###### a) Tenant Isolation at the Edge
-- Separate subdomains:
+- **Separate subdomains**:
     -   tenantA.example.com
     - tenantB.example.com
-- Independent OAuth2 / Cognito user pools
-- Admin-managed user onboarding per tenant
+- **Independent OAuth2 / Cognito user pools**
+- **Admin-managed user onboarding per tenant**
+
 This already places you above many “multi-tenant” claims.
+
 ###### b) Tenant-Specific Application Behavior
 This is where it gets real:
 - Each tenant:
-  - accesses different proprietary knowledge bases
-  - uses different retrieval workflows
-  - may have different RAG pipelines
+  - **accesses different proprietary knowledge bases**
+  - **uses different retrieval workflows**
+  - **may have different RAG pipelines**
+
 This is not just config flags. This is behavioral isolation.
 
 ###### c) Tenant Isolation inside the Service Mesh (this is rare)
 This is the part that most interviewers won’t expect:
-- Different Certificate Authorities per tenant
-- mTLS enforced so:
+- **Different Certificate Authorities per tenant**
+- **mTLS enforced** so:
     - tenant A services cannot talk to tenant B
     - Istio policies + cert-manager enforcing trust boundaries
 
@@ -266,10 +269,10 @@ That shows judgment, not stubbornness.
 Here’s the clean interview narrative. Memorize this structure, not the exact words.
 60–90 Second Interview Explanation
 
-I built a multi-tenant RAG-based LLM chatbot deployed on AWS EKS, designed for strong tenant isolation and production-grade reliability.
-I chose EKS over serverless because the system required advanced networking, security boundaries, and traffic control — including service mesh routing, tenant-specific TLS, and canary deployments — which would be either impossible or overly complex in a serverless setup. 
-Multi-tenancy meant more than shared infrastructure: each tenant had its own authentication, its own retrieval workflows and proprietary knowledge base, and enforced isolation inside the service mesh using separate certificate authorities.
-I owned the infrastructure and deployment layer end-to-end: CDK-defined resources, GitOps CI/CD, custom Helm charts, rollout strategies, and full observability. The goal was to make an LLM system that could actually be operated safely in a real enterprise environment.
+I built a multi-tenant RAG-based LLM chatbot deployed on AWS EKS, designed for **strong tenant isolation** and production-grade reliability.
+I chose EKS over serverless because the system required **advanced networking**, **security boundaries**, and **traffic control** — including **service mesh routing**, **tenant-specific TLS**, and **canary deployments** — which would be either impossible or overly complex in a serverless setup. 
+Multi-tenancy meant more than shared infrastructure: each tenant had **its own authentication**, **its own retrieval workflows** and **proprietary knowledge base**, and enforced isolation inside the service mesh using **separate certificate authorities**.
+I owned the infrastructure and deployment layer end-to-end: **CDK-defined resources**, **GitOps CI/CD**, **custom Helm charts**, **rollout strategies**, and **full observability**. The goal was to make an LLM system that could actually be operated safely in a real enterprise environment.
 
 Stop there unless they probe.
 
@@ -287,10 +290,10 @@ User Flow
 7. User submits a question
 8. The frontend sends the request to a FastAPI backend
 9. The backend:
-- merges conversation history
-- performs tenant-specific retrieval against the tenant’s knowledge base
-- formats a prompt
-- calls AWS Bedrock with the selected LLM
+   - merges conversation history
+   - performs tenant-specific retrieval against the tenant’s knowledge base
+   - formats a prompt
+   - calls AWS Bedrock with the selected LLM
 10. The response is returned to the user
 
 ###### Key point
@@ -457,6 +460,7 @@ This is production thinking, even for a personal project.
 - Error rates
 - Deployment health
 - Rollout status
+
 This closes the loop.
 
 #### Key Tradeoffs You Made (memorize these)
@@ -598,12 +602,12 @@ No critique yet. No “why didn’t you use X”.
 - Streamlit app runs inside the tenant namespace
 - Uses Streamlit’s WebSocket session
 - Responsibilities:
-    - Validate required headers (tenant + auth context)
+    - **Validate required headers (tenant + auth context)**
     - Let user:
         - Select LLM (Bedrock model)
         - Select embedding model (from allowed list)
-    - Capture user query
-    - Manage session state
+    - **Capture user query**
+    - **Manage session state**
 
 ##### Session management
 - Session metadata stored in DynamoDB
@@ -623,7 +627,7 @@ No critique yet. No “why didn’t you use X”.
 
 ##### Backend: RAG service (FastAPI)
 - Stateless API (by design)
-- Uses FAISS as in-memory vector store
+- **Uses FAISS as in-memory vector store**
     - Precomputed document embeddings
     - Loaded from S3 at startup
 - Per-tenant difference:
@@ -634,7 +638,7 @@ No critique yet. No “why didn’t you use X”.
 - Similarity search:
     - Query embedding → FAISS → top-k documents
 - LangChain:
-    - ConversationalRetrievalChain.from_llm
+    - `ConversationalRetrievalChain.from_llm`
     - Components:
         - LLM: AWS Bedrock
         - Retriever: FAISS
@@ -669,28 +673,28 @@ GitHub Actions is your CI entry point.
     - Containers are produced
 
 For releases:
-- You create a GitHub Release
+- **You create a GitHub Release**
 - That triggers a release workflow which:
-    - Builds container images
-    - Pushes them to GitHub Container Registry (ghcr.io)
-- Images are versioned (semver-compatible)
+    - **Builds container images**
+    - **Pushes them to GitHub Container Registry (ghcr.io)**
+- **Images are versioned (semver-compatible)**
 
 At this stage:
-CI ends with new immutable container images published
+- CI ends with new immutable container images published
 
 #### 2️⃣ GitOps-based deployment (CD with FluxCD)
 You use FluxCD as the deployment engine.
 
 ##### Flux installation & permissions
 - Flux installed in-cluster
-- Connected to the main Git repository
+- **Connected to the main Git repository**
 - Has:
-  - Read access (to detect desired state)
-  - Write access (to update manifests)
+  - **Read access**(to detect desired state)
+  - **Write access** (to update manifests)
 
 Controllers used
-- Image Reflector Controller
-- Image Automation Controller
+- **Image Reflector Controller**
+- **Image Automation Controller**
 
 Image automation flow
 - Two ImageRepository resources:
@@ -698,15 +702,15 @@ Image automation flow
   - One for rag_api
 
 - Flux:
-  - Polls container registries periodically
-  - Detects new image tags
-  - Applies constraints (e.g. semver >1.0.0)
+  - **Polls container registries periodically**
+  - **Detects new image tags**
+  - **Applies constraints (e.g. semver >1.0.0)**
 
 - When a new image is detected:
-  - Flux patches the image tag in Kubernetes manifests
-  - This is done via Kustomize overlays
-  - Base manifests stay stable
-  - Overlays apply per environment / tenant
+  - **Flux patches the image tag in Kubernetes manifests**
+  - This is done via **Kustomize overlays**
+  - **Base manifests stay stable**
+  - **Overlays apply per environment / tenant**
 
 This happens:
 - Automatically
@@ -714,8 +718,8 @@ This happens:
 - Without manually touching Kubernetes
 
 Importantly:
-- The updated manifests are committed back to Git
-- Git remains the single source of truth
+- **The updated manifests are committed back to Git**
+- **Git remains the single source of truth**
 - This applies to both tenants automatically.
 
 #### 3️⃣ End-to-end deployment sequence (summary)
@@ -726,16 +730,16 @@ Your full loop is:
 - GitHub Actions builds & pushes images
 - FluxCD detects new image
 - Flux updates deployment manifests in Git
-- Kubernetes reconciles and rolls out new version
+- **Kubernetes reconciles and rolls out new version**
 
 This is true GitOps, not “CI/CD with kubectl”.
 
 #### 4️⃣ Progressive delivery (Canary)
 You use Flagger for progressive rollout.
 - Flagger installed in-cluster
-- Integrated with:
-  - Istio
-  - Prometheus
+- I**ntegrated with**:
+  - **Istio**
+  - **Prometheus**
 - For each service you want canary for:
     - Define a Canary resource
     - Specify:
@@ -883,7 +887,7 @@ You may not see it yet, but this project taught you things many employed enginee
 ##### Lesson 1 — IaC ≠ runtime config
 CDK, Terraform, Pulumi:
 - Great at provisioning
-- Bad at runtime wiring
+- **Bad at runtime wiring**
 
 Modern fix patterns (you discovered manually):
 - External Secrets
@@ -1103,15 +1107,15 @@ Therefore:
 You had multiple legitimate reasons:
 ##### 1️⃣ Security & auditing
 Correct client IP for:
-- audit logs
-- incident investigation
-- abuse detection
+- **audit logs**
+- **incident investigation**
+- **abuse detection**
 - Important for multi-tenant SaaS
 
 ##### 2️⃣ Rate limiting / abuse control (even if not fully implemented)
-- IP-based throttling
-- DDoS visibility
-- Per-tenant protection
+- **IP-based throttling**
+- **DDoS visibility**
+- **Per-tenant protection**
 
 ##### 3️⃣ Authentication & authorization context
 User IP propagated through Istio
@@ -1382,20 +1386,20 @@ ArgoCD is more popular than FluxCD today, but FluxCD is absolutely production-gr
 #####  What does a “winner” Kubernetes CI/CD pipeline look like?
 Here’s the industry-gold-standard pattern, simplified:
 ###### CI (Artifact pipeline)
-- Triggered on PR / merge:
-- Lint + test
-- Build container
-- Scan (Snyk/Trivy)
-- Push image to registry
-- Tag with immutable version (SHA or semver)
+- **Triggered on PR / merge**:
+  - **Lint + test**
+  - **Build container**
+  - **Scan (Snyk/Trivy)**
+  - **Push image to registry**
+  - **Tag with immutable version (SHA or semver)**
 👉 You did this correctly.
 
 ###### CD (Deployment pipeline)
 Two common models
 - Model A — GitOps (what you built)
-  - Flux/Argo watches Git
-  - Image automation updates manifests
-  - Reconciliation applies changes
+  - **Flux/Argo watches Git**
+  - **Image automation updates manifests**
+  - **Reconciliation applies changes**
 
   This is very strong for:
   - Multi-tenant

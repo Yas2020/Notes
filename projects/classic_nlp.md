@@ -1,7 +1,7 @@
  
 ## Classic NLP Pipelines
 
-“This was a baseline NLP project where I built a preprocessing and feature engineering pipeline for StackOverflow question tags. Each question can have multiple tags, so I formulated it as a One-vs-Rest problem and  trained around 100 binary classifiers (one per tag) using Logistic Regression (and other linear models such as Ridge Regression, and linear SVMs) . I compared Bag of Words and TF-IDF representations, trained One-vs-Rest logistic regression for multi-label prediction, and evaluated with F1-score (macro/micro weighted averaging), ROC-AUC, and PR-AUC. The key insight was that TF-IDF with n-grams captured more discriminative features than plain BoW. While linear models are simple, they remain strong baselines for text classification and helped me understand the tradeoffs between vocabulary size, sparsity, and interpretability.
+“This was a **baseline NLP project** where I **built a preprocessing and feature engineering pipeline** for **StackOverflow Question Tags**. Each question can have multiple tags, so I formulated it as a **One-vs-Rest problem** and  trained around **100 binary classifiers** (one per tag) using Logistic Regression (and other linear models such as Ridge Regression, and linear SVMs) . I compared **Bag of Words** and **TF-IDF representations**, trained One-vs-Rest logistic regression for multi-label prediction, and evaluated with **F1-score** (macro/micro weighted averaging), **ROC-AUC**, and **PR-AUC**. The key insight was that TF-IDF with **n-grams** captured more discriminative features than plain BoW. While linear models are simple, they remain strong baselines for text classification and helped me understand the tradeoffs between **vocabulary size**, **sparsity**, and **interpretability**.
 
 
 We’ll go through 5 stages. Each stage is small. Each can take multiple turns if needed.
@@ -33,9 +33,9 @@ Formally, this is:
 - Task: multi-label text classification
 
 Key properties (important later):
--  Labels are not mutually exclusive
-- Label distribution is highly imbalanced
-- Vocabulary is technical and domain-specific
+-  **Labels are not mutually exclusive**
+- **Label distribution is highly imbalanced**
+- **Vocabulary is technical and domain-specific**
 
 This already justifies why linear + sparse methods were reasonable.
 
@@ -64,7 +64,7 @@ This imbalance is not noise — it is a defining characteristic of the problem.
 Titles:
 - Are dense with signal
 - Are written to summarize the problem
-- Contain strong keyword–tag correlations
+- Contain **strong keyword–tag correlations**
 
 Bodies:
 - Are noisy
@@ -318,9 +318,9 @@ That’s very reasonable for:
 - 100k samples
   
 Your manual vocab construction:
-- sorted by frequency
-- training-set only
-- indexed deterministically
+- **sorted by frequency**
+- **training-set only**
+- **indexed deterministically**
 
 This is good ML hygiene.
 
@@ -430,10 +430,10 @@ You:
 - used technical tags
 - preserved symbols like +, #
 
-So stopword removal:
-- reduces dimensionality
-- improves signal-to-noise
-- speeds up training
+So **stopword removal:**
+- **reduces dimensionality**
+- **improves signal-to-noise**
+- **speeds up training**
 
 Interview-safe phrasing
 “Since I was using sparse linear models on short texts, stopword removal helped reduce noise without losing semantic content.”
@@ -499,9 +499,9 @@ Let’s connect the dots causally.
 TF-IDF vs BoW
 
 TF-IDF:
-- Downweights frequent generic terms
-- Emphasizes discriminative tokens
-- Improves linear separability
+- **Downweights frequent generic terms**
+- **Emphasizes discriminative tokens**
+- **Improves linear separability**
 
 This directly benefits:
 - linear classifiers
@@ -568,14 +568,14 @@ This is:
 
 ###### Why deep models weren’t needed then
 Neural models shine when:
-- text is long
-- word order matters
-- semantics is subtle
+- **text is long**
+- **word order matters**
+- **semantics is subtle**
 
 Your task:
-- short titles
-- keyword-driven
-- strong lexical signals
+- **short titles**
+- **keyword-driven**
+- **strong lexical signals**
 
 So linear models:
 - win by simplicity
@@ -640,16 +640,16 @@ Weighted
 - Compromise between the two
 
 Interview-ready phrasing:
-“I primarily optimized **micro-averaged F1** and average precision for overall performance, while monitoring macro scores to ensure rare tags weren’t collapsing.”
+“I primarily optimized **micro-averaged F1** and **average precision** for overall performance, while monitoring macro scores to ensure rare tags weren’t collapsing.”
 
 That’s exactly what interviewers want to hear.
 
 In the case of multicalss/multilabel (more than 2 classes in y_val), you must explicitly specify the average: `{'binary', 'micro', 'macro', 'samples', 'weighted', None}`. The default='binary' is only for bianry classification.
 
 - `average='macro'`:
-    - Computes the F1 score independently for each class
+    - **Computes the F1 score independently for each class**
     - Then takes the unweighted mean of all F1 scores.
-    - Each class contributes equally, regardless of how frequent it is in the data.
+    - **Each class contributes equally**, regardless of how frequent it is in the data.
     - Useful when:
         - You have a multi-class classification problem.
         - You want to treat all classes equally, even if the class distribution is imbalanced.
@@ -783,8 +783,8 @@ Problems:
 
 ##### Better strategies (what you can say)
 1️⃣ Per-label thresholds
-- tune threshold per tag *using validation data*
-- especially important for imbalanced labels
+- **tune threshold per tag using validation data**
+- especially **important for imbalanced labels**
 
 2️⃣ Top-K tags
 - predict top 1–3 tags regardless of probability
@@ -855,14 +855,8 @@ That sentence alone shows senior-level thinking.
 ### Summary
 
 #### FINAL RESUME BULLET (≤ 2 lines)
-Option A:
 
 Engineered classic NLP pipelines including tokenization, stopword handling, vocabulary construction, BoW and TF-IDF representations; trained and evaluated Logistic Regression and SVM models for multi-label text classification
-
-
-Option B (more classic-NLP-forward):
-
-Engineered classic NLP pipelines (tokenization, TF-IDF, n-grams) and trained one-vs-rest linear classifiers for multi-label tag prediction on 100k Stack Overflow questions, with interpretable feature analysis.
 
 
 #### INTERVIEW STORY — SHORT VERSION (30–45 seconds)
@@ -1009,7 +1003,7 @@ This already sounds senior.
 Your pipeline
 - Preprocess text (same as Part 1 — important consistency)
 - Map words → embeddings
-- Compute question embedding by averaging word vectors
+- Compute question embedding by **averaging word vectors**
 - Compare questions using cosine similarity
 
 This is classic, clean, and correct for its time.
@@ -1021,9 +1015,9 @@ Averaging:
 - surprisingly strong baseline
 
 Especially for:
-- technical titles
-- keyword-heavy content
-- duplicate detection
+- **technical titles**
+- **keyword-heavy content**
+- **duplicate detection**
 
 Interview line:
 “Given short Stack Overflow titles, simple averaged embeddings provided a strong baseline without overfitting.”
@@ -1385,13 +1379,13 @@ You should be able to say this confidently:
 #### Concrete mapping:
 ##### Multi-label Classification
 - Then: OvR + TF-IDF
-- Now: Transformer encoder + sigmoid head
+- Now: **Transformer encoder + sigmoid head**
 - Same loss (binary cross-entropy per label)
 - Same thresholding issues
 
 ##### Duplicate Detection
 - Then: StarSpace + cosine similarity
-- Now: Sentence transformer + vector DB
+- Now: **Sentence transformer + vector DB**
 - Same metrics (Hit@K, DCG)
 
 ##### Chatbot

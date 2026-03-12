@@ -523,3 +523,108 @@ This experience taught me how seemingly small architectural choices in serving M
 
 
 
+
+
+
+## Behaviaral Qs
+
+
+### Present yourself as a strong ML Engineer / Data Scientist who:
+- Designs and deploys real ML systems
+- Understands end-to-end pipelines (training → serving → monitoring)
+- Can adapt to new domains like cybersecurity
+- Brings clean code, CI/CD, and security-aware practices as bonus skills
+
+
+### Tell Me About a Project You're Proud Of (LLM on EKS with GitOps)
+
+One project I’m especially proud of is building a secure, multi-tenant GenAI chatbot platform on AWS EKS, using Bedrock and LangChain. It taught me a lot about combining ML deployment, infrastructure, and DevOps best practices.
+The goal was to deploy knowledge-based chatbots for multiple client groups, each with strict access and data isolation requirements. I built a RAG pipeline for each tenant, using their own proprietary documents stored in S3. We used OAuth2 with Cognito and Istio auth policies to handle authentication and identity enforcement.
+
+Traffic flowed through a TLS-encrypted serverless NLB with proxy protocol to Istio ingress. The OAuth2 proxy validated users against Cognito, and traffic was then routed to a FastAPI-based backend powered by LangChain and Bedrock APIs. Each tenant's services were network-isolated via Istio CAs, and access to AWS services was strictly controlled with IRSA (IAM roles via OIDC).
+
+For the CI/CD side, the entire infrastructure — including EKS resources and most Kubernetes manifests — was provisioned via AWS CDK. Some manifests needed runtime values only available post-provisioning, so I automated that via `kubectl` inside a CodeBuild step on the first deployment.
+
+CI was handled by GitHub Actions and AWS CodeBuild, and CD used GitOps with FluxCD. Whenever a new container version was pushed, Flux detected the image tag update, ran load tests using Flagger (testing for latency and success rate), and automatically rolled out the update if the health checks passed. I used Kustomize to patch environment-specific configurations for each tenant.
+
+This project gave me end-to-end exposure: from secure LLM architecture and API integration, all the way to fully automated CI/CD with safe rollouts — which was a valuable learning experience.
+
+
+You’ve now covered:
+- LLM deployment
+- Secure multitenancy (Istio, IRSA)
+- Full RAG pipeline
+- CI/CD with GitOps
+- Infrastructure as Code (CDK)
+- Rollbacks and safe deploys (Flagger)
+
+
+#### If You Want an ML-Heavy Project to Talk About - your RLHF
+
+Expand on this: I also built an RLHF pipeline using a reward model and PPO, fine-tuned a GPT-2 model on Anthropic helpfulness data, and developed a simple evaluation script for prompt-response quality. That helped me get hands-on experience with training loops, reward modeling, and understanding evaluation challenges in LLMs.
+
+
+### Q4- Tell me about a time you had to learn a new technology quickly? 
+
+S – Situation:
+While working on my Reinforcement Learning from Human Feedback (RLHF) project, I hit a roadblock in the final stage — implementing Proximal Policy Optimization (PPO). This step was critical to aligning a language model's outputs using reward signals, but I didn’t yet have hands-on experience with reinforcement learning or PPO pipelines.
+
+T – Task:
+To complete the RLHF cycle, I needed to quickly get up to speed on how to implement PPO for fine-tuning an LLM, and how to integrate it with Hugging Face's transformers and trl libraries — all while building on my custom reward model.
+
+A – Action:
+I broke the problem into manageable parts:
+
+- I read the key RLHF paper, “Fine-Tuning Language Models from Human Preferences,” and blog posts by OpenAI and Hugging Face to understand the high-level process.
+- I studied the `trl` library’s PPO implementation and mapped it to my own architecture to spot integration points.
+- I started testing the PPO loop on synthetic prompts using GPT-2, and debugged learning dynamics by inspecting loss curves and log-probability shifts.
+- I customized the PPOTrainer with my own rollout and reward logic, integrating torch, datasets, and LoRA adapters for lightweight training.
+
+R – Result:
+Within two weeks, I had a functional PPO training loop running on my custom reward model, successfully aligning model outputs with helpfulness labels.
+This experience not only helped me complete the project but also built confidence in learning and applying complex RL techniques in the LLM setting — something directly relevant to ML engineering roles that touch advanced AI systems.
+
+
+### Q6- Tell me about a time you failed or something didn’t work as expected.
+
+S – Situation:
+Recently, I took on the challenge of implementing a full RLHF (Reinforcement Learning from Human Feedback) pipeline using GPT-2. My goal was to replicate the alignment process used in large LLMs — combining supervised fine-tuning, a reward model, and PPO optimization.
+
+T – Task:
+I had already fine-tuned the base model using LoRA and trained a custom reward model using the Anthropic HH dataset. The next step was to complete PPO training to close the RLHF loop — but I was working with limited compute resources locally, without access to high-end GPUs.
+
+A – Action:
+I started integrating the PPO loop using Hugging Face's TRL and accelerate, and designed the rollout and reward computation steps carefully. But as training progressed, I realized that PPO required significantly more memory and batch parallelism than I had anticipated. After several attempts to reduce sequence lengths and batch sizes, I still couldn’t achieve convergence — and I had to halt the PPO training.
+
+R – Result:
+Initially, it felt like a failure — I didn’t complete the full training cycle. But I reframed it:
+
+- I documented the architecture, training code, and lessons in detail and made the project open-source.
+- I gained deep, hands-on experience with RLHF, reward modeling, and PPO optimization.
+- Most importantly, I learned how to better scope projects based on available infrastructure and still deliver value, even when outcomes shift.
+
+This experience made me much more resilient and realistic in planning ML experiments and reinforced my ability to extract value from partial results — a critical skill in real-world ML work.
+
+### Q: Tell me about a time you had to work with a difficult stakeholder or teammate. How did you handle it?
+
+S – Situation
+I was part of a team building a machine learning model to enable image-based search — users would upload a photo and retrieve similar items from a product catalog. After trying several model architectures, we weren’t seeing meaningful performance gains.
+
+T – Task
+While most of the team believed we needed to try even more advanced model architectures, I felt strongly that the core issue wasn’t the model — it was the data quality. I believed improving and augmenting the dataset would yield better results than just model tinkering.
+
+A – Action
+Even though the rest of the team focused on experimenting with deeper or alternative models, I decided to parallelize efforts and work on the data side. I collected additional images, cleaned noisy labels, and applied targeted data augmentation strategies. I also monitored performance using the old model to isolate the impact of the data improvements.
+
+R – Result
+Within about 10 days, the older, simpler model — when trained on the improved data — started outperforming all the more complex models. Once I shared the results, the team quickly shifted focus and collaborated on refining the data pipeline. Eventually, we delivered a performant solution that met the client’s needs — using a leaner, more interpretable model with significantly better accuracy and robustness.
+
+Reflection:
+This experience taught me the value of standing by a technical intuition, but doing so in a way that respected team dynamics. Rather than push back verbally, I let the data speak — and that created alignment.
+
+
+This story highlights:
+- Collaboration despite disagreement
+- Independent initiative
+- Data-first thinking
+- Influence through results, not confrontation
