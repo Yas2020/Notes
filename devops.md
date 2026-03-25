@@ -19,9 +19,9 @@
     - [Configuration Management?](#configuration-management)
     - [Four Actionable Metrics for DevOps](#four-actionable-metrics-for-devops)
     - [What is Version Control?](#what-is-version-control)
-    - [How do you setup a script to run every time a repository receives new commits through push?](#how-do-you-setup-a-script-to-run-every-time-a-repository-receives-new-commits-through-push)
-    - [What is the difference between Git Merge and Git Rebase?](#what-is-the-difference-between-git-merge-and-git-rebase)
-    - [AWS CodeCommit VS Git?](#aws-codecommit-vs-git)
+      - [How do you setup a script to run every time a repository receives new commits through push?](#how-do-you-setup-a-script-to-run-every-time-a-repository-receives-new-commits-through-push)
+      - [What is the difference between Git Merge and Git Rebase?](#what-is-the-difference-between-git-merge-and-git-rebase)
+      - [AWS CodeCommit VS Git?](#aws-codecommit-vs-git)
   - [Infrastructure as Code](#infrastructure-as-code)
     - [Ephemeral Immutable Infrastructure](#ephemeral-immutable-infrastructure)
     - [Immutable Delivery with Containers](#immutable-delivery-with-containers)
@@ -184,13 +184,13 @@ DevOps is the combination of cultural philosophies (combining software developme
 - Leveraging automation (nobody can deploy manually microservices) such as CI/CD
 - Programmable platform (you can not wait for somebody to provision a server)
 
-DevOps is not just development and operation working together while remaining is a separate silos. DevOps is not a separate team (if you know anything about agile, you don’t make an agile team), DevOps is not tools either, its not one size fit all
+DevOps is not just development and operation working together while remaining is a separate silos. DevOps is not a separate team (if you know anything about agile, you don’t make an agile team), DevOps is not tools either, its not one size fit all.
 
 There are 3 pillar to agility:
 
-- DevOps (cultural change, automated pipeline, infrastructure as a code, immutable infrastructure)
-- Microservices (loose coupling/binding, RESTful API, design to resist failure, test by breaking/failing fast)
-- Containers (portability, fast startup, developer centric)
+- **DevOps** (cultural change, automated pipeline, infrastructure as a code, immutable infrastructure)
+- **Microservices** (loose coupling/binding, RESTful API, design to resist failure, test by breaking/failing fast)
+- **Containers** (portability, fast startup, developer centric)
 
 
 ### Application Evolution
@@ -200,28 +200,24 @@ There are 3 pillar to agility:
 </p>
 
 ### Problems with Traditional Development Practices
-
+<!-- 
 - Proven slow and inefficient, and fail to support teams' efforts to quickly deliver stable, high-quality applications
-- Challenges of Waterfall development, monolithic applications, manual processes, and siloed team structures cause bottlenecks and delays
+- Challenges of Waterfall development, monolithic applications, manual processes, and siloed team structures cause bottlenecks and delays -->
 
-Waterfall development projects are
+Waterfall development projects are:
 
 - slow, not iterative, resistant to change, and have long release cycles
 - requirements are rigid, set at project start, and will likely not change
 - development phases are siloed, each starting after the previous phase has ended
 - testing and security come after implementation, making corrective actions irresponsive and expensive.
 
-In the waterfall model, we have limitations of one-way working and lack of communication with customers.
-
-This was overcome in Agile by including the communication between the customer and the company by taking feedback. But in this model, another issue is faced regarding communication between the Development team and operations team due to which there is a delay in the speed of production.
-
-This is where DevOps is introduced. It bridges the gap between the development team and the operation team by including the automation feature. Due to this, the speed of production is increased. By including automation, testing is integrated into the development stage which resulted in finding the bugs at the very initial stage which increased the speed and efficiency.
+In the waterfall model, we have limitations of one-way working and lack of communication with customers. This was overcome in Agile by including the communication between the customer and the company by taking feedback. But in this model, another issue is faced regarding communication between the Development team and operations team due to which there is a delay in the speed of production. This is where DevOps is introduced. It bridges the gap between the development team and the operation team by including the automation feature. Due to this, the speed of production is increased. By including automation, testing is integrated into the development stage which resulted in finding the bugs at the very initial stage which increased the speed and efficiency.
 
 ### Monolith
 
 **Monolithic** applications are hard to update and deploy, complexity increases as app grows, less flexible to adapt to new technology. The reason for these are because they:
 
-- are developed and deployed as a unit (most or all within the same process), so when changes are made, the entire application must be redeployed
+- are developed and deployed as one unit (most or all within the same process), so when changes are made, the entire application must be redeployed
 - managed in internal layers for:
   - Security
   - Reporting
@@ -246,23 +242,21 @@ This is where DevOps is introduced. It bridges the gap between the development t
 - Scaling horizontally and precisely (for only one component)
 - Event driven - can help broadcast the state change 
 
-Microservices can also communicate with each other via a combination of remote procedure calls (RPC), event streaming, or message brokers. RPCs like gRPC provide a faster response but the impact on the microservices is bigger when the service goes down. Event streaming provides better isolation between services but it takes longer to process. 
+Microservices can also communicate with each other via a combination of Remote Procedure Calls (RPC), event streaming, or message brokers. RPCs like gRPC provide a faster response but the impact on the microservices is bigger when the service goes down. Event streaming provides better isolation between services but it takes longer to process. 
 
-Finally, instead of implementing end-user authentication, throttle, orchestrate, transform, route, and analytics in each service, you should use an **API Gateway**, a key component of micoservice design. An API gateway is an API management tool that sits between a client and your collection of backend services. This will become central to the above-mentioned non-functional concerns and will avoid re-engineering them with each service. API Gateway relies on an identity provider service to handle the authentication and authorization of each request coming through. To locate a service to route the request to, API Gateway consult a service registry and discover service. Microservices register with this service registry and discover the location of other micoservices through the discovery service.
+Finally, instead of implementing end-user authentication, throttle, orchestrate, transform, route, and analytics in each service, you should use an **API Gateway**, a key component of micoservice design. An API gateway is an API management tool that sits between a client and your collection of backend services. This will become central to the above-mentioned non-functional concerns and will avoid re-engineering them with each service. API Gateway relies on an Identity Provider Service to handle the authentication and authorization of each request coming through. To locate a service to route the request to, API Gateway consult a service registry and discover service. Microservices register with this service registry and discover the location of other micoservices through the discovery service.
 
 
 #### Drawbacks:
-- Security requirements: each service needs its own security paradigm, for example: TLS to secure network communication
+- Security requirements: each service needs its own security paradigm, for example TLS to secure network communication
 - Debugging is a challenge: multiple services running independently makes it challenging to find the root cause
 - Transferring to microservices architecture from monolithic often requires breaking up a monolithic database into its logical components. This could mean a separate schema in a bigger data cluster. Breaking up a database means it can no longer maintain foreign key relationship and enforce referential integrity between tables. The burden of maintaining dat integrity is moved into the application layer.
 
-The aim of microservices is to solve the three most frequent challenges, that is, enhance customer experience, be flexible to new requirements, and reduce costs by providing business functions as fine-grained services.
-
-Once you move to a microservices architecture, you will have more than one application with each having different code, test, and deploy cycles. Attempting to build microservices without either:
+The aim of microservices is to solve the three most frequent challenges, that is, enhance customer experience, be flexible to new requirements, and reduce costs by providing business functions as fine-grained services. Once you move to a microservices architecture, you will have more than one application with each having different code, test, and deploy cycles. Attempting to build microservices without either:
 - proper deployment and monitoring automation, or 
 - managed cloud services to support your now sprawling, heterogenous infrastructure
 
-is asking for a lot of unnecessary trouble. So, when you are building microservices, always use DevOps or cloud services because Manual processes throughout the application lifecycle are slow, inconsistent, and error-prone.
+is asking for a lot of unnecessary trouble. So, when you are building microservices, always use DevOps or cloud services because manual processes throughout the application lifecycle are slow, inconsistent, and error-prone.
 
 On the other hand, to fully leverage DevOps, you need to think differently about the application design:<center>_You need to think about cloud native microservices!_</center>
 
@@ -275,27 +269,25 @@ On the other hand, to fully leverage DevOps, you need to think differently about
     <img src="./assets/devops/microservices.png" alt="drawing" width="500" height="400" style="center" />
 </p>
 
-This is cloud native design using microservices which take advantage of horizontal scalability the cloud has to offer.
-
-In cloud native design, the applications are a collection of **stateless micorservices**. Stateless doesn’t mean the application doesn’t have state but it means each service maintains its own database. If the state are shared, you don’t have microservices but you just have distributed monolith. _The stateless in microservices allows scaling horizontally possible_. I can scale one service without touching others. You can and should use CD pipeline to help manage continuous delivery of these services.
+This is cloud native design using microservices which take advantage of horizontal scalability the cloud has to offer. In cloud native design, the applications are a collection of **stateless micorservices**. Stateless doesn’t mean the application doesn’t have state but it means each service maintains its own database. If the state are shared, you don’t have microservices but you just have distributed monolith. _The stateless in microservices allows scaling horizontally possible_. I can scale one service without touching others. You can and should use CD pipeline to help manage continuous delivery of these services.
 
 Microservice architecture style is an approach to developing a single application as a suite of small services, each running in its own process and communicating with lightweight mechanisms, often an HTTP resource API. These services are built around business capabilities and independently deployable by full automated deployment machinery.
-<br/><br/>
+
 <p align="center">
     <img src="./assets/devops/monolith-microservices.png" alt="drawing" width="700" height="300" style="center" />
 </p>
 
-In monolithic design, if I need to change the design of a table I would need to communicate with different departments because they depend on it for order and shipping. With microservices, I don’t need to call other teams because they are simply calling my api. They don’t care what my table looks like whether it is SQL database or NoSQL database. They want their data and I will deliver their data.
+In monolithic design, if I need to change the design of a table I would need to communicate with different departments because they depend on it for order and shipping. With microservices, I don’t need to call other teams because they are simply calling my API. They don’t care what my table looks like whether it is SQL database or NoSQL database. They want their data and I will deliver their data.
 
 ## Challenges of Microservices: Embracing Failures
 
 Once you develop your application as a stateless collection of microservices, there are a lot of moving parts. This means there is a lot that can go wrong:
 
-- Services can be occasionally slow to respond or even have outages, so you can not always rely on them when you need them. You don’t want your application to fail just because one of the services is slow or there is a lot of network latency on a particular day. This is why you need to design for failure at the application level. You must build your application to be resilient to failure and scale horizontally. Embrace failure! In DevOps we talk about mean _time to recovery_ instead of mean time to failure to make sure when failure happens and it will, you can recover quickly.
+- Services can be occasionally slow to respond or even have outages, so you can not always rely on them when you need them. You don’t want your application to fail just because one of the services is slow or there is a lot of network latency on a particular day. This is why you need to design for failure at the application level. You must build your application to be r*esilient to failure* and *scale horizontally.* Embrace failure! In DevOps we talk about mean _time to recovery_ instead of mean time to failure to make sure when failure happens and it will, you can recover quickly.
 - Application failure is not an operational concern but it is the developer concern. The developer needs to build that resilience right from the start. There are some patterns of making your application resilient:
-  - **Plan to be throttled**. let's say you pick a plan that allow 20 units of reads per second. Once you exceed that limit the service is going to throttle you! You will get a 429 "TooMany Request Error" instead of "200 OK". In this case, you need to plan to retry (with exponential backoff). This logic needs to be in your application code. The idea is to degrade gracefully. If you cant, cache when appropriate so you don’t have to make  these remote calls to these services if the answer is not been changed.
+  - **Plan to be throttled**. let's say you pick a plan that allow 20 units of reads per second. Once you exceed that limit the service is going to throttle you! You will get a 429 "TooMany Request Error" instead of "200 OK". In this case, you need to plan to retry (with exponential backoff). This logic needs to be in your application code. The idea is to degrade gracefully. If you cant, cache when appropriate so you don’t have to make  these remote calls to these services if the answer is not changed.
 
-  - **Retry pattern**: this enables the application to handle transient failures when it tries to connect to a service or a network resort by transparently retrying and failing the operation. You can not say ppl should deploy the database before they start my service because it expects the database to be there when it starts. That is a fragile design! And is not appropriate for cloud native applications. If the database is not there, you application should wait patiently and then retry again. You must be able to connect, reconnect, fail the connect and then connect again. That s how you design robust microservices. The key here is retrying. Back off exponentially and retry again until you get connected (increase the wait time by some factor)<br></br>
+  - **Retry pattern**: this enables the application to handle transient failures when it tries to connect to a service or a network resort by transparently retrying and failing the operation. You can not say ppl should deploy the database before they start my service because it expects the database to be there when it starts. That is a fragile design! And is not appropriate for cloud native applications. If the database is not there, you application should wait patiently and then retry again. You must be able to connect, reconnect, fail the connect and then connect again. That s how you design robust microservices. The key here is retrying. **Back off exponentially** and retry again until you get connected (increase the wait time by some factor)<br></br>
   
   <p align="center">
       <img src="./assets/devops/retry-pattern.png" alt="drawing" width="500" height="200" style="center" />
@@ -424,7 +416,7 @@ For a more concrete example consider a microservice architecture. Each service 
 
 It’s easy for these configuration values to become an afterthought, leading to the configuration to become disorganized and scattered. Imagine numerous post-it notes with passwords and URLs blowing around an office. Configuration management solves this challenge by creating a “source of truth” with a central location for configuration.
 
-Git is a fantastic platform for managing configuration data. Moving configuration data into a Git repository enables version control and the repository to act as a source of truth. Managing unexpected changes through the use of code review and version control helps to minimize downtime as it enables rollback or “undo” functionality to configuration, which helps avoid unexpected breakage.
+**Git** is a fantastic platform for managing configuration data. Moving configuration data into a Git repository enables version control and the repository to act as a source of truth. Managing unexpected changes through the use of code review and version control helps to minimize downtime as it enables rollback or “undo” functionality to configuration, which helps avoid unexpected breakage.
 
 Configuration Management (CM) is a practice in DevOps that involves organizing and maintaining the configuration of software systems and infrastructure. It includes
 
@@ -470,7 +462,7 @@ It is a system that **records changes to a file or set of files** over time so t
 
 A popular VCS is Git and GitHub which provides a Distributed Version Control system and is the industry standard.
 
-### How do you setup a script to run every time a repository receives new commits through push?
+#### How do you setup a script to run every time a repository receives new commits through push?
 
 Using hooks! There are three ways to configure a script to run every time a repository receives new commits through push, one needs to define either a _pre-receive, update, or a post-receive hook_ depending on when exactly the script needs to be triggered.
 
@@ -480,11 +472,11 @@ Using hooks! There are three ways to configure a script to run every time a repo
 
 Hooks are local to every Git repository and are not versioned. Scripts can either be created within the hooks directory inside the “.git” directory, or they can be created elsewhere and links to those scripts can be placed within the directory.
 
-### What is the difference between Git Merge and Git Rebase?
+#### What is the difference between Git Merge and Git Rebase?
 
 Both are merging mechanisms but the difference between the Git Merge and Git Rebase is, in Git Merge logs will be showing the complete history of commits. However, when one does Git Rebase, the logs are rearranged. The rearrangement is done to make the logs look linear and simple to understand. This is also a drawback since other team members will not understand how the different commits were merged into one another.
 
-### AWS CodeCommit VS Git?
+#### AWS CodeCommit VS Git?
 
 There is no need to host, maintain, and backup your own source control servers.
 
@@ -496,11 +488,11 @@ There is no need to host, maintain, and backup your own source control servers.
 
 ## Infrastructure as Code
 
-Configure infrastructure using an executable script known as code. We’re talking about textual code that you can hand to an IaC tool. And that tool reads the code and then builds your servers, and networks, and storage, etc., essentially the core infrastructure elements that you need. Using these tools with this textual code means that everyone gets the same environment every time, so it’s _consistent and repeatable_. Textual code is normally written in the YAML format, which is a very common way to write and declare IaC. So, why are we discussing Infrastructure as Code in this course? Well, performing these system configurations manually is **error-prone**, not to mention, _time-consuming_.
+**Configure infrastructure using an executable script: code**. 
 
-You can use templates or commands to describe how to install and configure the system according to your needs, how much storage you want, how much processing power you want, and so on. In the early days of DevOps, Configuration Management Systems (or CMSs) made this possible, and they predated the newer IaC tools.
+We’re talking about textual code that you can hand to an IaC tool. And that tool reads the code and then builds your servers, and networks, and storage, etc., essentially the core infrastructure elements that you need. Using these tools with this textual code means that everyone gets the same environment every time, so it’s **consistent** and **repeatable**. Textual code is normally written in the YAML format, which is a very common way to write and declare IaC. So, why are we discussing Infrastructure as Code? Well, performing these system configurations manually is **error-prone**, not to mention, _time-consuming_.
 
-Infrastructure as code tools can be either declarative or imperative:
+You can use templates or commands to describe how to install and configure the system according to your needs, how much storage you want, how much processing power you want, and so on. In the early days of DevOps, Configuration Management Systems (or CMSs) made this possible, and they predated the newer IaC tools. Infrastructure as code tools can be either declarative or imperative:
 
 - With the declarative approach, you specify the desired state of the infrastructure resources you want to provision, and then the IaC tool determines how to achieve this state. It handles dependencies and executes commands in the proper order without you having to specify the order of execution. Tools that use this approach include **Terraform, Puppet, SaltStack, CloudFormation**, and to some extent, Ansible.
 - The imperative approach, in contrast, requires that you define the specific order of the commands needed to achieve the desired state. It’s up to you to get the dependencies correct as the tool will execute commands in the order you specify. Tools like **Chef** are imperative and to some extent, Ansible can be as well.
@@ -528,7 +520,7 @@ Now, let’s briefly discuss some of the main IaC tools available:
 - **Service drift** is a major source of failure: services updated by new ppl may be different or not matching
 - **Services are cattle not pets**: don’t spend time fixing servers - replace them by identical servers that are working properly
 - **Infrastructure is transient**. It only exist for the time you need it then removed when not used
-- **Build through parallel infrastructure** - like in blue green deployment
+- **Build through parallel infrastructure** - like in blue-green deployment
 
 ### Immutable Delivery with Containers
 
@@ -577,53 +569,55 @@ CI and CD are not the same. It’s two separate and distinct processes that happ
 
 The main features of CI are: **Short-lived branches**, **frequent pull requests**, and **automated CI tools**
 
-- CI is continues building, testing, and merging to main branch. CI consists of the Plan, Code, Build, and Test phases. This is where developers plan and then code the solution, and then build it and test it in several repeating cycles until it’s complete. And then the solution is ready to be delivered
-- Developers push code often (daily). Commit regularly. The more time passed between merges, the greater risk of merge conflicts. Working for a week on code and check it in at once increases conflict between features. These conflicts can be difficult and time consuming to resolved
-- They work in short-lived feature branches that are merged into the master once the feature is complete. This means you integrate features as it is completed and The branch is deleted after it’s merged as its only purpose was to develop that small feature. It reduces drift that may occur between feature branches and the main branch
-- Frequent pull requests back to the main branch is a best practice. It allow team members to communicate about the changes and review the code they are making
+- CI is continuous building, testing, and merging to main branch. CI consists of the Plan, Code, Build, and Test phases. This is where developers plan and then code the solution, and then build it and test it in several repeating cycles until it’s complete. And then the solution is ready to be delivered.
+- Developers push code often (daily). Commit regularly. The more time passed between merges, the greater risk of merge conflicts which can be difficult and time consuming to resolved.
+- They work in short-lived feature branches that are merged into the master once the feature is complete. This means you integrate features as it is completed and the branch is deleted after it’s merged.
+- Frequent pull requests back to the main branch is a best practice. It allow team members to communicate about the changes and review the code they are making.
 
 <p align="center">
-    <img src="./assets/devops/main-ci-features.png" alt="drawing" width="500" height="200" style="center" />
+    <img src="./assets/devops/main-ci-features.png" alt="drawing" width="600" height="250" style="center" />
 </p>
 
 #### CI Automation
 
-Continuous Integration can be automated. But what does that mean? Automated CI tools subscribe to events such as pull requests and file changes using webhooks that can then trigger a workflow. That workflow can be anything, such as building an application. Once complete, these tools report back with messages of a successful or failed build
+Continuous Integration can be automated. Automated CI tools subscribe to events such as pull requests and file changes using webhooks that can then trigger a workflow. That workflow can be anything, such as building an application. Once complete, these tools report back with messages of a successful or failed build
 
-- Build and test every pull request automatically. The system should build the changes of the current working version to verify that the integration works correctly
+- **Build and test every pull request automatically**. The system should build the changes of the current working version to verify that the integration works correctly
 - CI tools monitor changes in the version control to get started with building and testing
 - Test should run after the build to ensure all the features are working properly
-- Never merge a pull request with failing tests
+- **Never merge a pull request with failing tests**
 
 #### Benefits of CI
 
-- Faster reaction times to changes
-- Reduces the risk of integration - less changes make less room for breaking things
-- Higher quality of code: you get higher code quality with CI/CD, because things are constantly being reviewed and constantly being tested, and every pull request is an opportunity for a code review.
-- The code in the version control works - The master branch should always be deployable. So you can not start testing when the code is merge in the master brach. Its late!
-- Never merge untest code into the master branch
+- **Faster reaction times to changes**
+- **Reduces the risk of integration** - less changes make less room for breaking things
+- **Higher quality of code**: you get higher code quality with CI/CD, because things are constantly being reviewed and constantly being tested, and every pull request is an opportunity for a code review.
+- The code in the version control works - **The master branch should always be deployable**. So you can not start testing when the code is merged in the master brach. Its late!
+- **Never merge untest code into the master branch**
 
 #### Tools
 
-Jenkins is CI/CD software that is installed on a server where the central build will take place. It is one of the oldest, most popular, and most complex of all the CI/CD tools. Circle CI is a CI/CD platform that can be used to implement DevOps practices. It performs deployments for Continuous Delivery and you define workflows inside a ‘circle.yaml’ file. GitHub Actions is a CI/CD platform that enables you to automate your build, test, and deploy GitHub workflows. Unlike other tools, it only works with GitHub.
+- **Jenkins** is CI/CD software that is installed on a server where the central build will take place. It is one of the oldest, most popular, and most complex of all the CI/CD tools. 
+- **Circle CI** is a CI/CD platform that can be used to implement DevOps practices. It performs deployments for Continuous Delivery and you define workflows inside a ‘circle.yaml’ file. 
+- **GitHub Actions** is a CI/CD platform that enables you to automate your build, test, and deploy GitHub workflows. Unlike other tools, it only works with GitHub.
 
 A CI pipeline needs:
 
 - **Code Repository**
 - **Build Server**: build from the source code - GitHubActions
 - **Integration Server** to automate the build and run the quality automated test - This orchestration capability is provided by all cloud providers
-- **Artifact Repository** to store binaries, the artifacts of the application- Java jar file, Python wheels, Docker images that have been tested and proven to work
+- **Artifact Repository** to store binaries, the artifacts of the application- **Java jar file**, **Python wheels**, **Docker images** that have been tested and proven to work
 
 Automatic configuration and development - provided by most cloud providers
 
   <p align="center">
-        <img src="./assets/devops/cicd.png" alt="drawing" width="500" height="300" style="center" />
+        <img src="./assets/devops/cicd.png" alt="drawing" width="600" height="400" style="center" />
     </p>
 
 The word continuous deployment is reserved for deployment into production environment.
 
   <p align="center">
-        <img src="./assets/devops/cicd2.png" alt="drawing" width="500" height="300" style="center" />
+        <img src="./assets/devops/cicd2.png" alt="drawing" width="600" height="400" style="center" />
     </p>
 
 ### Continuous Integration Components
@@ -649,7 +643,7 @@ Static code analysis can be paired with code standards as a method to ensure cod
 
 #### Linting
 
-A linter is a program that examines your code looking for syntax problems or bugs that can lead to errors when you run the code. A linter can be integrated into build automation or authoring tools. Historical linting functions have often moved into modern compilers.Modern linting tools have evolved to scan for undeclared variables, deprecated functions, spacing and formatting conventions, misuse of scope, and other potential code issues. Example:PyLint, Flake8, Ruff
+A linter is a program that examines your code looking for **syntax problems or bugs** that can lead to errors when you run the code. A linter can be integrated into build automation or authoring tools. Historical linting functions have often moved into modern compilers. Modern linting tools have evolved to scan for undeclared variables, deprecated functions, spacing and formatting conventions, misuse of scope, and other potential code issues. Example: PyLint, Flake8, Ruff
 
 #### Unit Testing
 
@@ -717,9 +711,7 @@ The git branching workflow is crucial in version control and collaboration when 
 
 Continuous Delivery is made up of Release, Deploy, and Operate phases, where the solution is released, and the binaries are deployed into a given environment in repeating cycles, and the solution is then in live operation from that point on. CD is a series of practices to ensure the code can be rapidly and safely deployed into production by delivering every change to a production-like environment (like development, test, stage environment that mimics the production environment). For example, if the production environment is containers on Kubernetes, you should deploy in Kubernetes as well. ‘Continuous Delivery’ is when you deploy it somewhere, like a development server, a staging server, a test server, or a pre-production server, whereas ‘Continuous Deployment’ is reserved for when you actually continuously push to production
 
-The goal of continuous deliver to ensure that every change is ready to go into production. But before that, usually a manual approval is needed. To do this, we can implement a decision process to ensure the production is authorized. This decision can be made by a person and executed by tools. This is a business decision rather than technical.
-
-At this stage where we are in a staging environment (production like), and before deploying into production, we might want to conduct some serious testing to ensure performance/compliance or user experience is satisfied or to collect inofrmation about other aspects of our app. Here are some common types of testing:
+The goal of continuous deliver to ensure that every change is ready to go into production. But before that, **usually a manual approval is needed**. To do this, we can implement a decision process to ensure the production is authorized. This decision can be made by a person and executed by tools. This is a business decision rather than technical. At this stage where we are in a staging environment (production like), and before deploying into production, we might want to conduct some serious testing to ensure performance/compliance or user experience is satisfied or to collect inofrmation about other aspects of our app. Here are some common types of testing:
 
 #### Types of Testing
 
@@ -775,7 +767,7 @@ At this stage where we are in a staging environment (production like), and befor
 - **Regulation acceptance testing**:
 Tests whether the software complies with relevant regulations
 
-- **Synthetic testing**: Synthetic testing is a method of understanding your user’s experience in an application by predicting behavior. Synthetic testing is often accomplished by using web browser emulation or scripted recordings of web transactions. Scripts are created to simulate the path or action an end user would take on a site. Those paths are then continuously monitored for performance, availability, and response time measures. Synthetic testing is useful because it can help you identify problems before a user experiences them. Monitoring results push to a monitoring service, which can then trigger alerts in the case of failures or slowdowns. Synthetic testing can run in a CI/CD pipeline to block a release that would break the product. Alternatively, it can run as part of the CD process, evaluating the state of the application immediately after a deployment is finished. The uses of synthetic testing is
+- **Synthetic testing**: Synthetic testing is a method of understanding your user’s experience in an application by predicting behavior. Synthetic testing is often accomplished by using **web browser emulation** or scripted recordings of web transactions. Scripts are created to simulate the path or action an end user would take on a site. Those paths are then continuously monitored for performance, availability, and response time measures. Synthetic testing is useful because it can help you identify problems before a user experiences them. Monitoring results push to a monitoring service, which can then trigger alerts in the case of failures or slowdowns. *Synthetic testing can run in a CI/CD pipeline to block a release that would break the product. Alternatively, it can run as part of the CD process, evaluating the state of the application immediately after a deployment is finished*. The uses of synthetic testing is
   - Monitor application uptime
   - Establish baseline of performance across countries
   - Monitor performance
@@ -800,10 +792,10 @@ Control Categories:
 
 Example Security Test:
 
-- Common vulnerability exploits
-- Open-port scanning
-- Secrets scanning
-- Runtime security risks
+- **Common vulnerability exploits**
+- **Open-port scanning**
+- **Secrets scanning**
+- **Runtime security risks**
 
 Tools:
 
@@ -841,8 +833,8 @@ With a rolling deployment, _your production fleet is divided into groups so the 
 The benefits of Continuous Delivery are many and varied and they include the following:
 
 - Enabling your development teams to automate the steps that transport software through the various stages of the software development lifecycle (or SDLC)
-- Automation leads to reducing the deployment time by nonstop testing and deployment cycles. The more you deploy, the more confidence you have that your next deployment will work, and the less time you spend debugging deployments
-- Reducing the costs that are normally common with standard deployment strategies. This could be people costs, infrastructure costs, and the cost of lost time due to manual failures. Continuous Delivery enables your development team to scale their software deployments based on the size of the project.
+- Automation leads to r**educing the deployment time** by nonstop testing and deployment cycles. The more you deploy, the more confidence you have that your next deployment will work, and the less time you spend debugging deployments
+- **Reducing the costs** that are normally common with standard deployment strategies. This could be people costs, infrastructure costs, and the cost of lost time due to manual failures. Continuous Delivery enables your development team to scale their software deployments based on the size of the project.
 - And enabling you to deploy code automatically into the various stages of the software development lifecycle. Once you have deployed to the development environment without incident, and to the test environment, and then the staging environment all without incident, the chances are pretty good that when you deploy to production that will also be without incident
 
 #### Health checks
@@ -869,18 +861,16 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
   - Old code: A server might disconnect from the network or power off for a long time. When it comes back on line, it could be running dangerously outdated code that is incompatible with the rest of the fleet.
   - Any unanticipated failure mode: Sometimes, servers fail in such a way that they return errors they identify as the client’s instead of theirs (HTTP 400 instead of 500). Servers might slow down instead of failing, or they might respond faster than their peers, which is a sign they’re returning false responses to their callers. Anomaly detection is an incredible catchall for unanticipated failure modes.
 
-Health checks can be implemented in the deployment of your application in several different ways. For example, with AWS CodeDeploy and the help of your application specification (AppSpec) file.
-
-You can initiate an action after each stage or a subset of stages. You can check if an application’s main page generates a 200 OK response before allowing production traffic to flow to it. You could specify a test that is performed on a server before an application is installed. This will ensure your environment is performing the way you expect before allowing the installation to continue.
+Health checks can be implemented in the deployment of your application in several different ways. For example, with AWS CodeDeploy and the help of your application specification (AppSpec) file. You can initiate an action after each stage or a subset of stages. You can check if an application’s main page generates a 200 OK response before allowing production traffic to flow to it. You could specify a test that is performed on a server before an application is installed. This will ensure your environment is performing the way you expect before allowing the installation to continue.
 
 While health checks can identify problems, the key to a successful continuous delivery strategy is to also implement remediations when these tests fail. You can build logic into your tests that indicate to CD pipeline that the deployment was unsuccessful and start the rollback process.
 
 
 ## Components of DevOps Pipeline
 
-A DevOps pipeline is a workflow that automates software delivery. It is a series of interconnected steps that enable efficient and consistent execution of tasks such as building, testing, deploying and releasing software. It automates the software delivery lifecycle by streamlining and standardizing the process. A DevOps pipeline enables continuous integration of code changes, integrates with repositories, automates testing and building, and facilitates conflict resolution and bug detection. Pipelines are essential for implementing continuous integration and continuous deployment or CI/CD practices in DevOps. Organizations utilize continuous integration and continuous delivery pipelines for a comprehensive build and delivery process.
+**A DevOps pipeline is a workflow that automates software delivery**. A DevOps pipeline enables continuous integration of code changes, integrates with repositories, automates testing and building, and facilitates conflict resolution and bug detection. Pipelines are essential for implementing continuous integration and continuous deployment in DevOps. Organizations utilize continuous integration and continuous delivery pipelines for a comprehensive build and delivery process.
 
-- The CI pipeline validates packages and builds essential components, creating deployable artifacts like container images and helm charts. It ensures versioning and resource preparation
+- The CI pipeline **validates packages** and **builds essential components**, **creating deployable artifacts** like **container images** and **helm charts**. It ensures versioning and resource preparation.
 - The CD pipeline is mainly responsible for deploying the prepared artifacts into specific target environments, thereby ensuring a smooth transition from development to production
 
 <p align="center">
@@ -898,8 +888,8 @@ Let's look at the role of the different components:
 - Pull requests in the application repository trigger the **PR pipeline**. It runs automated tests to validate code changes, ensuring the integrity of the code base
 - The issue tracker integrates with the CI pipeline and highlights associated issues or tasks linked to the pull request and facilitates issue resolution
 - The application repository stores the source code which the CI pipeline pulls for build and testing operations
-- The Code Risk Analyzer analyzes the code for potential risks, vulnerabilities, or code quality issues. It provides feedback and recommendations based on static code analysis
-- Slack integration enables efficient communications by sending notifications and reports to the development team
+- The Code Risk Analyzer analyzes the code for **potential risks**, **vulnerabilities**, or **code quality issues**. It provides feedback and recommendations based on static code analysis
+- **Slack integration** enables efficient communications by sending notifications and reports to the development team
 - DevOps Insights collects data from the CI pipeline, generating reports to identify bottlenecks and areas for improvement
 - [SonarQube](https://en.wikipedia.org/wiki/SonarQube), a code quality management platform, performs static code analysis, measures code coverage and assesses maintainability
 - A secrets manager securely stores sensitive information and integrates with the CI pipeline to provide authorized access during build and deployment
@@ -956,7 +946,7 @@ Let's talk about observability and the three types of things that you would want
 
   Elasticsearch is a full-text search and analysis engine, based on the Apache Lucene open source search engine. Logstash is a log aggregator that collects data from various input sources, executes different transformations and enhancements and then ships the data to various supported output destinations. It’s important to know that many modern implementations of ELK do not include Logstash. To replace its log processing capabilities, most turn to lightweight alternatives like Fluentd, which can also collect logs from data sources and forward them to Elasticsearch. Kibana is a visualization layer that works on top of Elasticsearch, providing users with the ability to analyze and visualize the data. And last but not least — Beats are lightweight agents that are installed on edge hosts to collect different types of data for forwarding into the stack. Just like how Prometheus and Grafana work together most of the time, you'll find Elasticsearch and Kibana working in tandem, because Kibana is a specialized visualizer for Elasticsearch.
 
-- And the third part of your observability helps you understand where the problem is, especially with a microservices environment are **traces**. Traces give you the span information, how your packet in the application is traveling, how long it is taking it to go from A to B. Let's say you have five services and a workflow connecting these services in a sequence. When you have a problem like your application is slowing down, how do you find out where the problem is? You'll have to go and check each span. Let's say one is two milliseconds, next takes 1 milliseconds, but next, in this particular span, is taking about seven milliseconds. Now you know where it is taking longer, where you would optimize. So, once you look at a trace, you can actually check the logs for that application, or you can look at the metrics you have collected for that application, either with Kibana or with Prometheus. There are many open tracing infrastructure, there are tools like **Jaeger** which help you visualize your traces as well.
+- And the third part of your observability helps you understand where the problem is, especially with a microservices environment are **traces**. Traces give you the **span information**, how your packet in the application is traveling, how long it is taking it to go from A to B. Let's say you have five services and a workflow connecting these services in a sequence. When you have a problem like your application is slowing down, how do you find out where the problem is? You'll have to go and check each span. Let's say one is two milliseconds, next takes 1 milliseconds, but next, in this particular span, is taking about seven milliseconds. Now you know where it is taking longer, where you would optimize. So, once you look at a trace, you can actually check the logs for that application, or you can look at the metrics you have collected for that application, either with Kibana or with Prometheus. There are many open tracing infrastructure, there are tools like **Jaeger** which help you visualize your traces as well.
 
 ## Introduction to Monitoring
 
@@ -974,9 +964,9 @@ Application monitoring is difficult due to its distribution at on-premises, hybr
 
 - **Access**: Monitoring _ensures that an application is healthy and responds to all requests_ accurately and quickly. It _helps avoiding major outages or  partial outages or interruptions_
 - **User Experience**: An application can appear healthy by responding to requests, but monitoring might uncover that the application is responding in an _extremely slow manner_. This is why you need to also do **performance monitoring**. Application performance monitoring tools continuously monitor performance and _send alerts_ when an application is not performing as it should.
-- **Scope**: real-time monitoring reveals the scope of usage. Helps developers and businesses see where and how their application is being used on different computers, web browsers, smart phones, or tablets. Real-time monitoring determines the scope of usage
-- **cost**: Monitoring can also reduce costs due to unavailability of the app or poor performance so users of the application have the experience they are expecting
-- **Safty**:  Monitoring can ensure that applications are safe from any unwelcome or unwanted intrusions
+- **Scope**: real-time monitoring reveals the **scope of usage**. Helps developers and businesses see where and how their application is being used on different computers, web browsers, smart phones, or tablets. Real-time monitoring determines the scope of usage
+- **Cost**: Monitoring can also reduce costs due to unavailability of the app or poor performance so users of the application have the experience they are expecting
+- **Safety**:  Monitoring can ensure that applications are safe from any unwelcome or unwanted intrusions
 
 ### Application Monitoring Terms
 
@@ -988,7 +978,7 @@ Application monitoring is difficult due to its distribution at on-premises, hybr
 
 - **Tracing**: Developers can also track how one event connects across multiple nodes to detect the origins of errors by using distributed tracing
 
-- Dependency&Flow: another way of monitoring apps with a visual representation of how information travels between services
+- **Dependency&Flow**: another way of monitoring apps with a visual representation of how information travels between services
 
 <p align="center">
         <img src="./assets/devops/monitoring-terms.png" alt="drawing" width="500" height="300" style="center" />
@@ -1005,35 +995,31 @@ Application monitoring is difficult due to its distribution at on-premises, hybr
 
     Uptime, or availability monitoring, continuously checks the application to confirm that it’s up and responding to the data and service requests it receives. Availability is a fundamental metric of system monitoring because if the application is unavailable or unreachable when it’s needed, no other data will matter
 
-2. **Dependency monitoring** starts with mapping the resources that an application depends on. Applications running over distributed IT infrastructures can be dependent on a variety of network nodes, other application components, and services. These dependencies are mapped by evaluating the incoming network connections
-
-For example: If your application isn’t working properly, your dependency monitoring tool could tell you where the error originates from, based on the mapped connections to your application. In this example, the server is offline. Monitoring dependencies allows you to watch your applications and identify any issues with their performance, so you can give your users the best experience with your application
+2. **Dependency monitoring** starts with mapping the resources that an application depends on. Applications running over distributed IT infrastructures can be dependent on a variety of network nodes, other application components, and services. These dependencies are mapped by evaluating the incoming network connections. For example: If your application isn’t working properly, your dependency monitoring tool could tell you where the error originates from, based on the mapped connections to your application. In this example, the server is offline. Monitoring dependencies allows you to watch your applications and identify any issues with their performance, so you can give your users the best experience with your application
 
 <p align="center">
         <img src="./assets/devops/monitoring-dependencies.png" alt="drawing" width="500" height="300" style="center" />
 </p>
 
-3 - **Integration monitoring**. Most likely, your apps won’t be stand-alone applications. Instead, they will allow for integration with third parties. Modern applications and services rely on third-party integrations, and developers should monitor these external systems for data processing, resource capacity, and other functional processes. Integration monitoring identifies the availability and uptime performance of the third-party integrations. And it’s important for you to monitor those integrated apps and services, so your application can perform at its best
+3. **Integration monitoring**. Most likely, your apps won’t be stand-alone applications. Instead, they will allow for integration with third parties. Modern applications and services rely on third-party integrations, and developers should monitor these external systems for data processing, resource capacity, and other functional processes. Integration monitoring identifies the availability and uptime performance of the third-party integrations. And it’s important for you to monitor those integrated apps and services, so your application can perform at its best
 
-<p align="center">
-        <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="600" height="300" style="center" />
-</p>
+    <p align="center">
+            <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="600" height="300" style="center" />
+    </p>
 
-4 - **Web performance monitoring** is designed to monitor the availability of a web server or service, but it also provides more in-depth details. These tools can capture information such as **page loading time**, the **location of errors** that are generated, and **individual load times** of various web elements. This information helps developers fine-tune a website or a web-based application’s performance
+4. **Web performance monitoring** is designed to monitor the availability of a web server or service, but it also provides more in-depth details. These tools can capture information such as **page loading time**, the **location of errors** that are generated, and **individual load times** of various web elements. This information helps developers fine-tune a website or a web-based application’s performance
 
-<p align="center">
-        <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="600" height="300" style="center" />
-</p>
+    <p align="center">
+            <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="600" height="300" style="center" />
+    </p>
 
-5 - **Business Activity Monitoring** (or B-A-M) tools take key business performance metrics and track them over time. For example, these metrics could include information about retail sales, application downloads or the volume of financial transactions. This type of monitoring is useful because it helps businesses understand how their application is used and how it impacts business
+5. **Business Activity Monitoring** (or B-A-M) tools take key business performance metrics and track them over time. For example, these metrics could include information about retail sales, application downloads or the volume of financial transactions. This type of monitoring is useful because it helps businesses understand how their application is used and how it impacts business
 
-6 - **Application Performance Monitoring** (or APM) observes how well apps behave in an IT environment. The scope of APM is extended from the application to the underlying infrastructure components and dependencies. APM aggregates and analyzes inbound network data to evaluate the state of the IT environment and identify the problem root cause when apps perform sub-optimally. This monitoring also ensures that your software launches fast and responds to commands in a timely manner. APM metrics include: **Resource consumption**, **Error rates** at the software level, App **response times**, and App **request rates**, and also the **user experience**
+6. **Application Performance Monitoring** (or APM) observes how well apps behave in an IT environment. The scope of APM is extended from the application to the underlying infrastructure components and dependencies. APM aggregates and analyzes inbound network data to evaluate the state of the IT environment and identify the problem root cause when apps perform sub-optimally. This monitoring also ensures that your software launches fast and responds to commands in a timely manner. APM metrics include: **Resource consumption**, **Error rates** at the software level, App **response times**, and App **request rates**, and also the **user experience**
 
-Sometimes applications behave differently than they do in application testing environments, so
+7. **Real User Monitoring** (or RUM) provides an accurate perspective on how users perceive and respond to applications or service performance. For example, *the number of users staying on a website for more than a few seconds* might tell you many things, like satisfaction with the site and how quickly the page loads. RUM is designed to record such interactions and provide the historical performance of a service delivered to users over the network. 
 
-7 - **Real User Monitoring** (or RUM) provides an accurate perspective on how users perceive and respond to applications or service performance. For example, the number of users staying on a website for more than a few seconds might tell you many things, like satisfaction with the site and how quickly the page loads. RUM is designed to record such interactions and provide the historical performance of a service delivered to users over the network. Security attacks and network infringements impact the flow of data traffic and network behavior. So it’s important to track unusual activities that occur. Security monitoring collects network log data, which can be analyzed and potential threats can be blocked before they impact the business
-
-8 - **Security Monitoring**: Security attacks and network infringements impact the flow of data traffic and network behavior. So it’s important to track unusual activities that occur. Security monitoring collects **network log data**, which can be analyzed and potential threats can be blocked before they impact the business
+8. **Security Monitoring**: Security attacks and network infringements impact the flow of data traffic and network behavior. So it’s important to track unusual activities that occur. Security monitoring collects **network log data**, which can be analyzed and potential threats can be blocked before they impact the business
 
 ### Golden Signals of Monitoring
 
@@ -1057,7 +1043,7 @@ What are the Golden Signals? By tracking “latency,” “traffic” “errors,
 
     So this might indicate that there are some intermittent problems. The graph also shows that system 2 is never hitting the target latency, which indicates that there’s a serious issue with it. With this data, you know you should look at system 2 to resolve any latency problems.
 
-2. Traffic is associated with the number of users who visit the site. But with application monitoring, the term “traffic” refers to how in-demand your service is. When you measure traffic, you have a better understanding of your users and you can fine-tune their experience.
+2. Traffic (or throughput) is associated with the number of users who visit the site. But with application monitoring, the term “traffic” refers to how in-demand your service is. When you measure traffic, you have a better understanding of your users and you can fine-tune their experience.
 
     <p align="center">
             <img src="./assets/devops/monitoring-traffic.png" alt="drawing" width="600" height="300" style="center" />
@@ -1073,7 +1059,7 @@ What are the Golden Signals? By tracking “latency,” “traffic” “errors,
 
     You should be tracking obvious errors. These include all server errors, like an HTTP 500 Internal Server Error, and Client errors, like an HTTP 404 Page Not Found error. But you should also watch for other errors that might be harder to catch. For example, a request might return an HTTP 200 OK status code. However, if the request doesn’t return the right content, it’s considered an error because the request was completed incorrectly. You need to track these errors and also identify errors to match your service-level objectives.
 
-4. The fourth Golden Signal is “saturation”. This measures the percentage of use of a system, like how much memory or CPU resources your system utilizes. If a web application is approaching 100 percent saturation, performance degradation is likely, and your users will be negatively impacted. On the other hand, if saturation is consistently at 50 percent or less, you might be over-provisioning and paying too much for services that you’re not using. By measuring the saturation of a web application, you get insights on how to optimize the services you’re using. Be sure to set a utilization target, as it will help ensure the service performance and availability. And you should be aware that an increase in latency is often a leading indicator of saturation.
+4. The fourth Golden Signal is “saturation” (or infra usage monitoring). This measures the percentage of use of a system, like how much memory or CPU resources your system utilizes. If a web application is approaching 100 percent saturation, performance degradation is likely, and your users will be negatively impacted. On the other hand, if saturation is consistently at 50 percent or less, you might be over-provisioning and paying too much for services that you’re not using. By measuring the saturation of a web application, you get insights on how to optimize the services you’re using. Be sure to set a utilization target, as it will help ensure the service performance and availability. And you should be aware that an increase in latency is often a leading indicator of saturation.
 
     Because large systems can get complicated with too many components, issues, and alerts to monitor, it’s in your best interest to use the four Golden Signals. When you track latency, traffic, errors, and saturation, you can focus on your application's most critical performance indicators and proactively monitor applications. With the Golden Signals, you can: Troubleshoot components of a system to find the root cause and fix problems. Alert your team about an incident, so they can identify the problem and work towards a remediation, and Aid in capacity-planning to monitor and improve things for your applications or services.
 
@@ -1091,31 +1077,28 @@ There are three essential components that form the basis of a monitoring system:
             <img src="./assets/devops/monitoring-components.png" alt="drawing" width="600" height="400" style="center" />
     </p>
 
-- **Metrics**:
-  - represent resource observed and collected raw measurements of resources used
-  - low-level usage summaries to higher level, specific data
-  - total capacity of a component
-  - view of behaviour and health of systems
-  - understand historical trends
-  - measre changes in performance, consumption and error rates
+- **Metrics**: represent observed and collected raw measurements of resources used. Some metrics are presented as a **total capacity**, while others are represented as a **rate** that indicates how busy a component is. Metrics are useful because they provide insight into the behavior and health of your systems, especially when **analyzed in aggregate**. Metrics are the basic values used in understanding historical trends, correlate diverse factors, and measure changes in your performance, consumption, or error rates. While monitoring is the process of collecting, aggregating, and watching different services, observing is analyzing those values to improve awareness of your components’ characteristics and behavior.
 
-   Some metrics are presented as a total capacity, while others are represented as a rate that indicates how busy a component is. Metrics are useful because they provide insight into the behavior and health of your systems, especially when analyzed in aggregate. Metrics are the basic values used in understanding historical trends, correlate diverse factors, and measure changes in your performance, consumption, or error rates. While monitoring is the process of collecting, aggregating, and watching different services, observing is analyzing those values to improve awareness of your components’ characteristics and behavior.
+- **Observability** is about **analyzing the metrics** to incease awareness about the system. Also includes recognizing and understanding patterns between data collected, aggregated information, and resources and values across services. For example, if an application experiences a spike in error rates, an administrator observing the monitoring system can discover what event contributed to the spike.
 
-- **Observability** is about analyzing the metrics to incease awareness about the system. Also includes recognizing and understanding patterns between data collected, aggregated information, and resources and values across services. For example, if an application experiences a spike in error rates, an administrator observing the monitoring system can discover what event contributed to the spike.
+- **Alerting** is the responsive component of a monitoring system that performs actions based on changes in metric values. Alerts definitions are composed of two parts: **a metric-based condition or threshold**, and an **action to perform** when the value falls outside of the acceptable conditions. The main purpose of alerting is to bring human attention to the status of systems if there are any issues or problems. 
 
-- **Alerting** is the responsive component of a monitoring system that performs actions based on changes in metric values. Alerts definitions are composed of two parts: a metric-based condition or threshold, and an action to perform when the value falls outside of the acceptable conditions. Alerts allow administrators to disengage from the system so they do not need to watch the applications nonstop.
-
-The main purpose of alerting is to bring human attention to the status of systems if there are any issues or problems. Some important qualities of an ideal monitoring system are: Independently operates on its own infrastructure. It is a reliable system. Easy-to-use dashboards views are available. Effective maintenance of historical data to help establish trends, patterns, and consistencies over long timelines. You have the ability to correlate from different sources. Tracking new metrics or a new infrastructure is easy to start, and Flexible and powerful alerting is available.
+Some important qualities of an ideal monitoring system are: 
+- Independently operates on its own infrastructure. It is a reliable system. 
+- Easy-to-use dashboards views are available. 
+- Effective maintenance of historical data to help establish trends, patterns, and consistencies over long timelines. You have the ability to correlate from different sources. 
+- Tracking new metrics or a new infrastructure is easy to start
+- Flexible and powerful alerting is available.
 
 ### Types of Metrics in a Monitoring System
 
-One of the main components of a monitoring system is metrics. Why are metrics important to track? Metrics represent how your applications use resources and provide insight into your systems' behavior and health. Important metrics you should track are host-based, application, network and connectivity, and server pool.Metrics tracking can help you plan and analyze your monitoring strategy since systems usually function hierarchically, with more complex layers building on top of the more primitive infrastructure.
+One of the main components of a monitoring system is metrics. Why are metrics important to track? 
 
-- **Host-based metrics**: measure CPU, Memory, Disk space, Processes. Indicators are anything involved in evaluating the health and performance of an individual machine, disregarding for the moment its application stacks and services. Host-based metrics are mainly comprised of usage or performance of the operating system or hardware.
+- **Host-based metrics**: measure **CPU, Memory, Disk space, Processes**. Indicators are anything involved in evaluating the health and performance of an individual machine, disregarding for the moment its application stacks and services. Host-based metrics are mainly comprised of usage or performance of the operating system or hardware.
 
-- **Application metrics** focus on units of processing or work that depend on resources like services or applications. The specific types of metrics to look at depends on what the service is providing, what dependencies it has, and what other components it interacts with. Metrics at this level indicate an application's health, performance, or load. Indicators to look for include: error and success rates, service failures and restarts, performance and latency of responses, and resource usage. These indicators help determine whether an application is functioning correctly and with efficiency.
+- **Application metrics** focus on units of processing or work that depend on resources like services or applications. The specific types of metrics to look at depends on what the service is providing, what dependencies it has, and what other components it interacts with. Metrics at this level indicate an application's health, performance, or load. Indicators to look for include: **error** and **success rates**, **service failures** and restarts, performance and **latency of responses**, and **resource usage**. These indicators help determine whether an application is functioning correctly and with efficiency.
 
-- **Network&Connectivity metrics**: For most types of infrastructure, network and connectivity indicators are important gauges of outward-facing availability, but they are also essential signs that services are accessible to other machines for any systems that span more than one machine. Like the other metrics, networks should be checked for their overall functional correctness and their ability to deliver necessary performance by looking at: connectivity, error rates and packet loss, latency, and bandwidth utilization. Monitoring your networking layer can help you improve the availability and responsiveness of both your internal and external services.
+- **Network & Connectivity metrics**: For most types of infrastructure, network and connectivity indicators are important gauges of outward-facing availability, but they are also essential signs that services are accessible to other machines for any systems that span more than one machine. Like the other metrics, networks should be checked for their overall functional correctness and their ability to deliver necessary performance by looking at: **connectivity**, **error rates** and **packet loss**, latency, and **bandwidth utilization**. Monitoring your networking layer can help you improve the availability and responsiveness of both your internal and external services.
 
 - **Server pool metrics**: When dealing with horizontally scaled infrastructure, server pools are another layer of infrastructure you will need to add metrics for. While metrics about individual servers are useful, service is better represented at scale as the ability of a collection of machines to perform work and respond adequately to requests. This metric type is in many ways just a higher-level extrapolation of application and server metrics, but the resources in this case are homogeneous servers instead of machine-level components. Collecting data that summarizes the health of collections of servers is important for understanding the actual capabilities of your system to handle load and respond to changes.
 
@@ -1128,15 +1111,7 @@ Other metrics you may wish to add are those related to external dependencies. Th
 
 Of course, there are many other types of metrics that can be helpful to collect. Conceptualizing the most important information at varying levels of focus can help you identify the most useful indicators for predicting or identifying problems.
 
-A few factors that can affect what you choose to collect and act on are:
 
-- Resources available for tracking: Depending on your human resources, infrastructure, and budget, you will have to limit the scope of what you keep track of to what you can afford to implement and reasonably manage.
-- The complexity and purpose of your application: The complexity of your application or systems can greatly impact what you choose to track. Items that might be mission critical for some software might not be important in others.
-- The deployment environment: While robust monitoring is most important for production systems, staging and testing systems also benefit from monitoring, though there may be differences in severity, granularity, and the overall metrics measured.
-- The potential usefulness of the metric: One of the most important factors affecting whether something is measured is its potential to help in the future. Each additional metric tracked increases the complexity of the system and takes up resources. The necessity of data can change over time as well, requiring reevaluation at regular intervals.
-- How essential stability is: For certain types of personal or early-stage projects, stability and uptime might not be priorities.
-
-Keep in mind that the factors that influence your decisions will depend on your available resources, the maturity of your project, and the level of service you require.
 
 ## Importance of Monitoring
 
@@ -1243,15 +1218,11 @@ Let's look at this process. The monitoring system chooses a checkpoint to do the
 
 Prometheus
 
-- is an open-source monitoring, and alerting solution, built by a company called SoundCloud
+- is an open-source **monitoring, and alerting solution**, built by a company called SoundCloud
 
 - Monitors your servers, virtual machines, applications and databases
   
-- Analyzes, tracks, and reports system health, application behavior and prediction, and performance
-  
 - Provides detailed, actionable metrics using a robust data model and query language
-  
-- Is reliable, go-to system, so you can diagnose problems quickly during an outage or regular monitoring of applications
 
 - Once configured, Prometheus works by automatically discovering services running in your infrastructure. Or you can manually define the services you want metrics pulled from
 
@@ -1261,21 +1232,19 @@ Prometheus
 
 </p>
 
-Because metrics don't automatically spring forth from applications, developers must add the instrumentation that produces them Application instrumentation requires client libraries.
-
-With two or three lines of code, you can define a metric and insert your instrumentation inside the source code you control. This method is called direct instrumentation.
+Because metrics don't automatically spring forth from applications, developers must add the **instrumentation** that produces them Application instrumentation requires client libraries.
 
 - You can perform instrumentation using client libraries. In client libraries, Prometheus includes official libraries for Go, Python, and Ruby, and Third-party libraries, which support C+, .Net, Node.js, and others such as Haskell, Erlang, Rust, Java, and Scala.
 - Or, with two or three lines of code, you can define a metric and insert your instrumentation inside the source code you control. This method is called direct instrumentation.
 
-- Or using exporters. Another way to obtain metrics from an application is through an exporter which is a piece of software you deploy beside the application from which you want to obtain metrics. Think of an exporter as a one-to-one proxy that converts data between the metrics interface of an application and the Prometheus exposition (or text) format
+- Or using **exporters**. Another way to obtain metrics from an application is through an exporter which is a piece of software you deploy beside the application from which you want to obtain metrics. Think of an exporter as a one-to-one proxy that converts data between the metrics interface of an application and the Prometheus exposition (or text) format
 . It takes in requests from Prometheus. It gathers metrics from the application and then transforms that data into the correct Prometheus format. Finally, it returns the data via a response to the Prometheus server.
 
 Prometheus servers are autonomous and don't rely on distributed or networked storage or other remote services. They can be deployed in the cloud or on-premises.
 
-- Some Prometheus implementations can use a dedicated time-series database to store Prometheus data rather than relying on the Prometheus server itself. Prometheus uses a time-series database which simplifies the taking of incremental backups of monitoring data. Prometheus provides native support to some services, which means monitoring agents are not required. A few examples are: Kubernetes, etcd, SkyDNS, and other database management systems and application systems.
+- Some Prometheus implementations can use a dedicated time-series database to store Prometheus data rather than relying on the Prometheus server itself. Prometheus uses a **time-series database** which simplifies the taking of incremental backups of monitoring data. 
 
-- Alert manager is a flexible metrics collection and alerting tool that can be combined with Prometheus. When an alert condition is detected, the Prometheus server generates the alert and sends it to alert manager. Alertmanager handles these alerts and sends the alert notifications using email, on-call notification systems, and chat platforms.
+- **Alert manager** is a flexible metrics collection and alerting tool that can be combined with Prometheus. When an alert condition is detected, the Prometheus server generates the alert and sends it to alert manager. Alertmanager handles these alerts and sends the alert notifications using email, on-call notification systems, and chat platforms.
 
 You'll benefit from using Prometheus if one of your primary goals is to collect and evaluate metrics, especially for recording purely numeric time-series data. Prometheus provides for multidimensional data collection and querying. Additionally, it's a good fit for both machine-centric monitoring as well as monitoring of highly dynamic service-oriented architectures. A properly tuned and deployed Prometheus cluster can collect millions of metrics every second, which makes it well suited for complex workloads. Prometheus is typically used in combination with Grafana.
 
@@ -1329,7 +1298,7 @@ Let's review critical factors for choosing the right APM tool.
 
 Grafana
 
-- is a professional cross-platform, open-source data visualization and metrics analysis tool
+- is a professional cross-platform, open-source **data visualization and metrics analysis** tool
 - provides time-series analytics for analyzing and monitoring data metrics over time
 - use it to query, visualize, alert on, and understand metrics no matter where your data is stored
 - transforms your time-series database (or TSDB) into graphs and visualizations that help you make sense of massive amounts of monitored data
@@ -1341,9 +1310,7 @@ Here’s how Grafana works: After you have deployed Grafana, on-premises or in t
   <img src="./assets/devops/monitoring-grafana1.png" alt="drawing" width="600" height="300" style="center" />
 </p>
 
-Grafana is a browser-based application. You can easily install it on-premises or on any cloud platform you choose. However, Grafana only works on data stored in databases. It doesn’t perform data collection. It connects to a data source retrieves metrics.
-
-Grafana’s customizable dashboards facilitate the interpretation of massive amounts of data.
+Grafana is a **browser-based application**. You can easily install it on-premises or on any cloud platform you choose. However, **Grafana only works on data stored in databases**. *It doesn’t perform data collection*. It connects to a data source to retrieve metrics. Grafana’s customizable dashboards facilitate the interpretation of massive amounts of data.
 
 Grafana provides native support for dozens of databases, including: Microsoft SQL Server, AWS CloudWatch, Graphite, Prometheus, ElasticSearch, MySQL, PostgreSQL, and others.
 
@@ -1371,9 +1338,9 @@ Features of Grafana are:
 
 ### Introduction to Logging
 
-- Log messages provide important information for developers when debugging an application and for system administrators maintaining applications in production
-- An application log contains information about events that have occurred within a software application. These events are logged by the application and saved. They can include errors, informational events and warnings
-- In the past, application logs were sent to files, but cloud-native applications treat logs as event streams and log to stdout so that they can easily be processed by data collectors.
+- Log messages provide important information for developers when **debugging** an application and for system administrators **maintaining** applications in production
+- An application log contains information about **events** that have occurred within a software application. These events are logged by the application and saved. They can include errors, informational events and warnings
+- In the past, application logs were sent to files, but cloud-native applications treat logs as **event streams** and log to stdout so that they can easily be processed by data collectors.
 
 #### Application Logs
 
@@ -1412,11 +1379,11 @@ Identifying what information should be collected and how it will be used is an i
 
 #### Why is application logging important?
 
-- Diagnostics:
+- **Diagnostics**:
   - Use application logs to perform analytics on your software. Some examples of information that might be useful to track and analyze are customer transactions, security threats, timeouts, and consumer behavior. Log management tools can give you valuable insights from the information you’re already collecting
   - Application logs can also be used for diagnosing issues. You can use application logs to identify and resolve bugs in a production environment. This process takes place regularly during software development. And it’s critical for ensuring long-term optimal performance of an application
 
-- Auditing:
+- **Auditing**:
   - Logged messages involve significant events in the application
   - Information relating to management and finance
   - Information important for fulfilling business requirements
@@ -1463,10 +1430,10 @@ Distributed logging
 
 Distributed tracing
 
-- Is a method used to profile and monitor applications that are composed of many micro-services
-- Allows developers to track requests, as they traveled through various services in the application, and helps to identify performance bottlenecks and errors
-- Tracing can also be used to monitor service dependencies, and ensure that all parts of a system are functioning correctly
-- Provides end-to-end visibility into the entire system
+- Is a method used to profile and monitor applications that are composed of many microservices
+- Allows developers to track requests, as they traveled through various services in the application, and helps to **identify performance bottlenecks** and **errors**
+- Tracing can also be used to **monitor service dependencies**, and ensure that all parts of a system are functioning correctly
+- Provides ***end-to-end visibility into the entire system***
 
 A **trace** is a collection of spans, individual timed events that represent a single logical request or workflow.
 
@@ -1722,7 +1689,7 @@ Write a failing test case for the code you wish you had. This expresses how to c
 **PyUnit** is one of the two most popular frameworks for Python testing. The other one is **Pytest**. With other Python testing frameworks, you can use multiple levels of setups and teardowns. And setups and teardowns are two Python methods together that allow you to define instructions to run before and after each of the tests. 
 Some other important testing tools in Python is **nose** (updated to **Pynose**). It is a test runner. While PyUnit has its own test runner, Nose allows you to add color and formatting and other test output. You actually get the Red/Green/Refactor. Lines really do turn red as opposed to in PyUnit where everything is just black and white or whatever color scheme your terminal happens to be. I like Nose because it makes the output easier to read. Nose also has the ability to call the coverage tool. This tool supports code coverage, which is the percentage of code that gets executed when you run automated testing. I especially like this feature because every time I run my test case, I get a code coverage report. From this report, I can see if my coverage went up or my coverage went down or it stayed the same. The coverage tool also has options to report on the lines of code that have not been executed during a test run. You can use this report to find those missing lines of code and know where to write more test cases. We are going to use PyUnit, Nose, and coverage in the labs. This way, you will have a complete set of tools to help you build a test suite that covers all of your code.
 
-PyUnit, PyTest for Python. Unittest is built in python module which is very helpful for organizing tests. Write a class with appropriate name which inherits from _TestCase_ class. This class has some prebuilt methods that run in specific order. These methods include setUp() that executes first, tearDown() that executes last. These methods are called _test features_. Test fixture allows you to specify the initial state of the system before a test case is run. setUp() and tearDown() will execute before and after each test, respectively.
+PyUnit, PyTest for Python. Unittest is built in python module which is very helpful for organizing tests. Write a class with appropriate name which inherits from `TestCase` class. This class has some prebuilt methods that run in specific order. These methods include `setUp()` that executes first, `tearDown()` that executes last. These methods are called _test fixtures_. Test fixture allows you to specify the initial state of the system before a test case is run. setUp() and tearDown() will execute before and after each test, respectively.
 
 Also it has simple but very useful `assert` types of methods such as: `assertEqual`, `assertAlmostEqual`, `assertRaises` for rasing different types of errors or custome errors.
 
@@ -2176,7 +2143,7 @@ To view test reports, you must configure the reports section of the `buildspec.y
 
 ### Synthetic testing with canaries
 
-Synthetic testing is automated testing that emulates user activity on your application every minute of every day. This allows you to continually verify your customer experience even when you don't have customer traffic on your applications.
+Synthetic testing is automated testing that **emulates user activity on your application** every minute of every day. This allows you to continually verify your customer experience even when you don't have customer traffic on your applications.
 
 You can use **Amazon CloudWatch Synthetics** to create canaries, (configurable scripts that run on a schedule, to monitor your endpoints and APIs). They follow the same routes and perform the same actions as a customer. By using canaries, you can discover issues before your customers do. Canaries work over HTTP and HTTPS protocols as well as APIs. You can run a canary once or on a regular schedule. Scheduled canaries can be set to run continuously, with tests performed as often as once per minute. Below are other benefits of CloudWatch Synthetics.
 - Customization: CloudWatch Synthetics can be customized to check for page-load errors, load latencies for UI assets, transaction completions, broken or dead links, complex wizard flows, or checkout flows in your applications. In case of application errors, there are multiple debugging artifacts including screenshots, HTTP Archive (HAR) files, and log files. You can even check for unauthorized changes from phishing, code injection, and cross-site scripting.
@@ -2501,10 +2468,10 @@ AWS CloudFormation Resource constructs are the lowest-level (L1) constructs. The
 
 ## Secure SDLC
 The Software Development Lifecycle (or SDLC) is a framework that specifies the steps involved in software development at each stage. SDLC is a well-structured sequence of stages that leads to the rapid development of high-quality software that has been completely tested and is ready for production. Different stages of the SDLC are: 
-- **Requirements**, where the project team begins to comprehend the customer's expectations for the project
-- **Design**, where decisions are based on the requirements list that you created during the Requirements stage
-- **Develop**, where a design is put into action 
-- **Test**, where developers test their code and programming to see whether it meets client needs or if the functionality is smooth
+- **Requirements**, where the project team begins to *comprehend the customer's expectations* for the project
+- **Design**, where *decisions are based on the requirements* list that you created during the Requirements stage
+- **Develop**, where a design is put into *action* 
+- **Test**, where developers *test their code* and programming to see whether it meets client needs or if the functionality is smooth
 - **Deploy**, which you execute when the product is ready to go live after it has been tested by the project team and has passed each testing phase 
 
 Secure SDLC describes how security fits into the different phases of the software development lifecycle. This process of involving security testing and its best practice in the existing development model includes: **Risk assessment**, **Threat modeling and design review**, **Static analysis**, **Security testing** and **code review**, And **security assessment** and **security configuration**.
@@ -2516,30 +2483,30 @@ Secure SDLC describes how security fits into the different phases of the softwar
 How can you map DevOps into the phases of a secure SDLC? 
 
 1. Requirements phase: 
-    - Determine operational standards: perform risk assessment and consider how people might attack the code. Make sure you've determined the security needs and standards, as well as the type of information you're dealing with
+    - Determine operational standards: perform risk assessment and consider how people might **attack the code**. Make sure you've determined the security needs and standards, as well as the type of information you're dealing with
     - Define the security requirements: identify the information to protect 
     - Include monitoring and metrics: perform attack profiling to determine what might be going on throughout the design threat modeling process 
 
 2. Design stage:
 
     - Perform threat modelling to secure your design architecture: During design threat modeling, ask, what are some of the elements that could make your architecture vulnerable? How can you securely design for the precautions that can be taken during this stage
-    - Secure the deployment pipeline: ensure that you have a secure design, that you've automated all the tests correctly, and that your CI/CD pipeline is searching for vulnerabilities
-    - Create unit tests to counter common threats: With DevOps, security team members can instruct Dev team members about common threat types and help them create unit tests to counter them. 
+    - Secure the deployment pipeline: ensure that you have a secure design, that you've automated all the tests correctly, and that your **CI/CD pipeline is searching for vulnerabilities**
+    - Create **unit tests to counter common threats**: With DevOps, security team members can instruct Dev team members about common threat types and help them create unit tests to counter them. 
 
 3. Develop stage: 
 
-    - Perform static analysis with tools that will check for security vulnerabilities in your code, look at it, and proclaim it insecure
+    - **Perform static analysis** with tools that will check for security vulnerabilities in your code, look at it, and proclaim it insecure
     - Include automation and validation of data to guarantee that the information in the system is both correct and useful
     - Use security tasks and security in scrum. Scrum is a scrum framework variation that emphasizes secure software development throughout the SDLC
 
 4. Test stage: 
-    - Incorporate vulnerability scans: undertake security testing on your code, and you conduct a risk assessment before you launch it
+    - **Incorporate vulnerability scans**: undertake security testing on your code, and you conduct a risk assessment before you launch it
     - Strive for failure: If you can break your application, attackers are likely to be able to do so as well
-    - Parallelize security testing: To save time, run tests in parallel to shorten the test window by using code scanners alongside unit tests and functional verification tests (or FVTs)
+    - **Parallelize security testing**: To save time, run tests in parallel to shorten the test window by using code scanners alongside unit tests and functional verification tests (or FVTs)
 
 5. Deploy stage in production:
-    - Use automated launch of deployment scripts
-    - Use deploy and roll back, which means that for a file upload deployment, rollback will essentially revert the changes. So, if a file was previously uploaded, it will be erased; if a modification was made, it will be undone; and if a file was removed, it will be placed back
+    - Use **automated launch of deployment scripts**
+    - Use **deploy and roll back**, which means that for a file upload deployment, rollback will essentially revert the changes. So, if a file was previously uploaded, it will be erased; if a modification was made, it will be undone; and if a file was removed, it will be placed back
     - Perform production security tests, which imitate real-world hacking methods and approaches to reveal hidden flaws in your device or application. These tests can give you genuine insights and practical outcomes. 
 
 ## What is DevSecOps?
@@ -2571,22 +2538,22 @@ Here are five of its most significant benefits:
 
 ## Understanding the role of Network Security
 
-The Internet is a complicated network of networks that stretches around the globe via interconnected cables. All kinds of data traverse the Internet, such as emails, phone calls, streaming events, etc. The pioneers of the Internet had to create a system to allow for present and future types of communications to be used by everyone globally. They devised the Open Systems Interconnection, or the OSI model to solve that. The OSI model consists of seven layers to describe the process of sending and receiving data:
+The Internet is a complicated network of networks that stretches around the globe via interconnected cables. All kinds of data traverse the Internet, such as emails, phone calls, streaming events, etc. The pioneers of the Internet had to create a system to allow for present and future types of communications to be used by everyone globally. They devised the **Open Systems Interconnection (OSI)** model to solve that. The OSI model consists of seven layers to describe the process of sending and receiving data:
 
 - **Physical**: it's purpose is to transmit bits of raw data across a physical connection
 
-- **Data Link**: It takes the raw bit from the physical layer and organize it into frames and it ensures that the frames are delivered to the correct destination. The Ethernet primarily lives in this layer.The data frames are sequentially transmitted in groups of 100 or 1000 bytes. After the data frames are received, the receiver sends back an acknowledgment frame to confirm a correct reception of the data
+- **Data Link**: It takes the raw bit from the physical layer and organize it into **frames** and it ensures that the frames are delivered to the correct destination. The Ethernet primarily lives in this layer. The data frames are sequentially transmitted in groups of 100 or 1000 bytes. After the data frames are received, the receiver sends back an acknowledgment frame to confirm a correct reception of the data
 
-- **Network**: It is responsible routing data frames across different networks. In other hands, it handles data transmission and the control of the subnet. The network layer determines how many packets are routed to a destination from a source (route tables)
+- **Network**: It is responsible routing data frames across different networks. In other hands, it handles data transmission and the **control of the subnet**. The network layer determines how many packets are routed to a destination from a source (**route tables**)
 
-- **Transport**: accepts transmissions or data from the upper layers (application, presentation, session layers) and then chops them into smaller units or packets for passing to the network layer. Transport layer assures that all the units arrive correctly from end-to-end. This layer provides an error-free point-to-point channel that delivers data in the same order as they were sent. At connection time, the transport layer will choose the type of service. T
+- **Transport**: accepts transmissions or data from the upper layers (application, presentation, session layers) and then chops them into smaller units or **packets** for passing to the network layer. Transport layer assures that all the units arrive correctly from end-to-end. This layer provides an **error-free** point-to-point channel that delivers data in the **same order **as they were sent. At connection time, the transport layer will choose the type of service. 
     This is the layer where TCP and UDP live. TCP provides reliable end-to-end communication between 2 devices by dividing data into small manageable segments and sending each segments individually. Each segment has a sequence number attached to it. The receiver uses the sequence number to reassemble the data in the correct order. TCP also provides error checking to ensure the data is not corrupted dustin transmission.
     
     UDP is another popular protocol in the transport layer but its simpler and faster then TCP. Unlike TCP, UDP doesn’t not provide the same level of  error checking and reliability. It simply send packets of data from one to another. The receiving end is responsible for determining whether the packet is received correctly. If an error detected the reciver simply discard the packet. The remaining layers are Session, Presentation and Application Layer. 
 
-- **Session**: establishes multiple sessions from different machines while establishing consistent sessions if a crash occurs. This layer delivers benefits such as dialog control or transmission turn tracking and token management, which eliminates two users simultaneously attempting the same important operation. The session layer also provides synchronization for reestablishing sessions from long transmissions and allowing them to resume from the last point
+- **Session**: establishes multiple sessions from different machines while establishing **consistent sessions** if a crash occurs. This layer delivers benefits such as dialog control or transmission turn tracking and token management, which eliminates two users simultaneously attempting the same important operation. The session layer also provides synchronization for reestablishing sessions from long transmissions and allowing them to resume from the last point
 
-- **Presentation**: focuses on the syntax and semantics of data being transmitted from one point to another. The serialization and deserialization process is performed on the data stream to rebuild the original format at the final destination. For instance, formats or file types such as jpeg, gif and ASCII text are widely and frequently used in the presentation layer. In addition, this layer also provides data compression encryption and decryption
+- **Presentation**: focuses on the **syntax and semantics of data** being transmitted from one point to another. The serialization and deserialization process is performed on the data stream to rebuild the original format at the final destination. For instance, formats or file types such as jpeg, gif and ASCII text are widely and frequently used in the presentation layer. In addition, this layer also provides data compression encryption and decryption
 
  - **Application**: is the top layer of the OSI model. Mainly, developers use this layer for building and deploying applications. Browsers, web pages and other web-based applications transmit data on the application layer. Besides the web, file transfer, email, and network news are other applications that use Layer 7
 
@@ -2594,8 +2561,7 @@ The Internet is a complicated network of networks that stretches around the glob
 
  Now let’s see how data moves through layers when transmitting through network:
 
-When a user send a HTTP request to the server over the network, the HTTP header is added to the data at application layer. Then a TCP header is added to the data. It is encapsulated in the TCP segments at the transform layer. The header contains the source port, destination port and sequence number. 
-The segments then encapsulated with IP header at the network layer. The header contains the source and the destination IP addresses. A MAC header is added to the data link layer with the source and destination MAC addresses. The real world case, the MAC addresses is not usually for the source and destination but it is the MAC addresses of the routing devices in the next hop in a usually long journey across the internet. 
+When a user send a HTTP request to the server over the network, the HTTP header is added to the data at application layer. Then a TCP header is added to the data. It is encapsulated in the TCP segments at the transform layer. The header contains the source port, destination port and sequence number. The segments then encapsulated with IP header at the network layer. The header contains the source and the destination IP addresses. A MAC header is added to the data link layer with the source and destination MAC addresses. The real world case, the MAC addresses is not usually for the source and destination but it is the MAC addresses of the routing devices in the next hop in a usually long journey across the internet. 
 
 When the web server receives the raw bits from the network, it reverses the process. The headers are removed layer by layer until the data is reached. The server then processes the data and returns the response. 
 
@@ -2622,15 +2588,15 @@ Secure the first layer by running vulnerability scanners, tests, and allow other
 
 Safeguard the backend layer by securing the Cloud infrastructure. Be sure you protect administrator credentials when developing applications to connect to Cloud-based databases. Create security groups or Network Access Control List that restrict access to certain Cloud resources: 
 
-- In your code, implement _two-factor authentication_ for all users of web applications. Be it phone or text authentication, you should also include strong authentication. Two-factor authentication is also important to authenticate third parties, such as GitHub and respective Cloud providers. 
+- In your code, implement **two-factor authentication** for all users of web applications. Be it phone or text authentication, you should also include strong authentication. Two-factor authentication is also important to authenticate third parties, such as GitHub and respective Cloud providers. 
 
-- Secure the communications between clients and servers using a secure shell or SSH, HTTPS, Secure Sockets Layer, and Transport Layer Security (SSL/TLS). Data transferred over secure connections with SSL and TLS, guarantee that hackers attempting man-in-the-middle attacks do not intercept communications.  
+- **Secure the communications between clients and servers** using a secure shell or SSH, HTTPS, Secure Sockets Layer, and Transport Layer Security (SSL/TLS). Data transferred over secure connections with SSL and TLS, guarantee that hackers attempting man-in-the-middle attacks do not intercept communications.  
 
-- If Cloud sources are implemented for developing applications, Identification and Access Management, or IAM, should be configured for securing Cloud assets according to the needs and roles when developing. IAM roles are an important security mechanism to grant permissions to applications and systems within Cloud infrastructures. Finally, secret passwords, admin credentials, certificates, and encryption keys should be stored in secret storage services such as HashiCorp Vault or AWS secret manager
+- If Cloud sources are implemented for developing applications, **Identification and Access Management (IAM)**, should be configured for securing Cloud assets according to the needs and roles when developing. IAM roles are an important security mechanism to grant permissions to applications and systems within Cloud infrastructures. Finally, secret passwords, admin credentials, certificates, and encryption keys should be stored in **secret storage services** such as HashiCorp Vault or AWS secret manager
 
-- Logging is considered another security layer, analyzing and storing for future inspection by application developers. It's also important to remember that every application should have a logging system to collect log messages for identifying any anomalies. Anomalies are unexpected events occurring within an application or system such as an attempt to log in as an administrator of a system without the necessary credentials. Lastly, access to the log messages should not be provided to all system users, but only those who can be trusted and need access for reviewing and analyzing. 
+- **Logging** is considered another security layer, analyzing and storing for future inspection by application developers. It's also important to remember that every application should have a logging system to collect log messages for identifying any anomalies. Anomalies are unexpected events occurring within an application or system such as an attempt to log in as an administrator of a system without the necessary credentials. Lastly, access to the log messages should not be provided to all system users, but only those who can be trusted and need access for reviewing and analyzing. 
 
-- The final layer of defense is intrusion detection. Intrusion detection is the ongoing detection of any cyberattacks, threats, and intrusions that compromise an application or a system. The three methods of intrusion detection are _endpoint security_, _network security_, and _system-call auditing_:
+- The final layer of defense is **intrusion detection**. Intrusion detection is the ongoing detection of any cyberattacks, threats, and intrusions that compromise an application or a system. The three methods of intrusion detection are _endpoint security_, _network security_, and _system-call auditing_:
     - Endpoint security protect systems, servers, and various types of devices connected to a network
     - Network security is monitoring a network using a network tool such as _Nmap_ and _Snort_. 
     - System call auditing is the retrieval and review of system call information from a kernel such as the Linux kernel. 
@@ -2681,7 +2647,7 @@ You can also use OpenSSL directly from the command line after installing it on a
 - Next public key cryptography is a public cryptographic algorithm that uses public and private keys. Rivest, Shamir and Adleman, or RSA, is the most popular implementation of public key cryptography. RSA provides secrecy, authentication, and encryption for anyone to use. You can also use RSA to implement prime number generation to generate private keys using different sizes of key lengths depending on the level of encryption needed.
 
 ## Vulnerability Scanning 
-Vulnerability scanning is the search for security vulnerabilities from within the code and from the outside of an application. Vulnerability scanners search in a variety of code languages such as C or C++, Java, Python, and PHP. Some common code vulnerabilities to scan for include structured query language (or SQL) injection, cross-site scripting and path traversal of files and directories in web applications.
+**Vulnerability scanning is the search for security vulnerabilities from within the code and from the outside of an application.** Vulnerability scanners search in a variety of code languages such as C or C++, Java, Python, and PHP. Some common code vulnerabilities to scan for include structured query language (or SQL) injection, cross-site scripting and path traversal of files and directories in web applications.
 
 - Vulnerability scans on the specific platform configuration, the patch levels, or the application composition. For a web application, vulnerability scans may require access to user credentials to scan the flow of an application according to how users interact with the application. Vulnerability scans should span the entire application flow, across the whole application, the stack, and all supporting platforms. 
 
@@ -2775,7 +2741,7 @@ Vulnerability scanning is the search for security vulnerabilities from within th
 
 ## Security Testing
 
-Security tests are s of application code and their packaged library dependencies. Procedures for comparing the states of an application or a system. Security testing provides a secure code baseline for development. You should perform security tests on all new code to reduce the risk of impacts. Any code changes may create vulnerabilities in previously secure code. 
+**Security tests are scan of application code and their packaged library dependencies**. Procedures for comparing the states of an application or a system. Security testing provides a secure code baseline for development. You should perform security tests on all new code to reduce the risk of impacts. Any code changes may create vulnerabilities in previously secure code. 
 
 Secure testing takes place during the Test stage along with code review. Although secure code should be a top priority during the Test phase, s of application code and their packaged library dependencies. Security testing should be part of your secure coding processes throughout the SDLC. 
 
@@ -2789,7 +2755,7 @@ BDD-Security is a security testing framework that uses behavior-driven developme
 
 
 ## Static Analysis
-Static analysis examines all code or runtime binaries to help detect common vulnerabilities. It's a debugging method that automatically inspects source code before execution. Static application security testing (or SAST) examines source code to identify security flaws that render your organization's applications vulnerable to attack. It is extremely effective in detecting problems in code and do not require code to be complete. 
+**Static analysis examines all code or runtime binaries to help detect common vulnerabilities**. It's a debugging method that automatically inspects source code before execution. **Static Application Security Testing (SAST)** examines source code to identify security flaws that render your organization's applications vulnerable to attack. It is extremely effective in detecting problems in code and do not require code to be complete. 
 
 Static analysis can take a long time because it thoroughly scans the code. Where does static analysis belong in the software development lifecycle (or SDLC)? Static code analysis takes place early in the development process before software testing begins. For DevOps enterprises, static analysis occurs during the Develop stage And establishes an automatic feedback loop. So, you will become aware of any issues with your code from the start. And it will be simpler for you to resolve those issues. 
 
@@ -2844,9 +2810,9 @@ Ref:
 
 ## Dynamic Analysis
 
-- Dynamic analysis is the process of testing and evaluating an application as it is executing. Dynamic analysis is typically run against fully built applications. While you would most often perform static analysis in development, you perform dynamic analysis in staging, pre-prod, or even after you deploy the code to production (best to be done in pre-production)
+- **Dynamic analysis is the process of testing and evaluating an application as it is executing**. Dynamic analysis is typically run against fully built applications. While you would most often perform static analysis in development, you perform dynamic analysis in staging, pre-prod, or even after you deploy the code to production (best to be done in pre-production)
 
-- DAST evaluates the application from the outside in through the front end. DAST is not functional testing. It acts like an attacker. It simulates attacks to detect potential threats and vulnerabilities. Because DAST does not have access to the source code, it performs black-box testing, analyzing behaviors of inputs and outputs
+- **DAST evaluates the application from the outside in through the front end**. DAST is not functional testing. It acts like an attacker. It simulates attacks to detect potential threats and vulnerabilities. Because DAST does not have access to the source code, it performs black-box testing, analyzing behaviors of inputs and outputs
 
 Here are three key benefits of using dynamic analysis: 
 
