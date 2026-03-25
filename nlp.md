@@ -129,7 +129,7 @@
     - [Answering Questions with RAG](#answering-questions-with-rag)
     - [Evaluating Question Answering](#evaluating-question-answering)
   - [RAG Components](#rag-components)
-    - [Retriever - embeddings 🗂️](#retriever---embeddings-️)
+    - [Retriever - embeddings](#retriever---embeddings)
       - [Split the documents into chunks](#split-the-documents-into-chunks)
         - [Character Splitting](#character-splitting)
         - [Recursive Character Text Splitting](#recursive-character-text-splitting)
@@ -144,6 +144,7 @@
         - [Advantages of Agentic Chunking Over Traditional Methods](#advantages-of-agentic-chunking-over-traditional-methods)
     - [More Chunking/Indexing](#more-chunkingindexing)
     - [RAG Evaluation](#rag-evaluation)
+        - [Summary Table: Where to Focus](#summary-table-where-to-focus)
       - [Evaluating RAG Performance](#evaluating-rag-performance)
         - [Build a Synthetic Evaluation Dataset](#build-a-synthetic-evaluation-dataset)
         - [Load the knowledge base](#load-the-knowledge-base)
@@ -385,14 +386,14 @@ Two algorithms are widely used: **byte-pair encoding** (Sennrich et al., 2016), 
 
 BPE relies on a **pre-tokenizer** that splits the training data into words. **Pre-tokenization** can be as simple as space tokenization, e.g. **GPT-2**, **Roberta**. More advanced pre-tokenization include rule-based tokenization, e.g. XLM, FlauBERT which uses Moses for most languages, or GPT which uses Spacy and ftfy, to count the frequency of each word in the training corpus. After pre-tokenization which determines the word boundaries, a set of unique words has been created and the frequency with which each word occurred in the training data has been determined. 
 
-The BPE token learner begins with a vocabulary that is just the set of all individual characters. It then examines the training corpus:
+The BPE token learner begins with a **base vocabulary** that is just the set of *all individual characters*. It then examines the training corpus:
 - Chooses the two symbols that are most frequently adjacent (say ‘A’, ‘B’) 
 - Adds a new merged symbol ‘AB’ to the vocabulary, and replaces every adjacent ’A’ ’B’ in the corpus with the new ‘AB’
-- It continues to count and merge, creating new longer and longer character strings, until $k$ merges have been done creating $k$ novel tokens
+- It continues to count and merge, creating new longer and longer character strings, *until $k$ merges have been done* creating $k$ novel tokens
   
 Number $k$ is the hyperparameter of the algorithm to define before training the tokenizers. The resulting vocabulary consists of the original set of characters plus $k$ new symbols. The algorithm is usually run inside words (not merging across word boundaries), so the input corpus is first white-space-separated to give a set of strings, each corresponding to the characters of a word, plus a special end-of-word symbol , and its counts.
 
-Once we’ve learned our vocabulary, the token segmenter is used to tokenize a test sentence. The token segmenter just runs on the merges we have learned from the training data on the test data. It runs them greedily, in the order we learned them. (Thus the frequencies in the test data don’t play a role, just the frequencies in the training data do). 
+Once we’ve learned our vocabulary, the token segmenter is used to tokenize a test sentence. The token segmenter just runs on the merges we have learned from the training data on the test data. It runs them greedily, in the order we learned them. *Thus the frequencies in the test data don’t play a role, just the frequencies in the training data do*. 
 - First we segment each test sentence word into characters. 
 - Then we apply the first rule, then the second rule and so on. 
  
@@ -657,11 +658,11 @@ $$
 This equation is still too hard to compute directly: without some simplifying assumptions, estimating the probability of every possible combination of features would require huge numbers of parameters and impossibly large training sets. Naive Bayes classifiers therefore make two simplifying assumptions:
 
 - The first is the **bag-of-words assumption**: we assume position doesn’t matter, and that the word “love” has the same effect on classification whether it occurs as the 1st, 20th, or last word in the document. Thus we assume that the features $f_1,f_2, \dots, f_n$ only encode word identity and not position. Therefore, we represent a text document as an unordered set of words with their position ignored, keeping only their frequency in the document. 
-- The second is commonly called the Naive Bayes assumption:  the **conditional independence** assumption; the probabilities $P( f_i\mid c)$ are independent given the class $c$ and hence can be "naively" multiplied as follows:
+- The second is commonly called the **Naive Bayes assumption**:  the **conditional independence** assumption; the probabilities $P( f_i\mid c)$ are independent given the class $c$ and hence can be "naively" multiplied as follows:
 
-$$
-P(f_1,f_2,...,f_n \mid c) = \prod_{i=1}^n P(f_i\mid c)
-$$ 
+    $$
+    P(f_1,f_2,...,f_n \mid c) = \prod_{i=1}^n P(f_i\mid c)
+    $$ 
 
     Note that this doesn’t mean they’re independent!
 
@@ -900,13 +901,13 @@ Word2Vec and GloVe are trained with objectives that ensure that words appearing 
 
 To create word embeddings you always need a corpus of text, and an embedding method. The context of a word tells you what type of words tend to occur near that specific word. The context is important as this is what will give meaning to each word embedding. There are many types of possible methods that allow you to learn the word embeddings *but mainly they involve a machine learning model performs a learning task, and the main by-products of this task are the word embeddings*. The task could be to learn to predict a word based on the surrounding words in a sentence of the corpus. These vectors capture information about the meaning of the word based on the surrounding words. 
 
-**Word2vec** is a technique in natural language processing (NLP) for obtaining vector representations of words. The word2vec algorithm estimates these representations by modeling text in a large corpus. Once trained, such a model can detect synonymous words or suggest additional words for a partial sentence. Word2vec was developed by Tomáš Mikolov and colleagues at Google and published in 2013. Word2vec represents a word as a high-dimension vector of numbers which capture relationships between words. In particular, *words which appear in similar contexts are mapped to vectors which are nearby as measured by cosine similarity*. This indicates the level of semantic similarity between the words, so for example the vectors for `walk` and `ran` are nearby, as are those for `but` and `however`, and `Berlin` and `Germany`. Word2vec can use either of two model architectures to produce these distributed representations of words: 
+**Word2vec** is a technique in natural language processing for obtaining vector representations of words. The word2vec algorithm estimates these representations by modeling text in a large corpus. Once trained, such a model can detect synonymous words or suggest additional words for a partial sentence. Word2vec was developed by Tomáš Mikolov and colleagues at Google and published in 2013. Word2vec represents a word as a high-dimension vector of numbers which capture relationships between words. In particular, *words which appear in similar contexts are mapped to vectors which are nearby as measured by cosine similarity*. This indicates the level of semantic similarity between the words, so for example the vectors for `walk` and `ran` are nearby, as are those for `but` and `however`, and `Berlin` and `Germany`. 
+
+Word2vec can use either of two model architectures to produce these distributed representations of words: 
 - **Continuous bag of words (CBOW)**
 - **Continuously sliding skip-gram**
 
-In both architectures, word2vec considers both individual words and a sliding context window as it iterates over the corpus. The CBOW can be viewed as a ‘fill in the blank’ task, where the word embedding represents the way the word influences the relative probabilities of other words in the context window. Words which are semantically similar should influence these probabilities in similar ways, because semantically similar words should be used in similar contexts. The order of context words does not influence prediction (bag of words assumption).
-
-In the continuous skip-gram architecture, the model uses the current word to predict the surrounding window of context words. The skip-gram architecture weighs nearby context words more heavily than more distant context words. According to the authors' note, CBOW is faster while skip-gram does a better job for infrequent words.
+In both architectures, word2vec considers both individual words and a sliding context window as it iterates over the corpus. The CBOW can be viewed as a ‘fill in the blank’ task, where the word embedding represents the way the word influences the relative probabilities of other words in the context window. Words which are semantically similar should influence these probabilities in similar ways, because semantically similar words should be used in similar contexts. The order of context words does not influence prediction (bag of words assumption). In the continuous skip-gram architecture, the model uses the current word to predict the surrounding window of context words. The skip-gram architecture weighs nearby context words more heavily than more distant context words. According to the authors' note, CBOW is faster while skip-gram does a better job for infrequent words.
 
 These tasks are **self-supervised**: it is both unsupervised in the sense that the input data — the corpus — is unlabelled, and supervised in the sense that the data itself provides the necessary context which would ordinarily make up the labels. 
 
@@ -974,9 +975,7 @@ $$
 \hat y_i = P(c|t) = \frac{e^{\theta_t^Tc}}{\sum_{c \in V} e^{\theta_{t}^Tc}},
 $$
 
-where $\theta_t$ output of softmax when model input is one-hot vector $t$ for target $t$, and $c$ is the one-hot vector for context word. The loss is cross-entropy the same as mentioned before. Only one probability vector $\hat y$ is computed. Skip-gram treats each context word equally: the models computes the probability for each word of appearing in the context independently of its distance to the center word. 
-
-Loss functions for CBOW and SkipGram are expensive to compute because of the softmax normalization, where we sum over all $|V|$ scores! Computing the denominator of this formulation involves performing a full softmax over the entire vocabulary words, which are often large terms. See this [notes](https://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes01-wordvecs1.pdf) for more details.
+where $\theta_t$ output of softmax when model input is one-hot vector $t$ for target $t$, and $c$ is the one-hot vector for context word. The loss is cross-entropy the same as mentioned before. Only one probability vector $\hat y$ is computed. Skip-gram treats each context word equally: the models computes the probability for each word of appearing in the context independently of its distance to the center word. Loss functions for CBOW and SkipGram are expensive to compute because of the softmax normalization, where we sum over all $|V|$ scores! Computing the denominator of this formulation involves performing a full softmax over the entire vocabulary words, which are often large terms. See this [notes](https://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes01-wordvecs1.pdf) for more details.
 
 
 ## High-Dimensional Outputs
@@ -1016,8 +1015,8 @@ Yet another visualization method is to use a clustering algorithm to show a hier
 ## Sentence Embeddings
 Just as word embeddings are vector representations of words, sentence embeddings are vector representations of a sentence. There are three approaches we can take: `[CLS]` pooling, max pooling and mean pooling.
 
-- Mean pooling means averaging all the word embeddings of the sentence.
-- Max pooling means taking the maximum value of each dimension of the word embeddings.
+- **Mean pooling** means averaging all the word embeddings of the sentence.
+- **Max pooling** means taking the maximum value of each dimension of the word embeddings.
 - `[CLS]` pooling means using the embedding corresponding to the `[CLS]` token as the sentence embedding. This is an output of BERT which is used for next-sentence prediction. We can obtain it like this:
 
     ```python
@@ -1025,7 +1024,7 @@ Just as word embeddings are vector representations of words, sentence embeddings
     model_output = model(**encoded_input)
     sentence_embedding = model_output["last_hidden_state"][:, 0, :]
     ```
-    On top of `[CLS]` token, a linear FC layer with `tanh` activation function is applied to get the representation that is used to train a binary classification. The idea is that the linear layer and the tanh activation function will learn a better representation of the `[CLS]` token. This is the *pooler component* of the BERT model and is used to obtain the `model_output.pooler_output`. This makes processing the `[CLS]` token more meaningful than the raw `[CLS]` embedding. It can be obtained like this:
+    On top of `[CLS]` token, a linear FC layer with `tanh` activation function is applied to get the representation that is used to train a binary classification. The idea is that the linear layer and the `tanh` activation function will learn a better representation of the `[CLS]` token. This is the *pooler component* of the BERT model and is used to obtain the `model_output.pooler_output`. This makes processing the `[CLS]` token more meaningful than the raw `[CLS]` embedding. It can be obtained like this:
     ```python
     model.pooler(model_output["last_hidden_state"])[0][:10] 
     # Or, equivalently:
@@ -1715,7 +1714,7 @@ While the original Transformer architecture doesn’t use recurrent or convoluti
 
 
 <p align="center">
-    <img src="./assets/seq-models/transformer-arch2.png" alt="drawing" width="400" height="500" style="center" />
+    <img src="./assets/seq-models/transformer-arch2.png" alt="drawing" width="500" height="600" style="center" />
 </p>
 
 The purpose of each **encoder layer** is to create **contextual representations** of the tokens, where each representation corresponds to a token that "mixes" information from other input tokens via self-attention mechanism. The encoder is composed of a stack of $N = 6$  identical layers. Each of these layers has two sub-layers:  
@@ -1740,7 +1739,7 @@ The **decoder** is composed of a stack of $N=6$ identical layers.  Each decoder 
 The **cross attention** sub-layer uses the encoder output as two of its three input values, which will be described in the next part of the chapter, for the multi-head attention. This sub-layer is in its function very close to the before seen attention mechanisms between encoders and decoders. It uses, same as the encoder, residual connections around each of the sub-layers.  
 
 <p align="center">
-    <img src="./assets/seq-models/encoder-decoder2.png" alt="drawing" width="600" height="400" style="center" />
+    <img src="./assets/seq-models/encoder-decoder2.png" alt="drawing" width="700" height="500" style="center" />
 </p>
 
 The decoder also uses a modified, **masked self-attention** sub-layer to prevent positions from attending to subsequent positions. This, coupled with the fact that the output embeddings are shifted by one position to the right ensures that the predictions for position $i$ only depend on previous known outputs. The output of this layer become the third input value for the multi-head attention. This attention is called **cross attention** because it calculates attention between input (after encoding) and output after masking. All sub-layers and the embedding layer before the encoder/decoder produce outputs of dimension 512 to allow these residual connections to work. The position-wise feed-forward network used in the sub-layer is applied to each position separately and identically. This network consists of two linear transformations with a ReLU activation function in between. 
@@ -1796,10 +1795,10 @@ At the end, the attention head is multiplied by the matrix $\bm W_O$. This is ne
 So far we have described a single attention head. But actually, transformers use multiple attention heads. The intuition is that each head might be attending to the context for different purposes: *each head might be specialized to represent different linguistic relationships between context elements and the current token, or to look for particular kinds of patterns in the context*. So in **multi-head attention**, we have $n$ separate attention heads that reside in parallel layers at the same depth in a model, each with its own set of parameters that allows the head to model different aspects of the relationships among inputs. Thus each **head**$_h$ in a self-attention layer has its own set of key, query and value matrices: $\bm W^h_{Q}, \bm W^h_{K}, \bm W^h_{V}$. These are used to project the inputs into separate key, value, and query embeddings for each head. When using multiple heads the model dimension $d$ is still used for the input and output, the key and query embeddings have dimensionality $d_k$, and the value embeddings are of dimensionality $d_v$ (again, in the original transformer paper $d_k = d_v = 64, A= 8$, and $d= 512$). Thus for each **head**$_h$, we have weight layers $\bm W^h_Q$ of shape $d \times d_k$, $\bm W^h_K$ of shape $d \times d_k$, and $W^h_V$ of shape $d ×d_v$. Each attention head calulates its output the same way as described before: $\text{head}_h = \sum_{j\leq i} \alpha_{ij} \bm v_j$. 
 
 $$
-\bm a_i = (\text{head}_1 \oplus \dots \oplus \text{head}_n) \bm W_o
+\bm a_i = (\text{head}_1 \oplus \dots \oplus \text{head}_h) \bm W_o
 $$
 
-Multihead attention concatnates them to produce a single output with domensionality $1 \times nd_v$. Then we use yet another linear projection $\bm W_O$ of dimension $nd_v \times d$ to reshape it, resulting in the multi-head attention vector $\bm a_i$ with the correct output shape $1 ×d$ at each input $i$. 
+Multihead attention concatnates them to produce a single output with domensionality $1 \times hd_v$. Then we use yet another linear projection $\bm W_O$ of dimension $hd_v \times d$ to reshape it, resulting in the multi-head attention vector $\bm a_i$ with the correct output shape $1 ×d$ at each input $i$. 
 
 <p align="center">
 <img src="./assets/seq-models/multihead-attention1.png" alt="drawing" width="600" height="400" style="center" />
@@ -1960,11 +1959,10 @@ where $t$ is the position 0, 1, 2, 3, ... of token in the sequence and $i= 0,1,.
 <!-- Where do we get these positional embeddings? The simplest method, called *absolute position*, is to start with randomly initialized embeddings corresponding to each possible input position up to some maximum length. For example, just as we have an embedding for the word `fish`, we’ll have an embedding for the position 3. As with word embeddings, these positional embeddings are _learned_ along with other parameters during training. We can store them in a matrix $\bm E_{pos}$ of shape $N \times d$. To produce an input embedding that captures positional information, we just add the word embedding for each input to its corresponding positional embedding. The individual token and position embeddings are both of size $1 \times d$, so their sum is also $1 \times d$. This new embedding serves as the input for further processing. A potential problem with the simple position embedding approach is that there will be plenty of training examples for the initial positions in our inputs and correspondingly fewer at the outer length limits. These latter embeddings may be poorly trained and may not generalize well during testing. An alternative is to choose a static function that maps integer inputs to real-valued vectors in a way that better handle sequences of arbitrary length. A combination of sine and cosine functions with differing frequencies was used in the original transformer work. Sinusoidal position embeddings may also help in capturing the inherent relationships among the positions, like the fact that position 4 in an input is more closely related to position 5 than it is to position 17. Among the choices for positional encodings (learned or fixed), Vaswani et al. (2017) chose the `sine` and `cosine` function of different frequencies for positional encodings:
  -->
 
-<br><br>
 
 ### Language Model Head
 
-The last component of the transformer is the language modeling head. The job of the language modeling head is to take the output of the final transformer layer from the last token $i$ and use it to predict the upcoming word at position $i + 1$. This is done by taking the output of the last token at the last layer and *producing a probability distribution over words in the vocabulary*. 
+The last component of the transformer is the language modeling head. The job of the language modeling head is to take the output of the final transformer layer from the last token $i$ and use it to predict the upcoming word at position $i + 1$. This is done by taking the output of the last token at the last layer and **producing a probability distribution over words in the vocabulary**. 
 
 <p align="center">
 <img src="./assets/seq-models/transformer-lmh.png" alt="drawing" width="500" height="500" style="center" />
@@ -1989,13 +1987,12 @@ Here is a collection of some **foundation models**, also sometimes called **base
 
 You can split the components transformer model apart for variations of the architecture.
 
-- **Encoder-only** models also work as seq2seq models (input and output length are the same) but with further modification, you can perform tasks such as s*entiment analysis*, *classification* (use the output of `[CLS]` token), *span extraction*, *embedding tasks*(e.g., sentence similarity), *token classification* (e.g., NER), etc. **BERT** is an example of only encoder model. Characteristics:
+- **Encoder-only** models also work as seq2seq models (input and output length are the same) but with further modification, you can perform tasks such as s*entiment analysis*, *classification* (use the output of `[CLS]` token), *span extraction*, *embedding tasks* (e.g., sentence similarity), *token classification* (e.g., NER), etc. **BERT** is an example of only encoder model. Characteristics:
   - Input: full sequence (e.g., a sentence or pair of sentences)
   - Output: same length — one output embedding per token
   - No autoregression or causal attention — full bidirectional attention
 
-- **Encoder-decoder** models allows for different input output size such as `T5` . The encoder produces a sequence of hidden states (contextualized representations). This is fully bidirectional — each token attends to all others. Its decoder part takes previously generated tokens as input (with masking to
-prevent seeing the future) . It also attends both to its own previous outputs (causal self-attention) and the encoder outputs (via cross-attention). The model predicts the next token autoregressively
+- **Encoder-decoder** models allows for different input output size such as `T5` . The encoder produces a sequence of hidden states, that is **contextualized representations**. This is fully bidirectional — each token attends to all others. Its decoder part takes previously generated tokens as input (with masking to prevent seeing the future) . It also attends both to its own previous outputs (causal self-attention) and the encoder outputs (via cross-attention). The model predicts the next token autoregressively
 
 - **Decoder-only** models are some the most commonly used ones such as `GPT`, `BLOOM`, `Lalma`. These are used for text generation tasks. Characteristics:
     - Input: a prompt
@@ -2352,7 +2349,7 @@ It turns out that training these enormous models is difficult and very expensive
 ## Computational challenges of training LLMs
 One of the most common issues you still counter when you try to train large language models is **running out of memory**. If you've ever tried training or even just loading your model on Nvidia GPUs, this error message might look familiar **CUDA**, short for Compute Unified Device Architecture, is a collection of libraries and tools developed for Nvidia GPUs. Libraries such as PyTorch and TensorFlow use CUDA to boost performance on matrix multiplication and other operations common to deep learning. You'll encounter these out-of-memory issues because most LLMs are huge, and require a ton of memory to store and train all of their parameters.
 
-Let's do some quick math to develop intuition about the scale of the problem. A single parameter is typically represented by a 32-bit float, which is a way computers represent real numbers.A 32-bit float takes up 4 bytes of memory. So to store one billion parameters you'll need four bytes times one billion parameters, or _4 gigabyte of GPU RAM at 32-bit full precision_. This is a lot of memory, and note, if only accounted for the memory to store the model weights so far. If you want to train the model, you'll have to plan for additional components that use GPU memory during training. _These include two Adam optimizer states, gradients, activations, and temporary variables_ needed by your functions. This can easily lead to *20 extra bytes of memory per model parameter*. In fact, to account for all of these overhead during training, you’ll actually require approximately *6 times the amount of GPU RAM that the model weights alone* take up. _To train a 1 billion parameter model at 32-bit full precision, you'll need approximately 24 gigabyte of GPU RAM_. This is definitely too large for consumer hardware, and even challenging for hardware used in data centers, if you want to train with a single processor. What options do you have to reduce the memory required for training? One technique that you can use to reduce the memory is called **quantization**. The main idea here is that you reduce the memory required to store the weights of your model by reducing their precision from 32-bit floating point numbers to *16-bit floating point* numbers, or *eight-bit integer* numbers. 
+Let's do some quick math to develop intuition about the scale of the problem. A single parameter is typically represented by a 32-bit float, which is a way computers represent real numbers. A 32-bit float takes up 4 bytes of memory. So to store one billion parameters you'll need four bytes times one billion parameters, or _4 gigabyte of GPU RAM at 32-bit full precision_. This is a lot of memory, and note, if only accounted for the memory to store the model weights so far. If you want to train the model, you'll have to plan for additional components that use GPU memory during training. _These include two Adam optimizer states, gradients, activations, and temporary variables_ needed by your functions. This can easily lead to *20 extra bytes of memory per model parameter*. In fact, to account for all of these overhead during training, you’ll actually require approximately *6 times the amount of GPU RAM that the model weights alone* take up. _To train a 1 billion parameter model at 32-bit full precision, you'll need approximately 24 gigabyte of GPU RAM_. This is definitely too large for consumer hardware, and even challenging for hardware used in data centers, if you want to train with a single processor. What options do you have to reduce the memory required for training? One technique that you can use to reduce the memory is called **quantization**. The main idea here is that you reduce the memory required to store the weights of your model by reducing their precision from 32-bit floating point numbers to *16-bit floating point* numbers, or *eight-bit integer* numbers. 
 
 The corresponding data types used in deep learning frameworks and libraries are FP32 for 32-bit full position, FP16, or Bfloat16 for 16-bit half precision, and int8 eight-bit integers. The range of numbers you can represent with FP32 goes from approximately $-3*10^{38}$ to $3*10^{38}$. By default, model weights, activations, and other model parameters are stored in FP32. Quantization statistically projects the original 32-bit floating point numbers into a lower precision space, using scaling factors calculated based on the range of the original 32-bit floating point numbers. Let's look at an example. Suppose you want to store a PI to six decimal places in different positions. Floating point numbers are stored as a series of bits zeros and ones. The 32 bits to store numbers in full precision with FP32 consist of one bit for the sign where zero indicates a positive number, and one a negative number. Then 8 bits for the exponent of the number, and 23 bits representing the fraction of the number. The fraction is also referred to as the _significant_. It represents the precision bits off the number. _If you convert the 32-bit floating point value back to a decimal value, you notice the slight loss in precision_. For reference, here's the real value of Pi to 19 decimal places. Now, let's see what happens if you project this FP32 representation of Pi into the FP16, 16-bit lower precision space. The 16 bits consists of one bit for the sign, as you saw for FP32, but now FP16 only assigns five bits to represent the exponent and 10 bits to represent the fraction.
 
@@ -3070,9 +3067,9 @@ In 2020, researchers at OpenAI published a paper that explored the use of fine-t
 2. **Supervised Learning Can't Learn Preference**: in tasks like dialogue generation, summarization, code explanation, it’s often hard to say what the right answer is. But humans can rank two outputs and say, “this one is better.” RLHF lets us train models using these human preferences instead of requiring perfect answers.
 
 3. **It Enables Fine Control**: by training a reward model on human preferences, you can:
-- Reward helpfulness
-- Penalize toxicity or hallucination
-- Encourage concise or polite behavior
+   - Reward helpfulness
+   - Penalize toxicity or hallucination
+   - Encourage concise or polite behavior
 
 This is a powerful tool for fine-tuning behavior without retraining from scratch called **reinforcement learning from human feedback (RLHF)**. It is a popular technique to finetune large language models with human feedback based on a very natural and intuitive pradigm of learning called **Reinforecment Learning** in which the model interacts with its environment through actions based on the return reward. Over many iterations, the models learns to choose the optimal actions at different states in the environment such that it maximizes some notions of the expected reward. If you want a quick review, see my notes on the [Basics of Reinforcement Learning](https://yas2020.github.io/Notes/deep_RL.html).  You can use RLHF to make sure that your model produces outputs that maximize usefulness and relevance to the input prompt. Perhaps most importantly, RLHF can help minimize the potential for harm. You can train your model to give caveats that acknowledge their limitations and to avoid toxic language and topics. One potentially exciting application of RLHF is the **personalizations** of LLMs, where models learn the preferences of each individual user through a continuous feedback process. This could lead to exciting new technologies like **personalized AI assistants**. 
 
@@ -3081,16 +3078,16 @@ At this point, one might ask why not just fine-tune the model directly on exampl
 - Prompt → Response A (preferred) → Fine-tune the model to produce A
 - This is simpler than RLHF and often used in earlier stages.
 
-But it has a key limitation: *it Ignores Trade-Offs & Exploration*.
+But it has a key limitation: **it ignores Trade-Offs & Exploration**.
 
 1. **It treats preference as absolute**.
 When you fine-tune with a preferred response, you tell the model: "This is the correct answer." But human preferences are often relative like,  Response A is better than B — not necessarily "perfect". There may be multiple good responses. *Supervised fine-tuning can't learn from comparisons* or subtleties in quality.
 
-2. **No reward shaping or long-term learning**.
+1. **No reward shaping or long-term learning**.
 Fine-tuning just memorizes the better responses in training data. It doesn’t:
-- Explore new outputs that might be even better
-- Balance trade-offs (e.g., helpful vs. concise)
-- Penalize unwanted behavior unless explicitly shown
+   - Explore new outputs that might be even better
+   - Balance trade-offs (e.g., helpful vs. concise)
+   - Penalize unwanted behavior unless explicitly shown
 
 With RLHF, the model gets dynamic rewards, allowing it to:
 
@@ -3105,7 +3102,7 @@ You train a reward model to estimate human preferences. You use PPO (or other RL
 | Supervised fine-tuning on preferences	| Simple, easy to implement	| Static, can’t generalize preferences well |
 | RLHF (with PPO & reward model) | Learns trade-offs, explores better behavior, aligns outputs more flexibly	| More complex, harder to train | 
 
-Let's start by taking a closer look at how RLHF works. In the case of fine-tuning large language models with RLHF, the agent's policy is an LLM. In fact LLM itself is the **policy** network we are trying to finetune using policy optimization algorithms. The **action** here is the act of generating text by the LLM which could be a single word or a sentence. The **action space** is the token vocabulary, meaning all the possible tokens that the model can choose from to generate the completion. The **environment** is the context window of the model, the space in which text can be entered via a prompt. The current **state** is the current context that is, any text currently contained in the context window. A response or completion is a **trajectory** in the space-action space. The **reward** is assigned based on how closely the completions align with human preferences. The objective is to generate text that is perceived as being aligned with the human preferences generating _maximum expected return_ from the rewards.
+Let's start by taking a closer look at how RLHF works. In the case of fine-tuning large language models with RLHF, the agent's policy is an LLM. In fact LLM itself is the **policy network** we are trying to finetune using policy optimization algorithms. The **action** here is the act of generating text by the LLM which could be a single word or a sentence. The **action space** is the token vocabulary, meaning all the possible tokens that the model can choose from to generate the completion. The **environment** is the context window of the model, the space in which text can be entered via a prompt. The current **state** is the current context that is, any text currently contained in the context window. A response or completion is a **trajectory** in the space-action space. The **reward** is assigned based on how closely the completions align with human preferences. The objective is to generate text that is perceived as being aligned with the human preferences generating **maximum expected return** from the rewards.
 
 Ordinary reinforcement learning, in which agents learn from their actions based on a predefined "reward function", is difficult to apply to NLP tasks because the rewards tend to be difficult to define or measure, especially when dealing with complex tasks that involve human values or preferences. One way you can do this is to have a human evaluate all of the completions of the model against some alignment metric, such as determining whether the generated text is toxic or non-toxic. This feedback can be represented as a scalar value, either a zero or a one. One can also rank the ouput as 1, 2, 3, ... depending on how aligned they are with our preferences. The LLM weights are then updated iteratively to maximize the reward obtained from the human classifier, enabling the model to generate non-toxic completions.  However, obtaining human feedback can be time consuming and expensive. 
 
@@ -3126,14 +3123,14 @@ In the original [paper by OpenAI](https://arxiv.org/pdf/2203.02155), the process
 
 - Step 1: Collect **demonstration data**, and train a supervised policy. The labelers provide demonstrations of the desired behavior on the input prompt distribution. Then fine-tune a pretrained GPT-3 model on this data using supervised learning.
 - Step 2: Collect **comparison data**, and train a reward model. Collect a _dataset of comparisons between model outputs_, where labelers indicate which output they prefer for a given input. We then train a reward model to predict the human-preferred output.
-- Step 3: **Optimize a policy against the reward model using PPO**. We use the output of the RM as a scalar reward. We fine-tune the supervised policy to optimize this reward using the PPO algorithm.
+- Step 3: **Optimize the policy against the reward model using PPO**. We use the output of the RM as a **scalar reward**. We fine-tune the supervised policy to optimize this reward using the PPO algorithm.
 
 Steps 2 and 3 can be iterated continuously; more comparison data is collected on the current best policy, which is used to train a new RM and then a new policy. In practice, most of our comparison data comes from our supervised policies, with some coming from our PPO policies.
 
 Three different datasets were used in the fine-tuning procedure:
-- SFT dataset, with labeler demonstrations used to train SFT models
-- RM dataset, with labeler rankings of model outputs used to train RMs
-- PPO dataset, without any human labels, which are used as inputs for RLHF fine-tuning. 
+- **SFT dataset**, with labeler demonstrations used to train SFT models
+- **RM dataset**, with labeler rankings of model outputs used to train RMs
+- **PPO dataset**, without any human labels, which are used as inputs for RLHF fine-tuning. 
 
 The SFT dataset contains about 13k training prompts (from the API and labeler-written), the RM dataset has 33k training prompts (from the API and labeler-written), and the PPO dataset has 31k training prompts (only from the API). The prompts datasets are very diverse and include **generation**, **question answering**, **dialog**, **summarization**, **extractions**, and other natural language tasks. For each natural language prompt, the task is most often specified directly through a natural language instruction (e.g. “Write a story about a wise frog”), but could also be indirectly through either few-shot examples (e.g. giving two examples of frog stories, and prompting the model to generate a new one) or implicit continuation (e.g. providing the start of a story about a frog). In each case, labelers do their best to infer the intent of the user who wrote the prompt, and they skip inputs where the task is very unclear. Moreover, labelers also take into account the implicit intentions such as truthfulness of the response, and potentially harmful outputs such as biased or toxic language.
 
@@ -3149,7 +3146,7 @@ The training dataset of prompt-generation pairs for the RM is generated by sampl
 
 In [Stiennon et al. (2020)](https://arxiv.org/pdf/2009.01325) published by OpenAI, the RM is trained on a dataset of comparisons between two model outputs on the same input. They use a cross-entropy loss, with the comparisons as labels—the difference in rewards represents the log odds that one response will be preferred to the other by a human labeler. In order to speed up comparison collection, we present labelers with anywhere between $K = 4$ and $K = 9$ responses to rank. This produces $K \choose 2$ comparisons for each prompt shown to a labeler. They trained on all comparisons from each prompt as a _single batch element_ since this is much more computationally efficient because it only requires a single forward pass of the RM for each completion (rather than $K \choose 2$ forward passes for K completions) and, because it no longer overfits, it achieves much improved validation accuracy and log loss. In fact, if each of the possible $K \choose 2$ comparisons is treated as a separate data point, then each completion will potentially be used for $K−1$ separate gradient updates. The model tends to overfit after a single epoch, so repeating data within an epoch also causes it to overfit.
 
-The reward model is then trained by replacing the final layer of the previous model with a randomly initialized regression head. This change shifts the model from its original classification task over its vocabulary to simply outputting a number corresponding to the score of any given prompt and response. This model is trained on the human preference comparison data collected earlier from the supervised model. In particular, it is trained to minimize the following cross-entropy loss function:
+The reward model is then trained by replacing the final layer of the previous model with a **randomly initialized regression head**. This change shifts the model from its original classification task over its vocabulary to simply outputting a number corresponding to the score of any given prompt and response. This model is trained on the human preference comparison data collected earlier from the supervised model. In particular, it is trained to minimize the following cross-entropy loss function:
 
 $$
 \begin{align*}
@@ -3162,7 +3159,7 @@ where $K$ is the number of responses the labelers ranked, $r_{\theta }(x,y)$ is 
 
 #### Policy
 
-The **policy** is a pretrained language model that takes in a prompt and returns a response of text (or just probability distributions over text).  The action space of this policy is all the tokens corresponding to the vocabulary of the language model (often on the order of 50k tokens) and the observation space is the distribution of possible input token sequences, which is also quite large given previous uses of RL (the dimension is approximately the size of vocabulary ^ length of the input token sequence).
+The **policy** is a pretrained language model that takes in a prompt and returns a response of text (or just probability distributions over text).  The action space of this policy is all the tokens corresponding to the vocabulary of the language model (often on the order of 50k tokens) and the observation space is the distribution of possible input token sequences, which is also quite large given previous uses of RL (the dimension is approximately the size of $|\text{vocabulary}|^{|\text{length}|}$ of the input token sequence).
 
 The first step in policy training is supervised fine-tuning (SFT). This step does not require the reward model. Instead, the pre-trained model is trained on a dataset $D_{SFT}$ that contains prompt-response pairs $(x,y)$. The dataset $D_{SFT}$ is usually written by human contractors, who write both the prompts and responses. Then, during SFT, the model is trained to auto-regressively generate the corresponding response $y$ when given a random prompt $x$.
 
@@ -3350,9 +3347,9 @@ Three techniques are commonly employed to evaluate question-answering systems, w
 
 For questions with free text answers, like Natural Questions, we commonly evaluated with token F1 score to roughly measure the partial string overlap between the answer and the reference answer:
 
-- **F1 score**: The average token overlap between predicted and gold answers. Treat the prediction and gold as a bag of tokens, and compute F1 for each question, then return the average F1 over all questions.
+- **F1 score**: The **average token overlap** between predicted and gold answers. Treat the prediction and gold as a **bag of tokens**, and compute F1 for each question, then return the average F1 over all questions.
 
-Finally, in some situations QA systems give multiple ranked answers. In such cases we evaluated using **mean reciprocal rank**, or **MRR** (Voorhees, 1999). MRR is designed for systems that return a short ranked list of answers or passages for each test set question, which we can compare against the (human-labeled) correct answer. First, each test set question is scored with the reciprocal of the rank of the first correct answer. For example if the system returned five answers to a question but the first three are wrong (so the highest-ranked correct answer is ranked fourth), the reciprocal rank for that question is 1/4. The score for questions that return no correct answer is 0. The MRR of a system is the average of the scores for each question in the test set. In some versions of MRR, questions with a score of zero are ignored in this calculation. More formally, for a system returning ranked answers to each question in a test set Q, (or in the alternate version, let Q be the subset of test set questions that have non-zero scores). MRR is then defined as
+Finally, in some situations QA systems give multiple ranked answers. In such cases we evaluated using **mean reciprocal rank**, or **MRR** (Voorhees, 1999). **MRR is designed for systems that return a short ranked list of answers or passages** for each test set question (just like top-k retrieved documents), which we can compare against the (human-labeled) correct answer. First, **each test set question is scored with the reciprocal of the rank of the first correct answer**. For example if the system returned five answers to a question but the first three are wrong (so the highest-ranked correct answer is ranked fourth), the reciprocal rank for that question is 1/4. The score for questions that return no correct answer is 0. The MRR of a system is the average of the scores for each question in the test set. In some versions of MRR, questions with a score of zero are ignored in this calculation. More formally, for a system returning ranked answers to each question in a test set Q, (or in the alternate version, let Q be the subset of test set questions that have non-zero scores). MRR is then defined as
 
 $$
 MRR = \frac{1}{|Q|}\sum^{|Q|}_{i=1}\frac{1}{rank_i}
@@ -3362,7 +3359,7 @@ $$
 ## RAG Components
 
 
-### Retriever - embeddings 🗂️
+### Retriever - embeddings 
 
 Your RAG is as good as your retrieval engine. Although there is not perfect solution but there are some best practices to make retrieval pipeline effective. 
 
@@ -3416,7 +3413,7 @@ Separators are character(s) sequences you would like to split on. Say you wanted
 
 ##### Recursive Character Text Splitting
 
-With Recursive Character Text Splitter, we'll specify a *series of separators* which will be used to split our docs. If you don't know which splitter to start with, this is a good first bet. 
+With Recursive Character Text Splitter, we'll **specify a series of separators** which will be used to split our docs. If you don't know which splitter to start with, this is a good first bet. 
 
 Recursive chunking breaks down the text into smaller parts step by step using a given list of separators sorted from the most important to the least important separator. If the first split doesn't give the right size or shape of chunks, the method repeats itself on the new chunks using a different separator. You can see the default separators for LangChain here. Let's take a look at them one by one.
 
@@ -3453,7 +3450,7 @@ text_splitter.create_documents([text])
  Document(page_content='customers. You get no customers, and you go out of business.')]
 ```
 
-The `RecursiveCharacterTextSplitter` doesnt take in account the required token length limit that we may impose so some documents length might go above the limit and be lost in truncation by the embedding model! So we should change the RecursiveCharacterTextSplitter class to count length in number of tokens instead of number of characters:
+The `RecursiveCharacterTextSplitter` doesnt take in account the required token length limit that we may impose so some documents length might go above the limit and be lost in truncation by the embedding model! So we should change the `RecursiveCharacterTextSplitter` class to count length in number of tokens instead of number of characters:
 
 ```python
 text_splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(
@@ -3469,14 +3466,9 @@ This helps with the chunk length distribution!
 
 ##### Document Specific Splitting
 
-Let's start to handle document types other than normal prose in a .txt. What if you have pictures? or a PDF? or code snippets?
-
-Our first two strategies of chunking wouldn't work great for this so we'll need to find a different tactic.
-
-This level is all about making your chunking strategy fit your different data formats. Let's run through a bunch of examples of this in action
+Let's start to handle document types other than normal prose in a .txt. What if you have pictures? or a PDF? or code snippets? Our first two strategies of chunking wouldn't work great for this so we'll need to find a different tactic. This level is all about making your chunking strategy fit your different data formats. Let's run through a bunch of examples of this in action
 
 The Markdown, Python, and JS splitters will basically be similar to Recursive Character, but with different separators.
-
 See all of LangChains document splitters here and Llama Index (HTML, JSON, Markdown)
 
 ###### Markdown
@@ -3743,18 +3735,19 @@ Agentic chunking makes use of AI-based text-splitting methods, recursive chunkin
 
 ##### Advantages of Agentic Chunking Over Traditional Methods
 
-- Retains Context – Maintains crucial information without unnecessary breaks
-- Smart Sizing – Adjusts chunk boundaries according to meaning and significance
-- Efficient Retrieval – Improves search and RAG by minimizing unnecessary fragmentation
+- **Retains Context** – Maintains crucial information without unnecessary breaks
+- **Smart Sizing** – Adjusts chunk boundaries according to meaning and significance
+- **Efficient Retrieval**– Improves search and RAG by minimizing unnecessary fragmentation
 
 
 We pass our text to an LLM asking it to chunk this text into parts. Do this using an appropriate prompt template such as [this](https://smith.langchain.com/hub/wfh/proposal-indexing?organizationId=50995362-9ea0-4378-ad97-b4edae2f9f22) which starts by:
-
+```
 "SYSTEM
 
 Decompose the "Content" into clear and simple propositions, ensuring they are interpretable out of
 context.  [continued ... ]"
-
+```
+ 
 Then you get the chunks of the text changed in a way that are more self-explanatory and useful for embeddings. For example, one of the sentences in the raw text is "They meant well, but this is rarely true." is chucked as 
 
 ```python
@@ -3782,17 +3775,53 @@ See the source for more info.
 
 ### RAG Evaluation
 
-Traditional evaluation metrics based on the similarity between outputs and reference answers (e.g., ROUGE, BLEU) are also ineffective for evaluating RAG systems. A powerful solution to assess outputs in a human way, without requiring costly human time, is **LLM-as-a-judge**. The idea is simple: ask an LLM to do the grading for you.
+Traditional evaluation metrics based on the similarity between outputs and reference answers (e.g., ROUGE, BLEU) are also ineffective for evaluating RAG systems. In modern RAG (Retrieval-Augmented Generation) evaluation, this is done using three primary methods:
+
+1. **LLM-as-a-Judge (Automated)** 
+This is the most common method in frameworks like Ragas and DeepEval. 
+   - The Process: You provide an LLM (the "judge") with the user query and the retrieved chunk.
+   - The Criteria: The judge evaluates if the chunk provides factual information, identifies key entities, or offers even a partial answer to the query.
+   - Output: The LLM typically returns a binary classification (Relevant vs. Not Relevant) or a numerical score (e.g., 0 to 1). 
+
+2. **Ground-Truth Matching (Reference-Based)**
+If you have a pre-labeled "gold standard" dataset, you can measure relevance by comparing retrieved chunks against known correct documents. 
+   - Semantic Similarity: Calculating the cosine similarity between the embeddings of the retrieved chunk and a "ground truth" document.
+   - Overlap Analysis: Using metrics like Intersection over Union (IoU) to see how many tokens or key facts in the retrieved chunk match the reference answer. 
+  
+1. **Human Evaluation (The Gold Standard)**
+For high-stakes domains (medical, legal), human experts manually review chunks. 
+
+- Nuance: Humans can detect relevance that automated systems might miss, such as a chunk that provides necessary background context rather than a direct answer.
+- Graded Scales: Instead of simple "Yes/No," humans often use a 1–5 scale to capture "partial relevance," which provides more granular data for ranking metrics like NDCG. 
+
+Again a powerful solution to assess outputs in a human way, without requiring costly human time, is **LLM-as-a-judge**. The idea is simple: ask an LLM to do the grading for you.
 
 There are several evaluation metrics available for measuring the performance of our RAG pipeline. These metrics can be split into two parts:
 
 - **Generation evaluation**
     - **Faithfulness** measures if all generated answers can be inferred from the retrieved context.
     - **Answer relevancy** measures the relevancy of the generated response to the question.
+    - **Answer Correctness**: Compares the generated response against a "ground truth" reference answer to ensure factual accuracy.
 
 - **Retrieval evaluation**
-    - **Context precision** measures the ranking of ground-truth relevant entities in the context. Higher context precision means ground-truth relevant items are ranked higher than “noise.”
-    - **Context recall** measures the extent to which the LLM’s generated answers to user queries can be found in the retrieved context.
+    - **Precision@k**: The percentage of retrieved documents that are actually relevant among the top-k results
+    - **Recall@k**: The percentage of all truly relevant documents in your database that were successfully captured in the top-k results.
+    - **MRR (Mean Reciprocal Rank)**: Measures how high up the first relevant document appears in the results. It is critical for "factoid" questions where the user just needs one correct hit.
+    - **Context precision** measures the ranking of ground-truth relevant entities in the context. Higher context precision means ground-truth relevant items are ranked higher than “noise.” Precision focuses on: Are the retrieved documents relevant?
+    - **Context recall** measures the extent to which the LLM’s generated answers to user queries can be found in the retrieved context. Recall focuses on: Did I retrieve all necessary documents?
+- **Operational KPIs**:
+    - **Latency**: The time taken for both retrieval and generation steps.
+    - **Cost**: Total token consumption for the LLM and vector search expenses. 
+
+
+##### Summary Table: Where to Focus
+
+| If your problem is... |	Focus on this metric	| Suggested Action |
+| ---  | ----  | ----  |
+| **Hallucinations** |	Faithfulness (Groundedness)	| Improve retrieval quality or prompt grounding. | 
+| **Missing Info**	| Context Recall |	Adjust chunking strategy or retrieve more documents (k). |
+| **Off-topic Answers**	| Answer Relevance	| Refine your prompt engineering or query expansion. |
+| **Poor Ranking**	| nDCG / MRR	| Implement a reranker after the initial vector search.|
 
 These metrics are meant to be subjective proxies for how well a RAG pipeline retrieves relevant information from its knowledge base to form a response. It is important to note, there is no ideal for data, prompts or LLMs.  Even context that has a low scoring context_relevance is not necessarily bad context. The low score might be due to some amount of "noise," or less relevant information, or simply because the task itself is open to multiple interpretations. Noise is not necessarily bad either. We, as humans, produce a certain amount of noise in our responses while also being intelligible in answering questions. There are also biases that affect the evaluation of a RAG pipeline such as preference for either shorter or longer responses, otherwise known as length bias. This type of bias can lead to one response being evaluated higher than another because of its length and not its substance.
 
