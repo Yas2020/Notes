@@ -82,12 +82,7 @@ Deployment-aware
 Agentic AI without system depth is fragile.
 Agentic AI with system design is rare.
 That’s leverage.
-Now I want to calibrate something important.
-On a scale 1–10:
-How heavy does the financial guilt feel right now?
-If it’s above 7, we need to manage the emotional side in parallel.
-If it’s 4–6, structure will reduce it.
-Be honest.
+
 
 
 They’re looking for someone who can answer:
@@ -323,6 +318,550 @@ No scope creep.
 ----------------------
 ----------------
 ----------
+
+### Foundational Models
+- tempreture: higher -> more creative, lower -> more deterministic
+- max_tokens: limits the number of tokens in the response
+- timeout: max time to wait for response for the model before canceling the request
+- max retires: max amount of times to retiry your request if that request fails
+
+Now you create an agent with a custom model but its not very useful unless you taylair to to your specific usecase.
+
+The easiest way to customize the performance of a chat model is with system prompt. For example, when you ask a LLM the capital of the moon, it correctly tells you there isnt one.  
+
+```python
+from langchain.chat_models import init_chat_model
+
+model = init_chat_model(model="gpt-4.1-nano")
+
+response = model.invoke("What's the capital of the Moon?")
+response
+```
+```o
+AIMessage(content='The Moon does not have a capital, as it is a natural satellite and not an independent nation or political entity.', additional_kwargs={'refusal': None}, ....
+```
+or 
+
+```python
+response.content
+```
+
+```o
+'The Moon does not have a capital, as it is a natural satellite and not an independent nation or political entity.'
+```
+
+#### Initializing an agent
+
+```python
+from langchain.agents import create_agent
+from pprint import pprint
+
+agent = create_agent("gpt-4.1-nano")
+
+from langchain.messages import HumanMessage
+
+response = agent.invoke(
+    {"messages": [HumanMessage(content="What's the capital of the Moon?")]}
+)
+
+pprint(response)
+```
+```o
+{'messages': [HumanMessage(content="What's the capital of the Moon?", additional_kwargs={}, response_metadata={}, id='a716c09b-5361-4f45-9c59-25258d7a3a5d'),
+              AIMessage(content='The Moon does not have a capital, as it is a celestial body and not a country or city.', additional_kwargs={'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 21, 'prompt_tokens': 14, 'total_tokens': 35, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_provider': 'openai', 'model_name': 'gpt-4.1-nano-2025-04-14', 'system_fingerprint': 'fp_62b483d6f3', 'id': 'chatcmpl-DMzdR0Xby2J8jXEGttKprnaXUBZWI', 'service_tier': 'default', 'finish_reason': 'stop', 'logprobs': None}, id='lc_run--019d20d7-dde0-7613-8e69-817f590ba239-0', tool_calls=[], invalid_tool_calls=[], usage_metadata={'input_tokens': 14, 'output_tokens': 21, 'total_tokens': 35, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}})]}
+```
+with all the metadata etc. The last message is
+```python
+response['messages'][-1].content
+```
+```o
+The Moon does not have a capital, as it is a celestial body and not a country or city.
+```
+How about this? Here, we are passing a chat history:
+```python
+from langchain.messages import AIMessage
+
+response = agent.invoke(
+    {"messages": [HumanMessage(content="What's the capital of the Moon?"),
+    AIMessage(content="The capital of the Moon is Luna City."),
+    HumanMessage(content="Interesting, tell me more about Luna City")]}
+)
+
+```
+which returns a dict of messages including the final message (AIMessage):
+
+```o
+"Luna City is a fictional or conceptual settlement often referenced in science fiction and space exploration discussions as a proposed or imagined permanent human settlement on the Moon. It is envisioned as a hub for scientific research, resource extraction, and potentially a stepping stone for missions deeper into space, such as Mars.\n\nWhile Luna City doesn't currently exist in reality, the concept generally includes features like:\n- **Habitat modules** to support life in the Moon's harsh environment.\n- **Research facilities** for lunar geology, astronomy, and other scientific endeavors.\n- **Resource utilization centers** for mining lunar materials like water ice and regolith-based minerals.\n- **Transportation infrastructure** for moving between different parts of the Moon and potentially to Earth.\n\nIn speculative terms, Luna City represents humanity's vision of establishing a sustainable presence on the Moon, fostering advancements in technology and enabling future exploration missions. Various space agencies and private companies, such as NASA, ESA, and SpaceX, are exploring concepts and plans that could make such settlements a reality in the coming decades."
+```
+
+#### Streaming Output
+
+One of the issues with agents is latency. Software systems may measure the response time in milliseconds, we'll be running agents with response times of seconds even minutes if we hand in few messages. One way ti improve percieved latency is to use `stream` to invoke agents which streams tokens to users rather than printing answers all at once. 
+
+```python
+for token, metadata in agent.stream(
+    {"messages": [HumanMessage(content="Tell me all about Luna City, the capital of the Moon")]},
+    stream_mode="messages"
+):
+
+    # token is a message chunk with token content
+    # metadata contains which node produced the token
+    
+    if token.content:  # Check if there's actual content
+        print(token.content, end="", flush=True)  # Print token
+```
+
+This method is used by all major chatbots to improve preceived latecny and user experience. 
+
+### Prompt 
+
+Now you have a custome model. The easiest way to imporve the perfromance of the model to taylor it for your specific usecase is **system prompt**.
+
+```python
+from langchain.agents import create_agent
+from langchain.messages import HumanMessage
+
+agent = create_agent(model="gpt-4.1-nano")
+
+question = HumanMessage(content="What's the capital of the moon?")
+
+response = agent.invoke(
+    {"messages": [question]}
+)
+
+response['messages'][1].content
+```
+```o
+The Moon does not have a capital, as it is a natural satellite of Earth and does not have a government or administrative divisions.
+```
+
+But if you include a system prompt, the answer will be different:
+
+```python
+from langchain.messages import SystemMessage
+
+system_prompt = "You are a science fiction writer, create a capital city at the users request."
+
+response = agent.invoke(
+    {"messages": [SystemMessage(content=system_prompt)] + [question]}
+)
+```
+
+```o
+'The moon doesn\'t have an official capital, but if we imagine a futuristic lunar colony, a fitting "capital" could be **Lunos Prime** — a sprawling lunar city located in the crater of Shackleton, near the lunar south pole, serving as the central hub for governance, research, and resource management in this envisioned moon colony. Would you like me to elaborate on how Lunos Prime might look and function?'
+```
+
+#### Few-shot examples
+
+We usually prefer the LLM response to be concise and even structured rather than long or unstructured. We can singal this to LLMs using a system prompt:
+
+```python
+system_prompt = """You are a science fiction writer, create a space capital city at the users request.
+User: What is the capital of mars?
+Scifi Writer: Marsialis
+
+User: What is the capital of Venus?
+Scifi Writer: Venusovia"""
+
+response = agent.invoke(
+    {"messages": [SystemMessage(content=system_prompt)] + [question]}
+)
+
+response['messages'][-1].content
+```
+```o
+'Lunaris Prime'
+```
+
+#### Structured Prompts
+We often desire agent response to be structured. One way to do this to add system prompt showing the model how to structure its response:
+
+```python
+system_prompt = '''
+You are a science fiction writer, create a space capital city at the users request.
+
+Please keep to the below structure.
+
+Name: The name of the capital city
+Location: Where is it based
+Vibe: 2-3 weeks to describe its value
+Economy: Main industries
+'''
+```
+
+And now pose the same question. You will receive the naswer with just these 4 topics. 
+
+```o
+Name: Luaris Prime
+Location: South plar region, perched on the rim of Shackleton Crater, Moon
+Vibe: Icebound metropolis
+Economy: ISRU ice mining and processinc
+```
+
+A good prompt helps LLMs to focus on their tasks and return a more high quality answers. It is more common to do theis using tools.
+
+### Tools
+
+What separates an agent from a standard chatbot is its ability to take actions and reat accordingly. ReAct agnets use this pattern since most of the industry coalesed around this matter, we'll just call ReAct agents, agents. The actions that an aent can take are defined by the tools that we provide to it. Tools can allow agents to access data, execute tasks, even call our agents, transforming it from a passive language model to the coordinator of a much more capable system. 
+
+You can turn any function into a tool by adding `@tool` decorator, adding detailed description for the function which becomes the tool description. You can then use `.invoke(*arg, **kwarg)` to run the function as usual. This is exactly how agents run the tool. We usually specify a list of the tools for our LLM to use when creating agents. The agents understands to use the tools provided when appropirate:
+
+```python
+from langchain.tools import tool
+
+@tool
+def square_root(x: float) -> float:
+    """Calculate the square root of a number"""
+    return x ** 0.5
+
+square_root.invoke({"x": 467})
+```
+```o
+21.61018278497431
+```
+```python
+from langchain.agents import create_agent
+from langchain.messages import HumanMessage
+
+
+agent = create_agent(
+    model="gpt-4.1-nano",
+    tools=[square_root],
+)
+
+question = HumanMessage(content="What is the square root of 467?")
+
+response = agent.invoke(
+    {"messages": [question]}
+)
+
+response['messages'][-1].content
+```
+The last message is very neat and exactl as we expected:
+```o
+The square root of 467 is approximately 21.61.
+```
+The model used the tool `square_root` automatically without even us adding any system prompt to possibly hint the model to use the tools. 
+```python
+response['messages']
+```
+```o
+[HumanMessage(content='What is the square root of 467?', additional_kwargs={}, response_metadata={}, id='04faf488-d62d-4f63-810c-2e53fe1a3ed4'),
+ AIMessage(content='', additional_kwargs={'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 54, 'total_tokens': 68, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_provider': 'openai', 'model_name': 'gpt-4.1-nano-2025-04-14', 'system_fingerprint': 'fp_4ea5d69903', 'id': 'chatcmpl-DN0lTGWn8nRqv74IBXa6kYVBWWp5G', 'service_tier': 'default', 'finish_reason': 'tool_calls', 'logprobs': None}, id='lc_run--019d211a-1a98-7921-9de1-232ecabdf54b-0', tool_calls=[{'name': 'square_root', 'args': {'x': 467}, 'id': 'call_O63szKKflf2cqQRaNO38iyB9', 'type': 'tool_call'}], invalid_tool_calls=[], usage_metadata={'input_tokens': 54, 'output_tokens': 14, 'total_tokens': 68, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}}),
+ ToolMessage(content='21.61018278497431', name='square_root', id='d6ae2d6f-32da-4cc1-a860-6f87b8b03d78', tool_call_id='call_O63szKKflf2cqQRaNO38iyB9'),
+ AIMessage(content='The square root of 467 is approximately 21.61.', additional_kwargs={'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 83, 'total_tokens': 97, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_provider': 'openai', 'model_name': 'gpt-4.1-nano-2025-04-14', 'system_fingerprint': 'fp_4ea5d69903', 'id': 'chatcmpl-DN0lUNtYCJT1ygeevP0YdIOhGNgyg', 'service_tier': 'default', 'finish_reason': 'stop', 'logprobs': None}, id='lc_run--019d211a-2493-7291-b7ac-9634bdb22144-0', tool_calls=[], invalid_tool_calls=[], usage_metadata={'input_tokens': 83, 'output_tokens': 14, 'total_tokens': 97, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}})]
+```
+
+You can see the model knows to use the tools. It creates an `AIMessage` with *no content* but containng a **tool call** part provifing the arguments the tool needs to run. The response is back to the model from the tool call message is called `ToolMessage`, which returns the result of applying the tools: `content='21.61018278497431'`.  Finally, the model polishes the final answer to the user request.
+
+### Search Web
+There are tools to add even more complex capabilities to LLMs such as searching the web. LLMs cant do that on their own.
+
+```python
+from langchain.messages import HumanMessage
+
+question = HumanMessage(content="Who is the current mayor of San Francisco?")
+
+response = agent.invoke(
+    {"messages": [question]}
+)
+
+response['messages'][-1].content
+```
+
+```o
+'As of October 2023, the current mayor of San Francisco is London Breed.'
+```
+
+which is incorrect! The current mayor at Mar 2026 is Daniel Lurie! Why the agent got is wrong??
+```python
+response = agent.invoke(
+    {"messages": ["How up-to-date your training knowledge is?"]}
+)
+response['messages'][-1].content
+```
+
+```o
+'My training includes information up until October 2023. If you have questions about events or developments beyond that date, I may not have the most current details.'
+```
+Model training knowldege is not up-to-date. `TavilySearch` API can help here.
+
+```python
+from langchain.tools import tool
+from typing import Dict, Any
+from tavily import TavilyClient
+
+tavily_client = TavilyClient()
+
+@tool
+def web_search(query: str) -> Dict[str, Any]:
+
+    """Search the web for information"""
+
+    return tavily_client.search(query)
+
+web_search.invoke("Who is the current mayor of San Francisco?")
+```
+The result is a list of search results from web related to the query.  Now let add this as a tool to the agent:
+
+```python
+agent = create_agent(
+    model="gpt-4.1-nano",
+    tools=[web_search]
+)
+
+question = HumanMessage(content="Who is the current mayor of San Francisco?")
+
+response = agent.invoke(
+    {"messages": [question]}
+
+response["messages"][-1].content
+```
+```o
+'The current mayor of San Francisco is Daniel Lurie.'
+```
+Now its correct. If we look at the detailed response we see that the model makes a tool call which returns the following  `ToolMessage`:
+
+```o
+ToolMessage(content='{"query": "current mayor of San Francisco", "follow_up_questions": null, "answer": null, "images": [], "results": [{"url": "https://en.wikipedia.org/wiki/Mayor_of_San_Francisco", "title": "Mayor of San Francisco - Wikipedia", "content": "The current mayor is Democrat Daniel Lurie.", "score": 0.94251215, "raw_content": null}, {"url": "https://apnews.com/article/san-francisco-new-mayor-liberal-city-81ea0a7b37af6cbb68aea7ef5cc6a4f0", "title": "San Francisco\'s new mayor is starting to unite the fractured city", "content": "San Francisco Mayor Daniel Lurie, a political newcomer and Levi Strauss heir, has marked his first 100 days with a hands-on, business-friendly approach.", "score": 0.8745175, "raw_content": null}, {"url": "https://www.sf.gov/departments--office-mayor", "title": "Office of the Mayor - SF.gov", "content": "Daniel Lurie is the 46th Mayor of the City and County of San Francisco.", "score": 0.8446273, "raw_content": null}, {"url": "https://en.wikipedia.org/wiki/Daniel_Lurie", "title": "Daniel Lurie - Wikipedia", "content": "Daniel Lawrence Lurie (born February 4, 1977) is an American politician and philanthropist who is the 46th and incumbent mayor of San Francisco, serving since", "score": 0.8156003, "raw_content": null}, {"url": "https://www.sf.gov/profile--daniel-lurie", "title": "Daniel Lurie - SF.gov", "content": "Chair, and Mayor of San Francisco. Disaster Council · Office of the Mayor. Mayor Daniel Lurie sworn in as the City\'s 46th mayor on Jan 8. See recent news. Learn", "score": 0.81524754,  --- continued
+```
+
+Thsi tool call enables the model to answer correctly.
+
+### LangSmith
+To get insight into how your agents are running, use LangSmith to trace all queries and observe latencies, token usage, tools called and their inputs and outputs. Connect to the API endpoint (with its API key) to debug your agents when things get a little bit more complex as you add more tools and the tasks are less deterministic. With the free tier, you have up to 5000 free tokens per month which is more than enough for development and side projects. 
+
+
+### Meomory
+
+The very basic feature expected from any chatbot is the ability to maintain the memory over the length of the conversation. The angent built so far dont have that ability. 
+
+```python
+from langchain.agents import create_agent
+from langchain.messages import HumanMessage
+
+agent = create_agent(
+    "gpt-4.1-nano"
+)
+
+question = HumanMessage(content="Hello my name is Seán and my favourite colour is green")
+
+response = agent.invoke(
+    {"messages": [question]} 
+)
+
+response["message"][-1].content
+```
+```o
+"Hello Seán! It's great to meet you. Green is a wonderful colour—so fresh and calming. Do you have a favourite thing that's green?"
+```
+Then ask:
+
+```python
+question = HumanMessage(content="What's my favourite colour?")
+
+response = agent.invoke(
+    {"messages": [question]} 
+)
+
+response["message"][-1].content
+```
+```o
+"I don't have access to your personal information, so I don't know your favorite color. If you'd like to tell me, I'd be happy to chat about it!"
+```
+
+What's happening? In out LanChain aganets we are tracking *states* which you can think of it as the memory of our agent. The problem is that *the state is NOT being saved from one run to another run*. In fact the agent memory is being wiped! We need to save the states so agents remember previous messages. We do that by using 
+- **checkpointers**: saves a snapshop of the state at the end of each run, and then groups them into the same **thread** of conversation, same thread id. 
+
+`InMemorySaver` is the checkpointer we use in LangGraph:
+
+```python
+from langgraph.checkpoint.memory import InMemorySaver 
+from langchain.messages import HumanMessage
+
+agent = create_agent(
+    "gpt-4.1-nano",
+    checkpointer=InMemorySaver(),  
+)
+
+question = HumanMessage(content="Hello my name is Seán and my favourite colour is green")
+config = {"configurable": {"thread_id": "1"}}
+
+response = agent.invoke(
+    {"messages": [question]},
+    config,  
+)
+
+response["message"][-1].content
+```
+```o
+"Hello Seán! It's great to meet you. Green is a wonderful colour—calming and full of life. Do you have a favourite thing that’s green or a reason why you like it?"
+```
+
+```python
+question = HumanMessage(content="What's my favourite colour?")
+
+response = agent.invoke(
+    {"messages": [question]},
+    config,  
+)
+
+response["message"][-1].content
+```
+```o
+'Your favourite colour is green.'
+```
+
+In fact you can see 4 messages in the response including the previous ones. It retained the memory of our conversation and appended it to its list of messages and they are all included in this repsonse because all the checkpoints are grouped by `thread_id=1`. Now we have memory.
+
+##### Customized States
+By default, the states track a list of messages only. But we can add custom fields like `user_id`, `langage` if we would like them to be tracked overtime. These fields dont even have to be text! Text is not the only type of inputs LLMs can receive these days. The states could include images or audios etc so agents can see or hear! Encode you image and audios in `Base64`. Thsi enables us to represent binary data and transmit text-based communication channels. 
+
+In the following snippet, we have encoded a picture of moon with a urban scene and invoking the model with a query about this picture. The image `img_b64` is encoded as `Base64` before.  
+
+```python
+from langchain.messages import HumanMessage
+from langchain.agents import create_agent
+
+agent = create_agent(
+    model='gpt-4.1-nano',
+    system_prompt="You are a science fiction writer, create a capital city at the users request.",
+)
+
+multimodal_question = HumanMessage(content=[
+    {"type": "text", "text": "Tell me about this capital"},
+    {"type": "image", "base64": img_b64, "mime_type": "image/png"}
+])
+
+response = agent.invoke(
+    {"messages": [multimodal_question]}
+)
+
+response['messages'][-1].content
+```
+```o
+This image depicts a breathtaking extraterrestrial city set against a dramatic alien landscape. The towering spires and sleek structures suggest an advanced civilization, possibly centered around energy or technological innovation. The city appears to be built in harmony with the rugged terrain—its spires piercing the sky and blending seamlessly into the rocky environment.
+
+In the background, a massive moon or planet dominates the sky, hinting at a neighboring ... --- continued
+```
+
+You can do the same thing for Audio files. Convert them to `Base64` and pass them to LLMs with and a query.
+
+### Model Context Protocol (MCP)
+MCP is defined by Anthropic the group who made it as an open protocol that standardizes how your LLM applications connect to and work  with your tools and data sources. It allows us to plug in various tools to our agent to add functionality just like USBs.
+
+Creating tools and providing context to different model providers used to look a lot like this. A never ending web of API calls and databases to connect to your agents for every application you try to build. Thats why this universal model context protocol for model providers and tool builders to use.
+
+The MCP host hosts an MCP client, which communicates to the MCP server. In our case, the host can be AI application or an agent. MCP servers can expose tools and resources (read-only data) and prompt templates or whatever our agent needs.
+
+Once we have built an MCP server with our tools and context, its very easy to share with other projects and developers and streamlining future agent builds. There is s ahuge open source servers that other people have built which we can easily insert into our agent and other types of AI applications compatible with MCP servers like your favourite chat bots or IDEs.
+
+The following code can start a MCP server which is defined in module `resources/2.1_mcp_server.py`. Setting up a MCP serve is very similar to that of a FastAPI server. The syntax is very familiar to me.  
+
+```python
+from langchain_mcp_adapters.client import MultiServerMCPClient
+
+client = MultiServerMCPClient(
+    {
+        "local_server": {
+                "transport": "stdio",
+                "command": "python",
+                "args": ["resources/2.1_mcp_server.py"],
+            }
+    }
+)
+```
+One important configuration is transport protocol. Thsi could be `STDIO` or `StreamingHTTP` depending on the server. For more info, check out MCP documentation. We can get the tools, resources and prompts available at this server:
+
+```python
+tools = await client.get_tools()
+
+# get resources
+resources = await client.get_resources("local_server")
+
+# get prompts
+prompt = await client.get_prompt("local_server", "prompt")
+prompt = prompt[0].content
+```
+For example:
+```python
+tools
+```
+```o
+[StructuredTool(name='search_web', description='Search the web for information', args_schema={'properties': {'query': {'title': 'Query', 'type': 'string'}}, 'required': ['query'], 'title': 'search_webArguments', 'type': 'object'}, response_format='content_and_artifact', coroutine=<function convert_mcp_tool_to_langchain_tool.<locals>.call_tool at 0x7fafc03c9d00>)]
+```
+We can create an agents with tools and prompts from our MCP server.
+
+```python
+from langchain.agents import create_agent
+
+agent = create_agent(
+    model="gpt-4.1-nano",
+    tools=tools,
+    system_prompt=prompt
+)
+```
+Now our agent has access to the tools, prompts, resouces on our server. 
+
+```python
+from langchain.messages import HumanMessage
+
+config = {"configurable": {"thread_id": "1"}}
+
+response = await agent.ainvoke(
+    {"messages": [HumanMessage(content="Tell me about the langchain-mcp-adapters library")]},
+    config=config
+)
+```
+If we see the response, we notice that the agent made a tool call to our tools in MCP server:
+
+```o
+tool_calls=[{'name': 'search_web', 'args': {'query': 'langchain-mcp-adapters library'}
+```
+
+#### Online MCP Servers
+The biggest advantage of MCP servers is to connect your agent to other people's MCP servers. There are 100k+ MCP servers you could find online most are open sourced and free and some are not. You just find a config file for the server you need and insert it in `MultiServerMCPClient` arg field and there you have it. Its that easy to connect your agent to the server. The significance here is that you do not need to run your MCP API. The agent will call the server for you.
+
+```python
+client = MultiServerMCPClient(
+    {
+        "time": {
+            "transport": "stdio",
+            "command": "uvx",
+            "args": [
+                "mcp-server-time",
+                "--local-timezone=America/New_York"
+            ]
+        }
+    }
+)
+
+# get the tools from the client and pass them to the agent just like we did before
+
+tools = await client.get_tools()
+```
+Now we can query time related questions:
+
+```python
+question = HumanMessage(content="What time is it?")
+
+response = await agent.ainvoke(
+    {"messages": [question]}
+)
+
+response['messages'][-1].content
+```
+```o
+'The current time in New York is 20:49 (8:49 PM) on Tuesday, March 24, 2026. Would you like to know the time in a different timezone?'
+```
+
+Our agent made a tool call `tool_calls=[{'name': 'get_current_time', 'args': {'timezone': 'America/New_York'}` to find the accurate time.
+
+Its highly recommneded to try the course [MCP: Build Rich-Context AI APPs with Antropic](https://learn.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic/lesson/dbabg/creating-an-mcp-server)
+
+
+
+---------------------------------------------------------
 
 ###  In-context Learning
 
@@ -4095,3 +4634,140 @@ async def get_available_tools(self):
 - Use synthetic tools to expose resources and prompts as callable functions, giving LLMs full access to all MCP capabilities.
 
 ### END
+
+
+# This is h1
+## This is h2
+### This is h3
+#### This is h4
+##### This is h5
+###### This is h6
+
+
+
+Notes from LangChain Official Documentation
+
+LangGraph FAQ
+
+- Do I need to use LangChain to use LangGraph? What’s the difference?
+    -  No. LangGraph is an orchestration framework for complex agentic systems and is more low-level and controllable than LangChain agents. On the other hand, LangChain provides a standard interface to interact with models and other components, useful for straight-forward chains and retrieval flows.
+How is LangGraph different from other agent frameworks?
+Other agentic frameworks can work for simple, generic tasks but fall short for complex tasks bespoke to a company’s needs. LangGraph provides a more expressive framework to handle companies’ unique tasks without restricting users to a single black-box cognitive architecture.
+Does LangGraph impact the performance of my app?
+LangGraph will not add any overhead to your code and is specifically designed with streaming workflows in mind.
+Is LangGraph open source? Is it free?
+Yes. LangGraph is an MIT-licensed open-source library and is free to use.
+Is LangSmith Deployment (formerly LangGraph Platform/Cloud) open source?
+No. LangSmith Deployment is proprietary software that will eventually be a paid service for certain tiers of usage. We will always give ample notice before charging for a service and reward our early adopters with preferential pricing.
+How do I enable LangSmith Deployment?
+All LangSmith users on Plus and Enterprise plans can access LangSmith Deployment. Check out the docs.
+How are LangGraph and LangSmith Deployment different?
+LangGraph is a stateful, orchestration framework that brings added control to agent workflows. LangSmith Deployment is a service for deploying and scaling LangGraph applications.
+How does LangGraph fit into the LangChain ecosystem? 
+Our open source frameworks help you build agents:
+LangChain helps you quickly get started building agents, with any model provider of your choice.
+LangGraph allows you to control every step of your custom agent with low-level orchestration, memory, and human-in-the-loop support. You can manage long-running tasks with durable execution.
+LangSmith is a platform that helps AI teams use live production data for continuous testing and improvement. LangSmith provides:
+Observability to see exactly how your agent thinks and acts with detailed tracing and aggregate trend metrics.
+Evaluation to test and score agent behavior on production data and offline datasets for continuous improvement.
+Deployment to ship your agent in one click, using scalable infrastructure built for long-running tasks.
+
+
+### Motivation
+
+A solitary LLM is fairly limited
+- it doesnt have access to tools, external context, multi-step workflows
+- it cant alone perform multi-stpe workflows
+
+So many LLM applications use a control flow with steps before and after LLM calls (tool calls, retreival steps).
+
+This control flow forms a **chain** which are very reliable: the same chain of steps occurs every time you invoke the workflow. But we do want LLM systems to pick their own control flow for certain kinds of problems. You might want a LLM application that can choose its own set of steps depending on the problems they face. This is really what an agent is. An angent is a control flow defined by an LLM. So you have chains that are fixed control flows versus the control flows defined by LLMs.
+
+There are many kind of agents depneding on the amount of control given to LLMs. For example a router can be though of as a low control agent where LLM controls a single step in a flow where it might choose between a narrow set of options. For example, i go from step 1 to step 2 or 3 based on the LM decision. On the other extreme, we have a fully autonomous  agent that can take any sequence of steps through some set of given options or even it can generate its own next move based on some potentially avialbel resources.
+
+ <p align="center">
+  <img src="./assets/agentic_ai/agentic4.png" alt="drawing" width="600" height="400" style="center" />
+</p>
+
+However there are some practical challenges. As you increase the level of contorl given to LLM, **application reliability** might decrease. LangGraph is aimed to help you increase the reliability here, allowing you to build agents that maintain the reliability even as you push out the level of control to LLMs. In short, LangGraph balances reliability with control. 
+
+In many application we want to combine developer intuituion with LLM control. LangGraph expressses custom control flows as graphs which contain nodes (steps in your application such as tool call, retreival) and edges are connectivity between nodes. 
+
+<p align="center">
+  <img src="./assets/agentic_ai/agentic5.png" alt="drawing" width="600" height="400" style="center" />
+</p>
+
+There are few specific pillars for LangGraph to help you acheive  this goal that we are talking about: 
+- Persistent:
+- Streaming:
+- Human-in-the-loop: 
+- controlability
+
+LangGraph plays very nicely naturally with LangChain. We often use the LangChain components in our LangGraph workflows. For example in a RAG application where you have a retreiver step from a vector store and an LLM step that takes the retreived documents and answers the questions. The retriever here could use a Langchain vector storage. Likewise the LLM node can a LanChain integration but You dont have to use LangChain in any of these cases. The main difference is that LangChain is built for linear, sequential workflows (chains), while LangGraph is designed for cyclical, stateful workflows (graphs). 
+
+LangGraph is an extension of LangChain, not a replacement. You often use LangChain’s components (like model wrappers and tool integrations) inside a LangGraph workflow.
+
+Why we still need both:
+- Foundation vs. Orchestration: LangChain provides the essential "building blocks"—like prompt templates, document loaders, and vector store connectors. LangGraph is the "orchestrator" that arranges these blocks into complex, repeating cycles. You actually use LangChain components inside LangGraph nodes.
+- Simplicity vs. Control: For a simple task like summarizing a PDF, using LangGraph is "over-engineering." LangChain’s linear chains (LCEL) are much faster to write, easier to read, and have less "boilerplate" code for basic jobs.
+- The "Glue Code" Problem: Before LangGraph, developers used LangChain but had to write messy "if/else" loops in raw Python to handle retries or decisions. LangGraph was created to replace that "glue code" with a structured state machine that is easier to debug and visualize.
+- Production Reliability: LangGraph adds specialized "production" features that LangChain doesn't focus on, such as Checkpointers (which let you save an agent's progress to a database so it can resume after a crash) and Human-in-the-loop (pausing the AI to wait for a human's approval). 
+
+##### The typical workflow
+Most developers don't choose one over the other; they follow a path: 
+- Start with LangChain to quickly prototype prompts and data retrieval.
+- Move to LangGraph when the app needs to "think," self-correct, or handle multi-turn conversations that aren't just a straight line. 
+
+These guides compare LangChain and LangGraph, focusing on why LangGraph was developed to handle complex control flow, statefulness, and event-driven execution beyond LangChain's linear chains.
+
+
+#### When to Use LangChain
+- Simple Pipelines: Use it when your task follows a clear A → B → C order, such as summarizing a document or a basic RAG (Retrieval-Augmented Generation) pipeline.
+- Prototyping: It is excellent for quickly connecting an LLM to a data source using pre-built components like prompt templates and output parsers.
+- Stateless Apps: Ideal for apps that don't need to "remember" complex logic or backtrack based on errors. 
+
+##### When to Use LangGraph
+- Agentic Workflows: If your AI needs to make a decision, use a tool, check the result, and potentially loop back to try again, LangGraph is the better tool.
+- Multi-Agent Systems: Use it to orchestrate multiple specialized agents (e.g., one researcher agent and one writer agent) that need to hand off tasks to each other.
+- Human-in-the-loop: It has native support for pausing an agent to wait for human approval or input before continuing a cycle.
+- Persistence: It easily maintains state across sessions, allowing you to "save" and "resume" an agent's progress.
+
+
+
+LangGraph API creates a API around our graph so we can call it to execute our command related to the graph. For example: client.runs.stream(...)
+
+Its is like a FastAPI wrapper around our graph... is this correct?
+Spot on. That is exactly what it is—a specialized FastAPI-style wrapper designed specifically for the unique needs of stateful agents.
+While you could write your own FastAPI wrapper, the LangGraph API (via the LangGraph Platform) gives you several "production" features out of the box that are surprisingly hard to code from scratch:
+1. Built-in Persistence (The "Checkpointer")
+In a standard FastAPI app, if you want to resume a conversation, you have to manually save the state to a database (Postgres/Redis) and load it back up.
+LangGraph API: Automatically manages a Postgres database for you. When you call a thread_id, it handles all the "Select/Update" logic behind the scenes.
+2. Long-Running Task Management
+Standard FastAPI requests often timeout after 30–60 seconds.
+LangGraph API: It uses a Background Task Queue. When you start a run, it can take minutes (or hours if waiting for a human). The API handles the "is it done yet?" polling and background execution for you.
+3. Double-Texting & Interrupts
+What happens if a user sends a second message while your LLM is still generating the first one?
+Standard FastAPI: You’d likely have two conflicting processes fighting over the same state.
+LangGraph API: It has built-in concurrency control. You can choose to "reject," "enqueue," or "interrupt" the previous run when a new one comes in.
+4. Human-in-the-Loop Endpoints
+The API provides specific endpoints just for the "resume" logic we struggled with earlier.
+Instead of you manually fixing the state in code, the API has a threads.state.update endpoint and a runs.resume command specifically for moving past those breakpoints.
+5. Streaming by Default
+Streaming token-by-token or node-by-node (the stream_mode you used) is tricky to implement reliably over Server-Sent Events (SSE). The LangGraph API handles the SSE protocol for you so your frontend gets smooth updates.
+The Verdict: If you are building a simple "one-and-done" bot, FastAPI is fine. If you are building a multi-step agent that needs to remember where it was, wait for humans, and handle complex state updates, the LangGraph API saves you weeks of infrastructure work.
+Do you want to see how the Client SDK (the client.runs.stream part) looks when you actually connect it to a frontend?
+
+
+
+ In LangGraph, a "thread" is a logical ID, not a physical Linux/OS thread.
+Here is the breakdown of the difference:
+1. It’s a "Database Key," not a "CPU Thread"
+In a Linux process, a thread is a unit of execution that shares memory and runs on a CPU core.
+In LangGraph, a thread is just a unique identifier (like a UUID or a string) used to look up a conversation's history in a database.
+Linux Thread: Managing instructions for the processor.
+LangGraph Thread: Mapping a user to their specific "Save Game" file.
+2. State vs. Execution
+State (LangGraph): When you send a thread_id, LangGraph goes to your Postgres/Sqlite database, pulls out the last known state (the "checkpoint"), and hands it to the AI.
+Execution (Linux): Your Python code (the LangGraph library itself) runs on standard OS threads to process that data.
+3. Why call it a "Thread"?
+The name comes from "Conversation Threading" (like in an email chain or a Slack reply). It represents a linear sequence of events.
