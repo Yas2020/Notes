@@ -1214,8 +1214,7 @@ from langchain_core.messages import HumanMessage
 query = "What is 3 + 2?"
 chat_history = [HumanMessage(content = query)]
 ```
-
-It carries the user's input and marks it appropriately for the model during the conversation.  Chat history list will hold all messages exchanged during the conversation, including user inputs, tool outputs, and model responses, ensuring that the model has complete context at every step. 
+It carries the user's input and marks it appropriately for the model during the conversation.  Chat history list will hold all messages exchanged during the conversation, including user inputs, tool outputs, and model responses, ensuring th
 
 It's time to run the tool enabled model. First, pass the complete chat history, which contains the user's question, into LLM with tools. At this point, the model reviews the conversation context, identifies the available tools, select the appropriate one, such as add function, and extract the parameters. 
 
