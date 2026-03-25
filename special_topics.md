@@ -1,6 +1,6 @@
-### What happens when you type a URL into your browser? 
+#### What happens when you type a URL into your browser? 
 
-URL stand for Universal Resource Locator composed of 
+URL stand for *Universal Resource Locator* composed of 
 - **Scheme**: http, https for encrypted connection
 - **Domain** (or Base URL): the domain name of the site
 - **Path**
@@ -13,11 +13,11 @@ Think of path and resource as directory in the file system, which is also called
 </p>
 
 
-- After typing URL, the browser needs to know how to reach the server, in this case `example.com`. This is done through a procedure called “DNS lookup”. DNS stands for Domain Name System. Think of it as the phone book of the internet. DNS translates doman names into IP addresses. 
+- After typing URL, the browser needs to know how to reach the server, in this case `example.com`. This is done through a procedure called **DNS lookup**. DNS stands for Domain Name System. Think of it as the phone book of the internet. DNS translates doman names into IP addresses. 
 - To make the lookup process fast, the DNS information is heavily cashed. First the browser itself cashes the information for a short period of time. If the browser don't have it, it asks the operating system for it. OS itself checks its own cache otherwise it makes a query to the internet to a DNS resolver server. This process involves many servers in the DNS infrastructure and the answer is cached very step of the way.
 
 - Finally the browser has the IP address of the server. Next the browser establishes a TCP connection to the server using the IP address received. This step involves a handshake with several network round trips for this step to complete. 
-- To keep the loading process fast, modern browsers use something called “keep alive connection” to try to reuse an established TCP connection to the server as much as possible. If the protocol is HTTPS, the process is even more involved requiring a SSL-TLS handshake to establish an encrypted connection between the browser and the server. 
+- To keep the loading process fast, modern browsers use something called “keep alive connection” to try to reuse an established TCP connection to the server as much as possible. If the protocol is HTTPS, the process is even more involved requiring a *TLS handshake* to establish an encrypted connection between the browser and the server. 
 - Finally the browser sends an HTTP request to the server over the established connection. The server sends back a response and the browser receives the response and renders the HTTP content. Often times, there are additional resources to load: the JavaScripts bundles and images. The browser repeats the process above to finish fetching all the other resources.   
 
 
@@ -27,51 +27,49 @@ Think of path and resource as directory in the file system, which is also called
 
 ----------------------
 
-### How does DNS work? 
+#### How does DNS work? 
 
 DNS is the internet directory. It translate human readable domain names to machine readable IP addresses. When a browser makes a DNS query, it is asking a DNS resolver which could be an ISP, or a popular DNS provider like CloudFlare 1.1.1.1 or Google 8.8.8.8. If the resolver don't have the IP in its cache, it finds an Authoritative Name Server and asks it. When we update a domain name record, we are updating Authoritative Name Server. How the resolver finds Authoritative Name Server? There are 3 main level servers of Authoritative Name Server: **Root Nameservers**, **TLD Nameservers**, **Authoritative Nameservers**.  
 
 The root name servers store the IP addresses of the TLD (Top Level Domain) name servers. There are 13 logical root name servers. There are actually many physical servers behind each IP address but we get routed to the one closest to us. 
 
-The TLD nameservers store the IP address of Authoritative Nameservers of all the domain under them. There are many types of TLD names like `.com`, `.org`, `.edu` or for countries like `.uk`, `.de` . 
+The TLD nameservers store the IP address of Authoritative Nameservers of all the domain under them. There are many types of TLD names like `.com`, `.org`, `.edu` or for countries like `.uk`, `.de`. When we register a domain, the registrar hosts the **authoritative name server** by default but we can change them to others.
 
-When we register a domain, the registrar hosts the authoritative name server by default but we can change them to others.
-
-Now lets walk through a typical DNS query. The user types google.com into the browser. The browser first checks its cache. If there is no answer, it makes OS system call and OS checks its cache and if not found, it reaches out to the DNS resolver. The DNs first checks its cache, if it is not there or if the answer is expired, it asks root name server. Root server responds with a list of .com TLD servers. The AND resolver then reaches out to .com TLD name server and that returns the Authoritative Nameserver for google.com. Finally DNS resolver reaches out to  google.com authoritative and it returns the IP addresses of google.com. The DNs resolver the returns the IP address to operating system and OS returns it tot he browser. 
+Now lets walk through a typical DNS query. The user types google.com into the browser. The browser first checks its cache. If there is no answer, it makes OS system call and OS checks its cache and if not found, it reaches out to the **DNS resolver**. The DNS first checks its cache, if it is not there or if the answer is expired, it asks root name server. Root server responds with a list of `.com` TLD servers. The DNS resolver then reaches out to `.com` TLD name server and that returns the **Authoritative Nameserver** for google.com. Finally DNS resolver reaches out to  google.com authoritative and it returns the IP addresses of google.com. The DNS resolver the returns the IP address to operating system and OS returns it tot he browser. 
 
 <p align="center">
-<img src="./assets/special-topics/dns.png" alt="drawing" width=500" height="300" style="center" />
+<img src="./assets/special-topics/dns.png" alt="drawing" width=600" height="300" style="center" />
 </p>
 
-DNs propagation is slow because there is a TTL on each DNS record which could be pretty long. There are 2 practical steps to take: first reduce the TTL for the record we want to change to say 60s well in advance before the update actually happens. This gives enough time to all DNS sever to receive the shortened TTL. Second, leave the server running with old IP addresses for a while. Only decommission server when traffic dies down to an acceptable level.
+DNS propagation is slow because there is a TTL on each DNS record which could be pretty long. There are 2 practical steps to take: first reduce the TTL for the record we want to change to say 60s well in advance before the update actually happens. This gives enough time to all DNS sever to receive the shortened TTL. Second, leave the server running with old IP addresses for a while. Only decommission server when traffic dies down to an acceptable level.
 
--------------------------
-### How does HTTPS work?
+
+#### How does HTTPS work?
 
 With HTTP, the communication between the browser and the server is plain text. This means the password you enter, or the credit card you send over the internet can be read by anyone who has the ability to intercept it. HTTPS is designed to solve this problem to make the data sent over the internet to be unreadable by anyone other than the sender and the receiver. HTTPS is an extension of the HTTP protocol. 
 
-With HTTPs, data is sent in an encrypted form using TLS (Transport Layer Security) protocol. In this case, if the encrypted data get intercepted by a hacker, all they could see is jebrish only data. 
-
-Let’s take a look at how TLS handshake work. 
+With HTTPs, data is sent in an encrypted form using TLS (**Transport Layer Security**) protocol. In this case, if the encrypted data get intercepted by a hacker, all they could see is jebrish only data.  Let’s take a look at how TLS handshake work. 
 
 1. The browser establishes a TCP connection with the server
 2. TLS handshake begins. The process send a client hello to the server. In this hello massage, the browser tells the server 
    - What TLS version it supports 1.2, 1.3 etc
    - What cipher suite it supports which is set of encryption algorithms to encrypt data
 3. After receiving the client hello, the server gets to choose from the options and sends a hello server message back to the client. 
-4. The server also sends the certificate to the client. This certificate includes a lot of different things. One of the key things is the public key of the server that the client uses this public key for symmetric encryption. In symmetric encryption, the data encrypted by a public key can only be decrypted by the associated private key. At this point the client has the server certificate and the server and client agreed on TLS versions and cyber suite to use for encryption.  
+4. The server also sends the certificate to the client. This certificate includes a lot of different things. One of the key things is the **public key** of the server that the client uses this public key for **symmetric encryption**. In symmetric encryption, the data encrypted by a public key can only be decrypted by the associated private key. At this point the client has the server certificate and the server and client agreed on TLS versions and cyber suite to use for encryption.  
 
-5. Next is client exchange key. Here we use RSA as an example. With RSA, the client generates an encryption key called the session key and encrypts it with the public key server sent to the client earlier. The client send this session to the server over the internet and the server decrypts it using its own private key. Now both sides have the session key which is used for encrypting data travelling between the client and the server over the internet.
+5. Next is *client exchange key*. Here we use RSA as an example. With RSA, the client generates an encryption key called the **session key** and encrypts it with the public key server sent to the client earlier. The client send this session to the server over the internet and the server decrypts it using its own private key. Now both sides have the session key which is used for encrypting data travelling between the client and the server over the internet.
     
-Symmetric encryption is computationally expensive and is not suitable for bulk data transmission. TLS 1.2 take 2 network round trip while TLS 1.3 take it 1 network round trip. TLS 1.3 uses Diffi Hellman for exchanging session keys instead of RSA which does not require sending public key over the network. 
-
 <p align="center">
-<img src="./assets/special-topics/tls-handshake.png" alt="drawing" width=500" height="300" style="center" />
+<img src="./assets/special-topics/tls-handshake.png" alt="drawing" width=700" height="400" style="center" />
 </p>
 
------------
+Symmetric encryption is computationally expensive and is not suitable for bulk data transmission. TLS 1.2 take 2 network round trip while TLS 1.3 take it 1 network round trip. TLS 1.3 uses Diffi Hellman for exchanging session keys instead of RSA which does not require sending public key over the network. 
 
-### HTTP Status codes:
+
+
+
+
+#### HTTP Status codes:
 
 **200x**: These are basically the server is giving a high 5!… 200 OK means everything went well on the server side.
 
@@ -85,40 +83,39 @@ Symmetric encryption is computationally expensive and is not suitable for bulk d
 
 - **404 NotFound** means the requested file isn’t there. Double check those routes and endpoints.
 
-- **429 Too Many Request** means we are hitting rate limits. Slow down!. You are throttled. We need to implement retries with backoffs.
+- **429 Too Many Request** means we are hitting rate limits. Slow down!. *You are throttled*. We need to implement retries with backoffs.
 
 
 **500x**: means something went wrong server side. Sever overloads, network glitches or just misconfigurations. 
-
+- **502 Bad Gateway** is about problematic communication between the servers.
 - **503 Service Unavailable** means the server can not process the request now due to maintenance or traffic overload
 
-- **502 Bad Gateway** is about problematic communication between the servers.
+
 
 **300x**: Redirection
-301 Moved permanently with the location pointed to a new URL
+- 301 Moved permanently with the location pointed to a new URL
 
 **100x**: Informational
 
 Tools Like Postman can be invaluable when testing requests and responses for troubleshooting here. Also server Logs are very important if you have access to them.
 
+#### What is REST API? 
 
--------------------------
+**REST (Representational State Transfer) API** is the most common standard between computers over internet. API stands for **Application Programming Interface**. It is the standard way for most mobile and web applications to talk to servers. 
 
-### What is REST API? 
+REST APIs provide a flexible, lightweight way to integrate applications, and have emerged as the most common method for connecting components in microservices architectures. It is an *architectural style* that defines how applications should communicate with each other within a network.  An API has three characteristics that classify it as RESTful:
 
-**REST (Representational State Transfer) API** is the most common standard between computers over internet. API stands for Application Programming Interface. It is the standard way for most mobile and web applications to talk to servers. 
-
-REST APIs provide a flexible, lightweight way to integrate applications, and have emerged as the most common method for connecting components in microservices architectures. It is an architectural style that defines how applications should communicate with each other within a network. 
-
-An API has three characteristics that classify it as RESTful:
-
-- **Manages all requests through HTTP**: REST APIs communicate via HTTP requests to perform standard functions like creating, reading, updating, and deleting records (also known as CRUD) within a resource. For example, a REST API would use a POST request to create a record, a GET request to retrieve a record, a PUT request to update a record, and a DELETE request to delete a record. 
+- **Manages all requests through HTTP**: REST APIs communicate via HTTP requests to perform standard functions like creating, reading, updating, and deleting records (also known as CRUD) within a resource. For example, a REST API would use a 
+  - POST request to create a record
+  - GET request to retrieve a record, 
+  - PUT request to update a record, 
+  - DELETE request to delete a record. 
 
 - **Stateless client-server communication**: REST APIs are stateless, meaning that each request contains all the information required to process it. Roy Fielding, the originator of REST, said in his dissertation. “_Each request from client to server must contain all of the information necessary to understand the request, and cannot take advantage of any stored context on the server_". Session state is therefore kept entirely on the client.” This stateless nature of REST APIs also makes them scalable. 
 
 - **Uniform interface between components**: The main benefit of RESTful APIs is the uniform interface, regardless of where the request originates. The REST API should ensure that the same piece of data, such as the product id, belongs to only one uniform resource identifier (or URI). And resources should contain every piece of information that the client might need. 
 
-#### Basics of REST:
+##### Basics of REST:
 
 - RESTful APIs organize resources into a set of unique URIs (uniform resource idenfiers). URIs differentiate different type of resources on a server. The resources should be grouped by nouns not verbs such as `https://example.com/api/v3/products` (not `https://example.com/api/v3/getAllProducts` for example) 
   
@@ -137,15 +134,15 @@ An API has three characteristics that classify it as RESTful:
 
 #### Best implementation and design practices for REST API
 
-- Use **clear naming**: plural names indicates to users that they are dealing with collection of resources. Ex `https://example.com/api/v1/carts/123` instead of `https://example.com/api/v1/cart/123`
+- **Use clear naming**: plural names indicates to users that they are dealing with collection of resources. Ex `https://example.com/api/v1/carts/123` instead of `https://example.com/api/v1/cart/123`
   
-- A well written API returns a proper **HTTP status code**. 
+- A well written API **returns a proper HTTP status code**. 
 
     - 200-level status code means the request was successful. 
     - 400-level status code means something was wrong with the request specially with syntax
     - 500-level status code means something went wrong at the server level - For example, the service was unavailable. 
   
-- A well written API should take care of **idempotency** when identical request come in again. Typically POST requests are not naturally idempotent. Sending that request twice could duplicate that resource
+- A well written API should **take care of idempotency** when identical request come in again. Typically POST requests are not naturally idempotent. Sending that request twice could duplicate that resource
 
 
 - A REST implementation should be **stateless**. It means the 2 parties don’t need to restore any information about each other. _Every request and response is independent from others_. This leads to web application be easy to scale and well-behaved.
@@ -168,8 +165,8 @@ An API has three characteristics that classify it as RESTful:
 
 The other popular APIs are GraphDL and gRPC.
 
--------------
-### API Gateway
+
+#### API Gateway
 
 When your online store follows microservices architecture, some of those services will be:
 - A product information service that shares basic information about the product such as id, name, and price
@@ -177,11 +174,9 @@ When your online store follows microservices architecture, some of those service
 - An order service that enables customers to place an order for a product
 - An authentication service to validate users on the platform
 
-So, how does a client access the microservices? This is a problem when you need to interact with multiple APIs. 
+So, how does a client access the microservices? This is a problem when you need to *interact with multiple APIs*. 
 
-An API Gateway is an API management tool that sits between a client and a collection of backend services. It aggregates the various services required to fulfill them and returns the appropriate result. 
-
-An API Gateway typically provides several important functions:
+An API Gateway is an API management tool that sits between a client and a collection of backend services. It aggregates the various services required to fulfill them and returns the appropriate result. An API Gateway typically provides several important functions:
 
 - Authentication and Security Policy Enforcement
 - Load Balancing and Circuit Breaking
@@ -213,30 +208,30 @@ API Gateway insulates the clients from how the application is partitioned into m
 - API Gateway transform the request into an appropriate protocol (ex., gRPC) and sends it to the backend service. When the response come from backend, API transforms it back to the public facing protocol to send it to the client
 
 <p align="center">
-<img src="./assets/special-topics/api-gateway.png" alt="drawing" width=500" height="300" style="center" />
+<img src="./assets/special-topics/api-gateway.png" alt="drawing" width=700" height="400" style="center" />
 </p>
 
 Also, a Gateway will increase the response time due to this additional network step in the execution of the application. 
 
 There are plenty of API Gateway products available on the market. You can choose from managed or open-source options. From IBM, an industry-leading, high-security application gateway called IBM DataPower Gateway. Google has two offerings based on your needs: Apigee or Cloud Endpoints. Microsoft Azure and Amazon AWS also offer gateways on their platforms. While those are managed products, in the open source world, some famous names are: Kong, being top of the list in popularity, Apache APISIX, Tyk, which also has a managed version, and finally, Gloo, which is also available as an enterprise version.
 
-### Creating REST API - Example: Flask
+#### Creating REST API - Example: Flask
 
 Flask is classified as a micro web framework to host Python web applications as it does not require particular tools or libraries. It was built with scalability and simplicity in mind. Flask applications are known for being lightweight compared to other frameworks. Since Flask is not opinionated about what database or template engine to use, it is a good choice for RESTful APIs. 
 
 After installing Flask, you create the `hello.py` file with the content shown. You then run the Flask server to host this python file and the output will be displayed.
 
-```
+```python
 # hello.py
 from flask import Flask
 app = Flask(__name__)
 
 @app.route("/“)
-Def hello_world():
-	return “Hello World"
+def hello_world():
+    return “Hello World"
 ```
 
-```
+```sh
 $ flask —app hello run
 ```
 
@@ -244,7 +239,7 @@ When you open this ‘hello world’ web application in the browser by navigatin
 
 You can now create a new python file with the name `products.py` which will provide all endpoints for your products microservice. You are not using any database to persist these products, so every time you restart the API, you start with the same list of products. Next, you define the GET method to retrieve all the products. This method implicitly returns `200`, which in HTTP means OK.
 
-```
+```python
 from flask import Flask
 import json
 
@@ -256,8 +251,8 @@ product = [
 ]
 
 @app.route(“/products", methods=['GET'])
-Def get_products():
-	return json.dump(products)
+def get_products():
+    return json.dump(products)
 ```
 
 #### Making API requests using curl and postman
@@ -268,8 +263,8 @@ The most common use cases for `curl` are: downloading files from the internet, e
 
 If you run this example curl command, you will receive the output as shown. 
 
-```
-$ curl -X ‘GET' \
+```sh
+$ curl -X 'GET' \
 'http://127.0.0.1:5000/products' \
 -H 'accept: application/json'
 ```
@@ -281,12 +276,13 @@ $ curl -X ‘GET' \
 ]
 ```
 
-`curl` accepts a wide array of options, which makes it an extremely versatile command. Options start with one or two dashes, and if they do not require additional values, the single-dash options can be written together. So, let’s breakdown the command and output. '- X' means you are explicitly specifying the HTTP function, which in this case is GET. We then specify the URL to evaluate. '- H' allows you to define headers, which in our case is telling the web server that we want to work with JSON. Our output is the list of products returned by the product’s microservice represented in JSON. 
+`curl` accepts a wide array of options, which makes it an extremely versatile command. Options start with one or two dashes, and if they do not require additional values, the single-dash options can be written together. So, let’s breakdown the command and output. 
+- `- X` means you are explicitly specifying the HTTP function, which in this case is GET. We then specify the URL to evaluate. 
+- `- H` allows you to define headers, which in our case is telling the web server that we want to work with JSON. Our output is the list of products returned by the product’s microservice represented in JSON. 
 
 Now, Postman is an API platform for building and using APIs based on a wide range of extremely user-friendly power tools, enabling the developers to easily create, test, share, and document APIs. Postman simplifies each step of the API lifecycle by allowing to orchestrate multiple requests which can be performed in several repetitions or iterations, and help you streamline collaboration so you can create better APIs—faster. And, due to its simplicity, it is one of the most popular and convenient tools for testing a wide variety of APIs supporting many protocols-- --for example, HTTP requests like GET, POST, PUT, and PATCH--and then convert the API to code for languages like JavaScript and Python.
 
-------------
-### What is OAuth 2.0?
+#### What is OAuth 2.0?
 
 OAuth 2.0 is about giving a client a special key to allow them to have a access to specific resources without having to share a password (Authorization). And yes, we can revoke that key at anytime. 
 
@@ -309,12 +305,9 @@ Here is another example of how Google APIs use OAuth2 to grant access to users.
 
 OAuth 2.0 is essential for web security structure and the backbone of many secure seamless app interaction we use daily. 
 
----------------------
-### What is JWT?
+#### What is JWT?
 
-JSON Web Tokens commonly known as “jots” is a robust way of securely transmitting information between parties as JSON objects.
-
-It has become a corner stone in web security for good reasons. JSON is a light weight data interchange format which is easy to read and write for humans and simple for machines to parse generally. JSON represents the payload for JWT which is where you store the data you want to transmit. JWT have the structure of 3 parts: header, payload and signature each separated by period. 
+JSON Web Tokens commonly known as “jots” is a robust way of securely transmitting information between parties as JSON objects. It has become a corner stone in web security for good reasons. JSON is a light weight data interchange format which is easy to read and write for humans and simple for machines to parse generally. JSON represents the payload for JWT which is where you store the data you want to transmit. JWT have the structure of 3 parts: **header**, **payload** and **signature** each separated by period. 
 
 <p align="center">
 <img src="./assets/special-topics/jwt.png" alt="drawing" width=500" height="300" style="center" />
@@ -326,17 +319,13 @@ It has become a corner stone in web security for good reasons. JSON is a light w
 
 - There are two main types of signing algorithms. Symmetric algorithms use a shared secret key for both signing and verification (both the encryption and decryption processes). Asymmetric encryption, also known as public-key encryption, uses two keys, a public key for encryption and a corresponding private key for decryption. When the public key is used for encryption, the corresponding private key must be used for decryption. Symmetric keys are quick and simple but the secret key must be shared between parties ahead of time. Asymmetric keys allow verification of the creator without sharing private keys but it is slower. 
 
-<p align="center">
-<img src="./assets/special-topics/jwt2.png" alt="drawing" width=500" height="300" style="center" />
-</p>
+    <p align="center">
+    <img src="./assets/special-topics/jwt2.png" alt="drawing" width=600" height="300" style="center" />
+    </p>
 
-Upon login, the server creates a signed jot with the user detail and sends it back. Client uses this to access protected resources by sending the token in HTTP header
+Upon login, the server creates a signed jot with the user detail and sends it back. Client uses this to access protected resources by sending the token in HTTP header. Jots are commonly used in standards like OAuth2 and OpenID Connect (OIDC) for Authentication and Authorization. 
 
-Jots are commonly used in standards like OAuth2 and OpenID Connect (OIDC) for Authentication and Authorization. 
-
-JWTs are ideal for managing user sessions since they are stateless. Revoking JWT access can be challenging. Some common vulnerabilities to be aware of includes token highjacking when an attacker steals a valid JWT to impersonate a user. JWT is vulnerable to cryptographic weaknesses if using weak hashing algorithms. An Automated brute force attacks may try to crack the token signatures. 
-
-Keep JWT payloads compact with only the necessary user claims using short token expiration times when possible storing tokens securely and invalidating any leaked token.
+JWTs are ideal for managing user sessions since they are stateless. Revoking JWT access can be challenging. Some common vulnerabilities to be aware of includes token highjacking when an attacker steals a valid JWT to impersonate a user. JWT is vulnerable to cryptographic weaknesses if using weak hashing algorithms. An Automated brute force attacks may try to crack the token signatures. Keep JWT payloads compact with only the necessary user claims using short token expiration times when possible storing tokens securely and invalidating any leaked token.
 
 <p align="center">
 <img src="./assets/special-topics/how-jwt-works.png" alt="drawing" width=600" height="400" style="center" />
@@ -348,9 +337,8 @@ The pros are clear:
 - The payload can get quiet large if too much info is included which affects the performance.
 - JWT provides scalable way to handle authentication, authorization and information exchange if implemented properly and carefully. 
 
-----------
 
-### What is Single Sign-On? 
+#### What is Single Sign-On? 
 
 SSO is an authentication scheme. _It enables a user to securely access multiple applications and services using a single id_. SSO is integrated into apps like Gmail, Workday or Slack. It provides a pop up widget or log-in page for the same set of credentials. With SSO, users can access many apps without having to log-in each time. 
 
@@ -376,9 +364,7 @@ _OpenID Connect is similar to SAML but instead of passing the signed XML documen
 </p>
 
 
-
------------
-### Serverless Computing
+#### Serverless Computing
 
 The Cloud Native Computing Foundation (or CNCF) defines serverless as "The concept of building and running applications that _do not require server management_. _It describes a finer-grained deployment model where applications, bundled as one or more functions, are uploaded to a platform and then executed, scaled, and billed in response to the exact demand needed at the moment_". In other words, serverless computing offloads the responsibility of infrastructure management to cloud providers, enabling developers to focus on the application business logic. Think of serverless computing as a combination of function-as-a-service (or FaaS) platforms and backend-as-a-service (or BaaS) services. FaaS platforms are used to run functions. BaaS represents backend cloud services, such as cloud databases, object storage services, and message queues. 
 
@@ -412,7 +398,7 @@ In comparing different cloud service models shown in this figure, let’s look a
 </p>
 
 
-#### Serverless Pros and Cons
+##### Serverless Pros and Cons
 
 In traditional computing, development and operations teams set up and maintain their own infrastructure. These processes take a lot of time, are complex, and require capital investments. However, with the arrival of cloud, containers, and serverless computing, development teams can focus on writing high-quality code and building and running their applications in milliseconds without worrying about infrastructure, scalability, and fault tolerance. 
 
@@ -422,35 +408,44 @@ With serverless computing, cloud providers take on a large share of the work, wh
 - There are no infrastructure setup and maintenance requirements as a cloud provider manages the same, thereby reducing costs. 
 - Cloud providers ensure reliability, which results in high availability and fault tolerance. Developers benefit because they focus on applications and do what they enjoy best. 
 - Without serverless, all parts of your applications are constantly running, thereby wasting resources. Serverless functions allow you to configure your application to only run certain parts when needed. For example, an application’s front end must run continuously to keep users logged in. But an authentication service saves resources and costs since it is only invoked occasionally. Functions run in milliseconds, while run times for containers or virtual machines (VMs) are in seconds and minutes, respectively. Many cloud providers include a built-in code editor called an Integrated Development Environment, or IDE, for faster developments, deployments, and updates. 
-- You are charged on a pay-per-request basis and not for any idle resources. You can use any popular programming language for development. 
+- You are charged on a **pay-per-request** basis and not for any idle resources. You can use any popular programming language for development. 
 - Plenty of third-party support is available for authentication, database, and other backend services. Since developers purely focus on development, organizations can focus on their business and release products faster than the competition. 
 - The serverless environment allows more innovation and experimentation, even if subject to failures. And with no infrastructure to manage, greener computing also becomes a definite possibility. 
 
 However, serverless computing is not best for every situation as it does have some constraints: 
-- For workloads characterized by long-running processes, a traditional environment can be more cost-effective. 
-- Dependencies on cloud providers’ technologies or environments lead to vendor lock-in risks. 
-- If requests are received after long intervals, the applications must often restart all processes, known as a cold start. This increases the function run time. 
-- Serverless latency is unacceptable for time-critical applications such as banking, health care, or edge-related applications. 
-- Security concerns increase due to changes in the attack surfaces from endpoints to source code and the limitations in the provider’s security implementations. 
+- For workloads characterized by **long-running processes**, a traditional environment can be more cost-effective. 
+- Dependencies on cloud providers’ technologies or environments lead to **vendor lock-in risks**. 
+- If requests are received after long intervals, the applications must often restart all processes, known as a **cold start**. This increases the function run time. 
+- Serverless **latency is unacceptable** for time-critical applications such as banking, health care, or edge-related applications. 
+- Security concerns increase due to changes in the attack surfaces from endpoints to source code and the **limitations in the provider’s security implementations**. 
 - Monitoring and debugging are complex in any distributed system. 
-- Since you cannot imitate the backend-as-a-service (or BaaS) environment in your local system, it’s challenging to test the complete functionality and debug application issues. 
-- Language support is dependent on the cloud provider. Not all cloud providers offer support for all programming languages; hence you are limited to the languages supported by your cloud provider. 
-- There are no servers to optimize for utilization or performance since you have no control over the servers. 
+- Since you cannot imitate the backend-as-a-service (or BaaS) environment in your local system, it’s **challenging to test the complete functionality and debug application issues**. 
+- Language support is dependent on the cloud provider. Not all cloud providers offer support for all programming languages; hence you are **limited to the languages supported** by your cloud provider. 
+- There are no servers to optimize for utilization or performance since you have **no control over the servers**. 
 - There is no state persistence. For example, the previous run state will not be available in the next invocation of the same function. Since local cache lasts only a few hours, it’s better to include low-latency external caches like Redis or Memcached. 
  
-Can serverless and containers work together? Absolutely! 
-
-Let’s compare serverless computing and containerization, starting with the pros of serverless and the cons of containers: 
+Can serverless and containers work together? Absolutely!  Let’s compare serverless computing and containerization, starting with the pros of serverless and the cons of containers: 
 - Serverless computing is more cost-effective since you only pay for what you use. 
 - For serverless, scalability is handled entirely by the cloud provider. The cloud provider manages all the infrastructure. 
 - The time to deploy is a matter of milliseconds rather than seconds. And in terms of speed to market, as development is fast, organizations can focus on their core business and not worry about the infrastructure. 
 
 Now, let’s consider the pros of containers and the cons of serverless:
- - With containers, testing in a local environment or in the cloud is easier. 
- - It’s easier to port containers as they are operating system agnostic, language agnostic, and provider agnostic. 
- - Latency is very low for containers, so it’s suitable even for time-critical workloads. 
- - Containers are also ideal for long-running apps as there are no time restrictions to complete batch jobs. 
+ - With containers, **testing in a local environment or in the cloud is easier**. 
+ - It’s easier to port containers as **they are operating system agnostic, language agnostic, and provider agnostic**. 
+ - **Latency is very low for containers**, so it’s suitable even for time-critical workloads. 
+ - Containers are also **ideal for long-running apps** as there are no time restrictions to complete batch jobs. 
  - With containers, you can configure both apps and resources. And for language support, containerization supports any language.
+
+
+
+
+
+
+
+
+
+
+
 
 
 ---------
@@ -476,3 +471,5 @@ Check the list of available images
 $ sudo crictl images ls
 ```
 Now image address in the manifest is `envoy:v1.31.0`. The image is accessible by K8s and will be installed in the cluster along with other configurations ins th manifest. 
+
+
