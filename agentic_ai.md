@@ -1,25 +1,28 @@
-<!-- Phase 1 (Week 1–2): Mental Model Solidification
+Phase 1 (Week 1–2): Mental Model Solidification
 Goal: Vocabulary + clarity + architecture confidence.
+
 You will master:
-ReAct pattern (reason + act loop)
-Tool calling mechanics (JSON schemas, function calling)
-Memory types:
-Short-term state
-Long-term vector memory
-Planning patterns:
-Single-agent loop
+- ReAct pattern (reason + act loop)
+- Tool calling mechanics (JSON schemas, function calling)
+- Memory types:
+    - Short-term state
+    - Long-term vector memory
+- Planning patterns:
+    - Single-agent loop
 Planner + executor split
 Guardrails:
 Input validation
 Output schema enforcement
 Tool permissioning
-Evaluation:
-Task success metrics
-Failure logging
-Human-in-the-loop feedback
-Deliverable:
-You can whiteboard an agent system confidently.
-No code obsession yet.
+
+- Evaluation:
+    - Task success metrics
+    - Failure logging
+    - Human-in-the-loop feedback
+- Deliverable:
+    - You can whiteboard an agent system confidently.
+    - No code obsession yet.
+
 Phase 2 (Week 3–4): Build ONE Structured Agent
 Not toy. Not messy.
 One clean architecture.
@@ -48,6 +51,7 @@ Logging
 Observability hooks
 Failure recovery
 This becomes your demo story.
+
 Phase 3 (Week 5–6): Production Framing
 You add:
 Latency analysis
@@ -61,14 +65,8 @@ Now you’re no longer “I built an agent.”
 You are:
 “I designed a reliable multi-step LLM system for enterprise.”
 That’s interview gold.
-Strict Rules (To Protect You Emotionally)
-Applications never stop again.
-Study time capped daily (e.g., 2–3 hours).
-No exploring 5 frameworks.
-One stack.
-One system.
-Ship it.
-This prevents guilt spiral.
+
+
 Why This Is High ROI For YOU Specifically
 Because you are not:
 A prompt engineer
@@ -145,7 +143,7 @@ You’re operating as an AI systems engineer.
 
 
 
-
+<!-- 
 
 
 ## 🔥 Project Concept (High-ROI, Resume-Level)
