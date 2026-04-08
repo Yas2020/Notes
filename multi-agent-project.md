@@ -87,205 +87,27 @@ You included:
 That is exactly the stack of concepts companies want engineers to understand.
 The only change I suggest is where each pattern lives in the system so it doesn't become messy.
 
-#### Final Project Architecture (Refined)
-Project name suggestion:
-**Autonomous Multi-Agent Intelligence System**
+## Final Project Architecture 
+Project Name:
+**Agentic Investment Researcher**
 
 Built with
 **LangGraph**
 
-Core Graph Design
-###### Node 1 — Goal Interpreter
-Parses user request.
-Example:
-- Topic: NVIDIA
-- Event: Q3 earnings
-- Objective: generate intelligence report
-- Output structured schema.
-- Orchestrator-Worker Pattern
-
-###### Node 2 — Orchestrator Agent
-Responsibilities:
-- break problem into subtasks
-- assign agents
-- manage graph state
-
-Example task plan:
-1. Research event
-2. Collect financial indicators
-3. Perform quantitative analysis
-4. Evaluate sources
-5. Generate report
-
-Workers receive tasks.
-Worker Agents
-Research Worker
-Tools:
-• web search
-• document retrieval
-Outputs:
-articles
-facts
-sources
-Analyst Worker
-Transforms research into structured insights:
-event_summary
-financial_signals
-sentiment_analysis
-risk_flags
-Quantitative Worker (PAL)
-Here your PAL idea is excellent.
-Instead of the LLM inventing math:
-1 LLM writes Python code
-2 Code executes in sandbox
-3 Result returned to agent
-Example tasks:
-• trend projection
-• volatility
-• simple forecasting
-This is a very strong technical feature.
-Reflection Pattern
-Critic Agent
-Implements self-correction loop.
-It checks:
-• hallucinations
-• logical errors
-• missing data
-Flow:
-generate → critique → revise
-Reflection is a major agentic pattern.
-Evaluator-Optimizer Pattern
-Separate from reflection.
-Evaluator checks output against rubric:
-source_quality
-analysis_depth
-data_consistency
-clarity
-Optimizer agent refines result.
-This demonstrates structured evaluation pipelines.
-Semantic Guardrails
-Your idea here is excellent and very professional.
-Implement with:
-Pydantic
-All agent messages must match schema.
-Example:
-ResearchOutput
-AnalysisOutput
-QuantitativeOutput
-ReportOutput
-If invalid:
-trigger Retry node
-This shows production engineering awareness.
-Token Budget Monitor
-Very smart idea.
-Add a node that tracks:
-total_tokens
-total_cost
-iteration_count
-If exceeded:
-terminate workflow
-This prevents agent loops, a real production issue.
-Human-in-the-Loop (HITL)
-Include but keep it simple.
-Example:
-When system detects high uncertainty or high-impact decision:
-Graph pauses.
-User approves:
-continue
-revise
-terminate
-LangGraph supports this with interrupts.
-This shows safe AI design.
-Persistence
-Use LangGraph checkpointer.
-This gives:
-• resumable workflows
-• fault tolerance
-Very good interview talking point.
-Traceability
-Use
-LangSmith
-You can show:
-• agent steps
-• token usage
-• tool calls
-• reasoning chains
-Companies care about observability.
-Memory
-Two types:
-Short-term
-Graph state.
-Long-term
-Vector database storing past investigations.
-Example use:
-retrieve previous company analysis
-Subgraphs
-Organize system like this:
-Planning Subgraph
-Research Subgraph
-Analysis Subgraph
-Evaluation Subgraph
-Report Subgraph
-This makes architecture clean and scalable.
-Parallelization
-Example:
-news search
-financial search
-regulatory search
-Run simultaneously.
-Map-Reduce
-Multiple research outputs aggregated.
-Final Output
-Structured intelligence report:
-Executive Summary
-Event Overview
-Market Analysis
-Quantitative Trends
-Risks
-Sources
-What makes this project impressive
-It demonstrates almost every modern agentic design pattern:
-• multi-agent orchestration
-• reflection loops
-• evaluator-optimizer pipelines
-• tool-augmented reasoning
-• PAL
-• semantic validation
-• token budgeting
-• human oversight
-• persistent workflows
-• traceability
-This is very close to production AI architecture.
-Important warning
-Even though you said you can handle complexity, we must keep the core graph clean.
-Avoid:
-• too many agents
-• too many loops
-• unnecessary features
-Goal:
-clear architecture
-working system
-easy explanation
-Not maximum complexity.
-My honest opinion
-If you build 70–80% of what you described, this will be an outstanding portfolio project.
-It will clearly show that you understand agentic AI system design, not just how to call an LLM.
-
-
-
-## High-Level Architecture
+### High-Level Architecture
 Think of the system as 5 subgraphs coordinated by a central orchestrator.
 ```ini
 User
  ↓
-Goal Interpreter
+Query Validator
  ↓
 Orchestrator
  ├── Planner Subgraph
  ├── Researcher Subgraph
  ├── Quant Analyst Subgraph
- ├── Evaluation Subgraph
- └── Report/Analyst Subgraph
+ ├── Analyst Subgraph
+ │   ├── Evaluation Subgraph
+ │   └── Report/Analyst Subgraph
 ```
 
 Cross-cutting nodes:
@@ -295,124 +117,228 @@ Cross-cutting nodes:
 - Checkpointer
 
 
-#### Global Graph State
-Define a shared state object (very important).
-Example schema:
-```ini
-state = {
-    topic
-    event
-    plan
-    research_sources
-    research_notes
-    analysis_results
-    quantitative_results
-    evaluation_feedback
-    final_report
-    token_usage
-    iteration_count
-}
-Use Pydantic models for each section to enforce semantic guardrails.
-```
 
+Core Graph Design
+##### Goal Interpreter
+Implements user input validation aganist the topic
+Responsibilites:
+1. ***User query validator**:
+    - validates user query for relevance, safety and lcarity
+    - If not met, activated HITL to ask user to revise their query
+2. Parses user request. 
 
--------------------------
-----------------
--------
-### MCP Servers
- Adding MCP on top of everything else turns your project from a normal agent system into something that looks very modern and forward-looking. This is exactly the kind of architecture that makes interviewers lean forward. Let's design the actual LangGraph node structure so you can implement it cleanly.
-
-We'll include MCP using Model Context Protocol and build the orchestration with LangGraph and tracing with LangSmith.
-
-
-
-#### Node Flow (Main Graph)
-1. **Goal Interpreter Node**
-    Input:
-    - User prompt
-    
-    Output structured goal:
-    ```ini
-    {
-    topic
-    event
-    objective
-    constraints
-    }
-    ```
-    Then send to orchestrator.
-
-2. **Token Budget Monitor Node**
-Runs before every major step.
-Checks:
-    - token_usage
-    - iteration_count
-
-    If exceeded → terminate workflow.
-
-    This protects against agentic loops.
-
-3. **Orchestrator Node (Manager Agent)**
-Implements Orchestrator-Worker pattern.
-
-    Responsibilities:
-    1. create plan
-    2. schedule subgraphs
-    3. route tasks
-
-    Example output:
-    ```ini
-        plan = [
-        research,
-        analysis,
-        quantitative,
-        evaluation,
-        report
-        ]
-    ```
-    Then call Planning Subgraph.
-
-##### Planner Subgraph
-Nodes:
-- Task Planner
-- Task Validator
-
-Planner decomposes goal.
 Example:
-```ini
-1 gather sources
-2 identify signals
-3 run quantitative analysis
-4 evaluate findings
-5 compile report
-```
-Validator checks plan quality.
-If poor → reflection loop.
+- Topic: NVIDIA
+- Event: Q3 earnings
+- Objective: generate intelligence report
+
+##### Orchestrator
+Implements Orchestrator-Worker pattern.
+Responsibilities:
+
+###### Create plan
+- **Planner subgraph**
+    - Breaks a user query into tasks
+    - Decides which agents/tools are needed
+    - `plan = List[Task]`
+    - Nodes:
+        - Planner Architect: generates a DAG plan of required tasks
+        - Plan Validator:
+        Checks plan quality. If poor → reflection loop.
+            - Plan is an acyclic graph
+            - Dependeiecie are not missing or ambinguous
+    Planner decomposes goal.
+    
+    Example task plan:
+    1. Research event: web search
+    2. Collect financial indicators: web search or vector database
+    3. Perform quantitative analysis: performs  simulations or generates charts or plots
+    4. Analyst: Evaluate sources and results from quant agnet, finds desrepancies between research data and qunatitavie results
+    5. Generate report: aggregate all the result into a summary report that might make a fiancial advices
+
+
+###### Schedule node
+Marks task pending → ready → running before dispatch them to agents. But before this, it checks if the dependent task are marked "completed" by agents.
+
+- **Scheduler**:
+    - Asigns tasks to agents if task dependecies are complete
+    - Manages task status
+
+###### Router Edge
+A conditional edge to route tasks to Agents and back to the Scheduler
+- **Route tasks**
+    - Fans out tasks to the corresponding agents in parallel
+    - When agents return their updates, graph flows back to the schduler to send the next batch of tasks in parallel
+
+
+
+#### Worker Agents
+Workers receive tasks from the scheduler.
 
 ##### Research Subgraph
-Runs in parallel.
-Nodes:
+Runs tasks in parallel.
+
+My design include single node to perform a web search using a MCP server. Out search tool that uses Tavily Search will perfomr the search for the agent once the agent calls the MCP srver.  However this could be extended to more specialized nodes such as:
+
 ```ini
 Research Coordinator
  ├── News Research Agent
  ├── Financial Data Agent
  ├── Document Retrieval Agent
  ```
-These agents use MCP tools.
-Example MCP servers:
+
+These agents may use their own MCP tools from MCP servers:
 ```ini
 web_search_server
 finance_data_server
 document_server
 ```
 The agents discover tools dynamically via MCP.
+
+Outputs are formatted into **Artifacts Schema** and saved in the gloabl graph state. In addition the results can be aggregated via map-reduce node.
+
+MCP Tools:
+- web search
+- document retrieval
+
+Outputs:
+- articles
+- facts
+- sources
+
+##### Analyst Subgraph
+- Transforms research into structured insights:
+    - Event_summary
+    - Financial_signals
+    - Sentiment_analysis
+    - Risk_flags
+
+- Nodes:
+    - The **Analyst** produces a "Candidate Report."
+    - The **Evaluator** (a separate node/LLM call) generates a "Scorecard."
+    - The **Optimizer** (the original Analyst) receives the scorecard and "Self-Corrects" based on that external feedback.
+
+It could have more nodes such as:
+
+```ini
+Trend Analyzer
+Risk Detector
+```
+Analayst subgraph transforms research data into insights.
 Outputs:
 ```ini
-sources
-documents
-facts
+insights
+risk_signals
+market_trends
 ```
-Then results aggregated via map-reduce node.
+
+###### Evaluator/Optimizer Nodes
+Implements Evaluator-Optimizer pattern.
+- Nodes:
+    ```ini
+    Evaluator Agent
+    Optimizer Agent
+    ```
+- Evaluator uses rubric:
+```ini
+source reliability
+analysis coherence
+data consistency
+coverage
+```
+If score low → send to optimizer.
+- Optimizer refines results.
+
+Could be a subgraph on it own:
+###### Evaluator-Optimizer (Subgraph-Level)
+
+Placement: A standalone evaluation/ subgraph.
+What it is: A conversation between two different "personas."
+- The Evaluator is the "Senior Partner."
+- The Optimizer is the "Associate."
+
+Why: This creates **Adversarial Collaboration**. The Evaluator is incentivized to find flaws that the Optimizer missed.
+
+Example: Evaluator grades the analysis.
+If Grade < 8, Optimizer fixes it. (Repeat up to 3x).
+
+
+
+
+##### Quantitative Subgraph (PAL)
+- Implements Program-Aided Language Models.
+    Flow:
+    ```ini
+    Quant Agent
+    ↓
+    Code Generator
+    ↓
+    Python Sandbox (MCP Server)
+    ↓
+    Result Parser
+    ```
+- Tasks:  
+    - Trend projection
+    - Volatility estimate
+    - Growth modeling
+    - Simple forecasting
+    - Monte Carlo Simualtions
+    
+- Avoids hallucinated math. Instead of the LLM invents math:
+    - LLM writes Python code
+    - Code executes in sandbox
+    - Result returned to agent
+
+- Nodes:
+    - **Quant Agent**: User data sources from Research Agents to generate safe Python Code to perform Data Analytics and run simulations
+    - **Autditor**: Perform self-reflection task. Checks for hallucinations, logical or runtime errors, descrepany, and provides feedback. Judges the results from Quant node for required outputs, validity of code and data used in the code, descrepencies betwwen the results from Quant agent and research data. PASS or FAIL if requirements not met. 
+        - If failed, the task will be returnrd to the Quant Agent with the feedback from Auditor 
+        - Cycle repeats for a MAX_ITERATION allowed
+        - After max retires, task marked failed and return to the scheduler
+    - **Router Quant Edge**
+    Conditional edge which routes the task from Quant node back to the Quant node before it reaches the Auditor if deterministic requirements are not met. For example, code output is empty or agent didnt call the `execute_python_code` tool
+    - **Route Auditor Edge**
+    Conditional edge which checks if max retires exhausted, routes the task to the scheduler otherwise returns thask to the Quant node with Auditor feedback 
+
+
+### Best Patterns for Multi Agent Architectures
+This project implemented best Agentic AI design patterns such as
+##### Reflection Pattern
+###### Critic Agent
+Auditor/Critic agent inside quant_analyst subgraph implements a self-correction loop. It checks:
+- **Hallucinations**: values are from research data
+- **Logical errors**: summary is print to stdout, artifacts wre saved to share volumes
+- **Missing data or discrepencies**: if quant campotation is sound based and matches the live data provided by the research agent or historical data from vector_db
+
+Flow:
+```ini
+generate → critique → revise
+```
+
+- Reflection is a major agentic pattern.
+- Limit iterations (important).
+- Placement: Inside the research/ or analysis/ subgraphs.
+
+What it is: A single node that follows a generation node.
+
+```ini
+Analyst Node → Reflection Node (Analyst checks its own syntax) → Output.
+```
+
+Why: It’s cheap and fast. You don’t need a whole subgraph for an agent to check if it forgot a comma.
+
+##### Evaluator-Optimizer Pattern 
+Separate from reflection.
+- Evaluator checks output against rubric:
+    - source_quality
+    - analysis_depth
+    - data_consistency
+    - clarity
+
+- Optimizer agent refines result.
+
+This demonstrates structured evaluation pipelines.
+- Semantic Guardrails
 
 ##### Semantic Guardrail Node
 Validate outputs with **Pydantic**.
@@ -430,100 +356,200 @@ If invalid JSON:
 ```ini
 Retry Node → regenerate
 ```
-This is very important in production systems.
+This is very important in production systems. All agent outputs must match specifict schema.
 
-##### Analyst Subgraph
-Nodes:
+Example:
+- ResearchOutput
+- AnalysisOutput
+- QuantitativeOutput
+- ReportOutput
+
+If invalid:
+- Trigger Retry node
+
+##### FinOps
+This node runs before every major step. Add a node that tracks:
+- Total_tokens
+- Total_cost
+- Iteration_count
+
+If exceeded → terminate workflow. This prevents agent loops, a real production issue.
+
+This shows production engineering awareness. 
+
+
+##### Human-in-the-Loop (HITL)
+
+Example:
+When system detects high uncertainty or high-impact decision:
+- Graph pauses.
+- User approves:
+    - Continue
+    - Revise
+    - Terminate
+
+I implemented this at user query validator node. If the query is not relevant to the topic, not safe, not clear, the graph inttrupts the flow and asks user to revise the query. LangGraph supports this with **interrupts**.
+
+This shows safe AI design.
+
+##### Streaming HTTP MCP Servers
+Adding MCP on top of everything else turns this project from a normal agent system into a modern and forward-looking system. This is exactly the kind of architecture that makes interviewers lean forward. Let's design the actual LangGraph node structure so you can implement it cleanly. We'll include MCP using Model Context Protocol and build the orchestration with LangGraph application equiped with  MCP clients.
+
+- Instead of hardcoding tools, agents discover them through MCP servers.
+
+- Architecture:
+    ```ini
+    Agent
+    ↓
+    MCP Client
+    ↓
+    Available Tools
+    ├ web_search
+    ├ financial_data
+    ├ document_lookup
+    └ python_execution
+    ```
+    This demonstrates **dynamic tool discovery**. Very modern architecture.
+
+- The Role of mcp_servers/:
+
+    Instead of importing your search functions directly into your agents, you run them as a separate process. This shows you understand Micro-service architecture. Your agents don't care how the web search works; they just know the MCP protocol.
+
+
+##### Retry Node
+This is a more deterministic feature rather than agentic. Used when:
+- Schema fails
+- Tool fails
+- Evaluation fails
+
+Retry strategy:
+`retry_count < 3`
+
+Otherwise escalate to HITL.
+
+
+
+##### Persistence
+I used **LangGraph checkpointer**.
+This gives:
+- resumable workflows
+- fault tolerance
+
+If the system stops:
+- resume from last node
+
+Very good interview talking point.
+
+
+##### Traceability
+I use **LangSmith**
+You can show:
+- agent calss
+- token usage
+- tool calls
+- execution graph
+- reasoning chains
+
+You will be able to show a beautiful execution trace during demos. Companies care about observability.
+
+
+##### Memory
+Two types:
+- Short-term: Graph state.
+- Long-term: Vector database storing past investigations.
+
+Example use:
+- retrieve previous company analysis
+
+
+##### Parallelization
+Use LangGraph's parallel nodes.
+
+Example:
+- news search
+- financial search
+- regulatory search
+
+Run simultaneously.
+- Map-Reduce: 
+    - Multiple research outputs aggregated.
+- Final Output
+    - Structured intelligence report:
+    - Executive Summary
+    - Event Overview
+    - Market Analysis
+    - Quantitative Trends
+    - Risks
+    - Sources
+
+
+##### Subgraphs
+I organized system like this:
+- Planning Subgraph
+- Research Subgraph
+- Quant Analysis Subgraph
+- Analysis Subgraph
+    - Evaluation Subgraph
+    - Report Subgraph
+
+This makes architecture clean and scalable.
+
+
+#### What interviewers will see
+This project demonstrates almost every modern agentic design pattern:
+-  Multi-agent orchestration
+-  MCP tool ecosystems
+-  Reflection loops
+-  Evaluator-optimizer pipelines
+-  Tool-augmented reasoning
+-  PAL reasoning
+-  Semantic guardrails
+-  Token budgeting
+-  Human oversight (HITL safety)
+-  persistent workflows
+-  traceability
+
+That is cutting-edge agentic architecture. This is very close to production AI architecture.
+
+Goal:
+- Clear architecture
+- Working system
+- Easy explanation
+- Not maximum complexity.
+
+My honest opinion
+If you build 70–80% of what you described, this will be an outstanding portfolio project. It will clearly show that you understand agentic AI system design, not just how to call an LLM.
+
+
+
+
+
+-----------------------------------------------------
+--------------------
+------------
+
+#### Global Graph State
+Define a shared state object (very important).
+Example schema:
 ```ini
-Analyst Agent
-Trend Analyzer
-Risk Detector
-```
-These transform research data into insights.
-Outputs:
-```ini
-insights
-risk_signals
-market_trends
-```
-The Analyst produces a "Candidate Report."
+state = {
+    topic
+    plan
+    artifacts
+    token_usage
+    iteration_count
+}
 
-The Evaluator (a separate node/LLM call) generates a "Scorecard."
-
-The Optimizer (the original Analyst) receives the scorecard and "Self-Corrects" based on that external feedback.
-
-##### Quantitative Subgraph (PAL)
-Implements Program-Aided Language Models.
-Flow:
-```ini
-Quant Agent
- ↓
-Code Generator
- ↓
-Python Sandbox (MCP Server)
- ↓
-Result Parser
-```
-Example tasks:
-```ini
-trend projection
-volatility estimate
-growth modeling
-```
-LLM writes Python → sandbox executes → results returned.
-This avoids hallucinated math.
-
-##### Evaluation Subgraph
-Implements Evaluator-Optimizer pattern.
-Nodes:
-```ini
-Evaluator Agent
-Optimizer Agent
-```
-Evaluator uses rubric:
-```ini
-source reliability
-analysis coherence
-data consistency
-coverage
-```
-If score low → send to optimizer.
-Optimizer refines results.
-
-Evaluator-Optimizer (Subgraph-Level)
-
-Placement: A standalone evaluation/ subgraph.
-What it is: A conversation between two different "personas."
-
-The Evaluator is the "Senior Partner."
-
-The Optimizer is the "Associate."
-
-Why: This creates "Adversarial Collaboration." The Evaluator is incentivized to find flaws that the Optimizer missed.
-
-
-##### Reflection Node
-Implements self-correction pattern.
-Flow:
-```ini
-Generate
-↓
-Critique
-↓
-Revise
-```
-Limit iterations (important).
-
-Reflection (Node-Level)
-
-Placement: Inside the research/ or analysis/ subgraphs.
-What it is: A single node that follows a generation node.
-
-```ini
-Analyst Node → Reflection Node (Analyst checks its own syntax) → Output.
+Use Pydantic models for each section to enforce semantic guardrails.
 ```
 
-Why: It’s cheap and fast. You don’t need a whole subgraph for an agent to check if it forgot a comma.
+
+-------------------------
+----------------
+-------
+
+
+
 
 
 
@@ -595,140 +621,22 @@ The "Stuck" Loop (Escalation): Inside your evaluation_graph.py, if the Evaluator
 
 Final Sign-off: After the report_graph.py generates the final PDF, but before it is "published" or emailed.
 
-
-
-##### Report Generation Subgraph
-Nodes:
-```ini
-Report Planner
-Report Writer
-Citation Builder
-```
-Final output structure:
-```ini
-Executive Summary
-Event Overview
-Key Insights
-Quantitative Findings
-Risks
-Sources
-```
-
-##### Persistence
-Enable checkpointer in LangGraph.
-If the system stops:
-- resume from last node
-
-Great feature for interviews.
-
-##### Traceability
-Use **LangSmith** to track:
-- agent calls
-- tool usage
-- tokens
-- execution graph
-
-You will be able to show a beautiful execution trace during demos.
-
-##### Where MCP Fits
-Instead of hardcoding tools, agents discover them through MCP servers.
-
-Example architecture:
-```ini
-Agent
- ↓
-MCP Client
- ↓
-Available Tools
-   ├ web_search
-   ├ financial_data
-   ├ document_lookup
-   └ python_execution
-```
-This demonstrates **dynamic tool discovery**.
-Very modern architecture.
-
-The Role of mcp_servers/:
-
-Instead of importing your search functions directly into your agents, you run them as a separate process. This shows you understand Micro-service architecture. Your agents don't care how the web search works; they just know the MCP protocol.
-
-
-##### Parallelization
-Use LangGraph's parallel nodes.
-Example:
-```ini
-news search
-financial search
-regulatory search
-```
-Run simultaneously.
-
-##### Retry Node
-Used when:
-- schema fails
-- tool fails
-- evaluation fails
-
-Retry strategy:
-retry_count < 3
-
-Otherwise escalate to HITL.
-
-##### Final Graph Overview
-Simplified structure:
-```ini
-Goal Interpreter
- ↓
-Token Monitor
- ↓
-Orchestrator
- ↓
-Planning Subgraph
- ↓
-Research Subgraph (parallel)
- ↓
-Guardrails
- ↓
-Analysis Subgraph
- ↓
-Quantitative Subgraph (PAL)
- ↓
-Evaluation Subgraph
- ↓
-Reflection Loop
- ↓
-HITL (if needed)
- ↓
-Report Subgraph
- ↓
-Final Output
-```
-Analysis Subgraph completes.
-
-Evaluation Subgraph starts:
-
-Evaluator grades the analysis.
-
-If Grade < 8, Optimizer fixes it. (Repeat up to 3x).
-
 HITL Gate: If the loop fails 3x OR if the report is ready for final sign-off, the graph Interrupts.
 
 Report Subgraph: Once the human clicks "Approve," the graph resumes and formats the final PDF.
 
-##### What interviewers will see
-This project demonstrates:
-- multi-agent orchestration
-- MCP tool ecosystems
-- PAL reasoning
-- reflection loops
-- evaluator pipelines
-- semantic guardrails
-- token budget protection
-- HITL safety
-- persistent workflows
-- observability
 
-That is cutting-edge agentic architecture.
+
+##### Final Graph Overview
+
+Include Mermaid Diagram fromNotebook
+
+---------------
+
+
+
+
+
 
 
 
@@ -736,39 +644,6 @@ That is cutting-edge agentic architecture.
 
 
 
-### Updated Folder Structure
-
-```ini
-agentic-investment-research/
-├── app/
-│   ├── core/                  
-│   │   ├── state.py           # MasterState + Reducers for data merging
-│   │   ├── engine.py          # The Compiled Graph with .interrupt_before()
-│   │   └── config.py          # Pydantic Settings & API keys
-│   │
-│   ├── subgraphs/             
-│   │   ├── planning/          # Node: Intent + Node: Goal Decomposition
-│   │   ├── research/          # Nodes: Parallel Search + Reflection (Self-Correction)
-│   │   ├── quantitative/      # Node: Code Gen + Node: Sandbox Exec (PAL)
-│   │   ├── evaluation/        # Nodes: Evaluator (Grader) + Optimizer (Editor)
-│   │   └── report/            # Node: Final PDF/Markdown Formatting
-│   │
-│   ├── services/              
-│   │   ├── mcp/               # MCP Clients (The 'Bridge' to tools)
-│   │   ├── vector_store.py    # Vector DB RAG logic
-│   │   └── sandbox/           # Logic for Dockerized code execution
-│   │
-│   └── schemas/               # Typed Pydantic models (Rubrics, Artifacts)
-│
-├── mcp_servers/               # Standalone Python Tool Servers
-│   ├── web_search/            # Tavily/Exa wrapper
-│   └── financial_models/      # Python logic for Monte Carlo/Simulations
-│
-├── notebooks/                 # Prototype your prompts & graph logic here
-├── tests/                     # Integration tests for Graph transitions
-├── pyproject.toml             # Use 'uv' or 'poetry'
-└── .env
-```
 
 
 
