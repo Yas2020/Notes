@@ -3842,7 +3842,7 @@ The MCP Protocol is a new standard which will help you to connect your data sour
 
 Model Context Protocol (MCP) is an open protocol that allows developers to build an MCP server using any language, including JavaScript, C Sharp, Python, Java, and others. It standardizes the connections between AI applications, large language models, and any available external data and service. 
 
-There are two main needs for an AI agent. The first is to provide context in the form of contextual data, such as documents, database entries, or articles. The second is to provide tools and tool capabilities for AI agents to perform actions or execute tools, such as performing a web search, calling an external service to book a reservation, or performing a complex calculation. 
+There are two main needs for an AI agent. The first is to provide context in the form of contextual data, such as **documents**, **database entries**, or **articles**. The second is to provide **tools** and **tool capabilities** for AI agents to perform actions or execute tools, such as performing a web search, calling an external service to book a reservation, or performing a complex calculation. 
 
 MCP behaves like a universal layer to enable developers to build tools that interact with any resource in a uniform and standardized manner. Why is this standardization so important to developers? 
 
@@ -3850,7 +3850,7 @@ Benefit | How it helps
 ------ | ---------
 Extendability | Easily add functionality or tools in the future without affecting the existing environment
 Interoperability | Build applications across platforms and vendors
-Consistency | Use tools that behave the same regardless of the model
+Consistency | Use tools that behave the same regardless of the model (model agnostic)
 Reusability | Build Once and reuse everywhere 
 Rapid development | No need for custom integrations 
 
@@ -3940,11 +3940,11 @@ Bear in mind that MCP is a relatively new technology, and therefore, we are only
   -  Highly flexible, as they can integrate with both internal systems and external resources or tools. 
  
 MCP primitives are the core concept of MCP, defining what servers and clients can provide for one another. They determine the kinds of contextual information that can be shared with AI applications and the actions that can be carried out. In MCP, servers can expose three types of core primitives as follows: 
-- Tools offer functions that AI apps can invoke to perform 
+- **Tools** offer functions that AI apps can invoke to perform 
     -  calculations, sending messages, file operations, database calls, or data retrieval via API calls. 
- -  Resources, which provide AI apps with access to contextual information from internal or external data sources. 
+ -  **Resources**, which provide AI apps with access to contextual information from internal or external data sources. 
     -  returns data only, such as file contents, database records, or API responses; no actions 
- - Prompts, which are reusable templates and workflows that structure and streamline communication and interactions between the LLM and the server. 
+ - **Prompts**, which are reusable templates and workflows that structure and streamline communication and interactions between the LLM and the server. 
 
 ###### MCP Architecture Layers 
 - Data Layer
@@ -3962,13 +3962,13 @@ In the client-to-server stream, MCP protocol messages are converted into JSON-RP
   
 Requests require a response from the server, whereas notifications do not.  
 
-Between clients and servers, the MCP transport layer defines two primary transport mechanisms, both transporting messages in JSON-RPC 2.0 format. The first is Standard Input-Output, or STDIO. This mechanism is particularly effective for integrating local resources, as it provides simple, lightweight, synchronous message exchange with systems, such as local file systems, databases, and local APIs. 
+Between clients and servers, the MCP transport layer defines two primary transport mechanisms, both transporting messages in `JSON-RPC 2.0` format. The first is **Standard Input-Output (STDIO)**. This mechanism is particularly effective for integrating local resources, as it provides simple, lightweight, synchronous message exchange with systems, such as local file systems, databases, and local APIs. 
 
 <p align="center">
   <img src="./assets/agentic_ai/mcp1.png" alt="drawing" width="600" height="250" style="center" />
 </p>
 
-The second is Streamable HTTP. This mechanism facilitates client-to-server communication over HTTP post, with optional support for server-sent events to enable streaming. It is designed for remote server interactions and accommodates standard HTTP authentication methods such as bearer tokens, API keys, and custom headers. The MCP standard advises using OAuth authorization framework to obtain authentication tokens. 
+The second is **Streamable HTTP**. This mechanism facilitates client-to-server communication over HTTP post, with optional support for server-sent events to enable streaming. It is designed for remote server interactions and accommodates standard HTTP authentication methods such as **bearer tokens**, **API keys**, and **custom headers**. The MCP standard advises using OAuth authorization framework to obtain authentication tokens. 
 
 
 ### MCP in Action
@@ -4009,7 +4009,7 @@ These two real-life examples of MCP have shown us that MCP really is a game chan
 
 ### Run existing MCP Server
 
-Fast MCP servers behave like remote function libraries. Instead of importing locally, you connect to services anywhere. Here we have a simple MCP server to perform mathematical calculations. The client is your code that connects to an MCP server and is represented by a Python object. 
+Fast *MCP servers behave like remote function libraries*. Instead of importing locally, you connect to services anywhere. Here we have a simple MCP server to perform mathematical calculations. The client is your code that connects to an MCP server and is represented by a Python object. 
 
 ```python
 response = client.call_tool("add", {"a": "1", "b": "2"})
@@ -4019,7 +4019,7 @@ print(response)
 3
 ```
 
-Each server has tools, like `add` and `multiply`. The server can run anywhere. Your code talks to it over the network. We call tools using the tool name and parameters. The tool name is `add`, and we pass parameters `a` and `b` with values 1 and 2. The parameters are set, the add tool is selected, and the result 3 is transmitted back via the transport. 
+Each server has tools, like `add` and `multiply`. The server can run anywhere. Your code talks to it over the network. *We call tools using the tool name and parameters*. The tool name is `add`, and we pass parameters `a` and `b` with values 1 and 2. The parameters are set, the add tool is selected, and the result 3 is transmitted back via the transport. 
 
 The MCP server communicates with the client via a transport mechanism. 
 
@@ -4040,7 +4040,7 @@ The second tool is getLibraryDocs. The parameter is the output from before. The 
 
 ```python
 from fastmcp import Client
-from fastmcp.client.transports import StudioTransport
+from fastmcp.client.transports import StdioTransport
 
 stdio_transport = StdioTransport(
   command="npx",
@@ -4165,6 +4165,8 @@ client = MultiServerMCPClient(
 )
 ```
 
+> **Note**:  `MultiServerMCPClient` is stateless, meaning each tool invocation creates a new MCP session. While `MultiServerMCPClient` is excellent for development and LangChain apps, for enterprise-level or large-scale multi-user applications, using an MCP Gateway (like MCP Manager) is considered better to manage tool selection, security (RBAC), and session-level context more efficiently.
+
 Next, we'll import the components for our agent system. `Create_react_agent` builds a ReAct agent and a language model for powering the agent's reasoning. In-Memory Saver provides conversation memory, allowing the agent to remember context across multiple exchanges. Asyncio enables asynchronous execution for non-blocking MCP server communication. 
 
 ```python
@@ -4203,7 +4205,7 @@ print(response['message'][-1].content)
 ```
 
 
-First, we'll initialize the LLM object. Before we create the agent, the agent needs to remember previous messages in the conversation. Therefore, we'll create a Memory Saver object. We then set the configuration with a thread_id. This is useful if you have more than one conversation happening simultaneously. It acts like a session identifier. Finally, we create the agent. To create the chatbot, we start by prompting the agent. This includes setting the agent's role, asking the agent to provide an introduction of its capabilities and available tools, and then printing out the response. The agent responds with a text introduction explaining its capabilities and available tools. This includes describing how it can help users access software documentation by resolving library IDs and retrieving documents, and how it can help explore the MetMuseum collection by listing departments, searching for museum objects, and getting detailed object data and images. We then create a basic chatbot to prompt the user, starting with a while loop. We ask the user to provide 1 to ask a question or 2 to exit. If the choice is 1, we prompt the user for their question, and we feed the user prompt into the agent using a invoke. 
+First, we'll initialize the LLM object. Before we create the agent, the agent needs to remember previous messages in the conversation. Therefore, we'll create a Memory Saver object. We then set the configuration with a `thread_id`. This is useful if you have more than one conversation happening simultaneously. It acts like a *session identifier*. Finally, we create the agent. To create the chatbot, we start by prompting the agent. This includes setting the agent's role, asking the agent to provide an introduction of its capabilities and available tools, and then printing out the response. The agent responds with a text introduction explaining its capabilities and available tools. This includes describing how it can help users access software documentation by resolving library IDs and retrieving documents, and how it can help explore the MetMuseum collection by listing departments, searching for museum objects, and getting detailed object data and images. We then create a basic chatbot to prompt the user, starting with a while loop. We ask the user to provide 1 to ask a question or 2 to exit. If the choice is 1, we prompt the user for their question, and we feed the user prompt into the agent using a invoke. 
 
 ```python
 while True:
@@ -4253,14 +4255,16 @@ def subtract(a: int, b:int) -> int:
     return a - b
 ```
 
-Also like a LangChain tool, we have a function. In this case, a function to add two integers together. And we have a doc string. Remember, the agent needs this to determine what the function does. It's how the LLM decides when to use this tool. We use type hints for the inputs `a` and `b` plus the return value. In addition, we create a subtraction tool following the same pattern. 
+Also like a LangChain tool, we have a function. In this case, a function to add two integers together. And we have a doc string. *Remember, the agent needs this to determine what the function does. It's how the LLM decides when to use this tool*. FastMCP uses fucntion **docstring** as the tool's description. If it's missing or vague, LLMs wont know when to call it. Also FastMCP turns your function **type hints** into JSON schema. Without specific types, the model gets a generic object and may skip the call because it doesnt know how to format the arguments. Use specific type hints `(int, str, bool)` and Optional for nullable fields.  
+
+
 
 ###### Resources
 Resources are like filing cabinets that AI systems can access. Here we define a resource with `@mcp.resource` and a URI template of file path. 
 
 ```python
 @mcp.resource("file:///endpoint/{name}")
-def return_template_documtn(name: str) -> str:
+def return_template_document(name: str) -> str:
     ```Read a document by name```
     return f"Document contents of {name}"
 ```
@@ -4391,13 +4395,14 @@ async with streamablehttp_client(f"http://127.0.0.1:{PORT}/mcp") as (read, write
         await session.initialize()
         tools = await load_mcp_tools(session)
         agent = create_react_agent(model=llm, tools=tools)
-        agent_response = await agent.ainvoke({"messages": "Uase the add tool to add 2 and 1 and let me know if you used a tool"})
+        agent_response = await agent.ainvoke({"messages": "Use the add tool to add 2 and 1 and let me know if you used a tool"})
 ```
 
 Streamable HTTP client establishes the HTTP connection and returns three parameters: read, write, and_sid. The streams for receiving and sending data, plus a session ID. These streams are passed to client session, which manages the MCP protocol communication. We initialize the session with `await session.initialize()`. This performs the MCP handshake. We load the MCP tool using `load_MCP_tools` passing in the active session. We create a ReAct agent, passing in our LLM and the converted tools. Finally, we invoke the agent with a prompt. The agent can now discover and use our MCP tools to respond. The agent extracts the numbers from the text, in this case, 1 and 2. These integers are sent to the MCP server. The result is calculated and sent back to the agent. The LLM converts it into a natural language response. 
 
 ###### STDIO MCP Server
 For the STDIO transport, the server runs on your own system. The client launches the server as a child process and communicates via `stdin/stdout` pipes, unlike HTTP, where you connect to an already running server. This is done via the Python file `stdio_server.py`. 
+
 If you're using Jupyter, you'll need to save it as a `.py` file. The code is identical to before, except we add `mcp.run()` at the end to start the server on stdin slash stdout. Next, we'll configure the STDIO transport. To do this, we run the Python file `stdio_server.py`. Using STDIO with an LLM is identical to using HTTP, except for the transport configuration. However, instead of streamable HTTP underscore client, we use stdio underscore client with stdio server parameters to launch the server as a child process. The rest is the same. 
 
 
@@ -4548,7 +4553,7 @@ Production MCP clients often manage multi-server connections across both transpo
     - All STDIO for local deployment
     - All streambale http for cloud deployment
     - Hybrid architecture (local and remote)
-- Anstraction layer makes transport differences trnaparent to application logic 
+- Abstraction layer makes transport differences trnaparent to application logic 
   
 
 #### MCP Security with Permissions and Elicitation
@@ -4763,11 +4768,14 @@ async with streamablehttp_client("http://127.0.0.1:8000/mcp") as (read, write, _
 
 ##### Security patterns
 
-Building secure MCP clients requires multiple defense layers: permission policies control which operations are allowed, audit logging tracks all actions for compliance, and human-in-the-loop approvals prevent unauthorized operations.
+Building secure MCP clients requires multiple defense layers: 
+- permission policies control which operations are allowed, 
+- audit logging tracks all actions for compliance, and 
+- human-in-the-loop approvals prevent unauthorized operations.
 
 ##### Permission policies
 
-Permission policies implement a three-tier authorization model: allow (auto-approve), ask (require confirmation), and deny (block completely). This gives you fine-grained control over which tools can execute automatically versus which need user approval.
+Permission policies implement a three-tier authorization model: **allow** (auto-approve), **ask** (require confirmation), and **deny** (block completely). This gives you fine-grained control over which tools can execute automatically versus which need user approval.
 
 ```python
 class MCPPermissionClient:
@@ -4872,7 +4880,7 @@ async def get_available_tools(self):
 
 - Use the base/derived pattern to separate protocol logic from application logic.
 - Implement lazy initialization with connection state tracking.
-- Always use AsyncExitStack for proper async resource cleanup, preventing connection leaks.
+- Always use `AsyncExitStack` for proper async resource cleanup, preventing connection leaks.
 
 ###### Security:
 
