@@ -1,3 +1,298 @@
+
+
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Plan for a Project](#plan-for-a-project)
+  - [Foundational Models](#foundational-models)
+    - [Initializing an agent](#initializing-an-agent)
+    - [Streaming Output](#streaming-output)
+  - [Prompt](#prompt)
+    - [Few-shot examples](#few-shot-examples)
+    - [Structured Prompts](#structured-prompts)
+  - [Tools](#tools)
+  - [Search Web](#search-web)
+  - [LangSmith](#langsmith)
+  - [Memory](#memory)
+      - [Customized States](#customized-states)
+  - [Model Context Protocol (MCP)](#model-context-protocol-mcp)
+    - [Online MCP Servers](#online-mcp-servers)
+  - [In-context Learning](#in-context-learning)
+        - [Advantage](#advantage)
+        - [Disadvantage](#disadvantage)
+    - [Prompts](#prompts)
+      - [Elements of prompt templates](#elements-of-prompt-templates)
+      - [Prompt engineering](#prompt-engineering)
+- [Introduction to LangChain](#introduction-to-langchain)
+    - [Language Models](#language-models)
+      - [Chat Models](#chat-models)
+      - [Prompt templates](#prompt-templates)
+      - [Output Parsers](#output-parsers)
+      - [Advanced methods of prompt engineering](#advanced-methods-of-prompt-engineering)
+        - [Zero-shot prompt](#zero-shot-prompt)
+        - [One-shot prompt](#one-shot-prompt)
+        - [Few-shot prompting](#few-shot-prompting)
+        - [Chain-of-thought](#chain-of-thought)
+        - [Self-consistency](#self-consistency)
+    - [Tools and applications](#tools-and-applications)
+      - [LangChain for prompt engineering](#langchain-for-prompt-engineering)
+    - [LangChain Chains and Agents for Building Applications](#langchain-chains-and-agents-for-building-applications)
+    - [Memory](#memory-1)
+    - [Agents](#agents)
+  - [Choose the right model for your use case](#choose-the-right-model-for-your-use-case)
+  - [Comparing AI system Designs](#comparing-ai-system-designs)
+      - [Single LLM features](#single-llm-features)
+        - [Best uses](#best-uses)
+        - [Advantages](#advantages)
+        - [Limitations:](#limitations)
+      - [Structured workflows: Multi-step, predictable processes](#structured-workflows-multi-step-predictable-processes)
+        - [Best uses](#best-uses-1)
+        - [Advantages](#advantages-1)
+        - [Limitations](#limitations-1)
+      - [Autonomous agents: Flexible, context-aware reasoning](#autonomous-agents-flexible-context-aware-reasoning)
+        - [Agents Capabilities](#agents-capabilities)
+        - [Best uses](#best-uses-2)
+        - [Advantages](#advantages-2)
+        - [Limitations](#limitations-2)
+      - [Key takeaways](#key-takeaways)
+  - [When (and When Not) to Use AI Agents](#when-and-when-not-to-use-ai-agents)
+    - [Current AI agent challenges](#current-ai-agent-challenges)
+  - [When not to use agents](#when-not-to-use-agents)
+  - [Tools, Agents, and Function Calling in LangChain](#tools-agents-and-function-calling-in-langchain)
+      - [Tool Calling](#tool-calling)
+        - [Function calling vs. tool calling](#function-calling-vs-tool-calling)
+        - [Tools in LangChain](#tools-in-langchain)
+        - [Ways to initialize and use tools](#ways-to-initialize-and-use-tools)
+      - [Agents](#agents-1)
+  - [Architecture of an AI agent in LangChain](#architecture-of-an-ai-agent-in-langchain)
+      - [AI Agent](#ai-agent)
+        - [Large Language Model (LLMs)](#large-language-model-llms)
+        - [Tool(s)](#tools-1)
+        - [Memory](#memory-2)
+        - [Action](#action)
+        - [Connection to the external world](#connection-to-the-external-world)
+        - [Example](#example)
+      - [Agents in LangChain](#agents-in-langchain)
+        - [Using built-in agent types](#using-built-in-agent-types)
+        - [Creating agents with OpenAI functions](#creating-agents-with-openai-functions)
+        - [Building agents with LangGraph](#building-agents-with-langgraph)
+        - [Executing agents with AgentExecutor](#executing-agents-with-agentexecutor)
+        - [Adding memory](#adding-memory)
+  - [LangChain Tool Creation Methods](#langchain-tool-creation-methods)
+      - [Checking & Using Your Tools](#checking--using-your-tools)
+      - [LangChain Built-in Tools](#langchain-built-in-tools)
+      - [Agents in LangChain](#agents-in-langchain-1)
+        - [Agent Types:](#agent-types)
+    - [LangChain LCEL Chaining Method](#langchain-lcel-chaining-method)
+    - [Build Interactive LLM Agents](#build-interactive-llm-agents)
+  - [AI-powered SQL agents](#ai-powered-sql-agents)
+    - [Natural Language Interfaces for Data Systems](#natural-language-interfaces-for-data-systems)
+      - [The evolution of data access interfaces](#the-evolution-of-data-access-interfaces)
+      - [How natural language interfaces work](#how-natural-language-interfaces-work)
+    - [Types of natural language interfaces for data](#types-of-natural-language-interfaces-for-data)
+    - [Key technologies powering natural language interfaces](#key-technologies-powering-natural-language-interfaces)
+    - [Approaches to building natural language interfaces](#approaches-to-building-natural-language-interfaces)
+        - [Rule-based approaches](#rule-based-approaches)
+        - [Machine learning/deep learning approaches](#machine-learningdeep-learning-approaches)
+        - [Hybrid approaches](#hybrid-approaches)
+    - [Applications and use cases](#applications-and-use-cases)
+        - [Business intelligence](#business-intelligence)
+        - [Data science and analytics](#data-science-and-analytics)
+        - [Enterprise information systems](#enterprise-information-systems)
+        - [Challenges and limitations](#challenges-and-limitations)
+        - [Ambiguity and context](#ambiguity-and-context)
+        - [Schema understanding](#schema-understanding)
+        - [Query complexity](#query-complexity)
+        - [Data security and governance](#data-security-and-governance)
+        - [Recent advances and benchmarks](#recent-advances-and-benchmarks)
+    - [The future of natural language interfaces for data](#the-future-of-natural-language-interfaces-for-data)
+      - [Multimodal interactions](#multimodal-interactions)
+      - [Autonomous data exploration](#autonomous-data-exploration)
+      - [Explainable AI integration](#explainable-ai-integration)
+- [Generative vs. Agentic](#generative-vs-agentic)
+  - [Introduction: The Shifting Landscape of AI](#introduction-the-shifting-landscape-of-ai)
+      - [What are AI Agents?](#what-are-ai-agents)
+      - [What Is Agentic AI?](#what-is-agentic-ai)
+      - [Smart home AI comparison](#smart-home-ai-comparison)
+      - [Key Architectural Differences between an AI Agent and Agentic AI](#key-architectural-differences-between-an-ai-agent-and-agentic-ai)
+        - [From Single to Multiple Agents:](#from-single-to-multiple-agents)
+        - [Advanced Reasoning Capabilities](#advanced-reasoning-capabilities)
+        - [Persistent Memory Systems](#persistent-memory-systems)
+        - [Real-World Applications](#real-world-applications)
+      - [Current Challenges](#current-challenges)
+        - [Limitations of AI Agents](#limitations-of-ai-agents)
+        - [Agentic AI Complexities](#agentic-ai-complexities)
+    - [The Path Forward: Emerging Solutions](#the-path-forward-emerging-solutions)
+      - [Retrieval-Augmented Generation (RAG)](#retrieval-augmented-generation-rag)
+      - [Tool-Augmented Reasoning](#tool-augmented-reasoning)
+      - [Memory Architectures](#memory-architectures)
+    - [Looking Ahead: The Future of AI Agents and Agentic AI](#looking-ahead-the-future-of-ai-agents-and-agentic-ai)
+        - [AI Agents Evolution](#ai-agents-evolution)
+        - [Agentic AI Advancement](#agentic-ai-advancement)
+    - [Building Agentic AI in Practice: Tools and Frameworks](#building-agentic-ai-in-practice-tools-and-frameworks)
+- [LangGraph Architecture: Designing Effective Workflows](#langgraph-architecture-designing-effective-workflows)
+    - [Why Use Graph Architecture?](#why-use-graph-architecture)
+      - [State Design Best Practices](#state-design-best-practices)
+      - [Node Design Principles](#node-design-principles)
+      - [Edge and Workflow Patterns](#edge-and-workflow-patterns)
+      - [Error Handling Strategies](#error-handling-strategies)
+      - [Testing and Debugging](#testing-and-debugging)
+      - [Performance Considerations](#performance-considerations)
+      - [Integration Tips](#integration-tips)
+      - [Common Mistakes to Avoid](#common-mistakes-to-avoid)
+      - [Example Workflow](#example-workflow)
+  - [LangChain vs LangGraph: Pros, Cons, and Practical Considerations](#langchain-vs-langgraph-pros-cons-and-practical-considerations)
+      - [What is LangChain?](#what-is-langchain)
+      - [What is LangGraph?](#what-is-langgraph)
+      - [Key Architectural Differences](#key-architectural-differences)
+      - [Pros and Cons](#pros-and-cons)
+      - [When to use which framework?](#when-to-use-which-framework)
+      - [Conclusion](#conclusion)
+      - [Note](#note)
+- [Introduction to LangGraph](#introduction-to-langgraph)
+      - [Why graph-based agents?](#why-graph-based-agents)
+      - [When to use LangGraph](#when-to-use-langgraph)
+  - [Core concepts of LangGraph](#core-concepts-of-langgraph)
+      - [State](#state)
+      - [StateGraph](#stategraph)
+      - [Nodes](#nodes)
+      - [Edges](#edges)
+      - [A LangGraph Example](#a-langgraph-example)
+        - [Define the state schema](#define-the-state-schema)
+        - [Initialize the StateGraph](#initialize-the-stategraph)
+        - [Add nodes](#add-nodes)
+        - [Connect edges](#connect-edges)
+        - [Conditional branching (optional)](#conditional-branching-optional)
+        - [Compile and invoke](#compile-and-invoke)
+  - [Structuring LLM Tool Calls with Pydantic and JSON Serialization](#structuring-llm-tool-calls-with-pydantic-and-json-serialization)
+      - [Real Example: Addition Tool with Pydantic and LangChain](#real-example-addition-tool-with-pydantic-and-langchain)
+      - [Why Use Pydantic Models for LLM Tool Calls?](#why-use-pydantic-models-for-llm-tool-calls)
+        - [Example: Defining Reusable Math Tool Schemas](#example-defining-reusable-math-tool-schemas)
+        - [Dispatching Tool Calls from JSON Input](#dispatching-tool-calls-from-json-input)
+      - [What Does Literal Do?](#what-does-literal-do)
+      - [Why JSON-Serializable Pydantic Models Are Powerful](#why-json-serializable-pydantic-models-are-powerful)
+      - [Final Thoughts and Alternatives](#final-thoughts-and-alternatives)
+        - [Optional Note: Pydantic vs. Python Dataclasses](#optional-note-pydantic-vs-python-dataclasses)
+  - [Building Self-Improvement Agents with LangGraph](#building-self-improvement-agents-with-langgraph)
+      - [Reflection Agents](#reflection-agents)
+      - [Reflexion agents](#reflexion-agents)
+      - [ReAct agents](#react-agents)
+      - [Comparison of agent styles](#comparison-of-agent-styles)
+      - [Conclusion](#conclusion-1)
+  - [Multi-Agent LLM Systems Fundamentals](#multi-agent-llm-systems-fundamentals)
+    - [Why Use Multiple LLM Agents?](#why-use-multiple-llm-agents)
+      - [Challenges of a Single LLM Agent](#challenges-of-a-single-llm-agent)
+      - [How Multi-Agent LLM Systems Help](#how-multi-agent-llm-systems-help)
+      - [Tangible Examples of Multi-Agent LLM Systems](#tangible-examples-of-multi-agent-llm-systems)
+        - [Example 1: Automated Market Research Report](#example-1-automated-market-research-report)
+        - [Example 2: Customer Support Automation](#example-2-customer-support-automation)
+        - [Example 3: Legal Contract Review](#example-3-legal-contract-review)
+      - [Communication and Collaboration Patterns](#communication-and-collaboration-patterns)
+        - [Sequential (Pipeline)](#sequential-pipeline)
+        - [Parallel with Aggregation](#parallel-with-aggregation)
+        - [Interactive Dialogue](#interactive-dialogue)
+        - [Communication Protocols](#communication-protocols)
+      - [Frameworks Supporting Multi-Agent LLM Systems](#frameworks-supporting-multi-agent-llm-systems)
+      - [Implementation Challenges and Design Considerations](#implementation-challenges-and-design-considerations)
+      - [Summary: Why Multi-Agent LLM Systems?](#summary-why-multi-agent-llm-systems)
+  - [Building Multi-Agent Systems with LangGraph](#building-multi-agent-systems-with-langgraph)
+      - [What is LangGraph?](#what-is-langgraph-1)
+        - [Key Benefits](#key-benefits)
+      - [State Management](#state-management)
+      - [Agent Nodes](#agent-nodes)
+        - [Agent Function Placeholders](#agent-function-placeholders)
+      - [Routing Logic](#routing-logic)
+      - [Building and Compiling the Workflow Graph](#building-and-compiling-the-workflow-graph)
+        - [Workflow Construction Example](#workflow-construction-example)
+      - [Running the Workflow](#running-the-workflow)
+        - [Running Example](#running-example)
+    - [Multi-Agent Systems and Agentic RAG with LangGraph](#multi-agent-systems-and-agentic-rag-with-langgraph)
+      - [Typical multi-agent communication patterns](#typical-multi-agent-communication-patterns)
+      - [Agentic RAG systems](#agentic-rag-systems)
+      - [Best practices & challenges](#best-practices--challenges)
+  - [Agentic AI Protocols](#agentic-ai-protocols)
+    - [What are AI agent protocols?](#what-are-ai-agent-protocols)
+    - [Examples of AI agent protocols](#examples-of-ai-agent-protocols)
+        - [Agent Communication Protocol (ACP)](#agent-communication-protocol-acp)
+        - [Agent Network Protocol (ANP)](#agent-network-protocol-anp)
+        - [Agent-User Interaction (AG-UI) Protocol](#agent-user-interaction-ag-ui-protocol)
+        - [Agent2Agent (A2A) Protocol](#agent2agent-a2a-protocol)
+        - [Model Context Protocol (MCP)](#model-context-protocol-mcp-1)
+        - [Agent Payments Protocol (AP2)](#agent-payments-protocol-ap2)
+        - [How do the A2A, MCP, and AP2 protocols work together for agentic commercial transactions?](#how-do-the-a2a-mcp-and-ap2-protocols-work-together-for-agentic-commercial-transactions)
+    - [Criteria for choosing an AI agent protocol](#criteria-for-choosing-an-ai-agent-protocol)
+- [What is MCP?](#what-is-mcp)
+  - [Why MCP?](#why-mcp)
+        - [Key benefits of MCP](#key-benefits-of-mcp)
+    - [MCP Applications](#mcp-applications)
+  - [MCP Architecture](#mcp-architecture)
+        - [MCP Host](#mcp-host)
+        - [MCP Client](#mcp-client)
+        - [MCP Server](#mcp-server)
+        - [MCP Architecture Layers](#mcp-architecture-layers)
+  - [MCP in Action](#mcp-in-action)
+      - [Some real-world applications of MCP](#some-real-world-applications-of-mcp)
+        - [SaaS](#saas)
+  - [Run existing MCP Server](#run-existing-mcp-server)
+        - [Example: Context7](#example-context7)
+        - [Other transport types](#other-transport-types)
+  - [Build an MCP Application with Python](#build-an-mcp-application-with-python)
+  - [Hello World of MCP Servers](#hello-world-of-mcp-servers)
+        - [Tools](#tools-2)
+        - [Resources](#resources)
+        - [Prompts](#prompts-1)
+        - [Client: In-memory transport](#client-in-memory-transport)
+        - [Test tools and resources](#test-tools-and-resources)
+        - [Create and test MCP Server](#create-and-test-mcp-server)
+        - [MCP HTTP-powered Agent](#mcp-http-powered-agent)
+        - [STDIO MCP Server](#stdio-mcp-server)
+  - [MCP Client Architecture and Fundamentals](#mcp-client-architecture-and-fundamentals)
+        - [JSON-RPC foundation](#json-rpc-foundation)
+        - [MCP Client Connection: 3 phases](#mcp-client-connection-3-phases)
+  - [Streambale HTTP, Roots and Sampling](#streambale-http-roots-and-sampling)
+        - [Streamable HTTP  and Implementation](#streamable-http--and-implementation)
+    - [Roots: MCP security boundaries](#roots-mcp-security-boundaries)
+    - [Multi-transport session management](#multi-transport-session-management)
+    - [MCP Security with Permissions and Elicitation](#mcp-security-with-permissions-and-elicitation)
+        - [Policies](#policies)
+        - [Permission enforement workflow](#permission-enforement-workflow)
+        - [Elicitation - Server initiated structure input](#elicitation---server-initiated-structure-input)
+  - [Cheat Sheet: MCP Hosts and Clients](#cheat-sheet-mcp-hosts-and-clients)
+    - [MCP client architecture](#mcp-client-architecture)
+      - [Base/derived pattern](#basederived-pattern)
+      - [Server-initiated operations](#server-initiated-operations)
+      - [Roots (filesystem security)](#roots-filesystem-security)
+      - [Sampling](#sampling)
+      - [Elicitation](#elicitation)
+      - [Transport methods](#transport-methods)
+      - [STDIO (local)](#stdio-local)
+      - [HTTP (remote)](#http-remote)
+      - [Security patterns](#security-patterns)
+      - [Permission policies](#permission-policies)
+      - [Audit logging](#audit-logging)
+      - [AI host integration](#ai-host-integration)
+      - [LLM tool calling](#llm-tool-calling)
+      - [Synthetic tools](#synthetic-tools)
+      - [Best practices](#best-practices)
+        - [Client design:](#client-design)
+        - [Security:](#security)
+        - [Transport:](#transport)
+        - [LLM integration:](#llm-integration)
+    - [Notes from LangChain Official Documentation](#notes-from-langchain-official-documentation)
+  - [Motivation](#motivation)
+      - [The typical workflow](#the-typical-workflow)
+        - [When to Use LangChain](#when-to-use-langchain)
+        - [When to Use LangGraph](#when-to-use-langgraph-1)
+        - [FastAPI wrapper arounf LangGraph app](#fastapi-wrapper-arounf-langgraph-app)
+
+<!-- /code_chunk_output -->
+
+
+
+
+
+## Plan for a Project
 Phase 1 (Week 1–2): Mental Model Solidification
 Goal: Vocabulary + clarity + architecture confidence.
 
@@ -28,59 +323,61 @@ Not toy. Not messy.
 One clean architecture.
 Example (aligned with your profile):
 Option A: Enterprise Document Intelligence Agent
-Upload financial reports
-Retrieve context (RAG)
-Decompose query into subtasks
-Use tools:
-Calculator
-SQL
-Document retriever
-Produce structured report
-Log intermediate reasoning (without exposing chain-of-thought)
-Store evaluation metrics
+- Upload financial reports
+- Retrieve context (RAG)
+- Decompose query into subtasks
+- Use tools:
+    - Calculator
+    - SQL 
+    - Document retriever
+- Produce structured report
+- Log intermediate reasoning (without exposing chain-of-thought)
+- Store evaluation metrics
+
 Option B: Multi-step Research Agent
-Query planning
-Web retrieval simulation
-Source ranking
-Structured synthesis
-Confidence scoring
+- Query planning
+- Web retrieval simulation
+- Source ranking
+- Structured synthesis
+- Confidence scoring
+
 Key: clean architecture.
 Include:
-Tool abstraction layer
-Logging
-Observability hooks
-Failure recovery
+- Tool abstraction layer
+- Logging
+- Observability hooks
+- Failure recovery
+
 This becomes your demo story.
 
 Phase 3 (Week 5–6): Production Framing
 You add:
-Latency analysis
-Cost analysis
-Failure cases
-Guardrail discussion
-Security concerns
-Scaling considerations
-Evaluation framework
+- Latency analysis
+- Cost analysis
+- Failure cases
+- Guardrail discussion
+- Security concerns
+- Scaling considerations
+- Evaluation framework
+
 Now you’re no longer “I built an agent.”
+
 You are:
 “I designed a reliable multi-step LLM system for enterprise.”
 That’s interview gold.
 
 
 Why This Is High ROI For YOU Specifically
-Because you are not:
-A prompt engineer
-A researcher chasing papers
-A frontend tinkerer
-You are:
-Systems thinker
-ML depth
-Pipeline-oriented
-Deployment-aware
-Agentic AI without system depth is fragile.
-Agentic AI with system design is rare.
-That’s leverage.
 
+You are:
+- Systems thinker
+- ML depth
+- Pipeline-oriented
+- Deployment-aware
+- Agentic AI without system depth is fragile.
+- Agentic AI with system design is rare.
+
+That’s leverage.
 
 
 They’re looking for someone who can answer:
@@ -97,18 +394,16 @@ If you can confidently design and discuss those, you are ready.
 
 What “Agentic-Ready AI Engineer” Actually Means in 2026
 It means you can confidently do these five things:
-###### 1️⃣ Design a Multi-Step LLM System
+1️⃣ Design a Multi-Step LLM System
 You can explain and implement:
 Goal decomposition
-- ReAct-style loops
-- Tool invocation
-- State tracking
-- Error handling
-
+ReAct-style loops
+Tool invocation
+State tracking
+Error handling
 You can whiteboard it under pressure.
 That alone puts you ahead of most candidates.
-
-###### 2️⃣ Integrate Tools Safely
+2️⃣ Integrate Tools Safely
 You understand:
 - JSON schema enforcement
 - Deterministic tool interfaces
@@ -117,17 +412,14 @@ You understand:
 - Retry logic
 
 This is engineering maturity — not hype.
-
-###### 3️⃣ Add Memory Properly
+3️⃣ Add Memory Properly
 You know the difference between:
-- Context window memory
-- Structured state
-- Vector retrieval memory
-- When NOT to use memory
-
+Context window memory
+Structured state
+Vector retrieval memory
+When NOT to use memory
 This is critical. Most people misuse it.
-
-###### 4️⃣ Implement Evaluation
+4️⃣ Implement Evaluation
 You can define:
 - Task success metrics
 - Regression tests
@@ -136,17 +428,16 @@ You can define:
 - Cost vs performance trade-offs
 
 This is where senior-level credibility comes from.
-
-###### 5️⃣ Frame It as Production System Design
+5️⃣ Frame It as Production System Design
 You can discuss:
-- Latency bottlenecks
-- Token cost control
-- Observability
-- Scaling
-- Security concerns
-- Guardrails
-
-At that point, you’re not “learning agents.” You’re operating as an AI systems engineer.
+Latency bottlenecks
+Token cost control
+Observability
+Scaling
+Security concerns
+Guardrails
+At that point, you’re not “learning agents.”
+You’re operating as an AI systems engineer.
 
 
 
@@ -639,7 +930,7 @@ Thsi tool call enables the model to answer correctly.
 To get insight into how your agents are running, use LangSmith to trace all queries and observe latencies, token usage, tools called and their inputs and outputs. Connect to the API endpoint (with its API key) to debug your agents when things get a little bit more complex as you add more tools and the tasks are less deterministic. With the free tier, you have up to 5000 free tokens per month which is more than enough for development and side projects. 
 
 
-### Meomory
+### Memory
 
 The very basic feature expected from any chatbot is the ability to maintain the memory over the length of the conversation. The angent built so far dont have that ability. 
 
@@ -868,7 +1159,9 @@ Its highly recommneded to try the course [MCP: Build Rich-Context AI APPs with A
 
 
 
----------------------------------------------------------
+
+
+
 
 ###  In-context Learning
 
@@ -1061,8 +1354,8 @@ Chain-of-thought or COT prompting is a technique used to guide LLM through compl
 LangChain employs a "chain of thought" processing model that breaks down complex queries or tasks into smaller, manageable steps and enhances the model's understanding of context and its ability to make accurate inferences, resulting in more relevant and precise responses. With this ability, LangChain mimics human problem-solving processes, making the interactions with AI more natural and intuitive.
 
 ###### Self-consistency
-It is a technique for enhancing the reliability and accuracy of outputs by generating multiple independent answers to the same question and then evaluating these to determine the
-most consistent result.  In this example, the query is:
+It is a technique for enhancing the reliability and accuracy of outputs by generating multiple independent answers to the same question and then evaluating these to determine the most consistent result.  In this example, the query is:
+
 ```
 When I was six, my sister was half my age. Now I am 70. What age is my sister? 
 
@@ -1177,7 +1470,7 @@ And you will get an answer.
 
 Do you know how memory is stored in the LLM applications? In LangChain, memory storage is important for reading and writing historical data. Each chain relies on specific input, such as user and memory. Chain reads from memory to enhance user inputs before executing its core logic and writes the current runs inputs and outputs back to the memory after execution. This ensures continuity and context preservation across interactions. 
 
-The *chat message history class* in LangChain is designed to manage and store conversation histories effectively, including human messages and AI messages. This allows adding messages from the AI and users to the history. In this example, call a `ChatMessageHistory` class and add AI message `Hi` into the memory. The memory will append this AI message as input. 
+The **chat message history class** in LangChain is designed to manage and store conversation histories effectively, including human messages and AI messages. *This allows adding messages from the AI and users to the history*. In this example, call a `ChatMessageHistory` class and add AI message `Hi` into the memory. The memory will append this AI message as input. 
 
 ```python
 from langchain.memory import ChatMessageHistory
@@ -1186,14 +1479,14 @@ history = ChatMessageHistory()
 history.add_ai_message("Hi")
 history.add_user_message("What is the capital of France?")
 ```
-After running this code, we have the following objects in the memory:
+Now, add the user's message, "what is the capital of France?", and the memory will append this as human message input. You would receive responses based on the stored memory.  After running this code, we have the following objects in the memory:
 
 ```sh
 # Memory
 [AIMessage(contet="Hi"), HumanMessage(content="What is the capital of France?")]
 ```
 
-Now, add the user's message, "what is the capital of France?", and the memory will append this as human message input. You would receive responses based on the stored memory. 
+
 
 #### Agents
 Agents in LangChain are dynamic systems where a language model determines and sequences actions such as pre-defined chains. The model generates text outputs to guide actions, but does not execute them directly. However, agents integrate with tools such as search engines, databases, and websites to fulfill user requests. For example, if a user asks for the population of Italy, the agent uses the language model to find options, query a database for details, and return a curated list. This shows the agent's ability to autonomously leverage LLM reasoning with external tools. 
@@ -1307,7 +1600,7 @@ Autonomous agents allow LLMs to plan sequence actions and adapt as conditions ch
 
 ###### Agents Capabilities
 
-Autonomous agents have the following core capabilities:
+**Autonomous agents** have the following core capabilities:
 
 - Dynamic planning: Decomposes goals and adjusts steps as needed
 - Contextual awareness: Remembers past steps and adapts to user and environment feedback
@@ -1326,9 +1619,9 @@ Examples
 - Automation that iteratively refines results based on feedback
 
 ###### Advantages
-- Highly adaptable: Handles unforeseen situations
-- Dynamic decision-making: Iterates and improves over time
-- Reduces human intervention: Manages complexity autonomously
+- **Highly adaptable**: Handles unforeseen situations
+- **Dynamic decision-making**: Iterates and improves over time
+- **Reduces human intervention**: Manages complexity autonomously
 
 ###### Limitations
 
@@ -1363,55 +1656,56 @@ Not all AI systems operate at the same level of complexity. The following table 
 
 1. Is the task ambiguous or predictable?
 
-    Use agents when the task is ambiguous:
+Use agents when the task is ambiguous:
 
-    - The decision path is unclear or cannot be mapped in advance
-    - Tasks involve exploration, troubleshooting, or creativity
+- The decision path is unclear or cannot be mapped in advance
+- Tasks involve exploration, troubleshooting, or creativity
 
-    Use workflows when the task is predictable:
-    - You can define all rules and outcomes
-    - The process follows a clear, repeatable structure
+Use workflows when the task is predictable:
+- You can define all rules and outcomes
+- The process follows a clear, repeatable structure
 
 2. Is the value of the task worth the cost?
 
-    AI agents are more expensive to operate due to exploration overhead. They can consume 10 to 100× more tokens than a workflow. 
+AI agents are more expensive to operate due to exploration overhead. They can consume 10 to 100× more tokens than a workflow. 
 
-    | Scenario |	Recommendation |
-    | -------- | ----------- |
-    | Strategic planning with high ROI	| Use an agent
-    | Basic customer support task	| Use a workflow instead
+| Scenario |	Recommendation |
+| -------- | ----------- |
+| Strategic planning with high ROI	| Use an agent
+| Basic customer support task	| Use a workflow instead
+
 3. Does the agent meet minimum capabilities?
 
-    Before launch, test the agent on three to five key skills.
+Before launch, test the agent on three to five key skills.
 
-    Here are some examples:
-    - A research agent must identify, filter, and summarize credible sources
-    - A coding agent must write, fix, and validate code snippets
-    - A customer support agent must classify issues, resolve common queries, and escalate complex cases appropriately
-    - A data analysis agent must clean datasets, detect anomalies, and summarize key trends
-    
-    If the agent fails these tests, scale back or redesign the agent.
+Here are some examples:
+- A research agent must identify, filter, and summarize credible sources
+- A coding agent must write, fix, and validate code snippets
+- A customer support agent must classify issues, resolve common queries, and escalate complex cases appropriately
+- A data analysis agent must clean datasets, detect anomalies, and summarize key trends
+
+If the agent fails these tests, scale back or redesign the agent.
 
 4. What happens if the agent makes a mistake?
 
-    Evaluate the answers to these questions
+Evaluate the answers to these questions
 
-    - Can you catch and correct errors quickly? If so, then using an agent might be appropriate.
+- Can you catch and correct errors quickly? If so, then using an agent might be appropriate.
 
-    - What's the risk if something is missed? Does the consequence of missing the answer affect the customer’s or organization’s well-being or safety?
+- What's the risk if something is missed? Does the consequence of missing the answer affect the customer’s or organization’s well-being or safety?
 
-    - Does the agent include built-in correction or validation tools?
+- Does the agent include built-in correction or validation tools?
 
-    Use agents when risk is manageable or reversible.
+Use agents when risk is manageable or reversible.
 
 #### Current AI agent challenges
 
 Even powerful agents have challenges.
 
 Challenge	Why It Matters
-- Reasoning inconsistency:	Agents may succeed once but fail on similar tasks
-- Unpredictable costs:	Resource use can spike depending on complexity
-- Tool integration issues:	Agents need well-integrated tools and stable APIs
+- **Reasoning inconsistency**:	Agents may succeed once but fail on similar tasks
+- **Unpredictable costs**:	Resource use can spike depending on complexity
+- **Tool integration issues**:	Agents need well-integrated tools and stable APIs
 
 ### When not to use agents
 
@@ -1480,7 +1774,7 @@ An agent is a high-level orchestration system rather than a single function (lik
 
 Let's discuss all the components in the architecture of an AI agent in LangChain.
 
-###### AI Agent
+##### AI Agent
 This is the main intelligence unit. It includes LLM, tools, memory, and logic to take actions. The agent is responsible for processing input queries and figuring out how to respond, not just with text, but by taking actions when needed.
 
 ###### Large Language Model (LLMs)
@@ -1492,7 +1786,7 @@ At the core of the agent, the LLM interprets the input and determines what to do
 
 ######  Tool(s)
 
-As explained earlier, they are functions or external capabilities that an agent can use. The LLM generates structured requests specifying which tool to use and with what parameters. The tool is then executed outside the model, and the result is returned.
+As explained earlier, they are functions or external capabilities that an agent can use. The LLM generates **structured requests** specifying which tool to use and with what parameters. The tool is then executed outside the model, and the result is returned.
 
 ###### Memory
 Memory allows the agent to store and retrieve useful information, enabling long-term context and personalized interaction. It could include:
@@ -1538,10 +1832,10 @@ LangChain offers several methods to create and utilize agents:
 LangChain offers predefined agent types such as zero-shot-react-description and chat-zero-shot-react-description. These are useful for simple reasoning tasks where the model decides which tool to use based on the description alone.
 
 ###### Creating agents with OpenAI functions
-LangChain supports agents that can leverage OpenAI's function-calling capabilities. You can create such agents using create_openai_functions_agent, which makes it easy to interact with structured tools in a safe and predictable way.
+LangChain supports agents that can leverage OpenAI's function-calling capabilities. You can create such agents using `create_openai_functions_agent`, which makes it easy to interact with structured tools in a safe and predictable way.
 
 ###### Building agents with LangGraph
-LangGraph is a low-level orchestration library that provides more flexibility and control. Using the high-level create_react_agent method, you can create agents capable of complex reasoning, action chaining, memory integration, and real-time streaming.
+LangGraph is a low-level orchestration library that provides more flexibility and control. Using the high-level `create_react_agent` method, you can create agents capable of complex reasoning, action chaining, memory integration, and real-time streaming.
 
 ###### Executing agents with AgentExecutor
 Agents are executed using AgentExecutor, which manages the loop of calling the LLM, processing tool outputs, and determining when the final response is ready. This ensures the agent can dynamically react to intermediate results during its reasoning process.
@@ -1576,7 +1870,7 @@ All tools built in LangChain follow a basic blueprint called `BaseTool`. It esta
 
     ```
 
-- Tool Creation using the `Tool` Class:
+-  **`Tool` Class**:
     LangChain provides a `Tool` class (which inherits from `BaseTool`) to encapsulate a function along with its metadata, such as name, description, and argument schema. This allows for more control over the tool's behavior and integration. Note: This is the traditional approach that primarily handles single string inputs, though it shares the same base class as `StructuredTool` for backward compatibility.
 
     ```python
@@ -1593,7 +1887,7 @@ All tools built in LangChain follow a basic blueprint called `BaseTool`. It esta
     )
     ```
 
-- Tool Creation Using `@tool` Decorator
+-  **`@tool` Decorator**
    
     The `@tool` decorator is a convenient way to create a tool from a Python function. It automatically infers the tool's name, description, and argument schema from the function's signature and docstring. Tools created using `@tool` decorator create a `StructuredTool` (which inherits from `BaseTool`), which allows LLMs to handle more complex inputs, including named arguments and dictionaries, improving flexibility and integration with function calling models.
 
@@ -1607,7 +1901,7 @@ All tools built in LangChain follow a basic blueprint called `BaseTool`. It esta
       return a / b
     ```
 
-- Structured Tool Creation
+- **Structured Tool** 
 
     `StructuredTool` (which inherits from `BaseTool`) provides the most flexibility for function-based tools and is the modern approach for creating tools that can operate on any number of inputs with arbitrary types. It supports complex argument schemas and both synchronous and asynchronous implementations.
 
@@ -1637,7 +1931,7 @@ All tools built in LangChain follow a basic blueprint called `BaseTool`. It esta
 
   Once you've defined your tools, here's how you can inspect and use them:
 
-   - Tool Schema
+   - **Tool Schema**
     You can look at a tool's name, description, and what inputs it expects using the following:
       ```python
       print("Name: \n", divide_numbers.name)
@@ -1645,27 +1939,27 @@ All tools built in LangChain follow a basic blueprint called `BaseTool`. It esta
       print("Args: \n", divide_numbers.args)
       ```
 
-   - Direct Invocation of Tools
+   - **Direct Invocation** of Tools
     Tools can be invoked directly using the `invoke()` method by passing a dictionary of arguments. This is especially useful for testing outside of an agent or LLM context.
 
       ```python
       result = divide.invoke({"a": 10, "b": 2})   # output: 5.0
       ```
 
-  - Tool Binding to Models
+  - **Tool Binding** to Models
     Before a model can use tools, you need to tell it which ones are available and what kind of information they need.
 
       ```python
       tools = [add_tool, divide_numbers]
       llm_with_tools = llm.bind_tools(tools)
       ```
-  - Tool Invocation via Model
+- Tool **Invocation via Model**
     
-      Once tools are bound to a model, the model can decide to invoke them based on the input prompt. The model's response will include the tool call details, which the application can then execute.
+    Once tools are bound to a model, the model can decide to invoke them based on the input prompt. The model's response will include the tool call details, which the application can then execute.
 
-      ```python
-      response = llm_with_tools.invoke("What is 10 divided by 2?")
-      ```
+    ```python
+    response = llm_with_tools.invoke("What is 10 divided by 2?")
+     ```
 
 ##### LangChain Built-in Tools
 
@@ -1783,7 +2077,7 @@ AIMessage(
 )
 ```
 
-Notice the model's output. Instead of a plain text response, an AI Message object is returned containing a tool calls array. Focus only on the part of the message related to tool usage. This is the model's way of saying, "I want to call this function with these arguments." Next, extract the details of the tool call and manually execute the addition ourselves. Finally, append the AI Message, including the tool call instruction, into chat history so the next model invocation has access to both the user's original query and the model's previous output. 
+Notice the model's output. Instead of a plain text response, an AI Message object is returned containing a *tool calls array*. Focus only on the part of the message related to tool usage. This is the model's way of saying, "I want to call this function with these arguments." Next, extract the details of the tool call and manually execute the addition ourselves. Finally, append the AI Message, including the tool call instruction, into chat history so the next model invocation has access to both the user's original query and the model's previous output. 
 
 ```python
 chat_history.append(response1)
@@ -1812,7 +2106,7 @@ tool_map = {"tool_1_name": AddTool, "tool_2_name": DivideTool}
 tool_response = tool_map[tool_1_name].invoke(tool_1_args)
 ```
 
-The tool map returns the output generated via the tool, in this case "2 plus 3 equals 5." Finally, wrap the tool's output in a Tool Message by creating a Tool Message object. 
+The tool map returns the output generated via the tool, in this case "2 plus 3 equals 5." Finally, wrap the tool's output in a **Tool Message** by creating a Tool Message object. 
 
 ```python
 from langchain_core.messages import ToolMessage
@@ -1914,30 +2208,34 @@ This evolution represents a fundamental shift in how we think about human-data i
 Natural language interfaces for data systems transform human questions into structured queries that databases can execute. This process involves several sophisticated components working together:
 
 1. User input query
+
 The process begins with the user submitting a natural language question. Unlike traditional database queries, these questions:
    - Use everyday vocabulary rather than technical terms
    - May be ambiguous or incomplete
    - Contain implicit assumptions about what data is important
 
 2. AI-driven query formulation
+
 This critical component interprets the natural language and transforms it into a structured format:
    - Identifies key entities and metrics mentioned in the query
    - Maps natural language terms to database schema elements
    - Determines the analytical intent (comparison, trend analysis, distribution, etc.)
    - Formulates the appropriate technical query (SQL, API calls, etc.)
 
-    The AI leverages its understanding of both language semantics and data structures to bridge the communication gap between humans and machines
+The AI leverages its understanding of both language semantics and data structures to bridge the communication gap between humans and machines
 
 3. Database data extraction
+
 Once the AI has formulated a structured query:
    - The system connects to the relevant data sources
    - Executes the query against databases or data warehouses
    - Retrieves the necessary raw data
    - Handles authentication, optimization, and error management
 
-    This step involves translating the AI's understanding into actual data retrieval operations
+This step involves translating the AI's understanding into actual data retrieval operations
 
 4. Data analysis process
+
 With the raw data retrieved, the system:
    - Cleans and preprocesses the data
    - Applies appropriate statistical methods
@@ -1945,9 +2243,10 @@ With the raw data retrieved, the system:
    - Identifies patterns, trends, or anomalies
    - Prepares the data for visualization or presentation
 
-    This step transforms raw data into meaningful analytical results
+This step transforms raw data into meaningful analytical results
 
 5. Insight synthesis
+
 The system goes beyond just processing numbers to:
    - Interpret the analytical results in context
    - Identify key findings and significant patterns
@@ -1958,43 +2257,48 @@ The system goes beyond just processing numbers to:
 This is where AI adds value—not just calculating results but understanding their significance
 
 6. Presentation insight
+
 Finally, the system delivers insights back to the user:
    - Presents visualizations (charts, graphs, dashboards)
    - Provides natural language summaries of key findings
    - Offers contextual explanations and interpretations
    - Suggests potential follow-up questions or analyses
 
-    The output combines visual and textual elements to communicate findings effectively, regardless of the user's technical background
+The output combines visual and textual elements to communicate findings effectively, regardless of the user's technical background
 
 #### Types of natural language interfaces for data
 
 There are two primary types of natural language interfaces for data systems:
 
 1. One-shot query systems
-These systems handle individual, standalone queries without maintaining context between interactions:
-  Strengths:
-     - Simpler to implement
-     - Good for direct, specific queries
-     - Easier to optimize for performance
 
-    Limitations:
-    - Cannot handle follow-up questions
-    - No memory of previous interactions
-    - Limited ability to refine or clarify questions
+These systems handle individual, standalone queries without maintaining context between interactions:
+
+Strengths:
+- Simpler to implement
+- Good for direct, specific queries
+- Easier to optimize for performance
+
+Limitations:
+- Cannot handle follow-up questions
+- No memory of previous interactions
+- Limited ability to refine or clarify questions
 
 2. Conversational interfaces
+
 These systems maintain context across multiple interactions, enabling a dialogue between the user and the system:
 
-    Strengths:
+Strengths:
    - Support follow-up questions and clarifications
    - Enable iterative data exploration
    - More natural interaction pattern
    - Can disambiguate vague queries through dialogue
 
-   Limitations:
-     - More complex to implement
-     - Require dialogue state tracking and management
-     - May have higher latency due to context processing
+Limitations:
+    - More complex to implement
+    - Require dialogue state tracking and management
+    - May have higher latency due to context processing
+
 Conversational interfaces for data are rapidly gaining popularity because of their unique ability to enable exploration of data and derivation of insights in small incremental steps as the conversation with the data progresses. They can understand, respond, and clarify ambiguity through interactions with the user in natural language, while persisting the context of the conversation across multiple turns.
 
 #### Key technologies powering natural language interfaces
@@ -2002,13 +2306,15 @@ Conversational interfaces for data are rapidly gaining popularity because of the
 Several advanced technologies work together to make natural language interfaces possible:
 
 1. Foundation Language Models
+
 Large language models such as GPT, BERT, and others provide the backbone for understanding natural language queries:
    - Interpret user intent from natural language
    - Handle various phrasings of the same question
    - Understand domain-specific terminology
    - Generate human-like explanations and summaries
 
-1. Semantic parsing and named entity recognition
+2. Semantic parsing and named entity recognition
+
 These techniques identify the key components of a query:
 
    - Extract entities (products, regions, metrics) from text
@@ -2016,30 +2322,32 @@ These techniques identify the key components of a query:
    - Map natural language terms to database schema elements
    - Identify query operations (filtering, sorting, aggregating, etc.)
 
-    Semantic parsing is particularly critical for natural language interfaces as it enables the extraction of a structured semantic representation of the user query. This involves parsing natural language queries for detecting intents and entities, which are then mapped to database schema elements.
+Semantic parsing is particularly critical for natural language interfaces as it enables the extraction of a structured semantic representation of the user query. This involves parsing natural language queries for detecting intents and entities, which are then mapped to database schema elements.
 
-1. SQL generation
- Converting natural language to database queries requires:
-
-   - Building syntactically correct SQL statements
-   - Handling complex queries with joins, nested conditions
-   - Managing different database dialects
-   - Optimizing queries for performance
+3. SQL generation
  
-    The complexity of the structured queries generated such as SQL and SPARQL makes the query translation from natural language very challenging. The system needs to infer appropriate entity mappings from natural language to schema elements and derive correct query structures from linguistic patterns embedded in a query.
+Converting natural language to database queries requires:
+
+- Building syntactically correct SQL statements
+- Handling complex queries with joins, nested conditions
+- Managing different database dialects
+- Optimizing queries for performance
+
+The complexity of the structured queries generated such as SQL and SPARQL makes the query translation from natural language very challenging. The system needs to infer appropriate entity mappings from natural language to schema elements and derive correct query structures from linguistic patterns embedded in a query.
 
 4. Dialogue management
+
 For conversational interfaces, dialogue management systems:
-   - Track the state of the conversation
-   - Maintain context across multiple queries
-   - Identify ambiguities that need clarification
-   - Manage the flow of the interaction
+- Track the state of the conversation
+- Maintain context across multiple queries
+- Identify ambiguities that need clarification
+- Manage the flow of the interaction
 
-    Dialogue management includes several key components:
+Dialogue management includes several key components:
 
-    - State tracking: Keeping track of the current state of data exploration given the prior set of queries issued by the user in a data exploration session.
-    - Decision making: Choosing an appropriate external knowledge source and generating structured queries to retrieve data for a given user query.
-    - Natural language response generation: Providing a natural language response conditioned on the identified intents, extracted entities, the current context of the conversation, and the results obtained from external knowledge sources.
+- **State tracking**: Keeping track of the current state of data exploration given the prior set of queries issued by the user in a data exploration session.
+- **Decision making**: Choosing an appropriate external knowledge source and generating structured queries to retrieve data for a given user query.
+- **Natural language response generation**: Providing a natural language response conditioned on the identified intents, extracted entities, the current context of the conversation, and the results obtained from external knowledge sources.
 
 #### Approaches to building natural language interfaces
 
@@ -2220,10 +2528,10 @@ AI Agents can be characterized as autonomous software entities designed for goal
 
 Agentic AI takes things a step further. Instead of just one agent doing one job, Agentic AI brings multiple agents together into a team. These agents coordinate tasks, exchange information, adapt roles dynamically, and share memory. Key features include:
 
-- Task Decomposition: Goals are split into subtasks automatically.
-- Inter-Agent Communication: Agents share updates and results via messaging or shared memory.
-- Memory and Reflection: Agents remember past steps and learn from outcomes.
-- Orchestration: A lead agent or system coordinates the team.
+- **Task Decomposition**: Goals are split into subtasks automatically.
+- **Inter-Agent Communication**: Agents share updates and results via messaging or shared memory.
+- **Memory and Reflection**: Agents remember past steps and learn from outcomes.
+- **Orchestration**: A lead agent or system coordinates the team.
 
 Example: Planning a vacation—one agent books the flight, another finds hotels and a third checks visa requirements. A coordinator agent makes sure everything matches your preferences.
 
@@ -2296,11 +2604,18 @@ Agentic AI enables:
 
 ###### Limitations of AI Agents
 
-AI Agents face significant challenges, including lack of causal understanding, inherited limitations from LLMs such as hallucinations and prompt sensitivity, incomplete agentic properties, and failures in long-horizon planning and recovery.
+AI Agents face significant challenges, including lack of causal understanding, inherited limitations from LLMs such as **hallucinations** and **prompt sensitivity**, **incomplete agentic properties**, and **failures in long-horizon planning and recovery**.
 
 ###### Agentic AI Complexities
 
-Agentic AI systems introduce amplified challenges, including **inter-agent error cascades**, **coordination breakdowns**, **emergent instability**, **scalability limits**, and **explainability issues** stemming from the complexity of orchestrating multiple agents across distributed tasks.
+Agentic AI systems introduce amplified challenges, including 
+- **inter-agent error cascades**, 
+- **coordination breakdowns**, 
+- **emergent instability**, 
+- **scalability limits**, 
+- **explainability issues** 
+
+stemming from the complexity of orchestrating multiple agents across distributed tasks.
 
 #### The Path Forward: Emerging Solutions
 
@@ -2348,10 +2663,10 @@ The diagram below outlines the anticipated evolution of AI Agents and Agentic AI
 
 While the concept of Agentic AI is still evolving, developers and researchers are already prototyping these systems using the following emerging AI orchestration frameworks:
 
-- LangChain
+- **LangChain**
 A Python framework for building applications around LLMs. It supports tool usage, memory, chains of reasoning, and agent interfaces. LangChain provides the building blocks to combine language models with external data and APIs.
 
-- LangGraph
+- **LangGraph**
 A framework for building multi-agent workflows using a graph-based execution model. It allows you to define agents as nodes and their interactions as edges, ideal for orchestrating collaborative agents in Agentic AI.
 
 - IBM Bee, CrewAI, AutoGen, and others
@@ -2363,7 +2678,7 @@ The distinction between AI Agents and Agentic AI is not static. These definition
 
 Agentic AI represents the next step in scalable, intelligent systems capable of real-world impact across domains such as robotics, healthcare, logistics, and beyond.
 
-### LangGraph Architecture: Designing Effective Workflows
+## LangGraph Architecture: Designing Effective Workflows
 
 Now that you've learned the basics of LangGraph—nodes, edges, and persistent state—this reading explores architectural principles for building clear and effective workflows.
 
@@ -2385,8 +2700,8 @@ Imagine creating a customer support agent:
 State holds the workflow's context and shared data.
 
 Key design principles include:
-- Clear Naming: Use descriptive names like user_query or agent_response.
-- Flat Structures: Avoid deeply nested states for easier manipulation.
+- **Clear Naming**: Use descriptive names like user_query or agent_response.
+- **Flat Structures**: Avoid deeply nested states for easier manipulation.
 
 ##### Node Design Principles
 
@@ -2397,7 +2712,7 @@ Each node should perform a single, clear task:
 - Integration Nodes: Interface with external systems (APIs, databases).
 - Decision Nodes: Direct workflow paths based on conditions.
 
-Nodes communicate through state:
+Nodes communicate through **state**:
 - Read necessary inputs from state.
 - Perform the task.
 - Update the state accordingly.
@@ -2420,14 +2735,14 @@ def route_decision(state):
 ##### Error Handling Strategies
 
 Always plan for errors:
-- Include error-specific state fields.
+- Include **error-specific state fields**.
 - Create dedicated error-handling nodes.
 - Implement graceful fallbacks.
 
 Common strategies:
 
-- Retry Nodes: Attempt an action again.
-- Error Nodes: Route to human intervention or logging systems after repeated failures.
+- **Retry Nodes**: Attempt an action again.
+- **Error Nodes**: Route to human intervention or logging systems after repeated failures.
 
 ##### Testing and Debugging
 
@@ -2437,24 +2752,26 @@ Maintain testable and debuggable workflows:
 - Predictable States: Same inputs should produce the same outputs.
 - Incremental Development: Add and verify nodes step-by-step.
 
+I did this by creating mock nodes while one node is under development. The same can be done whent testing.
+
 ##### Performance Considerations
 
 Ensure efficient workflow execution:
 
-- Minimize state complexity.
-- Isolate costly computations in specific nodes.
-- Use caching for repeated expensive operations.
+- **Minimize state complexity**.
+- **Isolate costly computations** in specific nodes.
+- Use **caching** for repeated expensive operations.
 
 ##### Integration Tips
 
 Connecting external systems:
 
-- Separate integration logic clearly.
-- Anticipate failures with timeouts and fallback mechanisms.
+- **Separate integration logic** clearly.
+- Anticipate failures with **timeouts** and **fallback mechanisms**.
 
 Incorporating humans effectively:
 
-- Pause workflows for approvals or reviews clearly.
+- Pause workflows for **human approvals or reviews** clearly.
 - Provide straightforward paths for human decisions.
 
 ##### Common Mistakes to Avoid
@@ -2508,7 +2825,7 @@ Recent developments in AI have produced powerful frameworks for building applica
 They take different approaches:
 
 - LangChain uses a linear "chain" of components (prompts, models, tools).
-- LangGraph uses a graph-based orchestration of stateful, multi-agent workflows.
+- LangGraph uses a **graph-based orchestration of stateful, multi-agent workflows**.
 
 In practice, LangChain is ideal for straightforward, sequential tasks (for example, a simple QA or RAG pipeline), whereas LangGraph is designed for complex, adaptive systems (for example, coordinating multiple AI agents, maintaining long-term context, or human-in-the-loop approval).
 
@@ -2516,24 +2833,22 @@ In practice, LangChain is ideal for straightforward, sequential tasks (for examp
 
 LangChain is an open-source framework for developing LLM-driven applications. It provides tools and APIs (in Python and JavaScript) to simplify building chatbots, virtual assistants, Retrieval-Augmented Generation (RAG) pipelines, and other LLM-based workflows. At its core, LangChain uses a "chain" or directed graph structure: you define a sequence of steps (prompts → model calls → outputs) that execute in order.
 
-For example, a RAG workflow might chain: (1) retrieve relevant documents, (2) summarize, (3) generate an answer. The LangChain ecosystem includes prebuilt components for prompts, memory buffers, tools (such as search or calculator), and agents that can pick actions. It also integrates with dozens of LLM providers. LangChain's flexible, modular design has made it popular for quickly prototyping AI apps with minimal coding.
+For example, a RAG workflow might chain: (1) retrieve relevant documents, (2) summarize, (3) generate an answer. The LangChain ecosystem includes prebuilt components for prompts, memory buffers, tools (such as search or calculator), and agents that can pick actions. It also integrates with dozens of LLM providers. LangChain's flexible, modular design has made it popular for quickly prototyping AI apps with minimal coding. The LangChain framework is layered: a core of abstractions (chat models, vectors, tools), surrounded by higher-level chains and agents that implement workflows.
 
-The LangChain framework is layered: a core of abstractions (chat models, vectors, tools), surrounded by higher-level chains and agents that implement workflows.
-
-LangChain's architecture is modular. The base langchain-core defines interfaces for models, prompts, memory and tools. The main langchain package adds chains and agents that form the "cognitive architecture". Popular LLM providers (OpenAI, Google, etc.) have their own integration packages, making it easy to switch models. There is also a langchain-community package for third-party extensions. Overall, LangChain serves as a high-level orchestration layer for LLMs and data. It handles inputs/outputs and connects components, but it remains mostly stateless by default (conversation histories can be passed, but long-term memory must be explicitly managed).
+LangChain's architecture is modular. The base langchain-core defines interfaces for models, prompts, memory and tools. The main langchain package adds chains and agents that form the "cognitive architecture". Popular LLM providers (OpenAI, Google, etc.) have their own integration packages, making it easy to switch models. There is also a langchain-community package for third-party extensions. Overall, LangChain serves as a high-level orchestration layer for LLMs and data. It handles inputs/outputs and connects components, but *it remains mostly **stateless** by default* (conversation histories can be passed, but long-term memory must be explicitly managed).
 
 ##### What is LangGraph?
 
-LangGraph is a newer framework (built by the same team) focused on stateful multi-agent orchestration. LangGraph is an extension of LangChain aimed at building robust and stateful multi-actor applications with LLMs by modeling steps as edges and nodes. In simple terms, while LangChain chains operations, LangGraph lets you build a graph of agents and tools. Each node in the graph can be an LLM call or an agent (with its own prompt, model, and tools), and edges define how data and control flow between them. This architecture natively supports loops, branches, and complex control flows.
+LangGraph is a newer framework (built by the same team) *focused on stateful multi-agent orchestration*. LangGraph is an extension of LangChain aimed at building robust and stateful multi-actor applications with LLMs by modeling steps as edges and nodes. In simple terms, while LangChain chains operations, LangGraph lets you build a graph of agents and tools. Each node in the graph can be an LLM call or an agent (with its own prompt, model, and tools), and edges define how data and control flow between them. This architecture natively supports loops, branches, and complex control flows.
 
-LangGraph is explicitly designed for long-running, complex workflows. Its core benefits include durable execution (agents can pause and resume after failures), explicit human-in-the-loop controls, and persistent memory across sessions. For instance, LangGraph provides "comprehensive memory" that records both short-term reasoning steps and long-term facts. It even offers built-in inspection and rollback features so developers can "time-travel" through an agent's state to debug or adjust its course. In practice, LangGraph is used to build applications where many agents work together – for example, one agent might retrieve documents, another summarizes them, a third plans next steps, etc. These agents communicate using shared "state" (a kind of global memory) and can be arranged hierarchically or in parallel. Major companies (LinkedIn, Uber, Klarna, and so on) have begun using LangGraph to build sophisticated agentic applications in production.
+LangGraph is explicitly designed for long-running, complex workflows. Its core benefits include durable execution (agents can pause and resume after failures), explicit human-in-the-loop controls, and persistent memory across sessions. For instance, LangGraph provides "comprehensive memory" that records both short-term reasoning steps and long-term facts. It even offers built-in inspection and rollback features so developers can "time-travel" through an agent's state to debug or adjust its course. In practice, LangGraph is used to build applications where many agents work together – for example, one agent might retrieve documents, another summarizes them, a third plans next steps, etc. These *agents communicate using **shared state*** (a kind of global memory) and can be arranged hierarchically or in parallel. Major companies (LinkedIn, Uber, Klarna, and so on) have begun using LangGraph to build sophisticated agentic applications in production.
 
 ##### Key Architectural Differences
 
 Feature	| LangChain	| LangGraph
  -------- | ------------- | -------------
 Type	| LLM orchestration framework based on chains and agents. |	AI agent orchestration framework based on stateful graphs.
-Workflow Structure	| Linear/DAG workflows (sequence of steps with no cycles). Good for "prompt → model → output” flows	|Graph-based workflows (nodes and edges allow loops, branches, and dynamic transitions). Suited for complex flows.
+Workflow Structure	| Linear workflows (sequence of steps with no cycles). Good for "prompt → model → output” flows	|Graph-based workflows (nodes and edges allow loops, branches, and dynamic transitions). Suited for complex flows.
 State Management	| Implicit/pass-through data. Chains carry inputs forward, but long-term state is limited by default	|Explicit global state ("memory bank") that all agents access. State is persistently stored and updated at each step.
 Task Complexity	| Best for simple to medium tasks: chatbots, RAG pipelines, sequential reasoning. |	Designed for complex, multi-step tasks and workflows that evolve over time (for example, multi-agent assistants).
 Agents and Collaboration	| Typically single-agent or linear chain; agents operate independently without inter-communication.	|Multi-agent. Agents (nodes) can call each other using the graph, share memory, or be arranged hierarchically.
@@ -2567,7 +2882,7 @@ The LangChain and LangGraph frameworks represent two evolving approaches to buil
 LangChain is deprecating its legacy agent framework in favor of LangGraph, which offers enhanced flexibility and control for building intelligent agents. In LangGraph, the graph manages the agent's iterative cycles and tracks the scratchpad as messages within its state. The LangChain "agent" corresponds to the prompt and LLM setup you provide. Refer to LangChain and LangGraph's latest documentation for latest updates.
 
 
-### Introduction to LangGraph
+## Introduction to LangGraph
 
 Getting started with LangGraph
 
@@ -2601,7 +2916,7 @@ Long-running processes	| Scenarios where the agent must persist state and resume
 Complex state management	| When many variables or data points must be carried through the workflow, LangGraph’s shared state object is more explicit than passing context through nested chains.
 Multi-agent or multi-step coordination	| You can design graphs where different nodes represent different agents or tools working together, with the central state tracking their interactions.
 
-#### Core concepts of LangGraph
+### Core concepts of LangGraph
 
 ##### State	
 State is the shared, central piece of data that flows through your LangGraph workflow. Think of it as a dictionary (or, more formally, a `TypedDict` or `Pydantic` model) that carries all relevant information from one node to the next. Each node in the graph reads from and updates this state object. 
@@ -2680,7 +2995,7 @@ Edges define how the workflow moves from one node to the next.
 - Visualizing your graph with a Mermaid diagram:	 LangGraph supports generating Mermaid diagrams, a lightweight syntax for rendering flowcharts and state diagrams. This helps you visually understand how your agent moves from one node to another, especially when there are loops or conditional branches. Once your graph is built, you can render a Mermaid diagram using: `print(app.get_graph().draw_mermaid())`
 
 
-#### A LangGraph Example
+##### A LangGraph Example
 
 In this example, let's build an increment counter using LangGraph.
 
@@ -2941,7 +3256,7 @@ ReAct agents	| Alternate reasoning and actions, thinking and doing in a loop (to
 
 LangGraph represents agents as graphs of states and nodes. The state (often a message history) flows through nodes (functions or LLM calls) linked by edges with conditional logic. Below, we explain each agent style, show sample LangGraph code, and give guidance on use cases.
 
-##### Reflection agents
+##### Reflection Agents
 
 Reflection agents use internal critique to refine outputs. Conceptually, the agent first generates an initial answer, then a second step reflects on that answer. The reflector (often role-played as a teacher or critic) points out flaws or suggests improvements. The agent may loop this generate-then-reflect cycle a few times to polish the answer.
 
@@ -2953,16 +3268,19 @@ Example Code	| Below, generate_answer and critique_answer are two nodes. We loop
 ```python
 from langgraph.graph import MessageGraph, END
 from langchain_core.messages import HumanMessage, AIMessage
+
 # Node that generates an initial response
 def generate_answer(state):
     # (In practice, call an LLM here)
     answer = "This is my first attempt."
     return {"messages": state["messages"] + [AIMessage(content=answer)]}
+
 # Node that critiques and refines the previous answer
 def critique_answer(state):
     # (In practice, call LLM to critique)
     critique = "The answer is incomplete; add more detail."
     return {"messages": state["messages"] + [AIMessage(content=critique)]}
+
 builder = MessageGraph()
 builder.add_node("generate", generate_answer)
 builder.add_node("reflect", critique_answer)
@@ -2971,9 +3289,11 @@ builder.set_entry_point("generate")
 MAX_STEPS = 3
 def should_continue(state):
     return "reflect" if len(state["messages"]) < 2*MAX_STEPS else END
+
 builder.add_conditional_edges("generate", should_continue)
 builder.add_edge("reflect", "generate")
 graph = builder.compile()
+
 # Run the reflection agent
 initial_message = HumanMessage(content="Explain photosynthesis.")
 result = graph.invoke({"messages": [initial_message]})
@@ -2986,7 +3306,7 @@ This makes the agent self-critique its answer. In practice, the reflector node i
 
 ##### Reflexion agents
 
-Reflexion agents formalize the idea of reflection with external grounding. Here the agent not only critiques its output, but also uses external information or citations to do so. Each cycle typically involves three steps:
+Reflexion agents formalize the idea of reflection with external grounding. Here the agent not only critiques its output, but also uses **external information** or **citations** to do so. Each cycle typically involves three steps:
 
 Step	| Description
 ------ | -----
@@ -3006,18 +3326,22 @@ Workflow | code	Below is a pseudocode of a Reflexion-style loop. (`tool_search` 
 ```python
 from langgraph.graph import MessageGraph, END
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+
 def draft_answer(state):
     # (LLM draft; could also generate search query)
     response = "The capital of France is Paris."
     return {"messages": state["messages"] + [AIMessage(content=response)]}
+
 def execute_tools(state):
     # (Simulate external info; e.g., search results)
     info = "París (France) - capital: Paris (en.wikipedia.org)"
     return {"messages": state["messages"] + [SystemMessage(content=info)]}
+
 def revise_answer(state):
     # (LLM re-evaluates answer using info)
     revision = "Yes, France’s capital is Paris. I've verified this."
     return {"messages": state["messages"] + [AIMessage(content=revision)]}
+
 builder = MessageGraph()
 builder.add_node("draft", draft_answer)
 builder.add_node("execute_tools", execute_tools)
@@ -3030,6 +3354,7 @@ def continue_reflexion(state):
     # Count assistant messages to determine iteration
     iteration = sum(1 for m in state["messages"] if isinstance(m, AIMessage))
     return "execute_tools" if iteration <= MAX_LOOPS else END
+
 builder.add_conditional_edges("revise", continue_reflexion)
 builder.set_entry_point("draft")
 graph = builder.compile()
@@ -3037,7 +3362,7 @@ initial_message = HumanMessage(content="What is the capital of France?")
 result = graph.invoke({"messages": [initial_message]}) # Final revised answer
 ```
 This agent uses a **built-in search or tool** (`execute_tools`) to ground its critique. The revise node then updates the answer explicitly (e.g., adding evidence or fixing errors). The process stops when the agent judges the answer is good or after a set number of loops.
-- **When to use**: Reflexion is ideal when accuracy or factual grounding matters. Because it enforces evidence (citations) and points out missing info, it shines on fact-checking, research, or coding tasks where correctness is critical. It is more complex and slower (requires search/tool calls), but yields highly vetted answers. Use Reflexion Agents for tasks like data lookup, code generation with static analysis, or any QA requiring references.
+- **When to use**: Reflexion is ideal when **accuracy** or **factual grounding** matters. Because it enforces evidence (citations) and points out missing info, it shines on fact-checking, research, or coding tasks where correctness is critical. It is more complex and slower (requires search/tool calls), but yields highly vetted answers. Use Reflexion Agents for tasks like data lookup, code generation with static analysis, or any QA requiring references.
 
 
 ##### ReAct agents
@@ -3054,6 +3379,7 @@ Example code	| Below is a simplified version for a weather agent (no actual API 
 ```python
 from langgraph.graph import StateGraph, END
 from langchain_core.messages import HumanMessage, AIMessage
+
 # Simple state with messages and a step counter
 def call_model(state):
     # (LLM reasons; may request an action or give an answer)
@@ -3066,6 +3392,7 @@ def call_model(state):
         # final answer
         answer = AIMessage(content="It's sunny in NYC today.")
         return {"messages": state["messages"] + [answer]}
+
 def call_tool(state):
     # (Simulate a weather API/tool result)
     tool_result = AIMessage(content="Weather(temperature=75F, condition=sunny)")
@@ -3120,10 +3447,10 @@ Multi-agent LLM systems overcome these challenges by distributing the workload a
 
 ##### Challenges of a Single LLM Agent
 
-- Context overload: A single agent juggling data retrieval, analysis, writing, and critique within one conversation can lose track of details or degrade performance.
-- Role confusion: Switching between distinct cognitive modes (creative writing vs. critical review) often causes inconsistent output quality.
-- Debugging difficulty: Identifying which reasoning step caused an error is hard when all logic runs in one model.
-- Quality dilution: The agent may be "good enough" at many tasks but not excel in any.
+- **Context overload**: A single agent juggling data retrieval, analysis, writing, and critique within one conversation can lose track of details or degrade performance.
+- **Role confusion**: Switching between distinct cognitive modes (creative writing vs. critical review) often causes inconsistent output quality.
+- **Debugging difficulty**: Identifying which reasoning step caused an error is hard when all logic runs in one model.
+- **Quality dilution**: The agent may be "good enough" at many tasks but not excel in any.
 
 ##### How Multi-Agent LLM Systems Help
 
@@ -3167,6 +3494,14 @@ Benefit: Specialized agents enable dynamic and accurate handling of diverse cust
 
 Benefit: Dividing the review into subtasks helps ensure thoroughness, legal accuracy, and actionable summaries for clients.
 
+
+Use case	| Agents & workflow	| Benefit
+---------- | ------------- | ------------
+Automated market report	| Research → Data analysis → Writing → Critique → Editing	| Faster, accurate, well-rounded reports
+Customer support |	Intent detection → Knowledge retrieval → Response → Escalation	| Dynamic, personalized, scalable responses
+Legal contract review	| Clause extraction → Compliance check → Risk analysis → Summary	|Thorough, accurate, actionable legal reviews
+
+
 ##### Communication and Collaboration Patterns
 
 ###### Sequential (Pipeline)
@@ -3191,7 +3526,7 @@ Example: A requirements agent queries a data agent, which asks the filter agent 
 
 Effective multi-agent coordination relies on standardized communication protocols, including:
 
-- Model Context Protocol (MCP): An open standard designed to enable LLMs to interact seamlessly with external tools, databases, and services via a structured, JSON-RPC based interface. MCP facilitates real-time context sharing and modular integration across diverse AI components.
+- Model Context Protocol (MCP): An open standard designed to enable LLMs to interact seamlessly with external tools, databases, and services via a structured, **JSON-RPC** based interface. MCP facilitates real-time context sharing and modular integration across diverse AI components.
 
 - IBM Agent Communication Protocol (ACP): A protocol aimed at standardizing message exchanges among autonomous AI agents. ACP supports modular, secure, and scalable communication, underpinning frameworks such as BeeAI for enterprise-grade multi-agent collaboration.
 
@@ -3209,10 +3544,10 @@ Several emerging frameworks simplify building, orchestrating, and managing multi
 
 ##### Implementation Challenges and Design Considerations
 
-- Context Management: How to share relevant information without overwhelming agents.
-- Granularity: Finding the right balance between too few (generalist) and too many (overhead) agents.
-- Communication Costs: Balancing thorough information exchange with latency and compute efficiency.
-- Error Handling: Defining fallback or retry mechanisms when agents fail.
+- **Context Management**: How to share relevant information without overwhelming agents.
+- **Granularity**: Finding the right balance between too few (generalist) and too many (overhead) agents.
+- **Communication Costs**: Balancing thorough information exchange with latency and compute efficiency.
+- **Error Handling**: Defining fallback or retry mechanisms when agents fail.
 
 ##### Summary: Why Multi-Agent LLM Systems?
 
@@ -3231,17 +3566,19 @@ LangGraph structures AI workflows as directed graphs where each node represents 
 
 ###### Key Benefits
 
-- Modular design with independently testable agents
-- Dynamic routing based on runtime conditions
-- Shared memory accessible by all nodes
+- **Modular design** with independently testable agents
+- **Dynamic routing** based on runtime conditions
+- **Shared memory** accessible by all nodes
 - Visual, clear workflow representation
 
 ##### State Management
 
-Before implementing, you need to define a shared state type that all agents will read from and update.
+Before implementing, you need to define a shared state type that **all** agents will read from and update.
 
 ```python
 from typing import TypedDict, List, Optional
+
+
 class SalesReportState(TypedDict):
     request: str
     raw_data: Optional[dict]
@@ -3263,18 +3600,22 @@ def data_collector_agent(state: SalesReportState) -> SalesReportState:
     # Placeholder: collect raw data based on request
     # Update state with raw_data and set next_action
     return state
+
 def data_processor_agent(state: SalesReportState) -> SalesReportState:
     # Placeholder: process raw_data and update processed_data
     # Set next_action to next step
     return state
+
 def chart_generator_agent(state: SalesReportState) -> SalesReportState:
     # Placeholder: create chart configuration from processed_data
     # Update chart_config and set next_action
     return state
+
 def report_generator_agent(state: SalesReportState) -> SalesReportState:
     # Placeholder: generate textual report using processed_data
     # Update report and set next_action to complete
     return state
+
 def error_handler_agent(state: SalesReportState) -> SalesReportState:
     # Placeholder: handle errors, prepare error messages in report
     # Set next_action to complete
@@ -3359,20 +3700,14 @@ def run_sales_report_workflow():
             print(f"- {err}")
     print("\nFinal Report:\n", final_state["report"])
     return final_state
+
 if __name__ == "__main__":
     run_sales_report_workflow()
 ```
 
 #### Multi-Agent Systems and Agentic RAG with LangGraph
 
-##### Why multi-agent systems?
 
-Challenge faced by single LLM agents	| Multi-agent system solution
------------ | ----------------
-Context overload	| Splits tasks among agents to reduce burden
-Role confusion	| Agents specialize in distinct cognitive roles
-Debugging difficulty	| Modular agents ease error tracing
-Quality dilution	| Each agent excels at a focused subtask
 
 ##### Typical multi-agent communication patterns
 
@@ -3382,115 +3717,12 @@ Sequential (Pipeline)	| Agents work one after another, passing results	| Researc
 Parallel with aggregation	| Multiple agents run concurrently, results combined	| SEO analysis, fact-checking, writing run in parallel
 Interactive dialogue	| Agents exchange messages to clarify or refine	| Requirements agent queries data agent before finalizing
 
-##### Real-world multi-agent use cases
-
-Use case	| Agents & workflow	| Benefit
----------- | ------------- | ------------
-Automated market report	| Research → Data analysis → Writing → Critique → Editing	| Faster, accurate, well-rounded reports
-Customer support |	Intent detection → Knowledge retrieval → Response → Escalation	Dynamic, personalized, scalable responses
-Legal contract review	| Clause extraction → Compliance check → Risk analysis → Summary	|Thorough, accurate, actionable legal reviews
-
-##### Communication protocols
-
-- Model Context Protocol (MCP): JSON-RPC-based interface for LLMs to interact with external tools/services, enabling modular, real-time collaboration.
-- IBM Agent Communication Protocol (ACP): Standardizes message exchange among autonomous agents for secure, scalable enterprise workflows.
 
 
-##### Frameworks supporting multi-agent LLM systems
-
-Framework	| Focus/Features
-------------- | --------------
-LangGraph	| Graph-based orchestration, shared state, dynamic routing
-AutoGen	| Agent self-organization, negotiation, adaptive collaboration
-CrewAI	| Structured workflows, strict typed interfaces (Pydantic), high-fidelity data passing
-BeeAI	| Enterprise-grade modular orchestration, uses IBM ACP
-
-##### LangGraph multi-agent workflow essentials
-
-- Directed graph nodes: represent agents/tasks
-- Edges: control flow between agents
-- Shared state: a TypedDict or similar, passed and updated by all agents
-- Routing logic: dynamically determines the next agent based on the state
-
-###### Example of shared state definition
-
-```python
-from typing import TypedDict, Optional, List
-class SalesReportState(TypedDict):
-    request: str
-    raw_data: Optional[dict]
-    processed_data: Optional[dict]
-    chart_config: Optional[dict]
-    report: Optional[str]
-    errors: List[str]
-    next_action: str
-```
-
-###### Example of agent node skeleton
-```python
-def data_collector_agent(state: SalesReportState) -> SalesReportState:
-    # Collect raw data based on state['request']
-    state['raw_data'] = {...}
-    state['next_action'] = 'process'
-    return state
-```
-
-Repeat for other agents: `data_processor_agent`, `chart_generator_agent`, `report_generator_agent`, `error_handler_agent`.
-
-###### Example of routing function
-
-```python
-def route_next_step(state: SalesReportState) -> str:
-    routing = {
-        "collect": "data_collector",
-        "process": "data_processor",
-        "visualize": "chart_generator",
-        "report": "report_generator",
-        "error": "error_handler",
-        "complete": "END"
-    }
-    return routing.get(state.get("next_action", "collect"), "END")
-```
-
-##### Building the workflow graph
-
-```python
-from langgraph.graph import StateGraph, END
-def create_workflow():
-    workflow = StateGraph(SalesReportState)
-    workflow.add_node("data_collector", data_collector_agent)
-    workflow.add_node("data_processor", data_processor_agent)
-    workflow.add_node("chart_generator", chart_generator_agent)
-    workflow.add_node("report_generator", report_generator_agent)
-    workflow.add_node("error_handler", error_handler_agent)
-    # Define conditional edges based on routing decisions
-    workflow.add_conditional_edges("data_collector", route_next_step, {...})
-    # Repeat for other nodes...
-    workflow.set_entry_point("data_collector")
-    return workflow.compile()
-```
-
-##### Running the workflow
-
-```python
-def run_workflow():
-    app = create_workflow()
-    initial_state = SalesReportState(
-        request="Q1-Q2 Sales Report",
-        raw_data=None,
-        processed_data=None,
-        chart_config=None,
-        report=None,
-        errors=[],
-        next_action="collect"
-    )
-    final_state = app.invoke(initial_state)
-    return final_state
-```
 
 ##### Agentic RAG systems
 
-- Combine Retrieval, Reasoning, and Verification using specialized agents
+Combine Retrieval, Reasoning, and Verification using specialized agents
 - Retrieval agent fetches relevant knowledge/data
 - Reasoning agent performs inference and decision-making
 - Verification agent checks results for accuracy and consistency
@@ -3559,13 +3791,15 @@ Communication proceeds with the client agent sending the task and the remote age
 
 ###### Model Context Protocol (MCP)
 
-Introduced by Anthropic, the Model Context Protocol (or MCP) provides a standardized way for AI models to get the context they need to carry out tasks. In the agentic realm, MCP acts as a tier for AI agents to connect and communicate with external services and tools, such as APIs, databases, files, web searches and other data sources. MCP encompasses these three key architectural elements:
+Introduced by Anthropic, the Model Context Protocol (or MCP) provides a standardized way for *AI models to get the context they need to carry out tasks*. In the agentic realm, MCP acts as a tier for AI agents to connect and communicate with external services and tools, such as APIs, databases, files, web searches and other data sources. MCP encompasses these three key architectural elements:
 
-- The MCP host contains orchestration logic and can connect each MCP client to an MCP server. It can host multiple clients.
-- An MCP client converts user requests into a structured format that the protocol can process. Each client has a one-to-one relationship with an MCP server. Clients manage sessions, parse and verify responses and handle errors.
-- The MCP server converts user requests into server actions. Servers are typically GitHub repositories available in various programming languages and provide access to tools. They can also be used to connect LLM inferencing to the MCP SDK through AI platform providers such as IBM and OpenAI.
+- The **MCP host** contains orchestration logic and can connect each MCP client to an MCP server. It can *host multiple clients*.
+- An ***MCP client** converts user requests into a structured format that the protocol can process*. Each client has a one-to-one relationship with an MCP server. Clients manage *sessions*, parse and *verify responses* and *handle errors*.
+- The *MCP server converts user requests into server actions*. 
 
-In the transport layer between clients and servers, messages are transmitted in JSON-RPC 2.0 format using either standard input/output (stdio) for lightweight, synchronous messaging or HTTP for remote requests.
+<!-- Servers are typically GitHub repositories available in various programming languages and provide access to tools. They can also be used to connect LLM inferencing to the MCP SDK through AI platform providers such as IBM and OpenAI. -->
+
+In the transport layer between clients and servers, messages are transmitted in `JSON-RPC 2.0` format using either standard input/output (stdio) for lightweight, synchronous messaging or HTTP for remote requests.
 
 ###### Agent Payments Protocol (AP2)
 
@@ -3574,7 +3808,7 @@ In September 2025, Google unveiled a new standard called Agent Payments Protocol
 Unlike traditional payment systems that rely on a person clicking a 'Buy Now' button, AP2 is designed for scenarios where autonomous agents make purchases on behalf of users.
 
 
-##### How do the A2A, MCP, and AP2 protocols work together for agentic commercial transactions?
+###### How do the A2A, MCP, and AP2 protocols work together for agentic commercial transactions?
 
 The A2A, MCP, and AP2 protocols work together to form the framework of agentic commercial transactions. For example:
 
@@ -3585,9 +3819,7 @@ The A2A, MCP, and AP2 protocols work together to form the framework of agentic c
 
 #### Criteria for choosing an AI agent protocol
 
-With the lack of benchmarks for standardized evaluation, enterprises must conduct their own appraisal of the protocol that best fits their business needs. They might need to start with a small and controlled use case combined with thorough and rigorous testing.
-
-Here are a few aspects to keep in mind when assessing agent protocols:
+With the lack of benchmarks for standardized evaluation, enterprises must conduct their own appraisal of the protocol that best fits their business needs. They might need to start with a small and controlled use case combined with thorough and rigorous testing. Here are a few aspects to keep in mind when assessing agent protocols:
 
 - Efficiency: protocols are designed for swift data transfer and rapid response times. Although some communication overhead is expected, but it must be kept to a minimum.
 - Reliability: AI agent protocols must be able to handle changing network conditions throughout agentic workflows, with mechanisms in place to manage failures or disruptions. For instance, ACP is designed with asynchronous communication as the default, which suits complex or long-running tasks. Meanwhile, A2A supports real-time streaming using SSE for large or long outputs or continuous status updates.
@@ -3596,13 +3828,13 @@ Here are a few aspects to keep in mind when assessing agent protocols:
 
 
 
-### What is MCP?
+## What is MCP?
 
-Model Context Protocol (MCP) is a new open-source standard to connect your agents to data sources such as databases or APIs. MCP consists of multiple components. The most important ones are the host, the client, and the server. 
+Model Context Protocol (MCP) is a clinet server protocol and a new open-source standard to connect your agents to data sources such as **databases** or **APIs**. MCP consists of multiple components. The most important ones are the **host,** the **client**, and the **server.** 
 
 Your MCP host will include one or more MCP clients. The MCP host could be an application chat app, code assistant in your IDE etc. The MCP host will connect to one or more MCP servers. The MCP host and servers will connect over each other through the MCP protocol which is a transport layer in the middle. Whenever your MCP host or client needs a tool, it's going to connect to the MCP server. The MCP server will then connect to, for example, a database (SQL or NoSQL) or APIs or data sources such as a local file type or maybe code. This is especially useful when you're building a code assistant in your IDE. 
 
-Let's look at an example of how to use MCP in practice. Suppose we have our MCP host and client,  a large language model and our MCP servers. Let's assume our MCP client and host is a chat app. You ask a question such as what is the weather like in a certain location or how many customers do I have? The MCP host will need to retrieve tools from the MCP server. The MCP server will then conclude and tell which tools are available. From the MCP host, you would then have to connect to the large language model and send over your question plus the available tools. If all is well, the LLM will reply and tell you which tools to use. Once the MCP host and client knows which tools to use, it knows which MCP servers to call. When it calls the MCP server in order to get a tool result, the MCP server will be responsible for executing something that goes to a database, to an API, or a local piece of code. For this, there could be subsequent calls to MCP servers. The MCP server will reply with a response which you can send back to the LLM. And finally, you should be able to get your final answer based on the question that you asked in the chat application. 
+Let's look at an example of how to use MCP in practice. Suppose we have our MCP host and client,  a large language model and our MCP servers. Let's assume our MCP client and host is a chat app. You ask a question such as what is the weather like in a certain location or how many customers do I have? The MCP host will need to retrieve tools from the MCP server. The MCP server will then  tell which tools are available. From the MCP host, you would then have to connect to the large language model and send over your question plus the available tools. If all is well, the LLM will reply and tell you which tools to use. Once the MCP host and client knows which tools to use, it knows which MCP servers to call. When it calls the MCP server in order to get a tool result, the MCP server will be responsible for executing something that goes to a database, to an API, or a local piece of code. For this, there could be subsequent calls to MCP servers. The MCP server will reply with a response which you can send back to the LLM. And finally, you should be able to get your final answer based on the question that you asked in the chat application. 
 
 The MCP Protocol is a new standard which will help you to connect your data sources via MCP server to any agent. Even though you might not be building agents, your client might be.
 
@@ -3927,7 +4159,7 @@ client = MultiServerMCPClient(
     "met-museum": {
       "command": "npx",
       "args": ["-y", "metmuseum-mcp"],
-      "transport": "studio"
+      "transport": "stdio"
     }
   }
 )
@@ -4108,7 +4340,7 @@ Let's create an HTTP MCP server. We call the `run_http_async` method on our MCP 
 
 ```python
 PORT = 8000
-mcp.run_http_async(portt=PORT)
+mcp.run_http_async(port=PORT)
 ```
 This starts the MCP server as an HTTP server running on port 8000 accessible at path `/mcp`. The server can be located anywhere, but as long as you have access to the URL, you can find it. 
 
@@ -4187,7 +4419,7 @@ The host process orchestrates everything, managing client instances, enforcing s
 MCP is built on JSON RPC 2.0, providing three message types. 
 - Requests expect responses. They have an ID and await a result or an error. 
 - Responses contain either a result or an error object. 
-- Notifications are fire and forget. They have no ID and no response is expected. 
+- Notifications are fired and forget. They have no ID and no response is expected. 
 
 This foundation enables bidirectional communication. Clients call server methods such as `list_tools` and `call_tool`, while servers can send sampling requests to clients. All messages are JSON objects transported over STDIO or streamable HTTP. 
 
@@ -4233,8 +4465,13 @@ MCP defines three core primitives:
 
 
 MCP supports two transport mechanisms 
-- STDIO transport spawns a local server subprocess and communicates through STDIN and STDOUT with newline-delimited JSON RPC messages. The server lifecycle is tied to the client process, perfect for local tools such as file system servers and Git interactions 
-- Streamable HTTP transport enables remote servers over networks The client connects to an HTTP endpoint using bidirectional streaming The server runs independently and can handle multiple clients simultaneously, each with its own connection Streamable HTTP replaced the deprecated SSE transport in March 2025, offering full bidirectional communication through a single endpoint The key difference is that STDIO is process-local with low latency, whereas Streamable HTTP is network-remote and production-ready 
+- **STDIO** transport spawns a local server subprocess and communicates through STDIN and STDOUT with newline-delimited JSON RPC messages. The server lifecycle is tied to the client process, perfect for local tools such as **file system servers** and **Git interactions** 
+- **Streamable HTTP** transport enables remote servers over networks. 
+    - The client connects to an HTTP endpoint using **bidirectional streaming** 
+    - The server runs independently and can handle multiple clients simultaneously, each with its own connection 
+    - Streamable HTTP replaced the deprecated SSE transport in March 2025, offering full bidirectional communication through a single endpoint 
+    
+The key difference is that STDIO is **process-local** with low latency, whereas Streamable HTTP is **network-remote** and **production-ready** 
 
 Here's a quick comparison of the two transports for reference 
 
@@ -4246,29 +4483,36 @@ Lifecycle | Tied to client | Independent server
 Use Case | Local tools, IDE | Cloud servers, multi-user
 Authentication | None (local) | Required (network)
 
-Streamable HTTP 
-- uses a single endpoint with bidirectional communication. 
+###### Streamable HTTP  and Implementation
+Streamable HTTP
+- Uses a single endpoint with bidirectional communication. 
 - The client connects to the server's `/mcp` endpoint, `fastmcp`'s default path. 
 - Both client and server can send messages through this connection at any time 
-- The client sends JSON RPC requests, and the server responds with results 
+- The client sends **JSON RPC requests**, and the server responds with results 
 - The server can also initiate requests, such as sampling for LLM capabilities, and the client responds 
 - Notifications flow in both directions without expecting responses 
 - This bidirectional pattern mirrors STDIO's STDIN, STDOUT, but uses modern HTTP protocols with better reliability and resumability features 
-- The key benefits of Streamable HTTP are It is a single endpoint for all communication 
+- The key benefits of Streamable HTTP are it is a single endpoint for all communication 
 - It uses fully bidirectional messaging 
 - It provides built-in resumability support 
 - It offers simple implementation 
 
-Implementing Streamable HTTP in your MCP client is straightforward with the official SDK. You start by importing the Streamable HTTP underscore client from the MCP SDK Then you connect your server URL with the slash MCP endpoint, which is the default fastMCP convention The client then returns three values, readStream, writeStream, and sessionInfo You use these streams to create a client session with the MCP SDK's session manager The session handles all protocol details Initialization handshake, capability negotiation, message routing, and bidirectional communication You call initialize to negotiate capabilities and send the initialized notification and then you're ready for operation The client automatically handles message framing, error recovery, and connection management This code snippet shows the client implementation pattern 
+Implementing Streamable HTTP in your MCP client is straightforward with the official SDK. 
+- You start by importing the `streamable_http_client` from the MCP SDK 
+- Then you connect your server URL with the  `/mcp` endpoint, which is the default fastMCP convention 
+- The client then returns three values: readStream, writeStream, and sessionInfo. You use these streams to create a client session with the MCP SDK's session manager 
+- The session handles all protocol details: Initialization handshake, capability negotiation, message routing, and bidirectional communication You call initialize to negotiate capabilities and send the initialized notification and then you're ready for operation The client automatically handles message framing, error recovery, and connection management 
 
-Sampling is an MCP feature that lets servers request LLM capabilities from the client during tool execution The workflow is as follows 
-1. The server executes a tool and determines it needs LLM reasoning, perhaps to analyze code, summarize findings, or generate content 
-2. The server sends a sampling slash create message request with messages array, system prompt, model preferences, and generation parameters such as temperature and max tokens 
-3. The client receives this request and prompts the user for approval This is critical for security and cost control 
-4. Only after approval does the client invoke the LLM 
-5. The LLM response flows back through the client to the server which incorporates it into the tool result 
 
-Sampling is optional Clients declare support and capabilities during initialization Servers must handle cases where sampling isn't available.
+**Sampling** is an MCP feature that lets servers request LLM capabilities from the client during tool execution. The workflow is as follows 
+- The server executes a tool and determines it needs LLM reasoning, perhaps to analyze code, summarize findings, or generate content 
+
+- The server sends a `sampling/create_message` request with messages array, system prompt, model preferences, and generation parameters such as temperature and max tokens 
+- The client receives this request and prompts the user for approval. This is critical for security and cost control 
+- Only after approval does the client invoke the LLM 
+- The LLM response flows back through the client to the server which incorporates it into the tool result 
+
+Sampling is optional. Clients declare support and capabilities during initialization. Servers must handle cases where sampling isn't available.
 
 #### Roots: MCP security boundaries
 
@@ -4369,12 +4613,10 @@ Audit logging is essential for security monitoring and compliance. Each permissi
 
 Elicitation logs include the schema and submitted data. Logs should be stored in append-only structured formats such as JSON lines with metadata such as user ID, session ID, and server identity. 
 
-For compliance, audit logs prove what operations
-occurred, who authorized them, and when. This includes incident investigation, security monitoring, compliance reports, and access review. This block of code highlights the audit log entry structure. When an AI assistant attempts a sensitive operation, the client's permission layer intercepts
+For compliance, audit logs prove what operations occurred, who authorized them, and when. This includes incident investigation, security monitoring, compliance reports, and access review. This block of code highlights the audit log entry structure. When an AI assistant attempts a sensitive operation, the client's permission layer intercepts
 it and assesses risk. For ask policies, the client prompts the user with full context, including risk level and tool details. The user can approve to proceed, deny to cancel, or request more information. If approved, the client may trigger server elicitation for additional confirmation. For example, deleting a file triggers elicitation requiring the user to type the file name and reason. The client validates this input and sends it to the server. Effective permission management relies on clear security patterns. Apply least privilege by starting with deny all and allowing only required tools. Grant permissions gradually as needed. Use environment-specific policies. Development can allow most tools. Staging should require approval. And production enforces deny by default with audited exceptions. Apply user-based policies so that different users receive appropriate permissions. 
 
-Temporary
-permissions can be granted for tasks and revoked automatically. Support inheritance through base profiles and role-based templates such as Reader, Editor, and Admin. Store permissions.json in version control to track changes and enable rollback. 
+Temporary permissions can be granted for tasks and revoked automatically. Support inheritance through base profiles and role-based templates such as Reader, Editor, and Admin. Store `permissions.json` in version control to track changes and enable rollback. 
 
 
 ### Cheat Sheet: MCP Hosts and Clients
@@ -4392,6 +4634,8 @@ The base/derived pattern separates low-level MCP protocol handling from applicat
 from contextlib import AsyncExitStack
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+
+
 class MCPBaseClient:
     def __init__(self, server_script: str):
         self.session = None
@@ -4412,6 +4656,7 @@ class MCPBaseClient:
     async def call_tool(self, tool_name: str, arguments: dict):
         await self.connect()
         return await self.session.call_tool(tool_name, arguments)
+
 # Derived application inherits all protocol methods
 class MCPGUIApp(MCPBaseClient):
     async def gui_list_tools(self):
@@ -4427,17 +4672,19 @@ MCP allows servers to initiate requests back to the client, enabling advanced ca
 
 ##### Roots (filesystem security)
 
-Roots define trusted base directories for file operations. By validating all file paths against these roots, you prevent path traversal attacks where malicious code could access files outside the intended workspace using patterns such as ../../etc/passwd.
+Roots define trusted base directories for file operations. By validating all file paths against these roots, you prevent path traversal attacks where malicious code could access files outside the intended workspace using patterns such as `../../etc/passwd`.
 
 ```python
 from pathlib import Path
 BASE_DIR = Path(__file__).parent / "workspace"
+
 def is_within_roots(path: Path) -> bool:
     try:
         path.resolve().relative_to(BASE_DIR.resolve())
         return True
     except ValueError:
         return False
+
 @mcp.tool()
 def read_file(filepath: str) -> str:
     path = BASE_DIR / filepath
@@ -4459,9 +4706,12 @@ Elicitation requests structured user input from the client using Pydantic schema
 ```python
 from fastmcp import Context
 from pydantic import BaseModel
+
+
 class ApprovalSchema(BaseModel):
     approved: bool
     reason: str
+
 @mcp.tool()
 async def delete_file(ctx: Context, filepath: str) -> str:
     response = await ctx.elicit(
@@ -4502,8 +4752,10 @@ HTTP/Streamable HTTP transport enables network communication between client and 
 from fastmcp import FastMCP
 mcp = FastMCP("HTTP Server")
 mcp.run(transport="http", host="127.0.0.1", port=8000)
+
 # Client
 from mcp.client.streamable_http import streamablehttp_client
+
 async with streamablehttp_client("http://127.0.0.1:8000/mcp") as (read, write, _):
     async with ClientSession(read, write) as session:
         await session.initialize()
@@ -4639,44 +4891,30 @@ async def get_available_tools(self):
 - Convert MCP tools to OpenAI function schemas for compatibility with popular LLMs.
 - Use synthetic tools to expose resources and prompts as callable functions, giving LLMs full access to all MCP capabilities.
 
-### END
-
-
-# This is h1
-## This is h2
-### This is h3
-#### This is h4
-##### This is h5
-###### This is h6
-
-
-
-Notes from LangChain Official Documentation
+#### Notes from LangChain Official Documentation
 
 LangGraph FAQ
 
 - Do I need to use LangChain to use LangGraph? What’s the difference?
     -  No. LangGraph is an orchestration framework for complex agentic systems and is more low-level and controllable than LangChain agents. On the other hand, LangChain provides a standard interface to interact with models and other components, useful for straight-forward chains and retrieval flows.
-How is LangGraph different from other agent frameworks?
-Other agentic frameworks can work for simple, generic tasks but fall short for complex tasks bespoke to a company’s needs. LangGraph provides a more expressive framework to handle companies’ unique tasks without restricting users to a single black-box cognitive architecture.
-Does LangGraph impact the performance of my app?
+
+- Does LangGraph impact the performance of my app?
 LangGraph will not add any overhead to your code and is specifically designed with streaming workflows in mind.
-Is LangGraph open source? Is it free?
+- Is LangGraph open source? Is it free?
 Yes. LangGraph is an MIT-licensed open-source library and is free to use.
-Is LangSmith Deployment (formerly LangGraph Platform/Cloud) open source?
+- Is LangSmith Deployment (formerly LangGraph Platform/Cloud) open source?
 No. LangSmith Deployment is proprietary software that will eventually be a paid service for certain tiers of usage. We will always give ample notice before charging for a service and reward our early adopters with preferential pricing.
-How do I enable LangSmith Deployment?
+- How do I enable LangSmith Deployment?
 All LangSmith users on Plus and Enterprise plans can access LangSmith Deployment. Check out the docs.
-How are LangGraph and LangSmith Deployment different?
+- How are LangGraph and LangSmith Deployment different?
 LangGraph is a stateful, orchestration framework that brings added control to agent workflows. LangSmith Deployment is a service for deploying and scaling LangGraph applications.
-How does LangGraph fit into the LangChain ecosystem? 
-Our open source frameworks help you build agents:
-LangChain helps you quickly get started building agents, with any model provider of your choice.
-LangGraph allows you to control every step of your custom agent with low-level orchestration, memory, and human-in-the-loop support. You can manage long-running tasks with durable execution.
-LangSmith is a platform that helps AI teams use live production data for continuous testing and improvement. LangSmith provides:
-Observability to see exactly how your agent thinks and acts with detailed tracing and aggregate trend metrics.
-Evaluation to test and score agent behavior on production data and offline datasets for continuous improvement.
-Deployment to ship your agent in one click, using scalable infrastructure built for long-running tasks.
+- How does LangGraph fit into the LangChain ecosystem? 
+    - LangChain helps you quickly get started building agents, with any model provider of your choice.
+    - LangGraph allows you to control every step of your custom agent with low-level orchestration, memory, and human-in-the-loop support. You can manage long-running tasks with durable execution.
+    - LangSmith is a platform that helps AI teams use live production data for continuous testing and improvement. LangSmith provides:
+        - Observability to see exactly how your agent thinks and acts with detailed tracing and aggregate trend metrics.
+        - Evaluation to test and score agent behavior on production data and offline datasets for continuous improvement.
+        - Deployment to ship your agent in one click, using scalable infrastructure built for long-running tasks.
 
 
 ### Motivation
@@ -4685,9 +4923,7 @@ A solitary LLM is fairly limited
 - it doesnt have access to tools, external context, multi-step workflows
 - it cant alone perform multi-stpe workflows
 
-So many LLM applications use a control flow with steps before and after LLM calls (tool calls, retreival steps).
-
-This control flow forms a **chain** which are very reliable: the same chain of steps occurs every time you invoke the workflow. But we do want LLM systems to pick their own control flow for certain kinds of problems. You might want a LLM application that can choose its own set of steps depending on the problems they face. This is really what an agent is. An angent is a control flow defined by an LLM. So you have chains that are fixed control flows versus the control flows defined by LLMs.
+So many LLM applications use a control flow with steps before and after LLM calls (tool calls, retreival steps). This control flow forms a **chain** which are very reliable: the same chain of steps occurs every time you invoke the workflow. But we do want LLM systems to pick their own control flow for certain kinds of problems. You might want a LLM application that can choose its own set of steps depending on the problems they face. This is really what an agent is. An angent is a control flow defined by an LLM. So you have chains that are fixed control flows versus the control flows defined by LLMs.
 
 There are many kind of agents depneding on the amount of control given to LLMs. For example a router can be though of as a low control agent where LLM controls a single step in a flow where it might choose between a narrow set of options. For example, i go from step 1 to step 2 or 3 based on the LM decision. On the other extreme, we have a fully autonomous  agent that can take any sequence of steps through some set of given options or even it can generate its own next move based on some potentially avialbel resources.
 
@@ -4709,7 +4945,7 @@ There are few specific pillars for LangGraph to help you acheive  this goal that
 - Human-in-the-loop: 
 - controlability
 
-LangGraph plays very nicely naturally with LangChain. We often use the LangChain components in our LangGraph workflows. For example in a RAG application where you have a retreiver step from a vector store and an LLM step that takes the retreived documents and answers the questions. The retriever here could use a Langchain vector storage. Likewise the LLM node can a LanChain integration but You dont have to use LangChain in any of these cases. The main difference is that LangChain is built for linear, sequential workflows (chains), while LangGraph is designed for cyclical, stateful workflows (graphs). 
+LangGraph plays very nicely naturally with LangChain. We often use the LangChain components in our LangGraph workflows. For example in a RAG application where you have a retreiver step from a vector store and an LLM step that takes the retreived documents and answers the questions. The retriever here could use a Langchain vector storage. Likewise the LLM node can a LanChain integration but You dont have to use LangChain in any of these cases. *The main difference is that LangChain is built for linear, sequential workflows (chains), while LangGraph is designed for cyclical, stateful workflows (graphs)*. 
 
 LangGraph is an extension of LangChain, not a replacement. You often use LangChain’s components (like model wrappers and tool integrations) inside a LangGraph workflow.
 
@@ -4722,17 +4958,17 @@ Why we still need both:
 ##### The typical workflow
 Most developers don't choose one over the other; they follow a path: 
 - Start with LangChain to quickly prototype prompts and data retrieval.
-- Move to LangGraph when the app needs to "think," self-correct, or handle multi-turn conversations that aren't just a straight line. 
+- Move to LangGraph when the app needs to **think**, **self-correct**, or handle **multi-turn conversations** that aren't just a straight line. 
 
 These guides compare LangChain and LangGraph, focusing on why LangGraph was developed to handle complex control flow, statefulness, and event-driven execution beyond LangChain's linear chains.
 
 
-#### When to Use LangChain
+###### When to Use LangChain
 - Simple Pipelines: Use it when your task follows a clear A → B → C order, such as summarizing a document or a basic RAG (Retrieval-Augmented Generation) pipeline.
 - Prototyping: It is excellent for quickly connecting an LLM to a data source using pre-built components like prompt templates and output parsers.
 - Stateless Apps: Ideal for apps that don't need to "remember" complex logic or backtrack based on errors. 
 
-##### When to Use LangGraph
+###### When to Use LangGraph
 - Agentic Workflows: If your AI needs to make a decision, use a tool, check the result, and potentially loop back to try again, LangGraph is the better tool.
 - Multi-Agent Systems: Use it to orchestrate multiple specialized agents (e.g., one researcher agent and one writer agent) that need to hand off tasks to each other.
 - Human-in-the-loop: It has native support for pausing an agent to wait for human approval or input before continuing a cycle.
@@ -4740,40 +4976,51 @@ These guides compare LangChain and LangGraph, focusing on why LangGraph was deve
 
 
 
-LangGraph API creates a API around our graph so we can call it to execute our command related to the graph. For example: client.runs.stream(...)
+LangGraph API creates a API around our graph so we can call it to execute our command related to the graph. For example: `client.runs.stream(...)`
 
+###### FastAPI wrapper arounf LangGraph app
 Its is like a FastAPI wrapper around our graph... is this correct?
 Spot on. That is exactly what it is—a specialized FastAPI-style wrapper designed specifically for the unique needs of stateful agents.
 While you could write your own FastAPI wrapper, the LangGraph API (via the LangGraph Platform) gives you several "production" features out of the box that are surprisingly hard to code from scratch:
 1. Built-in Persistence (The "Checkpointer")
+
 In a standard FastAPI app, if you want to resume a conversation, you have to manually save the state to a database (Postgres/Redis) and load it back up.
-LangGraph API: Automatically manages a Postgres database for you. When you call a thread_id, it handles all the "Select/Update" logic behind the scenes.
+- LangGraph API: Automatically manages a Postgres database for you. When you call a thread_id, it handles all the "Select/Update" logic behind the scenes.
+
 2. Long-Running Task Management
+
 Standard FastAPI requests often timeout after 30–60 seconds.
-LangGraph API: It uses a Background Task Queue. When you start a run, it can take minutes (or hours if waiting for a human). The API handles the "is it done yet?" polling and background execution for you.
+- LangGraph API: It uses a Background Task Queue. When you start a run, it can take minutes (or hours if waiting for a human). The API handles the "is it done yet?" polling and background execution for you.
 3. Double-Texting & Interrupts
+
 What happens if a user sends a second message while your LLM is still generating the first one?
-Standard FastAPI: You’d likely have two conflicting processes fighting over the same state.
-LangGraph API: It has built-in concurrency control. You can choose to "reject," "enqueue," or "interrupt" the previous run when a new one comes in.
+- Standard FastAPI: You’d likely have two conflicting processes fighting over the same state.
+- LangGraph API: It has built-in concurrency control. You can choose to "reject," "enqueue," or "interrupt" the previous run when a new one comes in.
 4. Human-in-the-Loop Endpoints
+
 The API provides specific endpoints just for the "resume" logic we struggled with earlier.
 Instead of you manually fixing the state in code, the API has a threads.state.update endpoint and a runs.resume command specifically for moving past those breakpoints.
+
 5. Streaming by Default
+
 Streaming token-by-token or node-by-node (the stream_mode you used) is tricky to implement reliably over Server-Sent Events (SSE). The LangGraph API handles the SSE protocol for you so your frontend gets smooth updates.
 The Verdict: If you are building a simple "one-and-done" bot, FastAPI is fine. If you are building a multi-step agent that needs to remember where it was, wait for humans, and handle complex state updates, the LangGraph API saves you weeks of infrastructure work.
-Do you want to see how the Client SDK (the client.runs.stream part) looks when you actually connect it to a frontend?
 
 
-
- In LangGraph, a "thread" is a logical ID, not a physical Linux/OS thread.
+In LangGraph, a "thread" is a logical ID, not a physical Linux/OS thread.
 Here is the breakdown of the difference:
 1. It’s a "Database Key," not a "CPU Thread"
+
 In a Linux process, a thread is a unit of execution that shares memory and runs on a CPU core.
 In LangGraph, a thread is just a unique identifier (like a UUID or a string) used to look up a conversation's history in a database.
 Linux Thread: Managing instructions for the processor.
 LangGraph Thread: Mapping a user to their specific "Save Game" file.
+
 2. State vs. Execution
+
 State (LangGraph): When you send a thread_id, LangGraph goes to your Postgres/Sqlite database, pulls out the last known state (the "checkpoint"), and hands it to the AI.
 Execution (Linux): Your Python code (the LangGraph library itself) runs on standard OS threads to process that data.
+
 3. Why call it a "Thread"?
+
 The name comes from "Conversation Threading" (like in an email chain or a Slack reply). It represents a linear sequence of events.
