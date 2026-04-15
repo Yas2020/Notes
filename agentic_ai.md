@@ -9,11 +9,11 @@ You will master:
     - Long-term vector memory
 - Planning patterns:
     - Single-agent loop
-Planner + executor split
-Guardrails:
-Input validation
-Output schema enforcement
-Tool permissioning
+    - Planner + executor split
+- Guardrails:
+    - Input validation
+    - Output schema enforcement
+    - Tool permissioning
 
 - Evaluation:
     - Task success metrics
@@ -84,60 +84,69 @@ That’s leverage.
 
 
 They’re looking for someone who can answer:
-How do you structure multi-step reasoning?
-How do you prevent tool hallucination?
-How do you evaluate task success?
-How do you control cost?
-How do you log failures?
-How do you scale this safely?
+- How do you structure multi-step reasoning?
+- How do you prevent tool hallucination?
+- How do you evaluate task success?
+- How do you control cost?
+- How do you log failures?
+- How do you scale this safely?
+
 If you can confidently design and discuss those, you are ready.
 
 
 
 What “Agentic-Ready AI Engineer” Actually Means in 2026
 It means you can confidently do these five things:
-1️⃣ Design a Multi-Step LLM System
+###### 1️⃣ Design a Multi-Step LLM System
 You can explain and implement:
 Goal decomposition
-ReAct-style loops
-Tool invocation
-State tracking
-Error handling
+- ReAct-style loops
+- Tool invocation
+- State tracking
+- Error handling
+
 You can whiteboard it under pressure.
 That alone puts you ahead of most candidates.
-2️⃣ Integrate Tools Safely
+
+###### 2️⃣ Integrate Tools Safely
 You understand:
-JSON schema enforcement
-Deterministic tool interfaces
-Tool permission boundaries
-Output validation
-Retry logic
+- JSON schema enforcement
+- Deterministic tool interfaces
+- Tool permission boundaries
+- Output validation
+- Retry logic
+
 This is engineering maturity — not hype.
-3️⃣ Add Memory Properly
+
+###### 3️⃣ Add Memory Properly
 You know the difference between:
-Context window memory
-Structured state
-Vector retrieval memory
-When NOT to use memory
+- Context window memory
+- Structured state
+- Vector retrieval memory
+- When NOT to use memory
+
 This is critical. Most people misuse it.
-4️⃣ Implement Evaluation
+
+###### 4️⃣ Implement Evaluation
 You can define:
-Task success metrics
-Regression tests
-Logging
-Failure categorization
-Cost vs performance trade-offs
+- Task success metrics
+- Regression tests
+- Logging
+- Failure categorization
+- Cost vs performance trade-offs
+
 This is where senior-level credibility comes from.
-5️⃣ Frame It as Production System Design
+
+###### 5️⃣ Frame It as Production System Design
 You can discuss:
-Latency bottlenecks
-Token cost control
-Observability
-Scaling
-Security concerns
-Guardrails
-At that point, you’re not “learning agents.”
-You’re operating as an AI systems engineer.
+- Latency bottlenecks
+- Token cost control
+- Observability
+- Scaling
+- Security concerns
+- Guardrails
+
+At that point, you’re not “learning agents.” You’re operating as an AI systems engineer.
 
 
 
@@ -318,8 +327,8 @@ No scope creep.
 ----------
 
 ### Foundational Models
-- tempreture: higher -> more creative, lower -> more deterministic
-- max_tokens: limits the number of tokens in the response
+- **Tempreture**: higher -> more creative, lower -> more deterministic
+- **max_tokens**: limits the number of tokens in the response
 - timeout: max time to wait for response for the model before canceling the request
 - max retires: max amount of times to retiry your request if that request fails
 
