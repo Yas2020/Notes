@@ -222,7 +222,7 @@
         - [Agent Payments Protocol (AP2)](#agent-payments-protocol-ap2)
         - [How do the A2A, MCP, and AP2 protocols work together for agentic commercial transactions?](#how-do-the-a2a-mcp-and-ap2-protocols-work-together-for-agentic-commercial-transactions)
     - [Criteria for choosing an AI agent protocol](#criteria-for-choosing-an-ai-agent-protocol)
-  - [What is MCP?](#what-is-mcp)
+- [What is MCP?](#what-is-mcp)
   - [Why MCP?](#why-mcp)
         - [Key benefits of MCP](#key-benefits-of-mcp)
     - [MCP Applications](#mcp-applications)
@@ -3840,13 +3840,13 @@ With the lack of benchmarks for standardized evaluation, enterprises must conduc
 
 
 
-### What is MCP?
+## What is MCP?
 
-Model Context Protocol (MCP) is a new open-source standard to connect your agents to data sources such as databases or APIs. MCP consists of multiple components. The most important ones are the **host,** the **client**, and the **server.** 
+Model Context Protocol (MCP) is a clinet server protocol and a new open-source standard to connect your agents to data sources such as **databases** or **APIs**. MCP consists of multiple components. The most important ones are the **host,** the **client**, and the **server.** 
 
 Your MCP host will include one or more MCP clients. The MCP host could be an application chat app, code assistant in your IDE etc. The MCP host will connect to one or more MCP servers. The MCP host and servers will connect over each other through the MCP protocol which is a transport layer in the middle. Whenever your MCP host or client needs a tool, it's going to connect to the MCP server. The MCP server will then connect to, for example, a database (SQL or NoSQL) or APIs or data sources such as a local file type or maybe code. This is especially useful when you're building a code assistant in your IDE. 
 
-Let's look at an example of how to use MCP in practice. Suppose we have our MCP host and client,  a large language model and our MCP servers. Let's assume our MCP client and host is a chat app. You ask a question such as what is the weather like in a certain location or how many customers do I have? The MCP host will need to retrieve tools from the MCP server. The MCP server will then conclude and tell which tools are available. From the MCP host, you would then have to connect to the large language model and send over your question plus the available tools. If all is well, the LLM will reply and tell you which tools to use. Once the MCP host and client knows which tools to use, it knows which MCP servers to call. When it calls the MCP server in order to get a tool result, the MCP server will be responsible for executing something that goes to a database, to an API, or a local piece of code. For this, there could be subsequent calls to MCP servers. The MCP server will reply with a response which you can send back to the LLM. And finally, you should be able to get your final answer based on the question that you asked in the chat application. 
+Let's look at an example of how to use MCP in practice. Suppose we have our MCP host and client,  a large language model and our MCP servers. Let's assume our MCP client and host is a chat app. You ask a question such as what is the weather like in a certain location or how many customers do I have? The MCP host will need to retrieve tools from the MCP server. The MCP server will then  tell which tools are available. From the MCP host, you would then have to connect to the large language model and send over your question plus the available tools. If all is well, the LLM will reply and tell you which tools to use. Once the MCP host and client knows which tools to use, it knows which MCP servers to call. When it calls the MCP server in order to get a tool result, the MCP server will be responsible for executing something that goes to a database, to an API, or a local piece of code. For this, there could be subsequent calls to MCP servers. The MCP server will reply with a response which you can send back to the LLM. And finally, you should be able to get your final answer based on the question that you asked in the chat application. 
 
 The MCP Protocol is a new standard which will help you to connect your data sources via MCP server to any agent. Even though you might not be building agents, your client might be.
 
