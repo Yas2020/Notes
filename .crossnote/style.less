@@ -2,6 +2,7 @@
 /* Please visit the URL below for more information: */
 /*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
 /* Other interesting fonts are: Noto Sans, Roboto, Fira Sans, Sixtyfour*/
+
 @import url('https://fonts.googleapis.com/css?family=Tangerine');
 @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono');
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
@@ -12,6 +13,9 @@
 @import url('https://fonts.googleapis.com/css?family=Verdana');
 @import url('https://fonts.googleapis.com/css?family=Lora');
 @import url('https://fonts.googleapis.com/css?family=Montserrat');
+@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono');
+@import url('https://fonts.googleapis.com/css?family=Pinyon+Script');
+
 // @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,600");
 
 
@@ -31,6 +35,7 @@
   font-family:  -apple-system, BlinkMacSystemFont, SF Pro, Lora, Georgia,  Arial, Helvetica, Verdana, Open Sans, Roboto;
   // -apple-system, BlinkMacSystemFont, SF Mono, 
   font-size: 15pt;
+  color: #333;
   // padding-left: 80px !important;
   // padding-right: 80px !important;
 
@@ -123,35 +128,35 @@
     font-size: 40pt;
     font-family: Montserrat;
     font-weight: 500;
-    color: rgb(123, 8, 255);
+    color: rgb(119, 0, 255);
   }
 
   h3{
     font-size: 35pt;
     font-family: Montserrat;
     font-weight: 500;
-    color: rgb(93, 72, 252);
+    color: rgb(38, 10, 254);
   }
 
   h4{
     font-size: 30pt;
     font-family: Montserrat;
     font-weight: 500;
-    color: rgb(9, 125, 250);
+    color: rgb(14, 143, 255);
   }
 
    h5{
     font-size: 25pt;
     font-family: Montserrat;
     font-weight: 400;
-    color: rgb(3, 231, 212);
+    color: rgb(21, 237, 252);
   }
   
   h6{
     font-size: 20pt;
     font-family: Montserrat;
     font-weight: 400;
-    color: rgb(37, 235, 57);
+    color: rgb(23, 233, 44);
   }
   
   ul li {
@@ -160,18 +165,36 @@
       margin-bottom: 5px;
       margin-left: 10px;
       text-align: justify;
+      color: #333;
+      // font-weight:normal !important;
+      // font-size: 16pt !important;
       // line-height: 30px;
+  }
+  ul li::marker {
+    color: #333 !important;
   }
 
   ol {
-    list-style-type: decimal; /* upper-roman or decimal, lower-alpha, upper-alpha, etc. */
-    list-style-position: outside; /* or inside */
-    color: #c05314;
-    font-family: Open Sans, Verdana;
-    font-weight: 1000;
-    margin-left: 0px;
-    padding-left: 20px;
+    list-style-type: decimal; /* 
+    upper-roman or decimal, lower-alpha, upper-alpha, etc. */
+    // list-style-position: outside; /* or inside */
+    // list-style-position: inside;
+    color: #af133c !important;
+    font-family: Open Sans, Verdana !important;
+    font-weight: bold !important;
+    // font-size: 16pt;
+    // margin-left: 0 !important;
+    // padding-left: 0 !important;
+    padding-left: 1.5em;
   }
+
+
+  ol li::marker {
+  font-family: Pinyon Script, monospace;
+  font-weight: bolder;
+  color: #f70360;
+  font-size: 1.2em;
+}
 
   table {
     justify-items: center; 
@@ -263,19 +286,21 @@
   }
   
   pre.language-o.o {
-    background-color: rgb(247, 247, 245);
-    // margin-top: -25px;
+    background-color: rgb(245, 252, 216) !important;
+     margin-top: 10px !important;
   }
   
   pre.language-o.o code {
-    font-family:  Cutive Mono, Kode Mono, Monaco, "Droid Sans Fallback";
-      // font-size: 11pt;
-      font-weight: 800;
-      line-height: 1.357em;
-      color:#93a293;  
+    font-family:  IBM Plex Mono, Kode Mono, Cutive Mono, Monaco, "Droid Sans Fallback" !important;
+      // font-size: 8pt;
+      font-weight: -200;
+      // line-height: 1.357em;
+      color:#999d99;  
       white-space: pre-wrap;
       word-wrap: break-word;
       overflow-wrap: break-word;
+      letter-spacing: -0.2px; /* Makes it feel slightly tighter/lighter */
+  -webkit-font-smoothing: antialiased;
   }
 
   @media screen and (max-width: 960px) {
