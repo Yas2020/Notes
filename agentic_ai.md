@@ -3832,7 +3832,10 @@ With the lack of benchmarks for standardized evaluation, enterprises must conduc
 
 Model Context Protocol (MCP) is a clinet server protocol and a new open-source standard to connect your agents to data sources such as **databases** or **APIs**. MCP consists of multiple components. The most important ones are the **host,** the **client**, and the **server.** 
 
-Your MCP host will include one or more MCP clients. The MCP host could be an application chat app, code assistant in your IDE etc. The MCP host will connect to one or more MCP servers. The MCP host and servers will connect over each other through the MCP protocol which is a transport layer in the middle. Whenever your MCP host or client needs a tool, it's going to connect to the MCP server. The MCP server will then connect to, for example, a database (SQL or NoSQL) or APIs or data sources such as a local file type or maybe code. This is especially useful when you're building a code assistant in your IDE. 
+Hosts are LLM application that want to sccess data through MCP (ex: Claude Desktop, IDEs, AI agents).  Your MCP host will include one or more MCP clients. MCP servers are lightweight programs that each expose specific capabilites through MCP.  MCP clients maintain 1:1 connections with servers inside the host applications.
+
+The MCP clients and servers will connect over each other through the MCP protocol which is a transport layer in the middle. Whenever your MCP client needs a tool, it's going to connect to the MCP server. The MCP server will then connect to, for example, a database (SQL or NoSQL) or APIs or data sources such as a local file type or maybe code. 
+
 
 Let's look at an example of how to use MCP in practice. Suppose we have our MCP host and client,  a large language model and our MCP servers. Let's assume our MCP client and host is a chat app. You ask a question such as what is the weather like in a certain location or how many customers do I have? The MCP host will need to retrieve tools from the MCP server. The MCP server will then  tell which tools are available. From the MCP host, you would then have to connect to the large language model and send over your question plus the available tools. If all is well, the LLM will reply and tell you which tools to use. Once the MCP host and client knows which tools to use, it knows which MCP servers to call. When it calls the MCP server in order to get a tool result, the MCP server will be responsible for executing something that goes to a database, to an API, or a local piece of code. For this, there could be subsequent calls to MCP servers. The MCP server will reply with a response which you can send back to the LLM. And finally, you should be able to get your final answer based on the question that you asked in the chat application. 
 
@@ -3939,6 +3942,10 @@ Bear in mind that MCP is a relatively new technology, and therefore, we are only
     - They enable the creation of reusable MCP services 
   -  Highly flexible, as they can integrate with both internal systems and external resources or tools. 
  
+<p align="center">
+  <img src="./assets/agentic_ai/mcp6.png" alt="drawing" width="600" height="400" style="center" />
+</p>
+
 MCP primitives are the core concept of MCP, defining what servers and clients can provide for one another. They determine the kinds of contextual information that can be shared with AI applications and the actions that can be carried out. In MCP, servers can expose three types of core primitives as follows: 
 - **Tools** offer functions that AI apps can invoke to perform 
     -  calculations, sending messages, file operations, database calls, or data retrieval via API calls. 
