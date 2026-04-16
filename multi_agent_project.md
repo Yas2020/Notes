@@ -1,110 +1,3 @@
-###### What a strong multi-agent notebook could demonstrate
-
-Example agents:
-1. Planner Agent
-    - breaks a user task into steps
-    -  decides which agents/tools are needed
-2. Research Agent
-    - performs web search or document retrieval
-    - summarizes information
-3. Execution Agent
-    - calls tools (APIs, code execution, DB queries)
-4. Critic / Evaluator Agent
-    - checks results
-    - asks for retries or corrections
-5. Memory Component
-    - stores important intermediate results
-    - demonstrates agent memory/state
-6. Orchestrator
-    - implemented with something like a graph workflow
-    - controls agent communication
-
-This shows interviewers you understand agent collaboration, not just prompts.
-
-Concepts that would make the notebook impressive
-You don’t need a giant production system. But if the notebook touches these ideas, it becomes very comprehensive:
-- multi-agent coordination
-- tool calling
-- planning + task decomposition
-- memory (short-term / long-term)
-- retrieval or search
-- evaluation / self-reflection loop
-- graph-based workflow orchestration
-
-These are exactly the things people mean when they talk about agentic AI.
-
-###### What makes the notebook powerful
-Include sections like:
-- Agentic Architecture Overview
-- Tooling Layer
-- Multi-Agent Communication
-- Memory System
-- Evaluation / Self-Correction Loop
-- Example Workflow
-
-Example task:
-“Research a topic, synthesize findings, critique the answer.”
-
-This shows planning + tool use + evaluation.
-
-If the goal is to make this not just fast but also comprehensive and interview-ready, we can include all the critical concepts that interviewers now expect in agentic AI. That includes things like:
-- MCP multi-agent control patterns (planner/executor/evaluator architecture)
-- Memory components (short-term, long-term, vector stores)
-- Tool usage (APIs, web search, DB access, CI/CD actions)
-- Workflow orchestration (graphs, LangGraph or equivalent)
-- Agent-to-agent communication (how multiple agents collaborate or pass data)
-- Evaluation / self-correction loops (critic agents or feedback loops)
-
-The idea is that this notebook becomes a “complete reference” for agentic AI workflows — not a production system, but fully representative of what interviewers expect in terms of architecture, roles, terminology, and reasoning patterns. 
-
-By the end, you’ll have:
-- a working multi-agent system 
-- all critical concepts clearly demonstrated
-- diagrams and explanations ready for interviews
-
-This will let you speak confidently about everything from MCP servers to tool orchestration without needing to build a full-scale production system.
-
-
-
-
-
-###### Why LangGraph for this?
-
-Unlike basic chains, LangGraph handles Persistence and Cycles.
-
-- Persistence: If the API fails halfway through a complex 10-minute research task, you can resume from the exact node where it crashed.
-
-- Cycles: If the "Risk Auditor" node finds a massive debt discrepancy, it can force the "Market Data" node to re-run specifically for debt maturity dates.
-
-
-To ensure your Quantitative Agent acts as a rigorous engineer rather than a "guessing" chatbot, the system prompt must enforce the PAL (Program-Aided Language) pattern.
-
-
-Next Step for "Senior Defense"
-
-When you build these endpoints, make sure you implement Resource Limiting (e.g., capping the container at 512MB RAM). If asked why during an interview, your answer is: "To prevent a malicious or hallucinated recursive loop from exhausting the host's resources (Denial of Service protection)."
-
-
-
--------------------------------
-
-
-#### My Overall Assessment
-Your additions are very strong and align with modern agentic design patterns.
-
-You included:
-- Reflection
-- Orchestrator-Worker
-- Evaluator-Optimizer
-- HITL
-- Semantic guardrails
-- Token budget protection
-- Traceability
-- PAL (program-aided reasoning)
-
-That is exactly the stack of concepts companies want engineers to understand.
-The only change I suggest is where each pattern lives in the system so it doesn't become messy.
-
 ## Project Architecture 
 Project Name:
 **Agentic Investment Researcher**
@@ -134,21 +27,30 @@ Cross-cutting nodes:
 - HITL Interrupt
 - Checkpointer
 
+###### Concepts that this project implement
+- Multi-agent communication
+- Tool calling
+- Planning + task decomposition
+- Memory (short-term / long-term)
+- Retrieval or search
+- Evaluation / self-reflection loop (critic agents or feedback loops)
+- Graph-based workflow orchestration
+- MCP multi-agent control patterns (planner/executor/evaluator architecture)
 
+These are exactly the things people mean when they talk about agentic AI and make this project comprehensive.
 
 #### Core Graph Design
 ##### Goal Interpreter
 Implements user input validation aganist the topic
 Responsibilites:
-1. ***User query validator**:
+1. User query validator:
     - validates user query for relevance, safety and lcarity
     - If not met, activated HITL to ask user to revise their query
 2. Parses user request. 
 
 Example:
-- Topic: NVIDIA
-- Event: Q3 earnings
-- Objective: generate intelligence report
+- Topic: Investment Report/Recommnedation
+- User query: Analyze NVIDIA and produce an investment research summary
 
 ##### Orchestrator
 Implements Orchestrator-Worker pattern. The "Planning" Phase Separates Planning from Execution which is a hallmark of "Reasoning" agents. 
@@ -177,7 +79,7 @@ Responsibilities:
     5. Generate report: aggregate all the result into a summary report that might make a fiancial advices
 
 
-###### Schedule Node
+###### Scheduler Node
 Marks task pending → ready → running before dispatch them to agents. But before this, it checks if the dependent task are marked "completed" by agents.
 
 - **Scheduler**:
@@ -235,39 +137,113 @@ Investment Reporter	| Synthesizes all the above into a final recommendation (Buy
 
 But we kept it simpler: a research agent which is a separate agent from this subgraph collect all the live data the quant agent needs (The "Eyes").
 
-##### Implementing Agents
+#### Implementing Agents
+Keep the following in mind when implementing agents:
 
+1. Clear separation of responsibilities
+
+Make sure each component does one thing well:
+- Planner – only generates DAG/tasks from the user query
+- Scheduler – routes tasks to the right agents dynamically
+- Agents – execute tasks (research, math, summarization, etc.)
+- Quant sandbox – handles all numeric/financial computation
+
+This ensures each piece can be swapped or improved independently.
+
+2. Explicit input/output schemas
+
+Define exactly what each agent receives and returns
+For the quant sandbox, define a schema like:
+```json
+{
+  "task_id": "calculate_var",
+  "input": {"ticker": "AAPL", "data": "..."},
+  "output": {"value_at_risk": 12345.67, "confidence": 0.95}
+}
+```
+This makes it easier for the scheduler to orchestrate and for debugging later.
+
+3. Error handling / fallback
+
+Agents sometimes fail (network issues, data unavailable, etc.):
+- Implement retry mechanisms in the scheduler
+- Allow agents to return error codes + messages rather than crashing the whole workflow
+- For the quant sandbox, provide a default behavior or placeholder if data is missing
+
+This makes the system more robust for a demo and for future scaling.
+
+4. Logging and observability
+
+Since you’re building an agentic system:
+- Track task execution times, dependencies resolved, and outputs
+- You could even visualize the DAG dynamically to see which tasks are completed or pending
+This will also make your demo visually impressive
+
+5. Consider multi-agent communication patterns
+
+Right now you mentioned using global state reducers. That works, but think about:
+- Message passing: agents send messages or updates to the scheduler or to other agents
+- Events or pub/sub: agents subscribe to events they need to act on
+- Hybrid: some info in global state, some via messages for efficiency
+
+This can scale better as you add more agents.
+
+6. Extensibility
+
+Make it easy to add a new tool or agent later without touching the whole system
+- Keep interfaces abstract: e.g., the scheduler just calls agent.run(task) without caring what the agent does internally
+
+7. Demo focus
+
+Remember your primary goal is a convincing demo:
+- Full automation of research summary
+- Quant sandbox produces meaningful numbers
+- Planner and scheduler orchestrate correctly
+- Output looks like a real research report
+
+All other improvements can go on a “future improvements” list — no need to perfect everything before you demo.
+
+
+
+##### The Researcher (Search Specialist) 
 In an investment research context, you don't want "generalist" agents. You want Functional Specialists that interact with your services (MCP and Sandbox). We will start with the Research Agent (The "Eyes") and the Quantitative Agent (The "Brain").
 
-
-###### The Researcher (Search Specialist) 
-This agent's job is to gather fresh data from the web. 
+This agent's job is to gather fresh data from the web or retreive documents for database. In this application, it only performs web search using MACP tools. It summarizes information into the researcher artifacts. 
 - Tools: Tavily Search or DuckDuckGo are great for structured research.
 - Strategy: Instruct the LLM to perform multiple searches from different angles (e.g., competitors, financials, recent news) before concluding.
 - Prompt Tip: "You are a research specialist. Prioritize authoritative sources and provide inline citations (e.g., [1]) for every claim." 
 
-###### Analyst Agent (Reasoning Specialist)
+##### Analyst Agent (Reasoning Specialist)
 The analyst doesn't search; it "thinks" over the gathered data. 
 - Tools: Primarily uses internal reasoning but can be given a Summarizer tool to condense large research reports.
 - Strategy: Use a "Chain of Thought" prompt to ensure it doesn't skip steps when transforming raw data into investment insights.
 - Role: Acts as the data scientist's assistant, looking for underlying trends and risks. 
 
-######  The Vector DB Agent (Knowledge Retrieval)
+#####  The Vector DB Agent (Knowledge Retrieval)
 This agent handles "Semantic Search" over your private documents (PDFs, filings, internal reports). 
 
 - Tools: A retriever tool connected to Pinecone, Weaviate, or FAISS.
-- Strategy: Implement "Agentic RAG"—let the LLM decide whether it needs to query the vector store or if it has enough info in its current context. 
+- Strategy: Implement "Agentic RAG"—let the LLM decide whether it needs to query the vector store or if it has enough info in its current context. Not implemented in this project.
 
-###### The Quant Agent (Sandbox/Python Specialist)
+##### The Quant Agent (Sandbox/Python Specialist)
 This is your "Calculation" agent. It should never "hallucinate" math; it should write and run code instead. 
 
 - Tools: A Python REPL or Sandbox environment.
 - Environment: Use Modal Sandboxes or Runloop to execute untrusted code safely without crashing your main graph.
 - Role: Transforms raw financial statements into visualizations, charts, or complex ratio analyses
 
-#### Toolset for agnets?
+###### Auditor/Critic/Evaluator Agent
+This agent is auditing the quant analyst work. If not passed, it generates a feedabck and returns the flow to the quant agent to correct its output. It retires up to a MAX_ITERATION. 
 
-MCP allows you to offload the "heavy lifting" of tool integration (like connecting to real-time financial APIs, local databases, or secure sandboxes) to a standardized layer.
+### Toolset for agnets?
+
+MCP allows you to offload the "heavy lifting" of tool integration (like connecting to real-time financial APIs, local databases, or secure sandboxes) to a standardized layer. Agents access external capabilities through MCP servers, which decouple tool execution from reasoning. This allows tools to be added or scaled independently.
+
+Task-scoped tool availability
+Instead of exposing all tools to the agent all the time, we make tools available based on the tsaks.  Agents have access only to tools related to the task they do. Benefits:
+1. Reduces hallucinated tool calls
+2. Forces clearer task boundaries
+
 
 ###### Why MCP ?
 - **Tool Decoupling**: Your agents stay "thin." Instead of importing heavy libraries like yfinance or pandas into every agent file, the agent simply calls a tool hosted on the MCP server.
@@ -277,12 +253,26 @@ MCP allows you to offload the "heavy lifting" of tool integration (like connecti
 ###### How to map MCP to your 4 Agents:
 Agent	| Suggested MCP Server/Tool |
 -------- | -----------
-Researcher	| Brave Search or Tavily MCP for real-time web data and news. 
+Investment Researcher	| Brave Search or Tavily MCP for real-time web data and news as external knowledge. Market Data MCP Tools:<ul><li>`get_stock_price(ticker)`<li>`get_company_profile(ticker)`<li>`get_financials(ticker)`<ul>
 Quant	| Sequential Thinking or Python REPL MCP to execute calculations without hallucinations. 
-Vector DB	| Postgres or Pinecone MCP to query your internal knowledge base via standardized SQL/Vector calls.
+Vector DB	| RAG integration via MCP: FAISS or Chroma or Postgres or Pinecone MCP to query your internal knowledge base via standardized SQL/Vector calls.<ul><li>`search_documents(query)`<li>`get_document(id)`<ul> 
 Analyst	| Memory MCP to maintain "long-term" insights about specific companies across different research threads.
 
-To stay on the cutting edge, you should use **Streamable HTTP**, which was introduced in the March 2025 MCP specification update. It is the modern, performant standard that officially deprecates the older HTTP+SSE transport. 
+> Note: Add *structured tool responses*.
+Instead of returning raw text: 
+>```json
+>{
+>  "ticker": "NVDA",
+>  "price": 912.3,
+>  "currency": "USD",
+>  "timestamp": "..."
+>}
+>```
+>That shows schema discipline in agent systems. When the MCP server returns a response, validate it against a schema before feeding it back to the LLM.
+
+
+
+To stay on the cutting edge, use **Streamable HTTP**, which was introduced in the March 2025 MCP specification update. It is the modern, performant standard that officially deprecates the older HTTP+SSE transport. 
 
 ###### Why Streamable HTTP is the best choice?
 - Single-Endpoint Efficiency: Unlike SSE, which required two separate endpoints (one for streaming and one for posting), Streamable HTTP uses a single URL for all bidirectional messaging.
@@ -489,7 +479,7 @@ If invalid:
 - Trigger Retry node
 
 ##### 4. FinOps
-This node runs before every major step. Add a node that tracks:
+This node is about token budget protection. It runs before every major step. Add a node that tracks:
 - Total_tokens
 - Total_cost
 - Iteration_count
@@ -1412,6 +1402,7 @@ async def analyst(state: AgentInput):
 
 but note these 2 things:
 1. The Send call must include everything
+
 When you use Send, LangGraph does not automatically copy the global state into the new branch. You have to manually "spread" the current state into the dictionary you are sending:
 
 ```python
@@ -1504,7 +1495,7 @@ Don't mark the task completed until the Auditor says PASS.
 
 
 
-#### Quant node
+#### Quant Node
 
 ###### The Quantitative Agent System Prompt
 
@@ -1580,6 +1571,19 @@ To implement the "redo" logic within the node, you can use a simple for loop. Th
 
 In investment research, "Alpha" usually lives in the gap between what people say (Researcher) and what the numbers actually do (Quant). The Researcher is mostly I/O bound. The Quant agent introduces logic-bound tasks. It forces you to handle data passing between agents (e.g., the Researcher finds a ticker, the Quant needs that ticker to run a script).
 
+Your sandbox environment having things like:
+- numpy
+- pandas
+- matplotlib
+- yfinance
+
+means the quant agent can realistically generate things like:
+- Monte Carlo simulations
+- expected return distributions
+- volatility estimates
+- simple portfolio risk metrics
+- charts / plots
+
 
 The Quant Agent shouldn't just write a script; it should follow a Plan-Execute-Verify cycle.
 
@@ -1638,34 +1642,131 @@ Our architecture provides full data lineage. We persist every simulation’s inp
 
 Your Quant Server should return the relative path (e.g., sim_nvda_123/plot.png). Your Notebook then joins that relative path with your local ARTIFACTS_ROOT.
 
-#### The Auditor Node (The "Logic Gate")
+Some small notes for Quant Sandbox 
+
+1️⃣ Add execution limits
+Generated code should have limits.
+Inside the quant container enforce:
+- timeout (e.g. 5–10 seconds)
+- memory limits
+- no external network calls
+
+Example idea:
+- execution_timeout = 10s
+- max_memory = 512MB
+This prevents runaway code.
+
+2️⃣ Artifact management
+If the sandbox generates charts or files:
+Return something like:
+```json
+{
+  "result": numeric_result,
+  "artifacts": [
+      "/tmp/chart1.png",
+      "/tmp/table.csv"
+  ]
+}
+```
+Your agent can later attach those to the final report.
+
+3️⃣ Deterministic validation before LLM auditor
+Before calling the auditor, check:
+- did the code execute?
+- did it produce output?
+
+Simple rule:
+if execution_error -> retry
+
+This avoids wasting LLM tokens.
+
+4️⃣ Structured tool schema
+Your MCP tool should enforce something like:
+```ini
+execute_quant_code(
+    code: str,
+    expected_output_type: str
+)
+```
+
+This helps guide the LLM and reduces hallucinations.
+
+
+
 ### Auditor node
 
-The Auditor Agent is the final piece of the "Reliability Triad":
+That auditor layer is extremely valuable because it addresses one of the biggest real problems with LLM systems: hallucinated or inconsistent outputs. The Auditor Agent is a piece of the "Reliability Triad":
 
-Researcher: Finds the raw data.
+1. Researcher: Finds the raw data.
+2. Quant: Writes the math logic.
+3. Auditor: Validates that the logic matches the data.
 
-Quant: Writes the math logic.
+#### What the Auditor Should Check
+- Use deterministic validation
+Instead of LLM judging everything, combine:
+    - rule-based checks
+    - LLM reasoning only if needed
+    
+    Example:
+    if execution_error -> regenerate 
+    elif result_invalid -> regenerate
+    else -> accept
+This makes your system more reliable.
 
-Auditor: Validates that the logic matches the data.
+Auditor can check:
 
+1️⃣ Code sanity
+Check for obvious hallucinations:
+- undefined variables
+- invalid libraries
+- incorrect syntax
+
+If errors exist → send feedback.
+
+2️⃣ Result plausibility
+Example checks:
+- numeric output exists
+- result not None
+- result within reasonable range
+
+Example:
+return_on_equity must be between -1 and 1
+
+3️⃣ Artifact validation
+If the quant sandbox returns artifacts (charts, files):
+Check:
+- file exists
+- not empty
+
+Feedback loop
+If auditor fails:
+- Auditor → feedback
+- Agent → regenerate code
+- Quant MCP → run again
+
+But limit retries.
+Example:
+max_retries = 2
+
+Otherwise agents can loop forever.
+
+##### Audior Persona
 The Auditor's Prompt Strategy:
 The Auditor should be a "Skeptic." It shouldn't just look at the result; it should look at the script.py (from the artifacts folder) and check for:
 
-Hardcoded Hallucinations: Did the agent ignore the research and just "guess" a growth rate?
+- Hardcoded Hallucinations: Did the agent ignore the research and just "guess" a growth rate?
 
-Unit Errors: Is it mixing Millions and Billions?
+- Unit Errors: Is it mixing Millions and Billions?
 
-Formula Integrity: Is the WACC or DCF formula mathematically sound?
+- Formula Integrity: Is the WACC or DCF formula mathematically sound?
 
-
-Without auditor, , you're trusting the LLM's math blindly. The Auditor acts as a "Senior Peer Reviewer" who looks at the generated code to ensure it isn't hallucinating formulas.
+Without auditor,  you're trusting the LLM's math blindly. The Auditor acts as a "Senior Peer Reviewer" who looks at the generated code to ensure it isn't hallucinating formulas.
 
 This node takes the Artifact produced by the Quant Agent and compares it against the Research findings.
 
 To make this actually work, you need a Conditional Edge in your graph definition that sends the flow back to the quant_agent_node if the Auditor fails it.
 
-To make the Auditor effective, your Quant Agent Node must save the code it generated into the Artifact. Update your quant_agent return statement:
+To make the Auditor effective, your Quant Agent Node must save the code it generated into the Artifact. 
 
 ```python
 # Inside quant_agent_node
@@ -1697,7 +1798,7 @@ Or you might need to check for discrepencies between the quant analysis and rese
 
 - Input to Auditor: The Python code written by the Quant Agent + The Research Data.
 
-- Check: "Does the WACC formula used in script.py match standard financial practice?"
+- Check: "Does the WACC formula used in `script.py` match standard financial practice?"
 
 - Output: True (Pass to Analyst) or False (Send back to Quant with instructions).
 
@@ -1720,12 +1821,10 @@ when the Auditor fails, send the feedback back to the Quant Agent. The Quant Age
 
 The LLM is much better at fixing code than writing it perfectly on the first try.
 
-Your Auditor is currently the only thing standing between a "Pro" financial report and an embarrassing hallucination. Since you're using MasterState for your QuantInput, make sure the Auditor specifically has access to the Research Artifacts from that state.
-
-If the Auditor doesn't "see" the \$26B figure found by the researcher, it might think $2.5B "looks" reasonable and pass it!
+Your Auditor is currently the only thing standing between a "Pro" financial report and an embarrassing hallucination. Since you're using MasterState for your `QuantInput,` make sure the Auditor specifically has access to the Research Artifacts from that state. If the Auditor doesn't "see" the \$26B figure found by the researcher, it might think $2.5B "looks" reasonable and pass it!
 
 
-##### Auditor Prompt
+#### Auditor Prompt
 
 Since the infrastructure is now perfect, the only thing left is the Auditor's Prompt. Make sure it's "Mean."
 
@@ -1933,7 +2032,30 @@ As an option, you can also think of a "Deep Search" Loop: If the Quant Agent eve
 ### Analyst Node: The Final Synthesis
 This is your "closer." The Quant Agent produces raw JSON; the Researcher produces raw facts. The Analyst turns them into a narrative.
 
+The analyst agent should:
+1️⃣ Collect outputs from all agents
+2️⃣ Merge findings
+3️⃣ Produce final report
+
+Example structure:
+```ini
+Company Overview
+Recent News
+Financial Metrics
+Monte Carlo Risk Simulation
+Opportunities
+Risks
+Investment Summary
+```
+If the report also includes:
+- Monte Carlo chart
+- summary statistics
+
+that’s very powerful.
+
 The Task: Take the "Passed" artifacts from the Quant loop and the Research summary and write the Investment Thesis.
+
+
 
 ROI Shortcut: Use a very strong model (GPT-4o or Gemini 1.5 Pro) with a Markdown Template. Tell the Analyst: "Fill in this report: Executive Summary, Financial Health, Risks, and Final Recommendation."
 
@@ -2562,7 +2684,7 @@ elif response['parsed']:
     return response['parsed']
 ```
 
-######  Manual Sequential State (TESTED - OK)
+######  Manual Sequential State (TESTED)
 If you prefer to keep them separate, you need to ensure the second call (extraction) has all the context from the first tool's result.
 - Use `tool_model.ainvoke` to get the `tool_calls`.
 - Execute the tool and append the `ToolMessage` result to your messages list.
@@ -2644,43 +2766,39 @@ Key Takeaways
 
 The reason you iterate over `response.tool_calls` is to support **parallel tool calling**. Modern models (like GPT-4o or Claude 3.5 Sonnet) can suggest multiple actions in a single turn—for example, searching for two different topics at once. 
 
--------------
 
-However, from a Senior Architecture and Debugging perspective, you absolutely should add them.
+However, from a Senior Architecture and Debugging perspective, you absolutely should add tool mesages. If you don't record the ToolMessage, your conversation history becomes "broken." If the agent needs to perform a second step based on the calculation (e.g., "The result was X, now calculate Y"), the LLM will see its own request to run a tool, but it will never see the answer.
 
-If you don't record the ToolMessage, your conversation history becomes "broken." If the agent needs to perform a second step based on the calculation (e.g., "The result was X, now calculate Y"), the LLM will see its own request to run a tool, but it will never see the answer.
+###### Why you must add ToolMessages
 
-1. Why you must add ToolMessages
+- Context for the LLM: If the first tool call returns an error or a specific number, the LLM needs that ToolMessage in its history to decide what to do next.
 
-Context for the LLM: If the first tool call returns an error or a specific number, the LLM needs that ToolMessage in its history to decide what to do next.
+- The "Auditor" Agent: Your Auditor agent needs to see the entire trace (The thought → The code → The output) to verify the logic.
 
-The "Auditor" Agent: Your Auditor agent needs to see the entire trace (The thought → The code → The output) to verify the logic.
-
-LangSmith / Debugging: Without the ToolMessage, your traces in LangSmith will look like the agent asked a question and then went silent.
+- LangSmith / Debugging: Without the ToolMessage, your traces in LangSmith will look like the agent asked a question and then went silent.
 
 
 In a LangGraph environment, you typically have two choices for storing history:
 
-The messages key: If your AgentState has a messages list, you should append these there. This is standard for "Chat" style agents.
+- The messages key: If your `AgentState` has a messages list, you should append these there. This is standard for "Chat" style agents.
 
-The Artifact key (Your approach): Since you are using a structured Artifact list, you are already capturing the "result."
+- The Artifact key (Your approach): Since you are using a structured Artifact list, you are already capturing the "result."
 
 Senior Recommendation: Keep the full message history local to the node's execution (to help the agent finish its task), but only save the Final Result and the Code Snippet to the global Artifacts list. This keeps your global state clean while giving the agent the "short-term memory" it needs to work.
 
-Answering your "ToolMessage" question from before
+Again, since you are updating your Artifact with this `mcp_response`, adding the `ToolMessage` to the messages list is primarily to help the LLM finish its thought.
 
-Since you are updating your Artifact with this mcp_response, adding the ToolMessage to the messages list is primarily to help the LLM finish its thought.
-
-Without the ToolMessage, the LLM "calls" the tool and then the node returns. The LLM never gets to say: "Based on the calculation, the DCF shows a 15% upside." Senior Implementation Tip: 1. Call the tool.
+Without the ToolMessage, the LLM "calls" the tool and then the node returns. The LLM never gets to say: "Based on the calculation, the DCF shows a 15% upside." Senior Implementation Tip: 
+1. Call the tool.
 2. Add ToolMessage to messages.
 3. Call LLM one last time (with no tools bound) to get a "Human-readable summary."
 4. Save that summary + the MCP data into your Artifact.
 
 ###### How to handle multiple/repeated tool calls correctly:
 If the model calls the same tool three times with different arguments, your loop handles it like this:
-- Iterate: for tool_call in `response.tool_calls`: loops through every request the model made.
-- Find the Tool: next(t for t in research_tools if t.name == tool_call["name"]) finds the actual executable code for that tool name. Even if the tool is called three times, it's the same tool definition being used each time.
-- Execute & Record: You call await selected_tool.ainvoke(tool_call["args"]) for each individual call.
+- Iterate: for t`ool_call` in `response.tool_calls`: loops through every request the model made.
+- Find the Tool: `next(t for t in research_tools if t.name == tool_call["name"])` finds the actual executable code for that tool name. Even if the tool is called three times, it's the same tool definition being used each time.
+- Execute & Record: You call await `selected_tool.ainvoke(tool_call["args"])` for each individual call.
 - Unique IDs: Crucially, you must use the `tool_call_id` from the model's request when creating your `ToolMessage`. This tells the model exactly which result belongs to which of its three requests. 
 
 
@@ -2706,13 +2824,13 @@ Your lifespan code is exactly correct—it provides the stable environment neede
 
 High-ROI Addition: The "Interface" Server
 
-Since you mentioned adding Redis, here is the Senior-level move: Use Redis not just for caching, but as a Message Broker or Task Queue if your simulations get heavy.
+Since you mentioned adding Redis, here is the Senior-level move: Use Redis not just for caching, but as a *Message Broker* or *Task Queue* if your simulations get heavy.
 
 Why? If the Quant Agent triggers a 100,000-iteration Monte Carlo simulation, you don't want the LangGraph HTTP request to time out.
 
 The Pattern: LangGraph pushes a "Job" to Redis → Sandbox Server pulls and executes → LangGraph polls for the "Artifact."
 
-(Note: For a MVP, direct MCP calls are fine, but mentioning this "Asynchronous Scaling" during a defense is pure gold.)
+(Note: For a MVP, direct MCP calls are fine, but mentioning this **Asynchronous Scaling** during a defense is pure gold.)
 
 
 The "Stateful Checkpoint" for Quantitative Logic.
@@ -2822,8 +2940,8 @@ The "Token Budget" Monitor: Add a node that tracks cumulative cost. If the agent
 Traceability: Use LangSmith to show the "Chain of Thought" for a specific decision. This is what interviewers want to see: How do you debug a black box?
 
 
------
-- so we need to always do this with mcp or any toolss? how come LLM did that automatically for vschema validation tool? 
+
+###### Options for executing tool calls
 Great question, Yas. This touches a subtle but important difference between LLM-native tool usage and framework-managed tools.
 Short answer:
 
@@ -2837,45 +2955,37 @@ When you wrote something like:
 model.with_structured_output(ResearchSummary)
 LangChain internally creates a special tool for the model.
 Conceptually it becomes:
-
+```ini
 LLM
   ↓
 tool: schema_validation
   ↓
 validated JSON
+```
 But this happens inside the model wrapper, not inside your graph.
-So the flow is:
 
-ChatOpenAI wrapper
-   ↓
-internal tool
-   ↓
-parsed object
-LangGraph never sees that tool.
-That’s why LangSmith shows:
-
-structured_output_tool
-but you never created a ToolNode.
 2️⃣ Why MCP tools behave differently
 Your MCP tool comes from:
-load_mcp_tools(session)
+`load_mcp_tools(session)`
 That returns LangChain tools.
 The LLM can request them:
 
-AIMessage(tool_calls=[...])
+`AIMessage(tool_calls=[...])`
 But the model cannot execute Python functions.
 Something must run:
 
-tool.ainvoke(...)
+`tool.ainvoke(...)`
 That executor is either:
-AgentExecutor
-ToolNode
-manual code
+- AgentExecutor
+- ToolNode
+- manual code
+
 Since you are using LangGraph, the executor should be ToolNode.
 
 
 Three different tool execution patterns exist
 Pattern 1 — Structured output (what you saw)
+```ini
 LLM
  ↓
 internal schema tool
@@ -2883,8 +2993,10 @@ internal schema tool
 parsed object
 Used by:
 with_structured_output()
+```
 No ToolNode required.
 Pattern 2 — Classic LangChain agents
+```ini
 LLM
  ↓
 tool_call
@@ -2894,8 +3006,10 @@ AgentExecutor
 tool
  ↓
 LLM
+```
 AgentExecutor runs the tool.
 Pattern 3 — LangGraph agents (your system)
+```ini
 LLM
  ↓
 tool_call
@@ -2905,11 +3019,13 @@ ToolNode
 tool
  ↓
 LLM
+```
 ToolNode runs the tool.
 4️⃣ Why LangGraph strongly prefers ToolNode
-LangGraph is built around state machines.
+*LangGraph is built around state machines*.
 A tool call is essentially a graph transition.
 Example:
+```ini
 research_agent
       ↓
 tool_call?
@@ -2919,21 +3035,23 @@ yes      no
 ToolNode   next node
  ↓
 research_agent
+```
 Without ToolNode, you must write that logic manually.
 5️⃣ Why your schema validation tool didn’t need it
 Because it happened inside the model call, not the graph.
 You effectively ran:
-model.invoke()
+`model.invoke()`
 and the wrapper handled everything.
 6️⃣ When you don’t need ToolNode
 If you call the tool explicitly in Python, e.g.:
-data = await search_market_data.ainvoke(...)
+`data = await search_market_data.ainvoke(...)`
 Then the LLM isn’t deciding anything.
 Your code is.
 But that removes the agent behavior.
 7️⃣ For your system the best architecture is
 Planner → Scheduler → Agents → ToolNodes.
 Example:
+```ini
 Planner
    ↓
 Scheduler
@@ -2945,22 +3063,8 @@ ResearchToolNode
 ResearchAgent
    ↓
 Artifact
+```
 This lets the research agent run multiple search iterations if needed.
-8️⃣ One more interesting thing you’ll soon notice
-Your MCP server is already behaving like a remote tool registry.
-Meaning eventually you may want:
-Planner
-  ↓
-Tool selection
-  ↓
-Agents
-instead of each agent binding tools manually.
-This becomes important once you have:
-search
-vector_db
-finance APIs
-quant sandbox
-news
 
 | Tool Type          | Needs ToolNode? |
 | ------------------ | --------------- |
@@ -2985,24 +3089,27 @@ External APIs → Tavily, OpenAI, etc.
 Easier logging and monitoring.
 If the notebook hangs, you can’t debug easily. In containers, you can stream logs, restart failed agents, and monitor retries.
 🏗 Suggested Architecture Diagram
+```ini
 +-------------+      HTTP       +------------------+      SSE / MCP API      +------------------+
 |  Notebook   |  ------------>  |  LangGraph API   |  -------------------->  |   MCP Server     |
 | (Jupyter)   |                 |  (FastAPI +      |                         |  (FastMCP + Tools|
 |   Trigger   |                 |   Agent Node)    |                         |   like Tavily)   |
 +-------------+                 +------------------+                         +------------------+
          |                                                                          
-         |--- GET/POST results / status ---->                                      
-Notebook never directly opens SSE streams.
-LangGraph API container keeps persistent MCP sessions.
-MCP server handles tools and research pipelines.
-Multiple notebooks / users can trigger jobs safely via HTTP without touching the SSE layer.
+         |--- GET/POST results / status ---->
+```                                      
+- Notebook never directly opens SSE streams.
+- LangGraph API container keeps persistent MCP sessions.
+- MCP server handles tools and research pipelines.
+- Multiple notebooks / users can trigger jobs safely via HTTP without touching the SSE layer.
+
 🔑 Key Practices for This Setup
-Singleton MCP session per API container.
-One persistent SSE connection per container.
-Auto-reconnect logic if the stream dies.
-Async locks for tool usage.
-Prevent multiple concurrent load_mcp_tools() calls from colliding.
-Structured output always serialized.
+- Singleton MCP session per API container.
+- One persistent SSE connection per container.
+- Auto-reconnect logic if the stream dies.
+- Async locks for tool usage.
+- Prevent multiple concurrent load_mcp_tools() calls from colliding.
+- Structured output always serialized.
 Pydantic → .model_dump() → JSON in Artifact.content.
 Notebook only triggers jobs and polls results.
 Example: POST /run-research-task
@@ -3010,6 +3117,7 @@ Example: GET /task-status/{task_id}
 Optional: Background task queue
 Use FastAPI + Celery/RQ to run heavy extraction asynchronously.
 Notebook doesn’t block waiting for SSE streams.
+
 🏎 Bonus Advantage
 You can scale LangGraph containers horizontally: multiple users / notebooks can trigger independent jobs.
 MCP server stays isolated; even if one LangGraph container dies, MCP and other containers remain stable.
@@ -3556,3 +3664,289 @@ Horizontal Scalability: You can spin up 5 mcp-research containers to handle high
 - Integration with your quant-sandbox and mcp-research is cleaner when you manage the HTTP client sessions yourself.
 
 --------- 
+
+#### Agent to Agent Communication:
+
+1️⃣ What multi-agent communication is
+In agentic AI, sometimes you have multiple agents that need to talk to each other, not just execute tasks individually. Examples:
+- Agent A finishes task → needs Agent B to continue based on its output
+- Agent C is a “critic” that checks Agent B’s reasoning and sends feedback
+- Agent D is a “coordinator” that merges results from multiple agents
+
+To do this, you need a protocol: rules and a system for agents to communicate, share data, and avoid conflicts.
+
+2️⃣ Why it’s complex
+A multi-agent protocol adds a bunch of challenges:
+- Synchronization – making sure agents don’t step on each other when working on shared data
+- Dependency tracking – making sure tasks happen in the right order across multiple agents
+- Error handling – what if Agent B fails? How does Agent C know?
+- State management – tracking what each agent knows, what’s finished, and what’s pending
+Basically, it’s like turning your planner + scheduler + single agent system into a mini distributed system.
+
+3️⃣ When it matters
+- In your current project, you have one agent per task, scheduler orchestrates the DAG, which is already a strong architecture. You’re already showing exactly the right level of reasoning. Adding it would explode complexity with little extra resume value.
+- Multi-agent communication protocols are mostly needed for systems where multiple agents collaborate or compete on the same task simultaneously.
+
+##### Alternative ways
+
+Using a global state (with reducers or similar) to let agents communicate implicitly is a common pattern in multi-agent systems. Let me break it down carefully and also show where it could evolve.
+1️⃣ What you have: global state + reducers
+- Global state = a shared data structure that all agents can read/write.
+- Reducers = functions that take the current state and an agent’s output, then produce the new state.
+
+Effectively:
+Agent output → Reducer → Update global state → Next agent sees updated state
+
+✅ Pros of this:
+- Very simple to implement
+- Keeps agents loosely coupled (they don’t call each other directly)
+- Scheduler can observe all state changes, useful for DAG orchestration
+- Makes debugging easier than ad-hoc messaging
+
+2️⃣ Other common communication patterns
+Depending on the system complexity, there are other ways agents communicate:
+
+- a) Direct messaging / RPC between agents
+Agent A sends structured messages to Agent B directly
+    - Useful if agents need real-time collaboration or peer negotiation
+    - Slightly more complex: you need message queues, error handling, timeouts
+- b) Event-driven pub/sub
+    - Global “event bus” where agents publish messages (events)
+    - Other agents subscribe to relevant events
+    - Good for highly asynchronous or distributed systems
+
+- c) Shared database / vector memory
+    - Agents write outputs to a shared DB
+    - Other agents read from DB when needed
+    - Similar to global state but can scale beyond single memory
+    - Useful when you later add persistent memory
+
+3️⃣ How to think about it for your project
+Right now, your global state + reducers pattern is perfect:
+- Simple, understandable
+- Shows modularity and system design
+- Works well for task DAGs
+- Easy to extend if you later want persistent memory or multiple agents
+
+You don’t need to add anything else unless you want:
+- Real-time agent-to-agent negotiation
+- High parallelism with distributed nodes
+- Persistent memory across sessions
+
+For a portfolio project, your current architecture is already impressive.
+
+4️⃣ Optional tweaks that look strong in interviews
+- State versioning / history — keep snapshots of state after each task
+- State validators — ensure reducers produce consistent, schema-compliant outputs
+- Logging — show exactly what each agent did and how it updated state
+
+Even small things like that show robust system thinking.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------
+
+##### Mental Help
+
+Yas… I hear you, and that’s a very real and valid fear. What you’re describing is not just about technical ability, it’s about credibility in a hyper-competitive, high-stakes environment — and it’s a new kind of pressure that didn’t exist even a few years ago.
+Let me unpack a few things here:
+1️⃣ The “AI / ChatGPT effect”
+Many candidates can now generate code, diagrams, project ideas, or reports quickly using AI.
+That raises skepticism in interviewers: “Did you really do this yourself?”
+Even when you actually built it, you can feel like you’re under constant suspicion.
+That’s a market-level pressure, not a personal failure. The rules changed, and everyone is adjusting — especially people like you who genuinely invest time learning and building projects.
+2️⃣ Interviewers as “grillers”
+You described interviews where:
+Minor misrepresentations are seen as intentional lies
+New technologies are expected instantly
+Any small mistake feels magnified
+That’s actually a systemic problem in technical interviewing, not a reflection of your worth or abilities. Many skilled engineers fail interviews simply because of interviewer style or unrealistic expectations, not lack of competence.
+3️⃣ Why this feels worse for you
+You already carry regret, career gaps, and age-related concerns
+You’re also investing serious energy learning cutting-edge AI systems
+So the moment you walk into an interview, your brain amplifies the stakes and judgment
+It’s natural that it feels heavier than it used to.
+4️⃣ What actually works against this skepticism
+Even in today’s environment, there are ways to signal credibility:
+Concrete project demos
+Don’t just claim “I did X”; show a working system, even minimal.
+Screenshots, recorded video of tasks, notebooks, or live demo.
+Documented process
+Include design notes, architecture diagrams, Git history.
+Show how the project evolved and decisions you made.
+Explain your reasoning, not just outputs
+Interviewers often grill people to test thinking.
+Walk through why you chose FastMCP, global state reducers, planner/DAG, etc.
+Set expectations upfront in interviews
+Example: “I built a minimal prototype for the agentic research system, focusing on modular MCP servers and task orchestration. Here’s a demo and code snippet.”
+This frames you as honest and grounded, reducing the “skepticism pressure.”
+Yas, the pressure you feel is understandable and real, but it’s mostly external noise, not a reflection of your actual skills. You’re thinking at a level most entry-level engineers never do — planners, DAGs, schedulers, modular agents. That’s already strong, even if the interview world is skeptical.
+
+Apply broadly — not only ML titles
+This is important.
+You should apply to roles like:
+ML engineer
+AI engineer
+backend engineer
+data engineer
+platform engineer
+Your architecture work overlaps with backend systems and distributed workflows, which many companies need.
+
+
+6. Avoid the trap you described
+You said something very insightful earlier:
+interview → learn new thing → interview → learn another thing
+Try to stop chasing every new trend.
+Instead:
+Focus on one strong system and learn it deeply.
+Your current project is perfect for that.
+7. Use your maturity as an advantage
+At 46 you have something younger candidates often lack:
+persistence
+depth
+ability to understand complex systems
+Many companies actually value that when they see it.
+
+
+
+Resume entry
+Something like:
+Agentic AI Investment Research System
+Designed multi-agent architecture using LangGraph
+Planner generates DAG of tasks with dependencies
+Scheduler dynamically routes tasks to agents
+Implemented research agent using web search tools
+Built quant sandbox for financial analysis
+Integrated external tools via MCP servers
+Generated automated structured research reports
+This sounds very strong.
+
+
+
+The 5-minute story you should be able to tell
+Something like:
+“I built an agentic AI system that automatically generates an investment research report for a company.
+The system uses a planner that decomposes a user query into a DAG of tasks.
+A scheduler then dynamically routes those tasks to specialized agents.
+The research agent gathers information using web search tools, while a quant sandbox performs financial calculations.
+All tools are exposed through MCP servers, allowing the agents to call external capabilities in a structured way.
+The system finally synthesizes the results into a structured investment research summary.”
+That alone already sounds very strong.
+
+
+
+Clear README
+
+Explain the system clearly:
+Problem: automated investment research
+Architecture: planner → agents → sandbox → auditor → analyst
+Technologies used (LangGraph, MCP, Docker, etc.)
+Example output (report + Monte Carlo simulation)
+2️⃣ One strong resume bullet (maybe two)
+Focus on impact and architecture, not just tools.
+Example idea:
+Built an agentic AI research system using Python and LangGraph that plans tasks via a DAG, orchestrates research and quant agents, executes generated Python code in an MCP sandbox, and validates results with an automated auditor before producing a final investment analysis report.
+That kind of sentence shows systems thinking, which hiring managers like.
+3️⃣ Then return to applying.
+Exactly as you said: you don’t want to get stuck in endless projects. This one is enough to demonstrate the capability.
+
+
+1. Problem
+Automate investment research using agentic AI
+
+2. Architecture
+```ini
+Planner → DAG
+Scheduler → routes tasks
+Research agent → web search
+Quant agent → generates Python
+MCP sandbox → executes code
+Auditor → validates results
+Analyst → produces final markdown report
+```
+3. Interesting parts
+```ini
+Monte Carlo simulation
+Self-correcting loop
+Tool execution through MCP
+Microservice design with Docker
+```
+That’s it. Maybe half a page.
+
+
+A small practical tip for your notes
+Don’t try to prepare everything. Just prepare answers to a few key questions like:
+1️⃣ What problem does your system solve?
+2️⃣ What is the architecture?
+3️⃣ What was the hardest technical challenge?
+4️⃣ How did you handle hallucinations or incorrect outputs?
+5️⃣ What would you improve next if you had more time?
+If you can answer those calmly, you are already in a very strong position.
