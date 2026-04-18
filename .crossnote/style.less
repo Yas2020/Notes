@@ -15,6 +15,7 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat');
 @import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono');
 @import url('https://fonts.googleapis.com/css?family=Pinyon+Script');
+@import url('https://fonts.googleapis.com/css?family=Fira+Code');
 
 // @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,600");
 
@@ -35,9 +36,27 @@
   font-family:  -apple-system, BlinkMacSystemFont, SF Pro, Lora, Georgia,  Arial, Helvetica, Verdana, Open Sans, Roboto;
   // -apple-system, BlinkMacSystemFont, SF Mono, 
   font-size: 15pt;
-  color: #333;
+  font-weight: 300;
+  // color: #333;
+  // background-color: #fdf6e3;
+  // color: #657b83;
+  // background-color: #022b36;
+    // color: #839496;
   // padding-left: 80px !important;
   // padding-right: 80px !important;
+  background-color: #1a1b26;
+  color: #b0b0c3;
+  // background-color: #1c1c1c;
+  // color: #c0b8af;
+  strong {
+        color: #efc137; /* Example: A bright amber/gold */
+        text-shadow: 2 2 18px rgba(255, 94, 0, 0.3) !important;
+    }
+  
+  em {
+        color: #2aa198; /* Cyan/Teal accent */
+        font-style: italic;
+    }
 
 
 
@@ -165,7 +184,7 @@
       margin-bottom: 5px;
       margin-left: 10px;
       text-align: justify;
-      color: #333;
+      // color: #333;
       // font-weight:normal !important;
       // font-size: 16pt !important;
       // line-height: 30px;
@@ -257,17 +276,64 @@
     // overflow-wrap: break-word;
   };
 
-  pre.language-python.python code{
-    font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
-    // font-size: 12pt;
-    line-height: 1.357em;
-    color:#14c111;  
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    // border-radius: 10px;
+  pre {
+    background-image: none !important;
+    backdrop-filter: blur(4px);
+    // box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    background-color: #062027 !important; /* Slightly lighter/darker than your main bg */
+    border-radius: 6px;
+    padding: 1em;
+    border: 1px solid #586e75;
   }
+  
 
+ 
+  pre.language-python.python code{
+      font-family: Fira Code, Courier New, monospace, Monospace, Menlo, Monaco !important;
+      font-weight: 100 !important;
+      // font-size: 12pt;
+      // background-color: #073642;
+      line-height: 1.357em;
+      color:#aabec2;  
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      background: transparent !important; /* Removes background behind individual words */
+      // font-weight: normal !important;      /* Removes the forced bolding */
+      text-shadow: none !important;       /* Removes "glow" or "glossy" text effects */
+      // border-radius: 6px;
+      // border-radius: 10px;
+    }
+
+    .token.operator {
+      background: none !important;
+    }
+
+    .token.punctuation,
+    .hljs-punctuation,
+    .hljs-operator {
+      color: #93a1a1 !important;  /* Brighter Solarized silver for high contrast */
+      background: transparent !important;
+      font-weight: 500 !important; /* Slightly thicker for better visibility */
+    }
+
+  /* Specifically highlight brackets if they are still too dark */
+  .hljs-punctuation {
+    color: #eee8d5 !important; 
+    background: transparent !important;
+    font-weight: normal !important;
+}
+  
+
+  /* Specific Python/Code Highlighting */
+  .hljs-keyword { color: #859900 !important; font-weight: normal !important; }
+  .hljs-title   { color: #268bd2 !important; }
+  .hljs-string  { color: #2aa198 !important; }
+  .hljs-comment { color: #586e75 !important; font-style: italic !important; }
+  .hljs-number  { color: #d33682 !important; }
+
+    
+  
   pre.language-text {
     background-color: rgb(247, 247, 245);
     // padding: 0px;
@@ -286,20 +352,22 @@
   }
   
   pre.language-o.o {
-    background-color: rgb(245, 252, 216) !important;
+    background-color: rgb(45, 52, 9) !important;
      margin-top: 10px !important;
   }
   
   pre.language-o.o code {
     font-family:  IBM Plex Mono, Kode Mono, Cutive Mono, Monaco, "Droid Sans Fallback" !important;
+    background: transparent !important; 
+    text-shadow: none !important;
       // font-size: 8pt;
       font-weight: -200;
       // line-height: 1.357em;
-      color:#999d99;  
+      color:#afb1af;  
       white-space: pre-wrap;
       word-wrap: break-word;
       overflow-wrap: break-word;
-      letter-spacing: -0.2px; /* Makes it feel slightly tighter/lighter */
+      letter-spacing: -0.5px; /* Makes it feel slightly tighter/lighter */
   -webkit-font-smoothing: antialiased;
   }
 
@@ -503,60 +571,60 @@ body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc
   //   border-left-style: solid;
   // }
   
-  code {
-    // background-color: rgb(194, 194, 183);
-    font-family: Monospace, Menlo, Monaco, Consolas;
-    // font-size: 12pt;
-    // line-height: 1.357em;
-    color:#c15211;
-    // white-space: pre-wrap;
-    // word-wrap: break-word;
-    // overflow-wrap: break-word;
-  };
+  // code {
+  //   // background-color: rgb(194, 194, 183);
+  //   font-family: Monospace, Menlo, Monaco, Consolas;
+  //   // font-size: 12pt;
+  //   // line-height: 1.357em;
+  //   color:#c15211;
+  //   // white-space: pre-wrap;
+  //   // word-wrap: break-word;
+  //   // overflow-wrap: break-word;
+  // };
 
-  pre.language-python.python code{
-    font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
-    // font-size: 12pt;
-    line-height: 1.357em;
-    color:#14c111;  
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    // border-radius: 10px;
-  }
+  // pre.language-python.python code{
+  //   font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
+  //   // font-size: 12pt;
+  //   line-height: 1.357em;
+  //   color:#14c111;  
+  //   white-space: pre-wrap;
+  //   word-wrap: break-word;
+  //   overflow-wrap: break-word;
+  //   // border-radius: 10px;
+  // }
 
-  pre.language-text {
-    background-color: rgb(247, 247, 245);
-    // padding: 0px;
-    // margin: 0px;
-  }
+  // pre.language-text {
+  //   background-color: rgb(247, 247, 245);
+  //   // padding: 0px;
+  //   // margin: 0px;
+  // }
 
-  pre.language-text code{
-      font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
-      // font-size: 10pt;
-      line-height: 1.357em;
-      color:#14c111;  
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      border-radius: 10px;
-  }
+  // pre.language-text code{
+  //     font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
+  //     // font-size: 10pt;
+  //     line-height: 1.357em;
+  //     color:#14c111;  
+  //     white-space: pre-wrap;
+  //     word-wrap: break-word;
+  //     overflow-wrap: break-word;
+  //     border-radius: 10px;
+  // }
   
-  pre.language-o.o {
-    background-color: rgb(247, 247, 245);
-    margin-top: -25px;
-  }
+  // pre.language-o.o {
+  //   background-color: rgb(247, 247, 245);
+  //   margin-top: -25px;
+  // }
   
-  pre.language-o.o code {
-    font-family:  Cutive Mono, Kode Mono, Monaco, "Droid Sans Fallback";
-      // font-size: 11pt;
-      font-weight: 800;
-      line-height: 1.357em;
-      color:#93a293;  
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-  }
+  // pre.language-o.o code {
+  //   font-family:  Cutive Mono, Kode Mono, Monaco, "Droid Sans Fallback";
+  //     // font-size: 11pt;
+  //     font-weight: 800;
+  //     line-height: 1.357em;
+  //     color:#93a293;  
+  //     white-space: pre-wrap;
+  //     word-wrap: break-word;
+  //     overflow-wrap: break-word;
+  // }
 
 }
 
