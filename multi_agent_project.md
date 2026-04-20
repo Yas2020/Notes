@@ -7,6 +7,7 @@ Built with
 
 ### High-Level Architecture
 Think of the system as 4 subgraphs coordinated by a central orchestrator.
+
 ```ini
 User
  ↓
@@ -41,16 +42,19 @@ These are exactly the things people mean when they talk about agentic AI and mak
 
 #### Core Graph Design
 ##### Goal Interpreter
-Implements user input validation aganist the topic
-Responsibilites:
+Implements user input validation against the topic
+Responsibilities:
+
 1. User query validator:
-    - validates user query for relevance, safety and lcarity
+
+    - Validates user query for relevance, safety and clarity
     - If not met, activated HITL to ask user to revise their query
+
 2. Parses user request. 
 
-Example:
-- Topic: Investment Report/Recommnedation
-- User query: Analyze NVIDIA and produce an investment research summary
+    Example:
+    - Topic: Investment Report/Recommendation
+    - User query: Analyze NVIDIA and produce an investment research summary
 
 ##### Orchestrator
 Implements Orchestrator-Worker pattern. The "Planning" Phase Separates Planning from Execution which is a hallmark of "Reasoning" agents. 
@@ -58,7 +62,7 @@ Implements Orchestrator-Worker pattern. The "Planning" Phase Separates Planning 
 Responsibilities:
 
 ###### Create plan
-- **Planner subgraph**
+- Planner subgraph
     - Breaks a user query into tasks
     - Decides which agents/tools are needed
     - `plan = List[Task]`, Task is a Pydantic model
@@ -67,24 +71,28 @@ Responsibilities:
         - *Plan Validator*:
         Checks plan quality. If poor → reflection loop.
             - Plan is an acyclic graph
-            - Dependeiecie are not missing or ambinguous
+            - Dependencies are not missing or ambiguous
     
     Planner decomposes goal.
     
     Example task plan:
     1. Research event: web search
+    
     2. Collect financial indicators: web search or vector database
+    
     3. Perform quantitative analysis: performs  simulations or generates charts or plots
-    4. Analyst: Evaluate sources and results from quant agnet, finds desrepancies between research data and qunatitavie results
-    5. Generate report: aggregate all the result into a summary report that might make a fiancial advices
+    
+    4. Analyst: Evaluate sources and results from quant agent, finds discrepancies between research data and quantitative results
+    
+    5. Generate report: aggregate all the result into a summary report that might make a financial advices
 
 
 ###### Scheduler Node
 Marks task pending → ready → running before dispatch them to agents. But before this, it checks if the dependent task are marked "completed" by agents.
 
-- **Scheduler**:
-    - Selects ready tasks (task dependecies are complete)
-    - Asigns tasks to agents
+- Scheduler:
+    - Selects ready tasks (task dependencies are complete)
+    - Assigns tasks to agents
     - Manages task status
 
 
@@ -104,9 +112,9 @@ Loop continues until all tasks are completed.
 
 ###### Router Edge
 A conditional edge to route tasks to Agents and back to the Scheduler
-- **Route tasks**
+- Route tasks
     - Fans out tasks to the corresponding agents in parallel
-    - When agents return their updates, graph flows back to the schduler to send the next batch of tasks in parallel
+    - When agents return their updates, graph flows back to the scheduler to send the next batch of tasks in parallel
 
 
 
@@ -142,64 +150,66 @@ Keep the following in mind when implementing agents:
 
 1. Clear separation of responsibilities
 
-Make sure each component does one thing well:
-- Planner – only generates DAG/tasks from the user query
-- Scheduler – routes tasks to the right agents dynamically
-- Agents – execute tasks (research, math, summarization, etc.)
-- Quant sandbox – handles all numeric/financial computation
+    Make sure each component does one thing well:
+    - Planner – only generates DAG/tasks from the user query
+    - Scheduler – routes tasks to the right agents dynamically
+    - Agents – execute tasks (research, math, summarization, etc.)
+    - Quant sandbox – handles all numeric/financial computation
 
-This ensures each piece can be swapped or improved independently.
+    This ensures each piece can be swapped or improved independently.
 
 2. Explicit input/output schemas
 
-Define exactly what each agent receives and returns
-For the quant sandbox, define a schema like:
-```json
-{
-  "task_id": "calculate_var",
-  "input": {"ticker": "AAPL", "data": "..."},
-  "output": {"value_at_risk": 12345.67, "confidence": 0.95}
-}
-```
-This makes it easier for the scheduler to orchestrate and for debugging later.
+    Define exactly what each agent receives and returns
+    For the quant sandbox, define a schema like:
+
+    ```json
+    {
+    "task_id": "calculate_var",
+    "input": {"ticker": "AAPL", "data": "..."},
+    "output": {"value_at_risk": 12345.67, "confidence": 0.95}
+    }
+    ```
+    This makes it easier for the scheduler to orchestrate and for debugging later.
 
 3. Error handling / fallback
 
-Agents sometimes fail (network issues, data unavailable, etc.):
-- Implement retry mechanisms in the scheduler
-- Allow agents to return error codes + messages rather than crashing the whole workflow
-- For the quant sandbox, provide a default behavior or placeholder if data is missing
+    Agents sometimes fail (network issues, data unavailable, etc.):
+    - Implement retry mechanisms in the scheduler
+    - Allow agents to return error codes + messages rather than crashing the whole workflow
+    - For the quant sandbox, provide a default behavior or placeholder if data is missing
 
-This makes the system more robust for a demo and for future scaling.
+    This makes the system more robust for a demo and for future scaling.
 
 4. Logging and observability
 
-Since you’re building an agentic system:
-- Track task execution times, dependencies resolved, and outputs
-- You could even visualize the DAG dynamically to see which tasks are completed or pending
-This will also make your demo visually impressive
+    Since you’re building an agentic system:
+    - Track task execution times, dependencies resolved, and outputs
+    - You could even visualize the DAG dynamically to see which tasks are completed or pending
+    This will also make your demo visually impressive
 
 5. Consider multi-agent communication patterns
 
-Right now you mentioned using global state reducers. That works, but think about:
-- Message passing: agents send messages or updates to the scheduler or to other agents
-- Events or pub/sub: agents subscribe to events they need to act on
-- Hybrid: some info in global state, some via messages for efficiency
+    Right now you mentioned using global state reducers. That works, but think about:
+    - Message passing: agents send messages or updates to the scheduler or to other agents
+    - Events or pub/sub: agents subscribe to events they need to act on
+    - Hybrid: some info in global state, some via messages for efficiency
 
-This can scale better as you add more agents.
+    This can scale better as you add more agents.
 
 6. Extensibility
 
-Make it easy to add a new tool or agent later without touching the whole system
-- Keep interfaces abstract: e.g., the scheduler just calls agent.run(task) without caring what the agent does internally
+    Make it easy to add a new tool or agent later without touching the whole system
+    - Keep interfaces abstract: e.g., the scheduler just calls agent.run(task) without caring what the agent does internally
 
 7. Demo focus
 
-Remember your primary goal is a convincing demo:
-- Full automation of research summary
-- Quant sandbox produces meaningful numbers
-- Planner and scheduler orchestrate correctly
-- Output looks like a real research report
+    Remember your primary goal is a convincing demo:
+    - Full automation of research summary
+    - Quant sandbox produces meaningful numbers
+    - Planner and scheduler orchestrate correctly
+    - Output looks like a real research report
+
 
 All other improvements can go on a “future improvements” list — no need to perfect everything before you demo.
 
@@ -290,7 +300,7 @@ To implement this in your project using the `LangChain MCP Adapter`, you will co
 #### Research Subgraph
 Runs tasks in parallel.
 
-My design include single node to perform a web search using a MCP server. Out search tool that uses Tavily Search will perfomr the search for the agent once the agent calls the MCP srver.  However this could be extended to more specialized nodes such as:
+My design include single node to perform a web search using a MCP server. Our search tool that uses Tavily Search will perform the search for the agent once the agent calls the MCP server.  However this could be extended to more specialized nodes such as:
 
 ```ini
 Research Coordinator
@@ -307,7 +317,7 @@ document_server
 ```
 The agents discover tools dynamically via MCP.
 
-Outputs are formatted into **Artifacts Schema** and saved in the gloabl graph state. In addition the results can be aggregated via map-reduce node.
+Outputs are formatted into **Artifacts Schema** and saved in the global graph state. In addition the results can be aggregated via map-reduce node.
 
 MCP Tools:
 - web search
@@ -393,7 +403,7 @@ Example:
     - Volatility estimate
     - Growth modeling
     - Simple forecasting
-    - Monte Carlo Simualtions
+    - Monte Carlo Simulations
     
 - Avoids hallucinated math. Instead of the LLM invents math:
     - LLM writes Python code
@@ -402,24 +412,24 @@ Example:
 
 - Nodes:
     - **Quant Agent**: User data sources from Research Agents to generate safe Python Code to perform Data Analytics and run simulations
-    - **Autditor Agent**: Perform self-reflection task. Checks for hallucinations, logical or runtime errors, descrepany, and provides feedback. Judges the results from Quant node for required outputs, validity of code and data used in the code, descrepencies betwwen the results from Quant agent and research data. PASS or FAIL if requirements not met. 
-        - If failed, the task will be returnrd to the Quant Agent with the feedback from Auditor 
+    - **Auditor Agent**: Perform self-reflection task. Checks for hallucinations, logical or runtime errors, discrepancy, and provides feedback. Judges the results from Quant node for required outputs, validity of code and data used in the code, discrepancies between the results from Quant agent and research data. PASS or FAIL if requirements not met. 
+        - If failed, the task will be returned to the Quant Agent with the feedback from Auditor 
         - Cycle repeats for a MAX_ITERATION allowed
         - After max retires, task marked failed and return to the scheduler
     - **Router Quant Edge**
-    Conditional edge which routes the task from Quant node back to the Quant node before it reaches the Auditor if deterministic requirements are not met. For example, code output is empty or agent didnt call the `execute_python_code` tool
+    Conditional edge which routes the task from Quant node back to the Quant node before it reaches the Auditor if deterministic requirements are not met. For example, code output is empty or agent didn't call the `execute_python_code` tool
     - **Router Auditor Edge**
-    Conditional edge which checks if max retires exhausted, routes the task to the scheduler otherwise returns thask to the Quant node with Auditor feedback 
+    Conditional edge which checks if max retires exhausted, routes the task to the scheduler otherwise returns thanks to the Quant node with Auditor feedback 
 
 
 ### Best Patterns for Multi Agent Architectures
 This project implemented best Agentic AI design patterns such as
-##### 1. Reflection Pattern
+##### Reflection Pattern
 ###### Critic Agent
 Auditor/Critic agent inside quant_analyst subgraph implements a self-correction loop. It checks:
 - **Hallucinations**: values are from research data
 - **Logical errors**: summary is print to stdout, artifacts wre saved to share volumes
-- **Missing data or discrepencies**: if quant campotation is sound based and matches the live data provided by the research agent or historical data from vector_db
+- **Missing data or discrepancies**: if quant computation is sound based and matches the live data provided by the research agent or historical data from vector_db
 
 Flow:
 ```ini
@@ -438,7 +448,7 @@ Analyst Node → Reflection Node (Analyst checks its own syntax) → Output.
 
 It’s cheap and fast. You don’t need a whole subgraph for an agent to check if it forgot a comma.
 
-##### 2. Evaluator-Optimizer Pattern 
+##### Evaluator-Optimizer Pattern 
 Separate from reflection.
 - Evaluator checks output against rubric:
     - source_quality
@@ -451,7 +461,7 @@ Separate from reflection.
 This demonstrates structured evaluation pipelines.
 - Semantic Guardrails
 
-##### 3. Semantic Guardrail Node
+##### Semantic Guardrail Node
 Validate outputs with **Pydantic**.
 Example schema:
 ```ini
@@ -467,7 +477,7 @@ If invalid JSON:
 ```ini
 Retry Node → regenerate
 ```
-This is very important in production systems. All agent outputs must match specifict schema.
+This is very important in production systems. All agent outputs must match specific schema.
 
 Example:
 - ResearchOutput
@@ -478,7 +488,7 @@ Example:
 If invalid:
 - Trigger Retry node
 
-##### 4. FinOps
+##### FinOps
 This node is about token budget protection. It runs before every major step. Add a node that tracks:
 - Total_tokens
 - Total_cost
@@ -493,7 +503,7 @@ Your *Token Monitor node* checks before scheduling new tasks.
 Token Monitoring as a First-Class Citizen: This addresses FinOps. It shows you care about the company’s cloud bill, not just the "coolness" of the AI. This shows production engineering awareness. 
 
 
-##### 5. Human-in-the-Loop (HITL)
+##### Human-in-the-Loop (HITL)
 
 The "Human-in-the-loop" Break
 
@@ -506,7 +516,7 @@ When system detects high uncertainty or high-impact decision:
     - Revise
     - Terminate
 
-I implemented this at user query validator node. If the query is not relevant to the topic, not safe, not clear, the graph inttrupts the flow and asks user to revise the query. LangGraph supports this with **interrupts**.
+I implemented this at user query validator node. If the query is not relevant to the topic, not safe, not clear, the graph interrupts the flow and asks user to revise the query. LangGraph supports this with **interrupts**.
 
 This shows safe AI design.
 
@@ -536,7 +546,7 @@ In your `graph_builder.py`, you will compile the graph with an `interrupt_before
 
 ###### A Logic Flow with HITL & Evaluation
 
-Here is a sequence for your `evaluation_graph.py` where human interfere when agnet is stuck after retrying multiple times:
+Here is a sequence for your `evaluation_graph.py` where human interfere when agent is stuck after retrying multiple times:
 
 ```ini
 [Analysis Subgraph Finish] 
@@ -576,7 +586,7 @@ It should be a State Gate placed at high-risk junctions. The three best places f
 - Report Subgraph: Once the human clicks "Approve," the graph resumes and formats the final PDF.
 
 
-##### 6. MCP Servers
+#####  MCP Servers
 
 ###### The MCP Server (FastMCP)
 To set up a modern, performant MCP system for your investment research graph, we will use `FastMCP` for the server and the `LangChain MCP Adapter` for your agents.
@@ -597,7 +607,7 @@ Advantages of SSE/HTTP:
 
 ###### The "Dual-Mode" Server
 
-You don't have to choose! You can write your server to support both. FastMCP makes this relatively easy, though the http transport requires a bit more boilerplate using starlette or fastapi.
+You don't have to choose! You can write your server to support both. FastMCP makes this relatively easy, though the http transport requires a bit more boilerplate using starlette or FastAPI.
 ```python
 # mcp_servers/research_server.py
 from mcp.server.fastmcp import FastMCP
@@ -620,7 +630,7 @@ if __name__ == "__main__":
         mcp.run(transport="stdio")
 ```
 
-Adding MCP on top of everything else turns this project from a normal agent system into a modern and forward-looking system. This is exactly the kind of architecture that makes interviewers lean forward. Let's design the actual LangGraph node structure so you can implement it cleanly. We'll include MCP using Model Context Protocol and build the orchestration with LangGraph application equiped with  MCP clients.
+Adding MCP on top of everything else turns this project from a normal agent system into a modern and forward-looking system. This is exactly the kind of architecture that makes interviewers lean forward. Let's design the actual LangGraph node structure so you can implement it cleanly. We'll include MCP using Model Context Protocol and build the orchestration with LangGraph application equipped with  MCP clients.
 
 - Instead of hardcoding tools, agents discover them through MCP servers.
 
@@ -643,7 +653,7 @@ Adding MCP on top of everything else turns this project from a normal agent syst
     Instead of importing your search functions directly into your agents, you run them as a separate process. This shows you understand Micro-service architecture. Your agents don't care how the web search works; they just know the MCP protocol.
 
 
-##### 7. Retry Node (Failure Hanlding)
+#####  Retry Node (Failure Handling)
 This is a more deterministic feature rather than agentic. Used when:
 - Schema fails
 - Tool fails
@@ -660,7 +670,7 @@ Retry task
 Limit retries. Otherwise escalate to HITL node.
 
 
-##### 8. Persistence
+##### Persistence
 I used **LangGraph checkpointer**.
 This gives:
 - resumable workflows
@@ -673,7 +683,7 @@ Very good interview talking point.
 
 
 
-##### 9. Traceability
+##### Traceability
 Send all task execution to LangSmith.
 You can show:
 - DAG execution
@@ -686,7 +696,7 @@ You can show:
 Great for debugging and demos. Companies care about observability.
 
 
-##### 10. Memory
+##### Memory
 Two types:
 - Short-term: Graph state.
 - Long-term: Vector database storing past investigations.
@@ -695,7 +705,7 @@ Example use:
 - retrieve previous company analysis
 
 
-##### 11. Parallelization
+#####  Parallelization
 Used LangGraph's parallel nodes. 
 
 Example: 
@@ -710,7 +720,7 @@ Analyst or Quant Analyst
 ```
 This demonstrates parallel reasoning workflows, which is very impressive in interviews.
 
-##### 12. Map-Reduce: 
+#####  Map-Reduce: 
 Multiple research outputs aggregated.
 - Final Output
     - Structured intelligence report:
@@ -722,7 +732,7 @@ Multiple research outputs aggregated.
     - Sources
 
 
-##### 13. Subgraphs
+#####  Subgraphs
 I organized system like this:
 - Planning Subgraph
 - Research Subgraph
@@ -3818,75 +3828,87 @@ Even small things like that show robust system thinking.
 
 Yas… I hear you, and that’s a very real and valid fear. What you’re describing is not just about technical ability, it’s about credibility in a hyper-competitive, high-stakes environment — and it’s a new kind of pressure that didn’t exist even a few years ago.
 Let me unpack a few things here:
+
 1️⃣ The “AI / ChatGPT effect”
-Many candidates can now generate code, diagrams, project ideas, or reports quickly using AI.
-That raises skepticism in interviewers: “Did you really do this yourself?”
-Even when you actually built it, you can feel like you’re under constant suspicion.
-That’s a market-level pressure, not a personal failure. The rules changed, and everyone is adjusting — especially people like you who genuinely invest time learning and building projects.
+- Many candidates can now generate code, diagrams, project ideas, or reports quickly using AI.
+- That raises skepticism in interviewers: “Did you really do this yourself?”
+- Even when you actually built it, you can feel like you’re under constant suspicion.
+- That’s a market-level pressure, not a personal failure. The rules changed, and everyone is adjusting — especially people like you who genuinely invest time learning and building projects.
+
 2️⃣ Interviewers as “grillers”
 You described interviews where:
-Minor misrepresentations are seen as intentional lies
-New technologies are expected instantly
-Any small mistake feels magnified
+- Minor misrepresentations are seen as intentional lies
+- New technologies are expected instantly
+- Any small mistake feels magnified
+
 That’s actually a systemic problem in technical interviewing, not a reflection of your worth or abilities. Many skilled engineers fail interviews simply because of interviewer style or unrealistic expectations, not lack of competence.
+
 3️⃣ Why this feels worse for you
 You already carry regret, career gaps, and age-related concerns
 You’re also investing serious energy learning cutting-edge AI systems
 So the moment you walk into an interview, your brain amplifies the stakes and judgment
 It’s natural that it feels heavier than it used to.
+
 4️⃣ What actually works against this skepticism
 Even in today’s environment, there are ways to signal credibility:
-Concrete project demos
-Don’t just claim “I did X”; show a working system, even minimal.
-Screenshots, recorded video of tasks, notebooks, or live demo.
-Documented process
-Include design notes, architecture diagrams, Git history.
-Show how the project evolved and decisions you made.
-Explain your reasoning, not just outputs
+- Concrete project demos
+- Don’t just claim “I did X”; show a working system, even minimal.
+- Screenshots, recorded video of tasks, notebooks, or live demo.
+- Documented process
+- Include design notes, architecture diagrams, Git history.
+- Show how the project evolved and decisions you made.
+- Explain your reasoning, not just outputs
+
 Interviewers often grill people to test thinking.
-Walk through why you chose FastMCP, global state reducers, planner/DAG, etc.
-Set expectations upfront in interviews
+- Walk through why you chose FastMCP, global state reducers, planner/DAG, etc.
+- Set expectations upfront in interviews
 Example: “I built a minimal prototype for the agentic research system, focusing on modular MCP servers and task orchestration. Here’s a demo and code snippet.”
+
 This frames you as honest and grounded, reducing the “skepticism pressure.”
+
 Yas, the pressure you feel is understandable and real, but it’s mostly external noise, not a reflection of your actual skills. You’re thinking at a level most entry-level engineers never do — planners, DAGs, schedulers, modular agents. That’s already strong, even if the interview world is skeptical.
 
 Apply broadly — not only ML titles
 This is important.
 You should apply to roles like:
-ML engineer
-AI engineer
-backend engineer
-data engineer
-platform engineer
+- ML engineer
+- AI engineer
+- backend engineer
+- data engineer
+- platform engineer
+
 Your architecture work overlaps with backend systems and distributed workflows, which many companies need.
 
 
 6. Avoid the trap you described
+
 You said something very insightful earlier:
 interview → learn new thing → interview → learn another thing
-Try to stop chasing every new trend.
+- Try to stop chasing every new trend.
 Instead:
-Focus on one strong system and learn it deeply.
-Your current project is perfect for that.
+- Focus on one strong system and learn it deeply.
+- Your current project is perfect for that.
+
 7. Use your maturity as an advantage
 At 46 you have something younger candidates often lack:
 persistence
-depth
-ability to understand complex systems
-Many companies actually value that when they see it.
+- depth
+- ability to understand complex systems
+- Many companies actually value that when they see it.
 
 
 
 Resume entry
 Something like:
 Agentic AI Investment Research System
-Designed multi-agent architecture using LangGraph
-Planner generates DAG of tasks with dependencies
-Scheduler dynamically routes tasks to agents
-Implemented research agent using web search tools
-Built quant sandbox for financial analysis
-Integrated external tools via MCP servers
-Generated automated structured research reports
+- Designed multi-agent architecture using LangGraph
+- Planner generates DAG of tasks with dependencies
+- Scheduler dynamically routes tasks to agents
+- Implemented research agent using web search tools
+- Built quant sandbox for financial analysis
+- Integrated external tools via MCP servers
+- Generated automated structured research reports
+
 This sounds very strong.
 
 
@@ -3906,40 +3928,23 @@ That alone already sounds very strong.
 Clear README
 
 Explain the system clearly:
-Problem: automated investment research
-Architecture: planner → agents → sandbox → auditor → analyst
-Technologies used (LangGraph, MCP, Docker, etc.)
-Example output (report + Monte Carlo simulation)
+- Problem: automated investment research
+- Architecture: planner → agents → sandbox → auditor → analyst
+- Technologies used (LangGraph, MCP, Docker, etc.)
+- Example output (report + Monte Carlo simulation)
+
 2️⃣ One strong resume bullet (maybe two)
 Focus on impact and architecture, not just tools.
 Example idea:
 Built an agentic AI research system using Python and LangGraph that plans tasks via a DAG, orchestrates research and quant agents, executes generated Python code in an MCP sandbox, and validates results with an automated auditor before producing a final investment analysis report.
 That kind of sentence shows systems thinking, which hiring managers like.
+
 3️⃣ Then return to applying.
+
 Exactly as you said: you don’t want to get stuck in endless projects. This one is enough to demonstrate the capability.
 
 
-1. Problem
-Automate investment research using agentic AI
 
-2. Architecture
-```ini
-Planner → DAG
-Scheduler → routes tasks
-Research agent → web search
-Quant agent → generates Python
-MCP sandbox → executes code
-Auditor → validates results
-Analyst → produces final markdown report
-```
-3. Interesting parts
-```ini
-Monte Carlo simulation
-Self-correcting loop
-Tool execution through MCP
-Microservice design with Docker
-```
-That’s it. Maybe half a page.
 
 
 A small practical tip for your notes

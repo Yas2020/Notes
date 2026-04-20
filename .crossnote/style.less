@@ -45,12 +45,12 @@
     // color: #839496;
   // padding-left: 80px !important;
   // padding-right: 80px !important;
-  background-color: #1a1b26;
-  color: #c8c8d8;
+  background-color: #0e0f21;
+  color: #bfbfd3;
   // background-color: #1c1c1c;
   // color: #c0b8af;
   strong {
-        color: #efc137; /* Example: A bright amber/gold */
+        color: #dcb133; /* Example: A bright amber/gold */
         font-weight: bold;
         // text-shadow: 2 2 18px rgba(255, 94, 0, 0.3) !important;
     }
@@ -123,7 +123,7 @@
     .title{
       font-size: 100pt;
       font-family: Tangerine, Pinyon Script;
-      color: rgb(48, 93, 138);
+      color: rgb(52, 108, 164);
       text-shadow: 3px 3px 0 #b08888;
       display: flex;
       justify-content: center;
@@ -143,14 +143,14 @@
     font-size: 40pt;
     font-family: Montserrat;
     font-weight: 500;
-    color: rgb(119, 0, 255);
+    color: rgb(101, 41, 222);
   }
 
   h3{
     font-size: 35pt;
     font-family: Montserrat;
     font-weight: 500;
-    color: rgb(38, 10, 254);
+    color: rgb(51, 28, 225);
   }
 
   h4{
@@ -164,8 +164,9 @@
     font-size: 25pt;
     font-family: Montserrat;
     font-weight: 400;
-    color: rgb(21, 237, 252);
+    color: rgb(22, 217, 231);
   }
+
   
   h6{
     font-size: 20pt;
@@ -186,34 +187,47 @@
       // line-height: 30px;
   }
   ul li::marker {
-    color: #9f9ea2 !important;
+    color: #ab7781 !important;
   }
 
+ 
   ol {
     list-style-type: decimal; /* 
     upper-roman or decimal, lower-alpha, upper-alpha, etc. */
-    // list-style-position: outside; /* or inside */
-    // list-style-position: inside;
-    color: #af133c !important;
-    // font-family: Open Sans, Verdana !important;
-    font-weight: 500 ;
-    // font-size: 16pt;
-    // margin-left: 0 !important;
-    // padding-left: 0 !important;
     padding-left: 1.5em;
+
+    li {
+      
+      // 1. Color for the numbers
+      &::marker {
+        font-family: Pinyon Script, monospace;
+        font-weight: 1000;
+        color: #f70360;
+        font-size: 1.1em;
+      }
+
+      // 2. The Title (First paragraph)
+      p:first-child {
+        color: #b81843 !important;
+        // color: #3b23eb !important;
+        // color: #bbb11c !important;
+        font-weight: 500;
+        margin-bottom: 4px; // Tightens space between title and description
+      }
+
+      // 3. The Description (All following paragraphs)
+    //   p:not(:first-child) {
+    //     color: #c3c3d8;
+    //     font-weight: normal !important;
+    //   }
+    }
   }
 
 
-  ol li::marker {
-  font-family: Pinyon Script, monospace;
-  font-weight: 1000;
-  color: #f70360;
-  font-size: 1.2em;
-}
-
   table {
     justify-items: center; 
-    // border-collapse: collapse;
+    border-collapse: collapse;
+    
     // margin: 0px auto;
     // margin-left: auto;
     // margin-right: auto;
@@ -222,6 +236,7 @@
   table > thead > tr > th {
     text-align: center;
     border-bottom: 1px solid;
+    border-top: 1px solid;
   }
   
   table > thead > tr > th,
@@ -236,17 +251,20 @@
   }
   
   th {
-    background-color: #0430aa;
+    background-color: #2b136d;
     color: white;
   }
 
   td {
-    background-color: #e5e5e6a6;
-    color: rgb(43, 66, 71);
+    background-color: #d6dadea6;
+    color: rgb(17, 37, 42);
   }
   
   th, td {
-    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #586e75;
+    border-bottom: 1px solid #586e75;
+    border-left: 1px solid #586e75;  
+    border-right: 1px solid #586e75; 
     padding: 10px;
     text-align: center;
   }
@@ -255,10 +273,16 @@
   blockquote {
     background: rgba(168, 83, 83, 0.1);
     border-color: rgba(204, 0, 58, 0.5);
-    margin: 5px 7px 7px 5px;
+    margin: 30px 7px 20px 5px;
     padding: 15px 16px 15px 10px;
     border-left-width: 5px;
     border-left-style: solid;
+    border-radius: 6px;
+    // border: 1px solid #586e75;
+
+    p {
+      color:rgb(222, 193, 193)
+    }
   }
 
   
@@ -281,6 +305,7 @@
     // box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     background-color: #062027 !important; /* Slightly lighter/darker than your main bg */
     border-radius: 6px;
+    margin: 10px 5px 15px 5px;
     padding: 1em;
     border: 1px solid #586e75;
   }
@@ -365,6 +390,22 @@
   -webkit-font-smoothing: antialiased;
   }
 
+  pre[data-role="codeBlock"]{
+    background-color: #f4f4f4;
+    // background: transparent !important; 
+    text-shadow: none !important;
+    // text-align: center;
+    border: 1px solid #949393;
+    border-radius: 4px;
+    padding: 1rem;
+    font-family: Courier New, monospace;
+    
+    code {
+        color: #cd3838; // Text color inside the code block
+        font-size: 0.9em;
+    }
+}
+
   @media screen and (max-width: 960px) {
 
     h1 {
@@ -422,7 +463,7 @@
 body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) {
   .markdown-preview {
     // 1. Force the container to behave like a standard block
-    font-size: 18pt;
+    font-size: 16pt;
 
 
     left: 0 !important;
@@ -510,7 +551,7 @@ body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc
   ol {
     list-style-type: decimal; /* upper-roman or decimal, lower-alpha, upper-alpha, etc. */
     list-style-position: outside; /* or inside */
-    color: #0f1d68;
+    // color: #0f1d68;
     // font-family: Georgia, Serif;
     // font-size: 18px;
   }
@@ -525,7 +566,7 @@ body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc
   
   table > thead > tr > th {
     text-align: center;
-    border-bottom: 1px solid;
+    // border-bottom: 1px solid;
   }
   
   table > thead > tr > th,
@@ -535,26 +576,30 @@ body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc
     padding: 5px 10px;
   }
   
-  table > tbody > tr + tr > td {
-    border-top: 1px solid;
-  }
+  // table > tbody > tr + tr > td {
+  //   border-top: 1px solid;
+  // }
   
-  th {
-    background-color: #0430aa;
-    color: white;
-  }
+  // th {
+  //   background-color: #0430aa;
+  //   color: white;
+  // }
 
-  td {
-    background-color: #e5e5e6a6;
-    color: rgb(43, 66, 71);
-  }
+  // td {
+  //   background-color: #e5e5e6a6;
+  //   color: rgb(43, 66, 71);
+  // }
   
   th, td {
-    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #586e75;
+    border-bottom: 1px solid #586e75;
+    border-left: 1px solid #586e75;  
+    border-right: 1px solid #586e75; 
     padding: 10px;
     text-align: center;
   }
   
+
   
   
   // blockquote {
