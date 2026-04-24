@@ -292,7 +292,7 @@
 
 
 
-## Plan for a Project
+#### Plan for a Project
 Phase 1 (Week 1–2): Mental Model Solidification
 Goal: Vocabulary + clarity + architecture confidence.
 
@@ -624,8 +624,39 @@ No scope creep.
 ----------------
 ----------
 
+
+
+
+
+### AI Agents
+
+An AI agent is a program that uses a large language model (LLM) as its reasoning engine and can take actions in the real world — calling APIs, querying databases, or running code — to accomplish a goal on behalf of a user.
+
+An AI Agent is a collection of parts working together. At its core, every agent has three pieces:
+- Environment — The space the agent works in. For a travel booking agent, this would be the booking platform itself.
+- Sensors — How the agent reads the current **state** of its environment. Our travel agent might check hotel availability or flight prices.
+- Actuators — How the agent takes **action**. The travel agent might book a room, send a confirmation, or cancel a reservation.
+
+Agents existed before LLMs, but LLMs are what make modern agents so powerful. They can understand natural language, reason about context, and turn a vague user request into a concrete plan of action.
+
+- *Tools*: Without an agent system, an LLM just generates text. Inside an agent system, the LLM can actually execute steps — searching a database, calling an API, sending a message. What tools the agent can use depends on what the developer chose to give it. A travel agent might be able to search flights but not edit customer records.
+
+- *Memory + Knowledge*: Agents can have short-term memory (the current conversation) and long-term memory (a customer database, past interactions). The travel agent might "remember" that you prefer window seats.
+
+##### What can AI Agent Frameworks do more? 
+
+Traditional AI Frameworks can help you integrate AI into your apps and make these apps better. For example AI can analyze user behavior and preferences to provide personalized recommendations, content, and experiences. Streaming services like Netflix use AI to suggest movies and shows based on viewing history, enhancing user engagement and satisfaction.
+
+But why do we need the AI Agent Framework? AI Agent frameworks  are designed to enable the creation of intelligent agents that can interact with users, other agents, and the environment to achieve specific goals. These agents can exhibit autonomous behavior, make decisions, and adapt to changing conditions. 
+
+- Agent Collaboration and Coordination: Enable the creation of multiple AI agents that can work together, communicate, and coordinate to solve complex tasks.
+- Task Automation and Management: Provide mechanisms for automating multi-step workflows, task delegation, and dynamic task management among agents.
+- Contextual Understanding and Adaptation: Equip agents with the ability to understand context, adapt to changing environments, and make decisions based on real-time information.
+
+Agents allow you to do more, to take automation to the next level, to create more intelligent systems that can adapt and learn from their environment.
+
 ### Foundational Models
-- **Tempreture**: higher -> more creative, lower -> more deterministic
+- **Temperature**: higher -> more creative, lower -> more deterministic
 - **max_tokens**: limits the number of tokens in the response
 - timeout: max time to wait for response for the model before canceling the request
 - max retires: max amount of times to retiry your request if that request fails
@@ -718,9 +749,51 @@ for token, metadata in agent.stream(
 
 This method is used by all major chatbots to improve preceived latecny and user experience. 
 
-### Prompt 
 
-Now you have a custome model. The easiest way to imporve the perfromance of the model to taylor it for your specific usecase is **system prompt**.
+###  In-context Learning
+
+In-context learning doesn’t require additional training. A new task is learned from a small set of examples presented within the context or prompt at inference time. 
+
+###### Advantage
+- No fine tuning needed
+- Reduces the resources and time while improving performance
+
+###### Disadvantage
+- Limited to what can fit in-context 
+- Complex tasks could require fine tuning for some models
+
+
+#### Prompts 
+Prompts are instructions or context given to an LLM designed to guide it toward generating an output. 
+
+##### Elements of prompt templates
+We usually use prompt templates when we need to repeat a prompt for different inputs.
+
+- Instructions (SystemPrompt)
+  - Clear, direct commands that tell the AI what to do
+  - Need to be specific to ensure the LLM understands the task
+- Context 
+  -  Information that helps the LLM make sense of the instruction. 
+  -  Can be data, any relevant details that shape the AI's response
+-  Input data 
+   -  Actual data the LLM will process and is different from prompt to prompt
+-  Output of model
+   -  Part of the prompt where the LLM's response is expected. It's a clear marker that tells the AI where to deliver its analysis.
+
+By combining these elements effectively, you can tailor LLMs to perform tasks ranging from answering queries and
+analyzing data to generating content. 
+
+
+##### Prompt Engineering
+Prompt engineering is 
+- Designing and refining the questions, commands, or statements to interact with the AI systems, particularly LLMs
+- The goal is to carefully craft clear, contextually rich prompts (not just asking questions) tailored to get the most relevant and accurate responses from the AI
+- Directly influencing how effectively and accurately LLMs function
+- Ensures LLMs to generate precise and relevant responses to the context
+- Clearer prompts reduces misunderstandings
+
+###### System Prompt
+The is the easiest way to improve the performance of the model to taylor it for your specific use case is **system prompt**.
 
 ```python
 from langchain.agents import create_agent
@@ -756,7 +829,9 @@ response = agent.invoke(
 'The moon doesn\'t have an official capital, but if we imagine a futuristic lunar colony, a fitting "capital" could be **Lunos Prime** — a sprawling lunar city located in the crater of Shackleton, near the lunar south pole, serving as the central hub for governance, research, and resource management in this envisioned moon colony. Would you like me to elaborate on how Lunos Prime might look and function?'
 ```
 
-#### Few-shot examples
+
+
+###### Few-shot examples
 
 We usually prefer the LLM response to be concise and even structured rather than long or unstructured. We can singal this to LLMs using a system prompt:
 
@@ -778,7 +853,7 @@ response['messages'][-1].content
 'Lunaris Prime'
 ```
 
-#### Structured Prompts
+###### Structured Prompts
 We often desire agent response to be structured. One way to do this to add system prompt showing the model how to structure its response:
 
 ```python
@@ -798,12 +873,138 @@ And now pose the same question. You will receive the naswer with just these 4 to
 
 ```o
 Name: Luaris Prime
-Location: South plar region, perched on the rim of Shackleton Crater, Moon
+Location: South polar region, perched on the rim of Shackleton Crater, Moon
 Vibe: Icebound metropolis
-Economy: ISRU ice mining and processinc
+Economy: ISRU ice mining and processing
 ```
 
 A good prompt helps LLMs to focus on their tasks and return a more high quality answers. It is more common to do theis using tools.
+
+
+
+### LangSmith
+To get insight into how your agents are running, use LangSmith to trace all queries and observe latencies, token usage, tools called and their inputs and outputs. Connect to the API endpoint (with its API key) to debug your agents when things get a little bit more complex as you add more tools and the tasks are less deterministic. With the free tier, you have up to 5000 free tokens per month which is more than enough for development and side projects. 
+
+
+### Memory
+
+The very basic feature expected from any chatbot is the ability to maintain the memory over the length of the conversation. The angent built so far dont have that ability. 
+
+```python
+from langchain.agents import create_agent
+from langchain.messages import HumanMessage
+
+agent = create_agent(
+    "gpt-4.1-nano"
+)
+
+question = HumanMessage(content="Hello my name is Seán and my favourite colour is green")
+
+response = agent.invoke(
+    {"messages": [question]} 
+)
+
+response["message"][-1].content
+```
+```o
+"Hello Seán! It's great to meet you. Green is a wonderful colour—so fresh and calming. Do you have a favourite thing that's green?"
+```
+Then ask:
+
+```python
+question = HumanMessage(content="What's my favourite colour?")
+
+response = agent.invoke(
+    {"messages": [question]} 
+)
+
+response["message"][-1].content
+```
+```o
+"I don't have access to your personal information, so I don't know your favorite color. If you'd like to tell me, I'd be happy to chat about it!"
+```
+
+What's happening? In out LanChain agents we are tracking *states* which you can think of it as the memory of our agent. The problem is that *the state is NOT being saved from one run to another run*. In fact the agent memory is being wiped! The **thread** is another important concept which represents a conversation or interaction between an agent and a user. Threads can be used to track the progress of a conversation, store context information, and manage the state of the interaction. 
+
+To save the states so agents remember previous messages, we use threads. To do this, use 
+
+- **Checkpointers**: saves a snapshop of the state at the end of each run, and then groups them into the same thread of conversation. 
+
+`InMemorySaver` is the checkpointer we use in LangGraph:
+
+```python
+from langgraph.checkpoint.memory import InMemorySaver 
+from langchain.messages import HumanMessage
+
+agent = create_agent(
+    "gpt-4.1-nano",
+    checkpointer=InMemorySaver(),  
+)
+
+question = HumanMessage(content="Hello my name is Seán and my favourite colour is green")
+
+config = {"configurable": {"thread_id": "1"}}
+
+response = agent.invoke(
+    {"messages": [question]},
+    config,  
+)
+
+response["message"][-1].content
+```
+```o
+"Hello Seán! It's great to meet you. Green is a wonderful colour—calming and full of life. Do you have a favorite thing that’s green or a reason why you like it?"
+```
+
+```python
+question = HumanMessage(content="What's my favourite colour?")
+
+response = agent.invoke(
+    {"messages": [question]},
+    config,  
+)
+
+response["message"][-1].content
+```
+```o
+'Your favorite color is green.'
+```
+
+In fact you can see 4 messages in the response including the previous ones. It retained the memory of our conversation and appended it to its list of messages and they are all included in this response because all the checkpoints are grouped by `thread_id=1`. Now we have memory.
+
+##### Customized States
+By default, the states track a list of messages only. But we can add custom fields like `user_id`, `langage` if we would like them to be tracked overtime. These fields dont even have to be text! Text is not the only type of inputs LLMs can receive these days. The states could include images or audios etc so agents can see or hear! Encode you image and audios in `Base64`. Thsi enables us to represent binary data and transmit text-based communication channels. 
+
+In the following snippet, we have encoded a picture of moon with a urban scene and invoking the model with a query about this picture. The image `img_b64` is encoded as `Base64` before.  
+
+```python
+from langchain.messages import HumanMessage
+from langchain.agents import create_agent
+
+agent = create_agent(
+    model='gpt-4.1-nano',
+    system_prompt="You are a science fiction writer, create a capital city at the users request.",
+)
+
+multimodal_question = HumanMessage(content=[
+    {"type": "text", "text": "Tell me about this capital"},
+    {"type": "image", "base64": img_b64, "mime_type": "image/png"}
+])
+
+response = agent.invoke(
+    {"messages": [multimodal_question]}
+)
+
+response['messages'][-1].content
+```
+
+```o
+This image depicts a breathtaking extraterrestrial city set against a dramatic alien landscape. The towering spires and sleek structures suggest an advanced civilization, possibly centered around energy or technological innovation. The city appears to be built in harmony with the rugged terrain—its spires piercing the sky and blending seamlessly into the rocky environment.
+
+In the background, a massive moon or planet dominates the sky, hinting at a neighboring ... --- continued
+```
+
+You can do the same thing for Audio files. Convert them to `Base64` and pass them to LLMs with and a query.
 
 ### Tools
 
@@ -850,6 +1051,7 @@ The model used the tool `square_root` automatically without even us adding any s
 ```python
 response['messages']
 ```
+
 ```o
 [HumanMessage(content='What is the square root of 467?', additional_kwargs={}, response_metadata={}, id='04faf488-d62d-4f63-810c-2e53fe1a3ed4'),
  AIMessage(content='', additional_kwargs={'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 54, 'total_tokens': 68, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_provider': 'openai', 'model_name': 'gpt-4.1-nano-2025-04-14', 'system_fingerprint': 'fp_4ea5d69903', 'id': 'chatcmpl-DN0lTGWn8nRqv74IBXa6kYVBWWp5G', 'service_tier': 'default', 'finish_reason': 'tool_calls', 'logprobs': None}, id='lc_run--019d211a-1a98-7921-9de1-232ecabdf54b-0', tool_calls=[{'name': 'square_root', 'args': {'x': 467}, 'id': 'call_O63szKKflf2cqQRaNO38iyB9', 'type': 'tool_call'}], invalid_tool_calls=[], usage_metadata={'input_tokens': 54, 'output_tokens': 14, 'total_tokens': 68, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}}),
@@ -859,7 +1061,7 @@ response['messages']
 
 You can see the model knows to use the tools. It creates an `AIMessage` with *no content* but containng a **tool call** part provifing the arguments the tool needs to run. The response is back to the model from the tool call message is called `ToolMessage`, which returns the result of applying the tools: `content='21.61018278497431'`.  Finally, the model polishes the final answer to the user request.
 
-### Search Web
+##### Search Web
 There are tools to add even more complex capabilities to LLMs such as searching the web. LLMs cant do that on their own.
 
 ```python
@@ -932,125 +1134,6 @@ ToolMessage(content='{"query": "current mayor of San Francisco", "follow_up_ques
 ```
 
 Thsi tool call enables the model to answer correctly.
-
-### LangSmith
-To get insight into how your agents are running, use LangSmith to trace all queries and observe latencies, token usage, tools called and their inputs and outputs. Connect to the API endpoint (with its API key) to debug your agents when things get a little bit more complex as you add more tools and the tasks are less deterministic. With the free tier, you have up to 5000 free tokens per month which is more than enough for development and side projects. 
-
-
-### Memory
-
-The very basic feature expected from any chatbot is the ability to maintain the memory over the length of the conversation. The angent built so far dont have that ability. 
-
-```python
-from langchain.agents import create_agent
-from langchain.messages import HumanMessage
-
-agent = create_agent(
-    "gpt-4.1-nano"
-)
-
-question = HumanMessage(content="Hello my name is Seán and my favourite colour is green")
-
-response = agent.invoke(
-    {"messages": [question]} 
-)
-
-response["message"][-1].content
-```
-```o
-"Hello Seán! It's great to meet you. Green is a wonderful colour—so fresh and calming. Do you have a favourite thing that's green?"
-```
-Then ask:
-
-```python
-question = HumanMessage(content="What's my favourite colour?")
-
-response = agent.invoke(
-    {"messages": [question]} 
-)
-
-response["message"][-1].content
-```
-```o
-"I don't have access to your personal information, so I don't know your favorite color. If you'd like to tell me, I'd be happy to chat about it!"
-```
-
-What's happening? In out LanChain aganets we are tracking *states* which you can think of it as the memory of our agent. The problem is that *the state is NOT being saved from one run to another run*. In fact the agent memory is being wiped! We need to save the states so agents remember previous messages. We do that by using 
-- **checkpointers**: saves a snapshop of the state at the end of each run, and then groups them into the same **thread** of conversation, same thread id. 
-
-`InMemorySaver` is the checkpointer we use in LangGraph:
-
-```python
-from langgraph.checkpoint.memory import InMemorySaver 
-from langchain.messages import HumanMessage
-
-agent = create_agent(
-    "gpt-4.1-nano",
-    checkpointer=InMemorySaver(),  
-)
-
-question = HumanMessage(content="Hello my name is Seán and my favourite colour is green")
-config = {"configurable": {"thread_id": "1"}}
-
-response = agent.invoke(
-    {"messages": [question]},
-    config,  
-)
-
-response["message"][-1].content
-```
-```o
-"Hello Seán! It's great to meet you. Green is a wonderful colour—calming and full of life. Do you have a favourite thing that’s green or a reason why you like it?"
-```
-
-```python
-question = HumanMessage(content="What's my favourite colour?")
-
-response = agent.invoke(
-    {"messages": [question]},
-    config,  
-)
-
-response["message"][-1].content
-```
-```o
-'Your favourite colour is green.'
-```
-
-In fact you can see 4 messages in the response including the previous ones. It retained the memory of our conversation and appended it to its list of messages and they are all included in this repsonse because all the checkpoints are grouped by `thread_id=1`. Now we have memory.
-
-##### Customized States
-By default, the states track a list of messages only. But we can add custom fields like `user_id`, `langage` if we would like them to be tracked overtime. These fields dont even have to be text! Text is not the only type of inputs LLMs can receive these days. The states could include images or audios etc so agents can see or hear! Encode you image and audios in `Base64`. Thsi enables us to represent binary data and transmit text-based communication channels. 
-
-In the following snippet, we have encoded a picture of moon with a urban scene and invoking the model with a query about this picture. The image `img_b64` is encoded as `Base64` before.  
-
-```python
-from langchain.messages import HumanMessage
-from langchain.agents import create_agent
-
-agent = create_agent(
-    model='gpt-4.1-nano',
-    system_prompt="You are a science fiction writer, create a capital city at the users request.",
-)
-
-multimodal_question = HumanMessage(content=[
-    {"type": "text", "text": "Tell me about this capital"},
-    {"type": "image", "base64": img_b64, "mime_type": "image/png"}
-])
-
-response = agent.invoke(
-    {"messages": [multimodal_question]}
-)
-
-response['messages'][-1].content
-```
-```o
-This image depicts a breathtaking extraterrestrial city set against a dramatic alien landscape. The towering spires and sleek structures suggest an advanced civilization, possibly centered around energy or technological innovation. The city appears to be built in harmony with the rugged terrain—its spires piercing the sky and blending seamlessly into the rocky environment.
-
-In the background, a massive moon or planet dominates the sky, hinting at a neighboring ... --- continued
-```
-
-You can do the same thing for Audio files. Convert them to `Base64` and pass them to LLMs with and a query.
 
 ### Model Context Protocol (MCP)
 MCP is defined by Anthropic the group who made it as an open protocol that standardizes how your LLM applications connect to and work  with your tools and data sources. It allows us to plug in various tools to our agent to add functionality just like USBs.
@@ -1160,65 +1243,1042 @@ response['messages'][-1].content
 'The current time in New York is 20:49 (8:49 PM) on Tuesday, March 24, 2026. Would you like to know the time in a different timezone?'
 ```
 
-Our agent made a tool call `tool_calls=[{'name': 'get_current_time', 'args': {'timezone': 'America/New_York'}` to find the accurate time.
-
-Its highly recommneded to try the course [MCP: Build Rich-Context AI APPs with Antropic](https://learn.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic/lesson/dbabg/creating-an-mcp-server)
+Our agent made a tool call `tool_calls=[{'name': 'get_current_time', 'args': {'timezone': 'America/New_York'}` to find the accurate time. For another example, take a look at  this course: [MCP for Building Rich-Context AI APPs with Antropic](https://learn.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic/lesson/dbabg/creating-an-mcp-server).
 
 
 
 
+## Agentic Design Patterns
+
+
+###### Pattern 1: Clear Agent Instructions
+    
+The most impactful pattern is also the simplest: writing clear, detailed instructions for your agent. Good instructions define:
+- Who the agent is (persona and tone)
+- What it should do (step-by-step responsibilities)
+- How it should behave (constraints and style)
+
+```python
+SystemPrompt="""You are a luxury travel concierge named Alex. Your role is to:
+1. Understand the traveler's preferences (budget, climate, activities)
+2. Check destination availability before making recommendations
+3. Provide detailed, personalized travel suggestions
+4. Always mention visa requirements and best travel seasons
+Be warm, professional, and enthusiastic about travel."""
+```
+
+###### Pattern 2: Structured Output with Pydantic Models
+
+Free-form text is useful for conversation, but downstream systems need structured data. By pairing *Pydantic models* with a tool function, we can:
+- Define an exact schema for the agent's output
+- Validate responses automatically
+- Integrate agent results into application logic reliably
+
+Two Options: Structured Output vs. Tool Calling:
+- `with_structured_output` (Recommended): Best for reliability. It uses "Strict Mode" (on OpenAI) which forces the model to follow the schema exactly.
+- `bind_tools`: Slightly less reliable for deep nesting because the model treats it as a function call. It might occasionally omit a nested field if it doesn't think it's necessary.
+
+```python
+from pydantic import BaseModel, Field
+from typing import List, Optional
+
+class Ingredient(BaseModel):
+    name: str = Field(description="Name of the ingredient")
+    amount: float = Field(description="Quantity needed")
+    unit: str = Field(description="Unit of measurement (e.g., grams, cups)")
+
+class Recipe(BaseModel):
+    title: str = Field(description="Name of the dish")
+    ingredients: List[Ingredient] = Field(description="List of required ingredients")
+
+structured_llm = llm.with_structured_output(Recipe)
+# Or: 
+# structured_llm= llm.bind_tools([Recipe])
+try:
+    result = structured_llm.invoke("How do I make a simple omelette?")
+    print(result)
+except Exception as e:
+    print(f"Failed after 3 attempts: {e}")
+```
+
+> *Validation Errors*: If the model makes a mistake, Pydantic will raise a validation error. You should wrap your call in a `try/except` block or use a retry mechanism to handle failures.
+
+Modern LLMs like GPT-4o or Claude 3.5 Sonnet are generally excellent at handling deep hierarchies. Smaller or older models may "hallucinate" the structure or flatten it if it's too complex.  
+- `TrustCall` was specifically built to handle the *self-correction* and *patching* of complex schemas more efficiently than standard retries. TrustCall is often integrated within LangGraph workflows to manage these iterative correction loops automatically for deeply nested data
+
+>*Best practice*: Keep the schema as flat as possible .Don't use too deep nested schemas (> 5 layers). 
+
+###### Pattern 3: Single Responsibility Agents
+
+Complex tasks benefit from splitting work across multiple focused agents, each with a single responsibility:
+
+- A Destination Expert that knows about places and availability
+- A Logistics Planner that handles flights, hotels, and itineraries
+
+This mirrors the software engineering principle of *separation of concerns* — each agent is easier to test, maintain, and improve independently.
+
+## Tool/Function Calling
+Function calling is the primary way we enable Large Language Models (LLMs) to interact with tools. You will often see 'Function' and 'Tool' used interchangeably because 'functions' (blocks of reusable code) are the 'tools' agents use to carry out tasks.
 
 
 
-###  In-context Learning
+###### What is the Tool Use Design Pattern?
 
-In-context learning doesn’t require additional training. A new task is learned from a small set of examples presented within the context or prompt at inference time. 
+The Tool Use Design Pattern focuses on giving LLMs the ability to interact with external tools to achieve specific goals. Tools are code that can be executed by an agent to perform actions. A tool can be a simple function such as a calculator, or an API call to a third-party service such as stock price lookup or weather forecast. In the context of AI agents, tools are designed to be executed by agents in response to model-generated function calls.
 
-###### Advantage
-- No fine tuning needed
-- Reduces the resources and time while improving performance
+###### What are the use cases it can be applied to?
 
-###### Disadvantage
-- Limited to what can fit in-context 
-- Complex tasks could require fine tuning for some models
+AI Agents can leverage tools to complete complex tasks, retrieve information, or make decisions. The tool use design pattern is often used in scenarios requiring dynamic interaction with external systems, such as databases, web services, or code interpreters. This ability is useful for a number of different use cases including:
+
+- Dynamic Information Retrieval: Agents can query external APIs or databases to fetch up-to-date data (e.g., querying a SQLite database for data analysis, fetching stock prices or weather information).
+- Code Execution and Interpretation: Agents can execute code or scripts to solve mathematical problems, generate reports, or perform simulations.
+- Workflow Automation: Automating repetitive or multi-step workflows by integrating tools like task schedulers, email services, or data pipelines.
+- Customer Support: Agents can interact with CRM systems, ticketing platforms, or knowledge bases to resolve user queries.
+- Content Generation and Editing: Agents can leverage tools like grammar checkers, text summarizers, or content safety evaluators to assist with content creation tasks.
+
+###### What are the elements/building blocks needed to implement the tool use design pattern?
+
+These building blocks allow the AI agent to perform a wide range of tasks. Let's look at the key elements needed to implement the Tool Use Design Pattern:
+
+1. Function/Tool Schemas
+
+    Detailed definitions of available tools, including function name, purpose, required parameters, and expected outputs. These schemas enable the LLM to understand what tools are available and how to construct valid requests.
+
+2. Function Execution Logic
+
+    Governs how and when tools are invoked based on the user’s intent and conversation context. This may include planner modules, routing mechanisms, or conditional flows that determine tool usage dynamically.
+
+3. Message Handling System
+
+     Components that manage the conversational flow between user inputs, LLM responses, tool calls, and tool outputs.
+
+4. Tool Integration Framework
+
+    Infrastructure that connects the agent to various tools, whether they are simple functions or complex external services.
+
+5. Error Handling & Validation
+    
+     Mechanisms to handle failures in tool execution, validate parameters, and manage unexpected responses.
+
+6. State Management
+
+    Tracks conversation context, previous tool interactions, and persistent data to ensure consistency across multi-turn interactions.
+
+Next, let's look at Function/Tool Calling in more detail.
+
+###### Function/Tool Calling
+
+In order for a function's code to be invoked, an LLM must compare the users request against the functions description. To do this, a **tool schema** containing the descriptions of all the available functions is sent to the LLM. The LLM then selects the most appropriate function for the task and returns its name and arguments. The selected function is invoked, it's response is sent back to the LLM, which uses the information to respond to the users request. To implement function calling for agents, you will need:
+
+- An LLM model that supports function calling
+- A schema containing function descriptions
+- The code for each function described
+
+Let's use the example of getting the current time in a city to illustrate:
+
+###### Create a Function Schema:
+
+Define a JSON schema that contains the 
+- function name, 
+- description of what the function does, and 
+- the names and descriptions of the function parameters
+
+We will then take this schema and pass it to the LLM, along with the users request to find the time in San Francisco. What's important to note is that a *tool call* is what is returned, *not* the final answer to the question. As mentioned earlier, the LLM returns the name of the function it selected for the task, and the arguments that will be passed to it.
 
 
-#### Prompts 
-Prompts are instructions or context given to an LLM designed to guide it toward generating an output. 
+```python
+# Function description for the model to read
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_time",
+            "description": "Get the current time in a given location",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "The city name, e.g. San Francisco",
+                    },
+                },
+                "required": ["location"],
+            },
+        }
+    }
+]
+```
+Here is the function:
 
-##### Elements of prompt templates
-We ususally use prompt templates when we need to repeat a prompt for different inputs.
-
-- Instructions 
-  - Clear, direct commands that tell the AI what to do
-  - Need to be specific to ensure the LLM understands the task
-  - For example: "Classify the following customer review into neutral, negative, or positive sentiment."
-- Context 
-  -  Information that helps the LLM make sense of the instruction. 
-  -  Can be data, any relevant details that shape the AI's response
-  -  For example: "this review is part of feedback for a recently launched product"
--  Input data 
-   -  the actual data the LLM will process and is different from prompt to prompt
-   -  For example: "The product arrived late but the quality exceeded my expectations"
--  Output of model
-   -  the part of the prompt where the LLM's response is expected. It's a clear marker that tells the AI where to deliver its analysis.
-
-By combining these elements effectively, you can tailor LLMs to perform tasks ranging from answering queries and
-analyzing data to generating content. 
-
-
-##### Prompt engineering
-Prompt engineering is 
-- designing and refining the questions, commands, or statements to interact with the AI systems, particularly LLMs. 
-- The goal is to carefully craft clear, contextually rich prompts (not just asking questions) tailored to get the most relevant and accurate responses from the AI. 
-- This process is fundamental in fields ranging from customer service automation to advanced research and
-computational linguistics. 
+```python
+def get_current_time(location):
+    """Get the current time for a given location"""
+    print(f"get_current_time called with location: {location}")  
+    location_lower = location.lower()
+    
+    for key, timezone in TIMEZONE_DATA.items():
+        if key in location_lower:
+            print(f"Timezone found for {key}")  
+            current_time = datetime.now(ZoneInfo(timezone)).strftime("%I:%M %p")
+            return json.dumps({
+                "location": location,
+                "current_time": current_time
+            })
+  
+    print(f"No timezone data found for {location_lower}")  
+    return json.dumps({"location": location, "current_time": "unknown"})
+```
+Bind LLM with tools: 
+- Pass the schema directly, OR
+- Pass the function name if the function is decorated by `@tool`. LangChain generates the schema JSON and attach it to the model
 
 
-- directly influencing how effectively and accurately LLMs function. 
-- ensures LLMs to generate precise and relevant responses to the context. 
-- clearer prompts reduces misunderstandings. 
+```python
+llm_with_tools = llm.bind(tools)
+```
 
+```python
+messages = [HumanMessage(content = "What's the current time in San Francisco")]
+
+response = llm_with_tools.invoke(messages)
+print(response)
+```
+
+```o
+AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_UB8E8EujHpZSts4DkkujwXi7', 'function': {'arguments': '{"location":"San Francisco"}', 'name': 'get_current_time'}, 'type': 'function'}], 'refusal': None}, response_metadata= ... 
+```
+
+When using` llm.bind_tools(tools)` in LangChain, you are registering a collection of tools—which can include Python functions decorated with `@tool`, Pydantic classes, or raw JSON schemas—to the LLM:
+
+- LangChain converts Python functions or Pydantic classes into the JSON schema format required by the LLM provider (similar to the one we created above). This step is hidden. 
+- Raw JSON schema dictionaries can be passed directly to define tools.
+- `bind_tools()` attaches tool schema to the model. This lets the LLM understand what tools are available. When the LLM decides a tool is needed, it returns a structured tool call (`AIMessage.tool_calls`) instead of a regular text response.
+- The LLM does not execute the tool; it only suggests which tool to call and provides the arguments in JSON format.
+
+
+Append this response to the message history:
+
+```python
+messages.append(response_1)
+```
+
+Extract the tool calls, run it, append the result to the messages and pass messages to the LLM :
+
+```python
+# Handle function calls
+ if response.tool_calls:
+     for tool_call in response.tool_calls:
+         if tool_call["name"] == "get_current_time":
+
+             function_args = tool_call["args"]
+            # Run the function/tool
+             time_response = get_current_time(
+                 location=function_args.get("location")
+             )
+
+            messages.append(ToolMessage(
+                content = time_response, 
+                tool_call_id = tool_call['id'])
+            )
+ else:
+     print("No tool calls were made by the model.")  
+
+ # Second API call: Get the final response from the model
+ final_response = llm.invoke(messages)
+ final_response.content
+ ```
+
+ ```o
+ The current time in San Francisco is 09:24 AM.
+ ```
+
+Function Calling is at the heart of most, if not all agent tool use design, however implementing it from scratch can sometimes be challenging.
+
+
+## Building Trustworthy Agents
+
+Trustworthy agents are systems whose outputs are *reliable*, *safe*, *verifiable*, and *controllable*, especially when interacting with external tools or making decisions.
+
+1. Layer 1 — Input / User Control
+
+    - validate inputs
+    - restrict scope
+    - prevent prompt injection
+
+    Example:
+    - schema validation
+    - allow-listed intents
+
+2. Layer 2 — Planning / Reasoning 
+
+    Control how the agent thinks
+    Problems:
+    - hallucinated plans
+    - invalid task decomposition
+    
+    Mitigation:
+    - structured outputs (Pydantic / JSON schema)
+    - plan validation (e.g., DAG correctness like you did)
+    
+    👉 This is where your project is strong
+
+3. Layer 3 — Tool Use (VERY important)
+    
+    This is where real risk lives.
+    Risks:
+    - wrong tool usage
+    - malicious inputs to tools
+    - unsafe execution (e.g., Python)
+    
+    Mitigation:
+    - tool schema validation
+    - sandboxing (you used MCP sandbox → excellent)
+    - permissioning / scoped tools
+
+4. Layer 4 — Execution & Environment
+
+    - isolate execution
+    - prevent system crashes / abuse
+
+    Examples:
+    - sandbox environments
+    - rate limits
+    - resource constraints
+
+5. Layer 5 — Output Validation (CRITICAL)
+
+    This is where trust is actually enforced.
+
+    Techniques:
+    - secondary model (auditor / critic) ✅ (you implemented this)
+    - rule-based validation
+    - consistency checks with data sources
+
+    Pattern:
+    - Agent → Output → Validator → Retry / Fail
+
+6. Layer 6 — Monitoring & Observability
+    - trace decisions
+    - log tool usage
+    - detect failures
+
+    Tools:
+    - LangSmith
+    - structured logs
+
+7. Layer 7 — Human-in-the-loop (HITL)
+
+    For high-risk cases:
+    - escalation
+    - approval before execution
+
+##### Structured meta prompting system
+Design prompts in a controlled, programmatic, multi-layered way, instead of writing one big free-text prompt.
+
+Two key ideas:
+###### Structured
+Not raw text. 
+- Uses schemas, templates, fields, roles
+- Without structure:
+    - prompts are fragile
+    - easy to inject / override
+    - outputs are inconsistent
+- With structure:
+    - predictable behavior
+    - easier validation
+    - safer tool usage
+🔧 Concrete example (very important)
+
+Example: ❌ Unstructured prompt
+“Analyze NVIDIA and give a report with insights and charts.”
+
+Problems:
+- vague
+- no format
+- no control
+- hard to validate
+
+###### Structured meta prompting
+    
+Prompts that control how other prompts behave
+you’re not just asking for an answer—you’re guiding the process
+
+Instead, you define:
+- Prompt = template + rules + schema
+Example:
+- System Layer
+    - role: financial analyst
+    - constraints: no hallucination, cite sources
+- Task Layer
+    - break into steps:
+    - gather data
+    - analyze
+    - generate report
+- Output Schema
+```json
+    {
+    "summary": "...",
+    "risks": [...],
+    "metrics": {...}
+    }
+```
+Now the model:
+- follows a structure
+- produces machine-checkable output
+
+    In agent systems (this is key for interviews)
+
+Structured meta prompting is used to:
+1. Control reasoning
+
+    - step-by-step plans
+    - DAG tasks (you did this)
+2. Control tool usage
+    
+    - specify when to call tools
+    - enforce tool input schemas
+3. Control outputs
+
+    - JSON / Pydantic schemas
+    - deterministic parsing
+4. Prevent errors / attacks
+
+    - reduce prompt injection impact
+    - isolate instructions
+    - validate outputs
+
+🔗 Tie to your project (very strong move)
+You can say:
+In my system, I used structured meta prompting by enforcing schema-based communication between agents, defining clear roles and constraints in system prompts, and requiring structured outputs for planning and execution. This allowed me to validate plans, control tool usage, and reduce hallucinations.
+
+
+🧠 Clean interview answer (30–40 sec)
+Structured meta prompting is the practice of designing prompts as structured, multi-layered instructions rather than free text. It includes defining roles, constraints, reasoning steps, and output schemas so the model behaves predictably. In agent systems, this is critical for controlling planning, enforcing tool usage, and validating outputs. In my project, I used schema-based prompts and structured outputs to ensure reliable coordination between agents and reduce hallucinations.
+
+
+##### Attackers
+
+ Organize threats by surface:
+
+###### Task & Instruction Manipulation (Prompt Injection)
+
+Description: Attackers attempt to change the instructions or goals of the AI agent through prompting or manipulating inputs.
+
+Mitigation: Execute validation checks and input filters to detect potentially dangerous prompts before they are processed by the AI Agent. Since these attacks typically require frequent interaction with the Agent, limiting the number of turns in a conversation is another way to prevent these types of attacks.
+
+###### Access to Critical Systems
+
+Description: If an AI agent has access to systems and services that store sensitive data, attackers can compromise the communication between the agent and these services. These can be direct attacks or indirect attempts to gain information about these systems through the agent.
+
+Mitigation: AI agents should have access to systems on a need-only basis to prevent these types of attacks. Communication between the agent and system should also be secure. Implementing authentication and access control is another way to protect this information.
+
+###### Resource and Service Overloading
+
+Description: AI agents can access different tools and services to complete tasks. Attackers can use this ability to attack these services by sending a high volume of requests through the AI Agent, which may result in system failures or high costs.
+
+Mitigation: Implement policies to limit the number of requests an AI agent can make to a service. Limiting the number of conversation turns and requests to your AI agent is another way to prevent these types of attacks.
+
+###### Knowledge Base Poisoning
+
+Description: This type of attack does not target the AI agent directly but targets the knowledge base and other services that the AI agent will use. This could involve corrupting the data or information that the AI agent will use to complete a task, leading to biased or unintended responses to the user.
+
+Mitigation: Perform regular verification of the data that the AI agent will be using in its workflows. Ensure that access to this data is secure and only changed by trusted individuals to avoid this type of attack.
+
+
+###### Cascading Errors
+
+Description: AI agents access various tools and services to complete tasks. Errors caused by attackers can lead to failures of other systems that the AI agent is connected to, causing the attack to become more widespread and harder to troubleshoot.
+
+Mitigation: One method to avoid this is to have the AI Agent operate in a limited environment, such as performing tasks in a Docker container, to prevent direct system attacks. Creating fallback mechanisms and retry logic when certain systems respond with an error is another way to prevent larger system failures.
+
+**Human-in-the-Loop**: Another effective way to build trustworthy AI Agent systems is using a Human-in-the-loop. This creates a flow where users are able to provide feedback to the Agents during the run. Users essentially act as agents in a multi-agent system and by providing approval or termination of the running process.
+
+Building trustworthy AI agents requires careful design, robust security measures, and continuous iteration. By implementing structured meta prompting systems, understanding potential threats, and applying mitigation strategies, developers can create AI agents that are both safe and effective. Additionally, incorporating a human-in-the-loop approach ensures that AI agents remain aligned with user needs while minimizing risks. As AI continues to evolve, maintaining a proactive stance on security, privacy, and ethical considerations will be key to fostering trust and reliability in AI-driven systems.
+
+
+-----------
+
+## Multi Agents Design Patterns
+
+Multi agents are a design pattern that allows multiple agents to work together to achieve a common goal. This pattern is widely used in various fields, including robotics, autonomous systems, and distributed computing.
+
+There are many scenarios where employing multiple agents is beneficial especially in the following cases:
+
+- *Large workloads*: Large workloads can be divided into smaller tasks and assigned to different agents, allowing for parallel processing and faster completion. An example of this is in the case of a large data processing task.
+- *Complex tasks*: Complex tasks, like large workloads, can be broken down into smaller subtasks and assigned to different agents, each specializing in a specific aspect of the task. A good example of this is in the case of autonomous vehicles where different agents manage navigation, obstacle detection, and communication with other vehicles.
+*Diverse expertise*: Different agents can have diverse expertise, allowing them to handle different aspects of a task more effectively than a single agent. For this case, a good example is in the case of healthcare where agents can manage diagnostics, treatment plans, and patient monitoring.
+
+###### Advantages of Using Multi-Agents Over a Singular Agent
+
+A single agent system could work well for simple tasks, but for more complex tasks, using multiple agents can provide several advantages:
+
+- *Specialization*: Each agent can be specialized for a specific task. Lack of specialization in a single agent means you have an agent that can do everything but might get confused on what to do when faced with a complex task. It might for example end up doing a task that it is not best suited for.
+
+- *Scalability*: It is easier to scale systems by adding more agents rather than overloading a single agent.
+- *Fault Tolerance*: If one agent fails, others can continue functioning, ensuring system reliability.
+
+Let's take an example, let's book a trip for a user. A single agent system would have to handle all aspects of the trip booking process, from finding flights to booking hotels and rental cars. To achieve this with a single agent, the agent would need to have tools for handling all these tasks. This could lead to a complex and monolithic system that is difficult to maintain and scale. A multi-agent system, on the other hand, could have different agents specialized in finding flights, booking hotels, and rental cars. This would make the system more modular, easier to maintain, and scalable.
+
+Compare this to a travel bureau run as a mom-and-pop store versus a travel bureau run as a franchise. The mom-and-pop store would have a single agent handling all aspects of the trip booking process, while the franchise would have different agents handling different aspects of the trip booking process.
+
+###### Implementing the Multi-Agent Design Pattern
+
+Before you can implement the multi-agent design pattern, you need to understand the building blocks that make up the pattern.
+
+- *Agent Communication*: Agents for finding flights, booking hotels, and rental cars need to communicate and share information about the user's preferences and constraints. You need to decide on the protocols and methods for this communication. What this means concretely is that the agent for finding flights needs to communicate with the agent for booking hotels to ensure that the hotel is booked for the same dates as the flight. That means that the agents need to share information about the user's travel dates, meaning that you need to decide which agents are sharing info and how they are sharing info.
+- *Coordination Mechanisms*: Agents need to coordinate their actions to ensure that the user's preferences and constraints are met. A user preference could be that they want a hotel close to the airport whereas a constraint could be that rental cars are only available at the airport. This means that the agent for booking hotels needs to coordinate with the agent for booking rental cars to ensure that the user's preferences and constraints are met. This means that you need to decide how the agents are coordinating their actions.
+- *Agent Architecture*: Agents need to have the internal structure to make decisions and learn from their interactions with the user. This means that the agent for finding flights needs to have the internal structure to make decisions about which flights to recommend to the user. This means that you need to decide how the agents are making decisions and learning from their interactions with the user. Examples of how an agent learns and improves could be that the agent for finding flights could use a machine learning model to recommend flights to the user based on their past preferences.
+- *Visibility into Multi-Agent Interactions*: You need to have visibility into how the multiple agents are interacting with each other. This means that you need to have tools and techniques for tracking agent activities and interactions. This could be in the form of logging and monitoring tools, visualization tools, and performance metrics.
+- *Multi-Agent Patterns*: There are different patterns for implementing multi-agent systems, such as centralized, decentralized, and hybrid architectures. You need to decide on the pattern that best fits your use case.
+- *Human in the loop*: In most cases, you will have a human in the loop and you need to instruct the agents when to ask for human intervention. This could be in the form of a user asking for a specific hotel or flight that the agents have not recommended or asking for confirmation before booking a flight or hotel.
+
+##### Visibility into Multi-Agent Interactions
+
+It's important that you have visibility into how the multiple agents are interacting with each other. This visibility is essential for debugging, optimizing, and ensuring the overall system's effectiveness. To achieve this, you need to have tools and techniques for tracking agent activities and interactions. This could be in the form of logging and monitoring tools, visualization tools, and performance metrics.
+
+For example, in the case of booking a trip for a user, you could have a dashboard that shows the status of each agent, the user's preferences and constraints, and the interactions between agents. This dashboard could show the user's travel dates, the flights recommended by the flight agent, the hotels recommended by the hotel agent, and the rental cars recommended by the rental car agent. This would give you a clear view of how the agents are interacting with each other and whether the user's preferences and constraints are being met.
+
+Let's look at each of these aspects more in detail.
+
+- *Logging and Monitoring Tools*: You want to have logging done for each action taken by an agent. A log entry could store information on the agent that took the action, the action taken, the time the action was taken, and the outcome of the action. This information can then be used for debugging, optimizing and more.
+
+- *Visualization Tools*: Visualization tools can help you see the interactions between agents in a more intuitive way. For example, you could have a graph that shows the flow of information between agents. This could help you identify bottlenecks, inefficiencies, and other issues in the system.
+
+- *Performance Metrics*: Performance metrics can help you track the effectiveness of the multi-agent system. For example, you could track the time taken to complete a task, the number of tasks completed per unit of time, and the accuracy of the recommendations made by the agents. This information can help you identify areas for improvement and optimize the system.
+
+##### Multi-Agent Patterns
+
+All agent systems are built from combinations of:
+- Control pattern (who decides what: orchestrator vs distributed)
+- Communication protocol (how info moves: direct vs shared state)
+- State model (where info lives)
+- Execusion model (sync / async / parallel)
+
+
+
+Let's dive into some concrete patterns we can use to create multi-agent apps. Here are some interesting patterns worth considering:
+
+#### Orchestrator–Worker (Hierarchical)
+What it is:
+- One central controller (planner/scheduler)
+- Multiple specialized agents execute tasks
+
+Your project: ✅ This is your main pattern
+
+Why it matters:
+- Strong Control, predictable flow
+- Determinism
+- Easier debugging
+
+Tradeoff:
+- Less flexible
+- Bottleneck at orchestrator
+
+Communication Protocol:
+- Centralized command
+- Orchestrator → agent (task dispatch)
+- Agent → orchestrator (result)
+
+Typical Implementation:
+- Gunction calls
+- RPC / API calls
+- Message queue (task queue)
+
+State Model:
+- Central state store (graph state, DB)
+
+Execution:
+- Often async + parallel workers
+
+
+#### Multi-Agent Collaboration (Peer-to-Peer)
+What it is:
+- Agents communicate directly
+- No central controller
+
+Examples:
+- Debate systems
+- Collaborative reasoning
+
+Why it matters:
+- Flexibility
+- Emergent behavior
+
+Tradeoff:
+- Hard to control
+- Hard to debug
+
+Communication Protocol:
+- Direct messaging between agents
+- No central controller
+
+Typical Implementation:
+- Message passing
+- pub/sub systems
+- Shared conversation thread
+
+State Model:
+- Distributed or shared context
+
+Execution:
+- Asynchronous, often concurrent
+
+
+#### Shared State
+What it is:
+- Agents don’t talk directly
+- They read/write to shared state
+
+Your system: ✅ this is basically your graph state
+
+Why it matters:
+- Loose coupling
+- Scalability
+- Traceability
+
+This is a strong signal if you say it right:
+“Agents communicate through structured shared state rather than direct messaging”
+
+
+##### Some subclass patterns
+
+###### Orchestrator–Worker (Hierarchical)
+What it is:
+- One central controller (planner/scheduler)
+- Multiple specialized agents execute tasks
+
+Your project: ✅ This is your main pattern
+
+Why it matters:
+- Control
+- Determinism
+- Easier debugging
+
+Tradeoff:
+- Less flexible
+- Bottleneck at orchestrator
+
+###### Group chat
+
+In this pattern, each agent represents a user in the group chat, and messages are exchanged between agents using a messaging protocol. The agents can send messages to the group chat, receive messages from the group chat, and respond to messages from other agents.
+
+This pattern is useful when you want to create a group chat application where multiple agents can communicate with each other:
+- Multiple agents share a conversation thread
+- Each agent can read previous messages and respond
+
+Typical use cases for this pattern include team collaboration, customer support, and social networking. Example: a Slack channel with multiple agents and messages are the shared context
+
+This pattern can be implemented using a centralized architecture where all messages are routed through a central server (such as a shared state design), or a decentralized architecture where messages are exchanged directly (Multi-Agent Collaboration (peer-to-peer))
+
+
+###### Hand-off
+
+In this pattern, each agent represents a task or a step in a workflow, and agents can hand off tasks to other agents based on predefined rules. One agent passes control to another agent often based on:
+- Task type
+- Failure
+- Specialization
+
+Example:
+- Router → sends to Research agent
+- Research → hands off to Analyst
+
+Where it fits:
+- 👉 Orchestrator–Worker (if controlled centrally)
+- 👉 Planner–Executor (task routing)
+
+Mental model:
+- controlled delegation
+
+In your system: ✅ you already do this via scheduler
+
+Typical use cases for this pattern include customer support, task management, and workflow automation.
+
+Interview phrasing:
+“Handoff is essentially controlled task routing between specialized agents.”
+
+
+###### Collaborative Filtering (⚠️ different meaning here)
+This one comes from recommender systems. This pattern is useful when you want to create an application where multiple agents can collaborate to make recommendations to users. Why you would want multiple agents to collaborate is because each agent can have different expertise and can contribute to the recommendation process in different ways.
+
+In agent context, it usually means:
+- Multiple agents produce outputs
+- System selects / aggregates best result
+
+Examples:
+- Voting
+- Ranking
+- Ensemble reasoning
+
+Let's take an example where a user wants a recommendation on the best stock to buy on the stock market.
+
+- Industry expert:. One agent could be an expert in a specific industry.
+- Technical analysis: Another agent could be an expert in technical analysis.
+- Fundamental analysis: and another agent could be an expert in fundamental analysis. By collaborating, these agents can provide a more comprehensive recommendation to the user.
+
+
+**Scenario: Refund process**
+
+Following are some agents that could be involved in the refund process:
+
+- Customer agent: This agent represents the customer and is responsible for initiating the refund process.
+- Seller agent: This agent represents the seller and is responsible for processing the refund.
+- Payment agent: This agent represents the payment process and is responsible for refunding the customer's payment.
+- Resolution agent: This agent represents the resolution process and is responsible for resolving any issues that arise during the refund process.
+- Compliance agent: This agent represents the compliance process and is responsible for ensuring that the refund process complies with regulations and policies.
+
+General agents: These agents can be used by other parts of your business.
+
+- Shipping agent: This agent represents the shipping process and is responsible for shipping the product back to the seller. This agent can be used both for the refund process and for general shipping of a product via a purchase for example.
+- Feedback agent: This agent represents the feedback process and is responsible for collecting feedback from the customer. Feedback could be had at any time and not just during the refund process.
+- Escalation agent: This agent represents the escalation process and is responsible for escalating issues to a higher level of support. You can use this type of agent for any process where you need to escalate an issue.
+- Notification agent: This agent represents the notification process and is responsible for sending notifications to the customer at various stages of the refund process.
+- Analytics agent: This agent represents the analytics process and is responsible for analyzing data related to the refund process.
+- Audit agent: This agent represents the audit process and is responsible for auditing the refund process to ensure that it is being carried out correctly.
+- Reporting agent: This agent represents the reporting process and is responsible for generating reports on the refund process.
+- Knowledge agent: This agent represents the knowledge process and is responsible for maintaining a knowledge base of information related to the refund process. This agent could be knowledgeable both on refunds and other parts of your business.
+- Security agent: This agent represents the security process and is responsible for ensuring the security of the refund process.
+- Quality agent: This agent represents the quality process and is responsible for ensuring the quality of the refund process.
+- There's quite a few agents listed previously both for the specific refund process but also for the general agents that can be used in other parts of your business. 
+
+
+##### Assignment
+
+Design a multi-agent system for a customer support process. Identify the agents involved in the process, their roles and responsibilities, and how they interact with each other. Consider both agents specific to the customer support process and general agents that can be used in other parts of your business.
+
+*Possible Solution*: The model could consists of a front desk agent that takes user query. Figures out the user intention and then routes the request to specialized agents. 
+
+- Front Desk (Router / Orchestrator)
+Responsibilities:
+    - Classify intent
+    - Extract entities
+    - Route to correct domain agent
+
+-  Domain Agents (Order, Return, Shipping, Recommendation)
+Responsibilities:
+    - Execute task
+    - Call tools (APIs, DBs)
+    - MAY request additional info from front desk
+
+- Controlled Handoff (important)
+Instead of:
+- agents directly calling other agents
+Say:
+    - “If a domain agent needs another capability, it returns a structured request to the orchestrator, which then routes to the next agent.”
+
+👉 This keeps:
+- control centralized
+- flow traceable
+
+- User Interaction Loop
+If missing info:
+    - agent → orchestrator → user
+    - user response → routed back
+
+🧠 What pattern this becomes
+- Orchestrator–Worker (core)
+- Tool-using agents
+- optional Evaluator (for response validation)
+
+🔥 Why your original idea is still valuable
+This part:
+“agents may need others to complete tasks”
+That’s correct.
+
+
+You just need to express it as:
+multi-step orchestration instead of agent autonomy
+🧭 How to say this in an interview (clean)
+“I’d design it with a front-desk orchestrator that classifies user intent and routes to specialized agents like orders, returns, or recommendations. Each agent handles its domain and can request further actions through the orchestrator, enabling multi-step workflows while keeping control centralized and traceable.”
+
+
+“In more advanced setups, you could allow limited agent-to-agent communication, but I’d still enforce structured protocols or shared state to prevent chaos.”
+
+
+🔑 Key insight
+Your intuition is right:
+- tasks are not isolated
+
+But the design principle is:
+- flexibility at the workflow level, control at the system level
+
+
+#### A2A Protocol
+
+A2A exists for flexibility—but it comes with tradeoffs, so it’s used selectively, not by default.
+
+A2A (agent-to-agent communication) is useful when:
+
+- You don’t have a single strong orchestrator
+    - Decentralized systems
+    - Multiple services owned by different teams
+    - No global controller
+    👉 Example: microservices-like agent ecosystem
+- You want specialization + negotiation
+Agents may:
+    - Debate
+    - Refine each other’s outputs
+    - Collaborate dynamically
+
+    👉 Example:
+    - Research agent ↔ critique agent
+    - Planner ↔ executor feedback loop
+- You need scalability across domains
+Instead of:
+    - One orchestrator knowing everything
+
+    You allow:
+    - Agents to discover and interact with other capabilities
+
+⚠️ Why A2A is *NOT* the default
+Because it introduces real problems:
+- ❌ Loss of control
+    - who is responsible for the final output?
+- ❌ Hard to debug
+    - chains of interactions become unclear
+- ❌ Risk of loops / runaway behavior
+- ❌ Harder to enforce constraints (security, cost, latency)
+
+🧭 So when SHOULD you use A2A?
+Use it when:
+- ✅ Collaboration is the goal
+    - brainstorming
+    - multi-perspective reasoning
+- ✅ Agents are peers (not hierarchical)
+    - no clear “boss”
+- ✅ System is exploratory, not transactional
+
+🧭 When to AVOID A2A (your customer support case)
+Customer support is:
+- Structured
+- Transactional
+- Needs reliability
+- Needs auditability
+
+👉 So:
+- Orchestrator > A2A
+
+
+🔑 The best answer in interviews
+If asked:
+“why not let agents talk to each other?”
+
+You say:
+“Agent-to-agent communication adds flexibility, but I’d avoid it in structured workflows like customer support because it reduces control and traceability. I’d use centralized orchestration for reliability, and only introduce A2A in cases like collaborative reasoning or when agents need to negotiate or refine outputs.”
+
+
+You can add:
+“Even with A2A, I’d enforce structured protocols or shared state to keep interactions bounded.”
+
+That shows:
+- you’re not dogmatic
+- you understand control vs flexibility
+
+🔁 Connect back to your design
+“agents can request additional actions, but orchestration should manage execution flow”
+
+🧘 One sentence to carry
+A2A is for flexibility—but orchestration is for reliability.
+
+##### Summary
+
+###### Orchestrator Architecture (Centralized Control)
+
+🔧 Structure
+- One central controller (router / planner)
+- Agents are workers
+- No direct agent-to-agent calls
+
+🔄 Flow
+- User → Orchestrator → Agent → Orchestrator → User
+
+✅ Strengths
+- predictable
+- easy to debug
+- strong control (security, cost, latency)
+- clear ownership
+
+❌ Weaknesses
+- bottleneck at orchestrator
+- less flexible
+- orchestrator becomes complex
+
+📦 Example (Customer Support)
+User:
+- “Cancel my order and refund”
+
+Flow:
+- Orchestrator → Order Agent (cancel)
+- Orchestrator → Payment Agent (refund)
+- Everything is centrally coordinated.
+
+🎯 When to use
+- Transactional systems
+- Production APIs
+- Regulated environments
+
+###### A2A Architecture (Decentralized)
+
+🔧 Structure
+- No central controller
+- Agents communicate directly
+
+🔄 Flow
+- User → Agent A → Agent B → Agent C → … → User
+
+✅ Strengths
+- Flexible
+- Scalable across domains
+- Supports collaboration / reasoning
+
+❌ Weaknesses
+- Hard to debug
+- Unclear control flow
+- Risk of loops
+- Harder to enforce constraints
+
+📦 Example (Research System)
+User:
+“Analyze NVIDIA”
+
+Flow:
+- Research Agent → Finance Agent
+- Finance Agent → News Agent
+- News Agent → back to Research
+
+Agents dynamically collaborate.
+
+🎯 When to use
+- research / exploration
+- multi-perspective reasoning
+- open-ended tasks
+
+
+Interview-level answer (clean)
+If asked:
+“Compare A2A vs orchestrator vs hybrid”
+
+You say:
+“Orchestrator-based systems provide strong control and are ideal for structured workflows like customer support. A2A systems enable flexible collaboration but are harder to control and debug. In practice, most production systems use a hybrid approach—centralized orchestration with limited agent-to-agent interaction—to balance reliability and flexibility.”
+
+
+⚠️ Pure A2A creates new problems
+If you let agents freely call each other:
+- ❌ Who owns the workflow?
+- ❌ How do you trace what happened?
+- ❌ How do you prevent loops?
+- ❌ How do you enforce auth / data boundaries?
+
+So yes, it’s faster—but it can get messy fast.
+
+######  The middle ground: Controlled A2A
+This is what I meant earlier—and it’s exactly what you’re reaching for. It means:
+- Agents can interact directly, but within constraints defined by the system
+
+🧭 What “controlled” actually looks like
+1. Predefined interaction graph
+
+    Instead of any agent can call any agent
+    You define:
+    - Order Agent → can call Payment Agent
+    - Recommendation Agent → can call Inventory Agent
+    
+    👉 bounded communication
+2. Structured contracts (very important)
+
+    Agents don’t just “talk”—they:
+    - Send structured requests (schemas)
+    - Receive structured responses
+   
+    👉 prevents chaos
+
+3. Observability layer (hidden orchestrator)
+
+    Even if agents talk directly:
+    - All interactions are logged
+    - Trace IDs propagate
+    - System can reconstruct flow
+    
+    👉 control without blocking execution
+
+4. Timeouts / limits / guards
+
+- Max hops
+- Max retries
+- Cost limits
+
+👉 prevents runaway chains
+
+5. Optional “soft orchestrator”
+
+    Not in the loop for every call—but:
+    - Defines policies
+    - Enforces constraints
+    - Intervenes on failure
+
+This is Not pure A2A. This is 
+- a hybrid system with decentralized execution and centralized governance
+
+That’s actually very strong design thinking.
+📦 Example (your customer support case)
+
+User:
+“Cancel order and refund”
+
+Flow:
+- Front Desk → Order Agent
+- Order Agent → Payment Agent (direct call)
+- Payment Agent → returns result
+- Order Agent → final response
+
+Payment Agent:
+- Applies policies
+- Decides refund strategy
+- Calls payment tools
+
+Payment Agent decides:
+- Eligibility (refund window?)
+- Fraud checks
+- Partial vs full refund
+- Retry strategies
+- Fallback payment method
+
+Front desk is NOT in the middle.
+
+But:
+- Calls are allowed by policy
+- Interactions are logged
+- Cchemas enforced
+
+###### ⚖️ Tradeoff summary
+Approach	| Latency |	Control	| Complexity
+-------- | ---------- | ---------- | --------- 
+Orchestrator (naive)	| ❌ slower	| ✅ high	| ✅ simple
+A2A (free)	| ✅ fast	| ❌ low 	| ❌ chaotic
+Controlled A2A (hybrid) |	✅ fast	| ✅ medium–high	| ⚠️ complex
+
+🧠 What interviewers want to hear
+Not:
+- “orchestrator is bad”
+
+But:
+
+A centralized orchestrator can introduce latency in highly interactive workflows, so I’d allow controlled agent-to-agent communication for efficiency while maintaining observability and constraints.
+
+That’s a very strong answer.
+
+🔑 One sentence to carry
+Remove the orchestrator from the data path, not from the control plane.
+
+
+## Deploy AI Agents into Production
+
+
+
+---------------------------------
+----------------
+---------
+-----
+---
 
 ## Introduction to LangChain
 
@@ -1302,7 +2362,6 @@ chain = prompt | mixtral_llm | output_parser
 
 chain.invoke({"subject": "ice cream flavors"})
 ```
-<br>
 
 ```o
 ['Cholocate', 'Vanilla', 'Strawberry', 'Mint Chocolate Chip', 'Butter Pecan']

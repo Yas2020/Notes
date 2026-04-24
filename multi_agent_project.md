@@ -28,7 +28,7 @@ Cross-cutting nodes:
 - HITL Interrupt
 - Checkpointer
 
-###### Concepts that this project implement
+###### Concepts Implemented in this Project
 - Multi-agent communication
 - Tool calling
 - Planning + task decomposition
@@ -38,30 +38,36 @@ Cross-cutting nodes:
 - Graph-based workflow orchestration
 - MCP multi-agent control patterns (planner/executor/evaluator architecture)
 
-These are exactly the things people mean when they talk about agentic AI and make this project comprehensive.
+<!-- These are exactly the things people mean when they talk about agentic AI and make this project comprehensive. -->
 
 #### Core Graph Design
 ##### Goal Interpreter
-Implements user input validation against the topic
+Clarifies user intention
 Responsibilities:
 
-1. User query validator:
-
+- User query validator:
     - Validates user query for relevance, safety and clarity
     - If not met, activated HITL to ask user to revise their query
 
-2. Parses user request. 
-
+- Asks user to rethink their query if not clear or valid
     Example:
     - Topic: Investment Report/Recommendation
     - User query: Analyze NVIDIA and produce an investment research summary
 
 ##### Orchestrator
-Implements Orchestrator-Worker pattern. The "Planning" Phase Separates Planning from Execution which is a hallmark of "Reasoning" agents. 
+Implements Orchestrator-Worker pattern. The "Planning" Phase Separates Planning from Execution which is a hallmark of "Reasoning" agents. In other words, this pattern separates what to do (planning) from how to do it (execution), making agents more modular, testable, and easier to extend.
 
 Responsibilities:
 
-###### Create plan
+###### Planner Agent
+Creates plan by breaking down the goal into smaller subtasks will be implemented by worker agents.  Task decomposition is the core of the planning design pattern. Instead of asking a single agent to handle a complex request end-to-end, we break the problem into smaller, well-defined subtasks. Each subtask is assigned to a specialist agent (e.g., flights, hotels, activities) with clear priorities and dependency ordering.
+
+This approach provides several benefits:
+- Clarity: each subtask has a single responsibility.
+- Parallelism: independent subtasks can run concurrently.
+- Reliability: failures are isolated to individual subtasks.
+- Budget tracking: costs are estimated per subtask and rolled up.
+
 - Planner subgraph
     - Breaks a user query into tasks
     - Decides which agents/tools are needed
@@ -73,27 +79,26 @@ Responsibilities:
             - Plan is an acyclic graph
             - Dependencies are not missing or ambiguous
     
-    Planner decomposes goal.
-    
-    Example task plan:
-    1. Research event: web search
-    
-    2. Collect financial indicators: web search or vector database
-    
-    3. Perform quantitative analysis: performs  simulations or generates charts or plots
-    
-    4. Analyst: Evaluate sources and results from quant agent, finds discrepancies between research data and quantitative results
-    
-    5. Generate report: aggregate all the result into a summary report that might make a financial advices
+Planner decomposes goal. 
+
+Example task plan:
+-  *Research event*
+    - Collect financial indicators: web search or vector database
+- *Quantitative analysis*
+    - performs  simulations or generates charts or plots
+- *Auditor*
+    - Evaluate sources and results from quant agent, finds discrepancies between research data and quantitative results
+- *Analyst*
+    - Generate report. aggregate all the result into a summary report that might make a financial advices
 
 
 ###### Scheduler Node
-Marks task pending → ready → running before dispatch them to agents. But before this, it checks if the dependent task are marked "completed" by agents.
+Marks tasks `pending → ready → running` before dispatching them to agents. But before this, it checks if the dependent tasks are marked "completed" by agents.
 
-- Scheduler:
-    - Selects ready tasks (task dependencies are complete)
-    - Assigns tasks to agents
-    - Manages task status
+Scheduler:
+- Selects ready tasks (task dependencies are complete)
+- Assigns tasks to agents
+- Manages task status
 
 
 Graph Flow
@@ -111,25 +116,22 @@ Task Scheduler
 Loop continues until all tasks are completed.
 
 ###### Router Edge
-A conditional edge to route tasks to Agents and back to the Scheduler
-- Route tasks
-    - Fans out tasks to the corresponding agents in parallel
-    - When agents return their updates, graph flows back to the scheduler to send the next batch of tasks in parallel
+A conditional edge to route tasks to Agents and back to the Scheduler. It
+- Fans out tasks to the corresponding agents in parallel
+- When agents return their updates, graph flows back to the scheduler to send the next batch of tasks in parallel
 
 
 
-#### Worker Agents
+##### The Core Architecture of Worker Agents
 Workers receive tasks from the scheduler.
 
-##### The Core Architecture
+In a standard RAG (Retrieval-Augmented Generation) setup, the flow is linear. In the investment graph, the agents can "think", fetch data, realize it needs more context, and go back to fetch more.
 
-In a standard RAG (Retrieval-Augmented Generation) setup, the flow is linear. In your investment graph, the agent can "think," fetch data, realize it needs more context, and go back to fetch more.
+- *State*: This is the "shared memory". It could include the ticker symbol, a collection of financial news, raw SEC filings, and the current draft of the investment thesis. These are Artifacts.
 
-- State: This is your "shared memory." It should include the ticker symbol, a collection of financial news, raw SEC filings, and the current draft of the investment thesis.
+- *Nodes*: These are the workers (Python functions or LLM calls).
 
-- Nodes: These are the workers (Python functions or LLM calls).
-
-- Edges: These define the logic (e.g., "If the data is insufficient, go back to the Search node; if it's ready, go to the Analyst node").
+- *Edges*: These define the logic of how agents interact (e.g., "If the data is insufficient, go back to the Search node; if it's ready, go to the Analyst node").
 
 ######  Possible Subgraph Nodes
 
@@ -143,9 +145,9 @@ Fundamental Scraper |	Parses 10-K and 10-Q filings for revenue, debt-to-equity, 
 Risk Auditor	| Specifically looks for "red flags" or bearish indicators to avoid bias.
 Investment Reporter	| Synthesizes all the above into a final recommendation (Buy/Hold/Sell).
 
-But we kept it simpler: a research agent which is a separate agent from this subgraph collect all the live data the quant agent needs (The "Eyes").
+But I kept it simpler: a research agent which is a separate agent from this subgraph collect all the live data the quant agent needs (The "Eyes").
 
-#### Implementing Agents
+###### Implementing Agents
 Keep the following in mind when implementing agents:
 
 1. Clear separation of responsibilities
@@ -243,58 +245,7 @@ This is your "Calculation" agent. It should never "hallucinate" math; it should 
 - Role: Transforms raw financial statements into visualizations, charts, or complex ratio analyses
 
 ###### Auditor/Critic/Evaluator Agent
-This agent is auditing the quant analyst work. If not passed, it generates a feedabck and returns the flow to the quant agent to correct its output. It retires up to a MAX_ITERATION. 
-
-### Toolset for agnets?
-
-MCP allows you to offload the "heavy lifting" of tool integration (like connecting to real-time financial APIs, local databases, or secure sandboxes) to a standardized layer. Agents access external capabilities through MCP servers, which decouple tool execution from reasoning. This allows tools to be added or scaled independently.
-
-Task-scoped tool availability
-Instead of exposing all tools to the agent all the time, we make tools available based on the tsaks.  Agents have access only to tools related to the task they do. Benefits:
-1. Reduces hallucinated tool calls
-2. Forces clearer task boundaries
-
-
-###### Why MCP ?
-- **Tool Decoupling**: Your agents stay "thin." Instead of importing heavy libraries like yfinance or pandas into every agent file, the agent simply calls a tool hosted on the MCP server.
-- **Standardization**: You can use the same MCP server for your Researcher (Search/News), Quant (Python/Analysis), and Vector DB (RAG) agents. 
-- **Local vs. Remote**: You can run an MCP server locally to handle sensitive financial data (like private portfolios) while the LLM runs in the cloud. 
-
-###### How to map MCP to your 4 Agents:
-Agent	| Suggested MCP Server/Tool |
--------- | -----------
-Investment Researcher	| Brave Search or Tavily MCP for real-time web data and news as external knowledge. Market Data MCP Tools:<ul><li>`get_stock_price(ticker)`<li>`get_company_profile(ticker)`<li>`get_financials(ticker)`<ul>
-Quant	| Sequential Thinking or Python REPL MCP to execute calculations without hallucinations. 
-Vector DB	| RAG integration via MCP: FAISS or Chroma or Postgres or Pinecone MCP to query your internal knowledge base via standardized SQL/Vector calls.<ul><li>`search_documents(query)`<li>`get_document(id)`<ul> 
-Analyst	| Memory MCP to maintain "long-term" insights about specific companies across different research threads.
-
-> Note: Add *structured tool responses*.
-Instead of returning raw text: 
->```json
->{
->  "ticker": "NVDA",
->  "price": 912.3,
->  "currency": "USD",
->  "timestamp": "..."
->}
->```
->That shows schema discipline in agent systems. When the MCP server returns a response, validate it against a schema before feeding it back to the LLM.
-
-
-
-To stay on the cutting edge, use **Streamable HTTP**, which was introduced in the March 2025 MCP specification update. It is the modern, performant standard that officially deprecates the older HTTP+SSE transport. 
-
-###### Why Streamable HTTP is the best choice?
-- Single-Endpoint Efficiency: Unlike SSE, which required two separate endpoints (one for streaming and one for posting), Streamable HTTP uses a single URL for all bidirectional messaging.
-- Performance: Benchmarks show it can handle ~300 requests per second, nearly 10x faster than the previous SSE implementation.
-- Production Readiness: It is far more firewall and load-balancer friendly because it uses standard HTTP patterns rather than fragile, long-lived streaming connections.
-- Stateless Operations: It allows servers to scale horizontally more easily and supports optional session resumption via a Mcp-Session-Id header. 
-
-
-<!-- ##### How to use it in your Researcher Node
-To implement this in your project using the `LangChain MCP Adapter`, you will configure the connection with the `streamable_http` transport. 
-
- -->
+This agent is auditing the quant analyst work. If not passed, it generates a feedback and returns the flow to the quant agent to correct its output. It retires up to a MAX_ITERATION. 
 
 
 #### Research Subgraph
@@ -346,7 +297,7 @@ It could have more nodes such as:
 Trend Analyzer
 Risk Detector
 ```
-Analayst subgraph transforms research data into insights.
+Analyst subgraph transforms research data into insights.
 Outputs:
 ```ini
 insights
@@ -362,16 +313,16 @@ Implements Evaluator-Optimizer pattern.
     Optimizer Agent
     ```
 - Evaluator uses rubric:
-```ini
-source reliability
-analysis coherence
-data consistency
-coverage
-```
+    ```ini
+    source reliability
+    analysis coherence
+    data consistency
+    coverage
+    ```
 If score low → send to optimizer.
 - Optimizer refines results.
 
-Could be a subgraph on it own:
+Could be a subgraph on its own:
 ##### Evaluator-Optimizer (Subgraph-Level)
 
 Placement: A standalone evaluation/ subgraph.
@@ -420,6 +371,46 @@ Example:
     Conditional edge which routes the task from Quant node back to the Quant node before it reaches the Auditor if deterministic requirements are not met. For example, code output is empty or agent didn't call the `execute_python_code` tool
     - **Router Auditor Edge**
     Conditional edge which checks if max retires exhausted, routes the task to the scheduler otherwise returns thanks to the Quant node with Auditor feedback 
+
+#### Toolset for Agnets
+
+MCP allows you to offload the "heavy lifting" of tool integration (like connecting to real-time financial APIs, local databases, or secure sandboxes) to a standardized layer. Agents access external capabilities through MCP servers, which decouple tool execution from reasoning. This allows tools to be added or scaled independently.
+
+###### Task-scoped tool availability
+Instead of exposing all tools to the agent all the time, we make tools available based on the tasks.  Agents have access only to tools related to the task they do. 
+
+Benefits:
+- Reduces hallucinated tool calls
+- Forces clearer task boundaries
+
+
+###### Why MCP ?
+- **Tool Decoupling**: Your agents stay "thin." Instead of importing heavy libraries like yfinance or pandas into every agent file, the agent simply calls a tool hosted on the MCP server.
+- **Standardization**: You can use the same MCP server for your Researcher (Search/News), Quant (Python/Analysis), and Vector DB (RAG) agents. 
+- **Local vs. Remote**: You can run an MCP server locally to handle sensitive financial data (like private portfolios) while the LLM runs in the cloud. 
+
+###### Possible Map MCP to 4 Agents:
+Agent	| Suggested MCP Server/Tool |
+-------- | -----------
+Investment Researcher	| Brave Search or Tavily MCP for real-time web data and news as external knowledge. Market Data MCP Tools:<ul><li>`get_stock_price(ticker)`<li>`get_company_profile(ticker)`<li>`get_financials(ticker)`<ul>
+Quant	| Sequential Thinking or Python REPL MCP to execute calculations without hallucinations. 
+Vector DB	| RAG integration via MCP: FAISS or Chroma or Postgres or Pinecone MCP to query your internal knowledge base via standardized SQL/Vector calls.<ul><li>`search_documents(query)`<li>`get_document(id)`<ul> 
+Analyst	| Memory MCP to maintain "long-term" insights about specific companies across different research threads.
+
+> Note: Add *structured tool responses*.
+Instead of returning raw text: 
+>```json
+>{
+>  "ticker": "NVDA",
+>  "price": 912.3,
+>  "currency": "USD",
+>  "timestamp": "..."
+>}
+>```
+>That shows schema discipline in agent systems. When the MCP server returns a response, validate it against a schema before feeding it back to the LLM.
+
+
+
 
 
 ### Best Patterns for Multi Agent Architectures
@@ -498,25 +489,22 @@ If exceeded → terminate workflow. This prevents agent loops, a real production
 ```ini
 state["token_usage"]
 ```
-Your *Token Monitor node* checks before scheduling new tasks.
-
-Token Monitoring as a First-Class Citizen: This addresses FinOps. It shows you care about the company’s cloud bill, not just the "coolness" of the AI. This shows production engineering awareness. 
+Your *Token Monitor node* checks before scheduling new tasks. Token Monitoring as a First-Class Citizen: This addresses FinOps. It shows you care about the company’s cloud bill, not just the "coolness" of the AI. This shows production engineering awareness. 
 
 
 ##### Human-in-the-Loop (HITL)
 
-The "Human-in-the-loop" Break
+Investment decisions are high-stakes. LangGraph allows you to add a breakpoint. The graph can do all the research, pause, and wait for you to "approve" the data before it spends tokens on the final synthesis. This is the *Human-in-the-loop* break.
 
-Investment decisions are high-stakes. LangGraph allows you to add a breakpoint. The graph can do all the research, pause, and wait for you to "approve" the data before it spends tokens on the final synthesis.
 Example:
 When system detects high uncertainty or high-impact decision:
-- Graph pauses.
+- Graph pauses
 - User approves:
     - Continue
     - Revise
     - Terminate
 
-I implemented this at user query validator node. If the query is not relevant to the topic, not safe, not clear, the graph interrupts the flow and asks user to revise the query. LangGraph supports this with **interrupts**.
+I implemented this at user query validator node. If the query is not relevant to the topic, not safe, not clear, the graph interrupts the flow and asks user to revise the query. LangGraph supports this with *interrupts*.
 
 This shows safe AI design.
 
@@ -536,12 +524,8 @@ This shows safe AI design.
     ```
 - Then continue workflow.
 
-###### HITL (State-Level / Breakpoint)
 
-- Placement: It is not a "folder"—it is a functional gate between subgraphs in your engine.py.
-- Technical implementation: In LangGraph, you don't "build" a HITL node in the same way. You define a **Breakpoint**.
-
-In your `graph_builder.py`, you will compile the graph with an `interrupt_before=["report_node"]`. This tells the system: "Save everything to the DB and stop right here until a human sends a 'Resume' command." Handle HITL as a configuration in your main `engine.py` using LangGraph's `interrupt_before` or `interrupt_after` features.
+Define a *breakpoint*. In your `graph_builder.py`, compile the graph with an `interrupt_before=["report_node"]`. This tells the system: "Save everything to the DB and stop right here until a human sends a 'Resume' command".
 
 
 ###### A Logic Flow with HITL & Evaluation
@@ -575,20 +559,16 @@ Here is a sequence for your `evaluation_graph.py` where human interfere when age
 
 It should be a State Gate placed at high-risk junctions. The three best places for HITL in your architecture:
 
-- Post-Planning: After the `planning_graph.py` finishes, the agent says: "I plan to search these 5 sources and run a Monte Carlo simulation with these parameters. Proceed?" This prevents wasted tokens on a bad plan.
+- *Post-Planning*: After the planning finishes, the agent says: "I plan to search these 5 sources and run a Monte Carlo simulation with these parameters. Proceed?" This prevents wasted tokens on a bad plan.
 
-- The "Stuck" Loop (Escalation): Inside your `evaluation_graph.py`, if the Evaluator rejects the Optimizer's work 3 times in a row (an "Infinite Loop"), the graph should interrupt and ask a human for guidance.
+-  *Escalation*: stuck loop. If the evaluator rejects the Optimizer's work 3 times in a row (an "Infinite Loop"), the graph should interrupt and ask a human for guidance.
 
-- Final Sign-off: After the `report_graph.py` generates the final PDF, but before it is "published" or emailed.
-
-- HITL Gate: If the loop fails 3x OR if the report is ready for final sign-off, the graph Interrupts.
-
-- Report Subgraph: Once the human clicks "Approve," the graph resumes and formats the final PDF.
+- *Final Sign-off*: Before the final report is generated or after the final report is generated, but before it is published or emailed. Once the human clicks "Approve" the graph resumes and formats the final PDF.
 
 
 #####  MCP Servers
 
-###### The MCP Server (FastMCP)
+<!-- ###### The MCP Server (FastMCP) -->
 To set up a modern, performant MCP system for your investment research graph, we will use `FastMCP` for the server and the `LangChain MCP Adapter` for your agents.
 
 FastMCP handles the protocol complexity for you and supports the latest Streamable HTTP transport by default. For your use case, the best path is to use FastMCP Python SDK. It handles the `JSON-RPC` complexity for you and lets you focus on the logic. Instead of hard-coding tool logic into your agent, you are building a standardized, decoupled interface.
@@ -604,6 +584,19 @@ Advantages of SSE/HTTP:
 
 - **Observability**: You can put a Load Balancer or an API Gateway in front of it.
 
+To stay on the cutting edge, use **Streamable HTTP**, which was introduced in the March 2025 MCP specification update. It is the modern, performant standard that officially deprecates the older HTTP+SSE transport. 
+
+###### Why Streamable HTTP?
+- Single-Endpoint Efficiency: Unlike SSE, which required two separate endpoints (one for streaming and one for posting), Streamable HTTP uses a single URL for all bidirectional messaging.
+- Performance: Benchmarks show it can handle ~300 requests per second, nearly 10x faster than the previous SSE implementation.
+- Production Readiness: It is far more firewall and load-balancer friendly because it uses standard HTTP patterns rather than fragile, long-lived streaming connections.
+- Stateless Operations: It allows servers to scale horizontally more easily and supports optional session resumption via a Mcp-Session-Id header. 
+
+
+<!-- ##### How to use it in your Researcher Node
+To implement this in your project using the `LangChain MCP Adapter`, you will configure the connection with the `streamable_http` transport. 
+
+ -->
 
 ###### The "Dual-Mode" Server
 
@@ -632,7 +625,7 @@ if __name__ == "__main__":
 
 Adding MCP on top of everything else turns this project from a normal agent system into a modern and forward-looking system. This is exactly the kind of architecture that makes interviewers lean forward. Let's design the actual LangGraph node structure so you can implement it cleanly. We'll include MCP using Model Context Protocol and build the orchestration with LangGraph application equipped with  MCP clients.
 
-- Instead of hardcoding tools, agents discover them through MCP servers.
+- Instead of hardcoding tools, agents discover them through MCP servers. This demonstrates **dynamic tool discovery**. 
 
 - Architecture:
     ```ini
@@ -646,11 +639,10 @@ Adding MCP on top of everything else turns this project from a normal agent syst
     ├ document_lookup
     └ python_execution
     ```
-    This demonstrates **dynamic tool discovery**. Very modern architecture.
+    
 
-- The Role of mcp_servers/:
-
-    Instead of importing your search functions directly into your agents, you run them as a separate process. This shows you understand Micro-service architecture. Your agents don't care how the web search works; they just know the MCP protocol.
+<!-- Instead of importing your search functions directly into your agents, you run them as a separate process. 
+This shows you understand Micro-service architecture. Your agents don't care how the web search works; they just know the MCP protocol. -->
 
 
 #####  Retry Node (Failure Handling)
@@ -764,6 +756,7 @@ This project demonstrates almost every modern agentic design pattern:
 - Persistent workflows
 - Traceability
 
+<!-- 
 That is cutting-edge agentic architecture. This is very close to production AI architecture.
 
 Goal:
@@ -774,7 +767,7 @@ Goal:
 
 My honest opinion
 If you build 70–80% of what you described, this will be an outstanding portfolio project. It will clearly show that you understand agentic AI system design, not just how to call an LLM.
-
+ -->
 
 
 
@@ -784,51 +777,29 @@ If you build 70–80% of what you described, this will be an outstanding portfol
 
 ##### Final Graph Overview
 
-Include Mermaid Diagram from Notebook
+![](./assets/agentic_ai//mygraph.png)
 
----------------
-
-
-
-
-
-
-
-
-----------
-
+### Step by Step Progress
 
 1. The Pre-Flight Check (Goal & Token Monitor)
-
-Node: Goal_Interpreter.
-
-Tech: Uses a small model (e.g., GPT-4o-mini) to turn a vague user prompt into a structured JSON schema.
-
-Logic: If the requested task is "Too Broad," the node returns an error to the user before a single expensive token is spent on the Research Subgraph.
+    - Node: Query Validator.
+    - Tech: Uses a small model (e.g., GPT-4o-mini) to turn a vague user prompt into a structured JSON schema.
+    - Logic: If the requested task is "Too Broad," the node returns an error to the user before a single expensive token is spent on the Research Subgraph.
 
 2. The Research Subgraph (Parallel & Hybrid)
-
-Pattern: Fan-out/Fan-in.
-
-Node A (Vector Store): Queries internal proprietary data (Historical Analysis).
-
-Node B (Web/MCP): Queries real-time news via an MCP-connected search tool.
-
-Convergence: A Summarizer node merges these two streams into a "Current Context" object.
+    - Pattern: Fan-out/Fan-in.
+    - Node A (Vector Store): Queries internal proprietary data (Historical Analysis).
+    - Node B (Web/MCP): Queries real-time news via an MCP-connected search tool.
+    - Convergence: A Summarizer node merges these two streams into a "Current Context" object.
 
 3. The Quantitative Subgraph (PAL Pattern)
-
-Logic: The agent generates Python code → MCP Server executes code in a Dockerized Sandbox → Returns JSON results.
-
-Senior Defense: "We use a Program-Aided Language (PAL) approach to ensure 100% mathematical accuracy, treating the LLM as a logic-generator rather than a calculator."
+    - Logic: The agent generates Python code → MCP Server executes code in a Dockerized Sandbox → Returns JSON results.
+    - Senior Defense: "We use a Program-Aided Language (PAL) approach to ensure 100% mathematical accuracy, treating the LLM as a logic-generator rather than a calculator."
 
 4. The Reflection Loop & HITL
-
-The Checkpoint: Before the "Report Subgraph," the graph enters a "Pending Approval" state.
-
-Action: The state is saved to a database. You (the Human) review the findings in a UI. You can "Approve" or "Add Comment."
-
-Resumption: The graph "wakes up" and incorporates your feedback into the final report.
+    - Checkpoint: Before the "Report Subgraph", the graph enters a "Pending Approval" state.
+    - Action: The state is saved to a database. You (the Human) review the findings in a UI. You can "Approve" or "Add Comment."
+    - Resumption: The graph "wakes up" and incorporates your feedback into the final report.
 
 ### Planner 
 The Planning Subgraph is the most critical part of a Senior-level agent. If the plan is flawed, the Research and Quantitative agents will simply "hallucinate with confidence" for 10 minutes and waste $5.00 in tokens.
@@ -841,38 +812,29 @@ We will break the planning/ subgraph into three distinct steps (nodes) to ensure
 
 - Guardrail Node (Query Validator): Is the user asking for financial advice (legal risk)? Is the ticker valid? Is the request too vague?
 
-- Decomposition Node (The Architect): Breaks the high-level goal into a List[Task] (e.g., "Fetch 10-K," "Run DCF," "Search News").
+- Decomposition Node (The Architect): Breaks the high-level goal into a `List[Task]` (e.g., "Fetch 10-K," "Run DCF," "Search News").
 
 - Resource Estimator: Checks if we have the tools/budget to fulfill the plan.
 
-###### Implementation
+
+##### Implementation
 We'll use Pydantic Tool Choice to force the LLM to output a structured plan that fits our MasterState.
 
-The Guardrails
+**The Guardrails**
 
 To make this interview-defensible, you should mention these three guardrail patterns:
 
-- Syntax Guardrails: In planning_architect, we use `with_structured_output(StructuredPlan)`. If the LLM returns bad JSON, LangGraph's built-in retry mechanism will catch it.
+- *Syntax Guardrails*: In planning_architect, we use `with_structured_output(StructuredPlan)`. If the LLM returns bad JSON, LangGraph's built-in retry mechanism will catch it.
 
-- Semantic Guardrails: Before the plan is accepted, a "Validator" node checks if the plan includes at least one "Quantitative" step. If it’s just "Web Search," the validator rejects the plan and asks for a more technical approach.
+- *Semantic Guardrails*: Before the plan is accepted, a "Validator" node checks if the plan includes at least one "Quantitative" step. If it’s just "Web Search," the validator rejects the plan and asks for a more technical approach.
 
-- Token Budgeting: The StructuredPlan includes an estimated_tokens field. In the orchestrator.py, we check: if state.total_cost + estimated_cost > MAX_BUDGET: STOP.
+- *Token Budgeting*: The StructuredPlan includes an estimated_tokens field. We check: if state.total_cost + estimated_cost > MAX_BUDGET: STOP.
 
-###### Why this is "Senior" vs "Junior"
+This  multi-node subgraph validates the ticker (could be via an MCP tool - checking if AAPL exists), decomposes the request into typed Task objects, and checks if the plan is economically viable or passes a sanity before starting. The plan has
 
-- Junior: One prompt says "Make a plan to research Apple."
+- *Dependency Awareness*: By defining `depends_on`, we've moved past simple sequential loops. It uses topological sorting to identify which research nodes can run in parallel, optimizing for latency.
 
-- Senior: A multi-node subgraph that validates the ticker via an MCP tool (checking if AAPL exists), decomposes the request into typed Task objects, and checks if the plan is economically viable before starting.
-
-
-
-3. Why this is "Senior" Level
-
-- Dependency Awareness: By defining depends_on, you've moved past simple sequential loops. You can now justify your architectural choice in interviews: "My graph uses topological sorting to identify which research nodes can run in parallel, optimizing for latency."
-
-- 
-
-- Error Resilience: If the LLM generates a circular dependency (Task A depends on B, B depends on A), your Validator Node (which we'll build next) can catch this before the graph execution starts.
+- *Error Resilience*: If the LLM generates a circular dependency (Task A depends on B, B depends on A), Validator Node can catch this before the graph execution starts.
 
 #### DAG Planning Architecture
 My Planning Architect produces a **task DAG** instead of a linear list. DAG is stored in Graph State in `plan` key.
@@ -917,7 +879,7 @@ Example planner output:
 This is exactly how workflow orchestration systems work (Airflow, Prefect, etc.).
 
 ###### Planner Output Schema 
-Uses strict validation with
+Uses strict validation with Pydantic schema.
 
 Example:
 ```python
@@ -938,9 +900,7 @@ class Plan(BaseModel):
     tasks: List[Task]
 ```
 
-This enforces *semantic guardrails*. If the LLM produces invalid structure → retry.
-
-This also constrains allowed agent types.
+This enforces *semantic guardrails*. If the LLM produces invalid structure → retry. This also constrains allowed agent types.
 
 ```python
 VALID_AGENTS = [
@@ -958,34 +918,9 @@ Reject unknown agents. Otherwise the planner might invent `sentiment_super_agent
 
 
 
-
-
-###### Best architecture
-```ini
-Planner → Tasks → Agents → Tools
-```
-- Roles: 
-Agents
-    - decision makers
-    - reasoning
-    - orchestrate steps
-    - choose which tools to call
-
-- Tools
-Examples:
-    ```ini
-    web_search
-    document_retrieval
-    python_execution
-    financial_api
-    database_lookup
-    ```
-
 ##### How to execute DAG Orchestrator-Worker
 
-Use LangGraph **dynamic routing** to execute the DAG. This aligns naturally with how LangGraph is designed and avoids writing your own scheduler.
-
-LangGraph already supports:
+Use LangGraph **dynamic routing** to execute the DAG. This aligns naturally with how LangGraph is designed and avoids writing your own scheduler. LangGraph already supports:
 - Conditional edges
 - Parallel branches
 - State-driven routing
@@ -1008,7 +943,7 @@ Why use **Send** over standard Conditional Edges?
 The scheduler node identifies "ready" tasks and immediately mark them as running, but it doesn't actually trigger them yet. To trigger them, we use a **Conditional Edge** right after the scheduler that uses `Send()` to dispatch all running taks to the agents. Send command takes the whole graph state and some extra keys (optional) as argments to forward to agents. Agents must expect the extra keys in their states if different from the global graph state. 
 
 ###### Why this works:
-- Parallelism: If 3 tasks are "ready," dispatch_tasks returns 3 Send objects, and LangGraph runs them at the same time.
+- Parallelism: If 3 tasks are `ready` scheduler returns 3 Send objects, and LangGraph runs them at the same time.
 - State Management: Because of the Annotated reducer, when an agent returns `{"task_status": {"task_1": "complete"}}`, it doesn't delete "task_2"; it just updates the specific key.
 - The Loop: Every time an agent finishes, the graph hits the scheduler again. The scheduler sees a new "complete" status, marks the next dependent tasks as "ready," and the cycle repeats until dispatch tasks are completed.
 
@@ -1019,113 +954,120 @@ This is an important reliability layer in DAG agent systems. The key idea is: a 
 
 Let’s keep it simple and structured.
 
-1️⃣ What “task failure” actually means?
- A task is failed if any of these happen:
-
-###### Tool Failure
-Example:
-- web search API fails
-- MCP tool unavailable
-- Python sandbox throws exception
-
-###### LLM Failure
-Examples:
-- invalid JSON output
-- schema validation fails
-- hallucinated tool name
-
-###### Logic Failure
-Examples:
-- required artifact missing
-- planner created invalid dependency
-
-2️⃣ Detecting Failure in an Agent
-Wrap agent execution in `try/except`.
-Example:
-```python
-id="agentfail"
-def research_agent(state):
-
-    task = state["current_task"]
-
-    try:
-
-        result = run_research_tool(task)
-
-        artifact = Artifact(
-            task_id=task.task_id,
-            artifact_type="research",
-            source="research_agent",
-            content=result,
-            timestamp=now()
-        )
-
-        return {
-            "artifacts": [artifact],
-            "completed_tasks": [task.task_id]
-        }
-
-    except Exception as e:
-
-        return {
-            "failed_tasks": [task.task_id],
-            "error_messages": [str(e)]
-        }
-```
-3️⃣ Scheduler Handling Failure
-Scheduler logic becomes:
-```python
-if task.retries < MAX_RETRIES:
-    retry_task(task)
-else:
-    mark_task_failed(task)
-```
-
-4️⃣ Retry Flow
-Retry is simple.
-Scheduler just requeues the task.
-```ini
-id="retrylogic"
-task.retries += 1
-task.status = PENDING
-```
-Then it will be picked up again.
+1. What “task failure” actually means?
  
-5️⃣ Reflection Agent (recommended)
-If retry fails once, send task to reflection agent.
-Flow:
-```ini
-Task fails
-   ↓
-Reflection agent
-   ↓
-Improved task instruction
-   ↓
-Retry task
-```
-Example reflection output:
-```ini
-{
- "problem": "Web search query too vague",
- "fix": "Add date filter and company ticker"
-}
-```
-Then scheduler retries with improved instruction.
+    A task is failed if any of these happen:
+
+    ###### Tool Failure
+    Example:
+    - web search API fails
+    - MCP tool unavailable
+    - Python sandbox throws exception
+
+    ###### LLM Failure
+    Examples:
+    - invalid JSON output
+    - schema validation fails
+    - hallucinated tool name
+
+    ###### Logic Failure
+    Examples:
+    - required artifact missing
+    - planner created invalid dependency
+
+2. Detecting Failure in an Agent
+
+    Wrap agent execution in `try/except`.
+
+    Example:
+    ```python
+    id="agentfail"
+    def research_agent(state):
+
+        task = state["current_task"]
+
+        try:
+
+            result = run_research_tool(task)
+
+            artifact = Artifact(
+                task_id=task.task_id,
+                artifact_type="research",
+                source="research_agent",
+                content=result,
+                timestamp=now()
+            )
+
+            return {
+                "artifacts": [artifact],
+                "completed_tasks": [task.task_id]
+            }
+
+        except Exception as e:
+
+            return {
+                "failed_tasks": [task.task_id],
+                "error_messages": [str(e)]
+            }
+    ```
+
+3. Scheduler Handling Failure
+
+    Scheduler logic becomes:
+    ```python
+    if task.retries < MAX_RETRIES:
+        retry_task(task)
+    else:
+        mark_task_failed(task)
+    ```
+
+4. Retry Flow
+
+    Retry is simple. Scheduler just requeues the task.
+    ```ini
+    id="retrylogic"
+    task.retries += 1
+    task.status = PENDING
+    ```
+    Then it will be picked up again.
+    
+5. Reflection Agent (recommended)
+
+    If retry fails once, send task to reflection agent.
+
+    Flow:
+
+    ```ini
+    Task fails
+    ↓
+    Reflection agent
+    ↓
+    Improved task instruction
+    ↓
+    Retry task
+    ```
+    Example reflection output:
+    ```ini
+    {
+    "problem": "Web search query too vague",
+    "fix": "Add date filter and company ticker"
+    }
+    ```
+    Then scheduler retries with improved instruction.
 
 
-6️⃣ Final Failure
-If retries exhausted:
-```ini
-id="finalfail"
-task.status = FAILED
-```
-Scheduler decision:
-Either
-- Strict mode: Stop the whole workflow.
-or
-- Tolerant mode (better): Continue DAG if downstream tasks don't depend on it.
+6. Final Failure
 
-- HITL: ask a human to intervene
+    If retries exhausted:
+    ```ini
+    id="finalfail"
+    task.status = FAILED
+    ```
+    Scheduler decision:
+    - *Strict mode*: Stop the whole workflow.
+    or
+    - *Tolerant mode* (better): Continue DAG if downstream tasks don't depend on it.
+    - *HITL*: ask a human to intervene
 
 
 ##### Task Status Updates
@@ -1170,17 +1112,15 @@ state = {
 ```
 This separation is very important.
 
-If you stored status inside Task (as I did), you would need to mutate the plan:
-`task.status = RUNNING`
+If you stored status inside Task (as I did), you would need to mutate the plan: `task.status = RUNNING`
 
 To do this you would need to use **reducers** to tell LangGraph how to update them so that 
-• state merging 
-• parallel updates 
-• debugging 
+- state merging 
+- parallel updates 
+- debugging 
 
 go smooth!  To make this thread-safe for parallel tasks, you must use a **Reducer** in your MasterState. This prevents one agent's update from "clobbering" another's.
 
-Python
 ```python
 def update_plan_status(current_tasks: List[Task], updates: List[TaskUpdate]) -> List[Task]:
     """
@@ -1226,6 +1166,7 @@ Scheduler sets:
 Then routes it to the agent.
 7️⃣ This Pattern Is Called
 Immutable Plan + Execution State
+
 Used in:
 - Airflow
 - Prefect
@@ -1247,33 +1188,34 @@ DAG Validator   ← add here
 Scheduler
 ```
 If validation fails, you can:
-1️⃣ Ask the planner to regenerate
-2️⃣ Or run a reflection step to fix dependencies.
+- Ask the planner to regenerate
+- Or run a reflection step to fix dependencies.
 
 The standard approach is Kahn’s algorithm (Topological Sort). The exactly the same solution as we had for Lettcode quetion `Schedule Course II`.
 
-Another common planner error:
-Task 5 depends on Task 99
-But Task 99 doesn't exist.
+Another common planner error: Task 5 depends on Task 99
+but Task 99 doesn't exist.
 
 ###### Validation Pipeline
 Your validator should check:
-1. Task IDs unique
-2. Dependencies exist
-3. Graph is acyclic
+- Task IDs unique
+- Dependencies exist
+- Graph is acyclic
 
 This makes the plan safe to execute. If the validator finds an invalid plan, it should clear the state.plan list before sending the agent back to the architect. If you don't, the next time the architect runs, it might see the old "bad" plan in the state and get confused.
 
 ###### In Interviews
 If asked about reliability, you can say:
-“Since the planner is an LLM, I added a structural validator that ensures the generated plan is a valid DAG by checking dependency existence and performing a topological sort.” That signals excellent system design awareness.
+“Since the planner is an LLM, I added a structural validator that ensures the generated plan is a valid DAG by checking dependency existence and performing a topological sort.” 
+
+That signals excellent system design awareness.
 
 Next, the biggest reliability boost you can add is something many agent systems miss:
 - plan sanity checks (detecting when the planner generates nonsensical tasks even if the graph is valid).
 
 
 
-#### How it actually flows
+###### How it actually flows
 
 - Step A: The Planner starts everything as pending
 
@@ -1331,10 +1273,8 @@ This prevents stuck workflows.
 
 
 
-### User query validation
-In production, an agent shouldn't just "fail" or "give up"; it should engage in Conversational Repair.
-
-If the query_validator finds a problem, you have two high-level choices:
+#### User query validation
+In production, an agent shouldn't just "fail" or "give up"; it should engage in Conversational Repair. If the `query_validator` finds a problem, you have two high-level choices:
 
 - Autonomous Rejection: The system tells the user why it can't proceed and ends.
 
@@ -1346,11 +1286,11 @@ You don't need a complex new node. You simply need a Terminal State Gate.
 
 is_valid check:
 
-True → Proceed to planning_architect.
+- True → Proceed to planning_architect.
+- False → Update messages with the reason for failure and move to a waiting_for_input node.
 
-False → Update messages with the reason for failure and move to a waiting_for_input node.
+In LangGraph, the most "production-ready" way to do this is to use a Breakpoint. You don't write a node that "waits"; you tell the graph to Interrupt itself. 
 
-In LangGraph, the most "production-ready" way to do this is to use a Breakpoint. You don't write a node that "waits"; you tell the graph to Interrupt itself. The Engine Configuration (app/core/engine.py)
 ```Python
 # We tell the graph: "If the query is invalid, STOP and wait for the human."
 app = workflow.compile(
@@ -1364,142 +1304,36 @@ In an interview, you can say:
 "I implemented Stateful Interruption Points for query validation. Instead of hard-failing on vague prompts, the graph utilizes a persistent checkpointer to pause execution. This allows for a multi-turn 'Conversational Repair' loop where the human provides clarification, and the agent resumes with the updated context, saving the compute cost of restarting the entire pipeline."
 
 
-## About LangGraph
 
-### States:
+### Quant Analyst Subgraph
 
-For a senior-level, production-ready system in 2026, the industry standard is Pydantic for the internal Graph State. Use Pydantic models for each section to enforce semantic guardrails.
-
-While TypedDict is lightweight, it only provides type-hinting. Pydantic provides runtime validation. In a multi-agent system, if the Researcher agent outputs a malformed string instead of a list of URLs, a TypedDict will let it pass (causing a crash later), whereas Pydantic will catch the error at the node boundary, allowing your Reflection logic to trigger a retry.
-
-1. The "State of the Art" State Strategy
-
-We will use a Hierarchical State pattern.
-
-- MasterState: The global state shared across the main graph.
-
-- SubgraphStates: Local states for specific logic (like the Evaluation loop) that "sync" back to the MasterState.
-
-2. Why this is "Production Ready"
-
-- Runtime Safety: If the Quantitative agent tries to inject a float into the plan (which expects a List[str]), Pydantic will raise a ValidationError immediately.
-
-- The Reducer Pattern (Annotated): Notice operator.add or merge_lists. This is crucial for Parallel Research. If your Web Search and Vector Search finish at the same time, LangGraph uses this function to combine their results into the MasterState without data loss.
-
-- Traceability: Because these are Pydantic objects, they serialize perfectly into JSON for LangSmith or a SQL Database, making your "Human-in-the-loop" resume/pause functionality seamless.
-
-In LangGraph, the state object passed into each node is an instance of the schema you defined (often a TypedDict). For example, if your schema is inherited from `StateMessage`, you can access them with dict methods (`state["messages"]` works) not `.` method for Pydantic schemas (`state.messages`: Error).
-
-
-### Send command
-The error occurs because when you use `Send`(node_name, payload), LangGraph passes that entire payload dictionary as the first positional argument to your node function.
-Your analyst function is likely defined to expect a task_id string, but LangGraph is trying to hand it the whole state dictionary (the payload).
-
-You need to update your agent nodes definition to accept the state (the payload you sent) and then extract the task_id from it.
-
-1. The Send Logic: When you do Send("analyst", {"task_id": "123"}), LangGraph treats {"task_id": "123"} as the local state for that specific branched invocation of the analyst node.
-2. The Function Signature: LangGraph always calls a node by passing *the state* as the first argument. If your function header is def analyst(task_id), Python thinks the dictionary {"task_id": "123"} is the value for `task_id`. It then looks for a second argument that doesn't exist, leading to the "missing 1 required positional argument" confusion.
-
-To recieve `task_id` which is not a key in global state, we need to make it clear for recievers, foe example by doing:
-
-```python
-class AgentInput(MasterState):
-    task_id: int
-
-async def analyst(state: AgentInput):
-    ...
-```
-
-but note these 2 things:
-1. The Send call must include everything
-
-When you use Send, LangGraph does not automatically copy the global state into the new branch. You have to manually "spread" the current state into the dictionary you are sending:
-
-```python
-return [
-    Send(task.agent, {
-        **state,           # This passes all MasterState fields (messages, topic, etc.)
-        "task_id": task.id # This adds the specific task_id for the analyst
-    }) 
-    for task in state.plan if task.status == "running"
-]
-```
-
-### Updating Tasks by Reducers
-By default, LangGraph overwrites a state key with whatever a node returns. If your analyst node returns an update but doesn't include the full plan, or if multiple analysts return updates simultaneously, they might overwrite each other's data, leaving the list empty or incomplete. 
-
-In LangGraph, the **Reducer** is called every time a node returns data for that key. When  `planning_architect` finishes, it returns a list of Task objects, but your reducer is expecting a list of `TaskUpdate` objects to merge.
-
-LangGraph often passes state updates as dictionaries rather than Pydantic objects during the reduction phase. If you see errors about `.id` not existing, change `up.id` to up["id"] or ensure you are casting them back to objects inside the reducer.
-
-### Send
-LangGraph expects nodes to return a dictionary that maps to your state keys. In LangGraph, even if you are only performing a "fan-out" (branching), the node must return a dictionary where the **Send** objects are the value for a specific key (usually the one that triggers the next step) OR you simply return the list of Send objects as the entire return value if that node is specifically a **Command** or a functional router.
-
-Wrap it in a Dictionary If your scheduler is a standard node in the graph, it must return the Send objects inside a dictionary.
-
-```python
-return {
-    "plan": [Send(task.agent, {**state, "task_id": task.id}) for task in tasks_to_run]
-}
-```
-
-In LangGraph, Send objects can only be returned from a Conditional Edge function, not from a Standard Node.
-
-```python
-return [Send(task.agent, {**state, "task_id": task.id}) for task in tasks_to_run]
-```
- 
-Why it is better to use conditional edge for fanning out:
-- Mermaid Visualization: Because you explicitly mapped the names (e.g., "analyst": "analyst"), the graph will show a clear fan-out from the scheduler to all agents.
-- Decoupling: Your scheduler node focuses on data, while your edge focuses on flow.
-- No "Ghost" Invocations: Since there are no direct edges, your agents will only ever be called when the router explicitly sends them a task_id.
-
-Why this works:
-- The Fan-Out: The scheduler (via route_to_agents) sends tasks to multiple agents at once.
-- The Collection: As each agent finishes, it returns its `TaskUpdate`.
-- The Loop: The edge takes the agent back to the scheduler. The scheduler looks at the updated plan, sees which tasks are now "ready" (because their dependencies met), and fans out again.
-- The Exit: When `route_to_agents` sees no more tasks to run, it returns END.
-
-
-
-
-
-
---------------------------
--------------------
-
-### Quant Analayst Subgraph
-
-
-
-##### Define Quant Analyst as a subgraph
-As we need a self reflection loop using an auditor, it becomes cleaner to have the quant alayst in a its own graph as a subgraph of the main graph. In LangGraph, we call this the "Isolate and Encapsulate" pattern.
+As we need a self reflection loop using an auditor, it becomes cleaner to have the quant analyst in a its own graph as a subgraph of the main graph. In LangGraph, we call this the "Isolate and Encapsulate" pattern.
 
 By compiling the Quant-Auditor-Retry loop as its own graph, you treat the entire "Quantitative Analysis" as a single black box to the Master Planner. The Planner says "Do a DCF," and the subgraph doesn't return until it has a verified result or has exhausted its retries.
 
 Think of the subgraph as a "Unit Test" for the agent's work.
 
-- Cleaner State: The QuantInput schema stays local to the subgraph. The Master State doesn't need to be cluttered with retry_count or audit_feedback.
+- *Cleaner State*: The `QuantInput` schema stays local to the subgraph. The Master State doesn't need to be cluttered with `retry_count `or `audit_feedback`.
 
-- Parallelism: If you had two quant tasks, you could spin up two instances of this subgraph simultaneously without state collisions.
+- *Parallelism*: If you had two quant tasks, you could spin up two instances of this subgraph simultaneously without state collisions.
 
-- Testing: You can run the Quant Subgraph in a notebook with a mock task to see if it can self-correct without running the whole system.
+- *Testing*: You can run the Quant Subgraph in a notebook with a mock task to see if it can self-correct without running the whole system.
 
-######  Status Logic
+######  Status Logic for Quant Tasks
 
 
 If the Quant Agent sets the status to completed but the Auditor then sets it to failed, you create a "flapping" status that can confuse the Planner or the UI.
 
 - Senior Recommendation: The "Pending Verification" State
-Don't mark the task completed until the Auditor says PASS.
-
-`Quant Agent: Finishes code → Sets status = "pending_verification".` 
-
+- Don't mark the task completed until the Auditor says PASS.
+```ini
+Quant Agent: Finishes code → Sets status = "pending_verification".
+```
 - Auditor Node:
 
-    If FAIL: Sets status = "in_progress" (with feedback for the retry).
+    - If FAIL: Sets status = "in_progress" (with feedback for the retry).
 
-    If PASS: Sets status = "completed".
+    - If PASS: Sets status = "completed".
 
 - Route: If retry_count > 3 and still failing, sets status = "failed" and exits.
 
@@ -1515,21 +1349,21 @@ Don't mark the task completed until the Auditor says PASS.
 
 - Operational Constraints:
 
-    - No Manual Math: Never perform calculations (DCF, CAGR, simulations) in your text response. Always write and execute Python code.
+    - *No Manual Math*: Never perform calculations (DCF, CAGR, simulations) in your text response. Always write and execute Python code.
 
-    - Data Lineage: Use the specific financial variables provided in the Global State (retrieved by the Researcher). If a variable (e.g., WACC or terminal growth rate) is missing, explicitly flag it as a MISSING_DATA error for the Supervisor.
+    - *Data Lineage*: Use the specific financial variables retrieved by the Researcher. If a variable (e.g., WACC or terminal growth rate) is missing, explicitly flag it as a MISSING_DATA error for the Auditor.
 
-    - Library Standard: Prefer `numpy` for simulations, `pandas` for data manipulation, and `matplotlib` for generating visual artifacts.
+    - *Library Standard*: Prefer `numpy` for simulations, `pandas` for data manipulation, and `matplotlib` for generating visual artifacts.
 
-    - Deterministic Outputs: Ensure your code prints a JSON-formatted string to stdout so the system can parse your results into the Artifact Schema.
+    - *Deterministic Outputs*: Ensure your code prints a JSON-formatted string to stdout so the system can parse your results into the Artifact Schema.
 
 ###### Workflow:
 
 - Plan: State the mathematical approach (e.g., "Implementing a 10,000-iteration Monte Carlo simulation for revenue sensitivity").
 
-- Code: Call the run_python_code tool.
+- Code: Call the `execute_python_code` tool.
 
-- Verify: If the tool returns an error, analyze the traceback, fix the logic, and re-run.
+- Verify: If the tool returns an error, analyze the traceback, fix the logic, and re-run (done by Auditor).
 
 - Finalize: Summarize the results based only on the script's output.
 
@@ -1537,13 +1371,15 @@ Don't mark the task completed until the Auditor says PASS.
 
 
 
-##### The "Hallucination" Analysis
+##### Hallucination Analysis
 
 While the Planner assigns the task (e.g., "Perform a DCF"), the Quant Agent is a "Logic Generator," not a "Data Finder." It needs the specific numbers (Revenue, WACC, Growth rates) that the Researcher just found to populate the variables in its Python script.
 
 Before the LLM writes the code, you need to ensure it has the numbers. Instead of letting the LLM "guess" variable names, your node can inject a standard header into the prompt:
 
-"The following variables are available from the Research Phase: revenue_2025=120.5B, wacc=0.085. Use these exact values in your script."
+```o
+The following variables are available from the Research Phase: revenue_2025=120.5B, wacc=0.085. Use these exact values in your script.
+```
 
 If you don't pass the research findings, the Quant Agent will be forced to hallucinate the numbers or fail because of NameError: revenue is not defined. For example, LLM might make up values in the generated code:
 
@@ -1551,12 +1387,12 @@ If you don't pass the research findings, the Quant Agent will be forced to hallu
 
 NVIDIA's Data Center revenue is actually north of \$26 Billion per quarter in 2024. The agent used a "mock" value of $2.5 Billion because it wasn't forced to use the Research Artifacts. This is a classic failure in agentic workflows called "Knowledge Neglect." That's why ou should implement a **Context Injection** step before calling the LLM.
 
-###### Handling the Data Gap (The "Research-to-Quant" Bridge)
+###### Handling the Data Gap:  "Research-to-Quant" Bridge
 
 The most common point of failure in these graphs is the Quant agent not having the data it needs to run the math.
 
 The Solution: Implement a Pre-Flight Check.
-If the Quant agent realizes it's missing the "Discount Rate" or "Historical Volatility," it should have an edge in the graph that points back to the Researcher with a specific request: "Need 5-year average WACC for NVDA to complete DCF."
+- If the Quant agent realizes it's missing the "Discount Rate" or "Historical Volatility," it should have an edge in the graph that points back to the Researcher with a specific request: "Need 5-year average WACC for NVDA to complete DCF."
 
 <!-- 
 When the MCP returns the JSON, you will map it to your Artifact class. Since you are using a shared volume, the content field should store the numeric results, while the source or a metadata field stores the file path. -->
@@ -1573,11 +1409,7 @@ To implement the "redo" logic within the node, you can use a simple for loop. Th
 
 
 
-
----------------------------
-
-
-#### Why Quant_Sandbox?
+#### Why Quant Sandbox?
 
 In investment research, "Alpha" usually lives in the gap between what people say (Researcher) and what the numbers actually do (Quant). The Researcher is mostly I/O bound. The Quant agent introduces logic-bound tasks. It forces you to handle data passing between agents (e.g., the Researcher finds a ticker, the Quant needs that ticker to run a script).
 
@@ -1618,9 +1450,9 @@ If an interviewer asks, "How do you handle LLM math hallucinations?" your answer
 
 "We don't let the LLM do math. We use the PAL pattern. The LLM acts as a translator that turns an investment hypothesis into a deterministic Python script. We then execute that script in an isolated MCP-managed Docker sandbox, ensuring 100% computational accuracy and environment security."
 
-The Sandbox saves the file to a shared disk and returns a simple string: "path": "/app/artifacts/sim_123.png". The LangGraph API (and eventually your Frontend) simply reads that file from the disk. It’s faster and more stable.
+The Sandbox saves the file to a shared disk and returns a simple string: `"path": "/app/artifacts/sim_123.png"`. The LangGraph API (and eventually your Frontend) simply reads that file from the disk. It’s faster and more stable.
 
-If your mcp-quant container restarts or crashes, any files inside it are lost forever. By using a Shared Volume, the "Artifacts" (the proof of your analysis) are persisted on the host machine.
+If your mcp-quant container restarts or crashes, any files inside it are lost forever. By using a Shared Volume, the Artifacts (the proof of your analysis) are persisted on the host machine.
 
 Data Type | Transmission Method | Reason
 -------- | --------- | ------------
@@ -1634,141 +1466,140 @@ We implemented a sidecar volume strategy to decouple metadata from heavy binary 
 
 Let’s implement the Senior Pattern for Artifact Management in your mcp-quant server.
 
-###### The "Artifacts Directory"
+###### Artifacts Directory  -- **Fix this!2**
 
-The Docker Volume: We will assume your docker-compose mounts a volume to /app/artifacts inside the mcp-quant container.
+- We will assume your docker-compose mounts a volume to `/app/artifacts` inside the MCP quant container.
 
-The Server Logic:
+- The MCP server will create a unique folder for each execution (e.g., `/app/artifacts/sim_<task_id>/`).
 
-The MCP server will create a unique folder for each execution (e.g., /app/artifacts/sim_<task_id>/).
+- The LLM?? will be instructed (via System Prompt) to save any plots to that folder.
 
-The LLM will be instructed (via System Prompt) to save any plots to that folder.
+- The MCP server?? will look for new files in that folder and return their relative paths.
 
-The MCP server will look for new files in that folder and return their relative paths.
+This is the most critical part of your "UI-less" defense. In your Jupyter Notebook (which has the same `/app/artifacts` volume mounted), you display the result.
 
-This is the most critical part of your "UI-less" defense. In your Jupyter Notebook (which has the same /app/artifacts volume mounted), you display the result.
+Our architecture provides full data lineage. We persist every simulation’s inputs (context.json), the generated logic (`script.py`), the computational traces (`stdout/stderr`), and the visual proof (`result.png`) in a structured, timestamped audit trail within our shared volume. This allows for a deterministic replay of any investment recommendation.
 
-Our architecture provides full data lineage. We persist every simulation’s inputs (context.json), the generated logic (script.py), the computational traces (stdout/stderr), and the visual proof (result.png) in a structured, timestamped audit trail within our shared volume. This allows for a deterministic replay of any investment recommendation.
+Quant MCP Server returns the relative path of charts/assets (e.g., `sim_nvda_123/plot.png`). Your Notebook then joins that relative path with your local ARTIFACTS_ROOT.
 
-Your Quant Server should return the relative path (e.g., sim_nvda_123/plot.png). Your Notebook then joins that relative path with your local ARTIFACTS_ROOT.
+###### Some small notes for Quant Sandbox 
 
-Some small notes for Quant Sandbox 
-
-1️⃣ Add execution limits
-Generated code should have limits.
-Inside the quant container enforce:
-- timeout (e.g. 5–10 seconds)
-- memory limits
-- no external network calls
-
-Example idea:
-- execution_timeout = 10s
-- max_memory = 512MB
-This prevents runaway code.
-
-2️⃣ Artifact management
-If the sandbox generates charts or files:
-Return something like:
-```json
-{
-  "result": numeric_result,
-  "artifacts": [
-      "/tmp/chart1.png",
-      "/tmp/table.csv"
-  ]
-}
-```
-Your agent can later attach those to the final report.
-
-3️⃣ Deterministic validation before LLM auditor
-Before calling the auditor, check:
-- did the code execute?
-- did it produce output?
-
-Simple rule:
-if execution_error -> retry
-
-This avoids wasting LLM tokens.
-
-4️⃣ Structured tool schema
-Your MCP tool should enforce something like:
-```ini
-execute_quant_code(
-    code: str,
-    expected_output_type: str
-)
-```
-
-This helps guide the LLM and reduces hallucinations.
-
-
-
-### Auditor node
-
-That auditor layer is extremely valuable because it addresses one of the biggest real problems with LLM systems: hallucinated or inconsistent outputs. The Auditor Agent is a piece of the "Reliability Triad":
-
-1. Researcher: Finds the raw data.
-2. Quant: Writes the math logic.
-3. Auditor: Validates that the logic matches the data.
-
-#### What the Auditor Should Check
-- Use deterministic validation
-Instead of LLM judging everything, combine:
-    - rule-based checks
-    - LLM reasoning only if needed
+1.  Add execution limits
     
-    Example:
-    if execution_error -> regenerate 
-    elif result_invalid -> regenerate
-    else -> accept
-This makes your system more reliable.
+    Generated code should have limits.
+    Inside the quant container enforce:
+    - timeout (e.g. 5–10 seconds)
+    - memory limits
+    - no external network calls
+
+    Example idea:
+    - execution_timeout = 10s
+    - max_memory = 512MB
+    
+    This prevents runaway code.
+
+2. Artifact management
+
+    If the sandbox generates charts or files:
+    Return something like:
+    ```json
+    {
+    "result": numeric_result,
+    "artifacts": [
+        "/tmp/chart1.png",
+        "/tmp/table.csv"
+    ]
+    }
+    ```
+    Your agent can later attach those to the final report.
+
+3. Deterministic validation before LLM auditor
+
+    Before calling the auditor, check:
+    - did the code execute?
+    - did it produce output?
+
+    Simple rule:
+    - if execution_error -> retry by Quant agent
+
+    This avoids wasting LLM tokens by Auditor.
+
+4. Structured tool schema
+
+    Your MCP tool should enforce something like:
+    ```python
+    def execute_quant_code(code: str) -> str
+    ```
+
+    This helps guide the LLM and reduces hallucinations.
+
+
+
+### Auditor Node
+
+That auditor layer is extremely valuable because it addresses one of the biggest real problems with LLM systems: *hallucinated or inconsistent outputs*. The Auditor Agent is a piece of the "Reliability Triad":
+
+- Researcher: Finds the raw data.
+- Quant: Writes the math logic.
+- Auditor: Validates that the logic matches the data.
+
+##### What the Auditor Checks
+Use deterministic validation combined with LLM judge:
+- rule-based checks
+- LLM reasoning only if needed
+    
+Example:
+- if execution_error -> regenerate 
+elif result_invalid -> regenerate
+else -> accept
+
+    This makes your system more reliable.
 
 Auditor can check:
 
-1️⃣ Code sanity
-Check for obvious hallucinations:
-- undefined variables
-- invalid libraries
-- incorrect syntax
+1. Code sanity
 
-If errors exist → send feedback.
+    Check for obvious hallucinations:
+    - undefined variables
+    - invalid libraries
+    - incorrect syntax
 
-2️⃣ Result plausibility
-Example checks:
-- numeric output exists
-- result not None
-- result within reasonable range
+    If errors exist → send feedback to Quant to fix it
 
-Example:
-return_on_equity must be between -1 and 1
+2. Result plausibility
 
-3️⃣ Artifact validation
-If the quant sandbox returns artifacts (charts, files):
-Check:
-- file exists
-- not empty
+    Example checks:
+    - numeric output exists
+    - result not None
+    - result within reasonable range
 
-Feedback loop
+    Example: `return_on_equity` must be between -1 and 1
+
+3. Determinist validation
+
+    If the quant sandbox returns artifacts (charts, files):
+    Check:
+    - file exists
+    - not empty
+
+###### Feedback Loop
 If auditor fails:
-- Auditor → feedback
+- Auditor → feedback → update messages
 - Agent → regenerate code
 - Quant MCP → run again
 
-But limit retries.
-Example:
-max_retries = 2
+ **Limit retries**; Otherwise agents can loop forever.
 
-Otherwise agents can loop forever.
+<!-- Example: `max_retries = 2` -->
 
-##### Audior Persona
-The Auditor's Prompt Strategy:
-The Auditor should be a "Skeptic." It shouldn't just look at the result; it should look at the script.py (from the artifacts folder) and check for:
 
-- Hardcoded Hallucinations: Did the agent ignore the research and just "guess" a growth rate?
 
-- Unit Errors: Is it mixing Millions and Billions?
+#### Auditor Persona
+The Auditor should be a "Skeptic." It shouldn't just look at the result; it should look at the generated code `script.py` (from the artifacts folder) and check for:
 
-- Formula Integrity: Is the WACC or DCF formula mathematically sound?
+- *Hardcoded Hallucinations*: Did the agent ignore the research and just "guess" a growth rate?
+- *Unit Errors*: Is it mixing Millions and Billions?
+- *Formula Integrity*: Is the WACC or DCF formula mathematically sound?
 
 Without auditor,  you're trusting the LLM's math blindly. The Auditor acts as a "Senior Peer Reviewer" who looks at the generated code to ensure it isn't hallucinating formulas.
 
@@ -1804,7 +1635,7 @@ In a standard Python script (unlike a Jupyter cell), just typing the variable na
 
 - Silent Output: The script ran but didn't actually "report" its findings to stdout.
 
-Or you might need to check for discrepencies between the quant analysis and research data. Are values used in code match the reaech data? if not, the whole analysis is not reliable because value are probably hallucinated or misunderstood.
+Or you might need to check for discrepancies between the quant analysis and research data. Are values used in code match the research data? if not, the whole analysis is not reliable because value are probably hallucinated or misunderstood.
 
 - Input to Auditor: The Python code written by the Quant Agent + The Research Data.
 
@@ -1838,110 +1669,97 @@ Your Auditor is currently the only thing standing between a "Pro" financial repo
 
 Since the infrastructure is now perfect, the only thing left is the Auditor's Prompt. Make sure it's "Mean."
 
-"You are a cynical Hedge Fund Auditor. Your job is to find reasons to REJECT this code. If the numbers don't match the Research exactly, FAIL it. If it doesn't use print(json.dumps()), FAIL it."
+"You are a cynical Hedge Fund Auditor. Your job is to find reasons to REJECT this code. If the numbers don't match the Research exactly, FAIL it. If it doesn't use `print(json.dumps())`, FAIL it."
 
 
-o ensure your Auditor is a "hard-to-please" senior reviewer, we need to design its prompt to be adversarial. It shouldn't just look at the code; it should act as a cross-referencing engine between the Research Artifacts and the Quant Code.
+To ensure your Auditor is a "hard-to-please" senior reviewer, we need to design its prompt to be adversarial. It shouldn't just look at the code; it should act as a cross-referencing engine between the Research Artifacts and the Quant Code.
 
 1. The Auditor's "Discrepancy" Logic
 
-The Auditor needs to perform a "Data-to-Code" mapping. If the researcher found "NVIDIA Q4 Revenue: $22.1B", the Auditor must look for 22_100 or 22100000000 in the code. If it sees 2_500, it triggers a FAIL.
+    The Auditor needs to perform a "Data-to-Code" mapping. If the researcher found "NVIDIA Q4 Revenue: $22.1B", the Auditor must look for 22_100 or 22100000000 in the code. If it sees 2_500, it triggers a FAIL.
 
 2. The Senior Auditor System Prompt
 
-Here is an example of high-precision prompt designed to kill hallucinations:
+    Here is an example of high-precision prompt designed to kill hallucinations:
 
-```sh
-AUDITOR_SYSTEM_PROMPT = """
-You are a Lead Financial Auditor. Your sole mission is to ensure the Quantitative Agent's simulation is FACTUALLY ACCURATE and LOGICALLY SOUND.
+    ```ini
+    AUDITOR_SYSTEM_PROMPT = """
+    You are a Lead Financial Auditor. Your sole mission is to ensure the Quantitative Agent's simulation is FACTUALLY ACCURATE and LOGICALLY SOUND.
 
-INPUT DATA FOR VERIFICATION:
-1. RESEARCH DATA: The ground truth extracted from filings/news.
-2. QUANT CODE: The Python script the agent wrote to process this data.
-3. STDOUT: The actual output of that script.
+    INPUT DATA FOR VERIFICATION:
+    1. RESEARCH DATA: The ground truth extracted from filings/news.
+    2. QUANT CODE: The Python script the agent wrote to process this data.
+    3. STDOUT: The actual output of that script.
 
-YOUR CRITICAL ERROR LIST:
-- DATA HALLUCINATION: Did the agent use 'Mock' or 'Example' numbers instead of the specific figures in the Research Data? (Check billions vs millions!)
-- SILENT FAILURE: Did the script run but fail to print the results in a structured format (JSON)?
-- LOGIC ERROR: Is the formula for DCF, WACC, or CAGR mathematically incorrect?
-- UNIT MISMATCH: Is the code mixing 'Thousands' and 'Millions' incorrectly?
+    YOUR CRITICAL ERROR LIST:
+    - DATA HALLUCINATION: Did the agent use 'Mock' or 'Example' numbers instead of the specific figures in the Research Data? (Check billions vs millions!)
+    - SILENT FAILURE: Did the script run but fail to print the results in a structured format (JSON)?
+    - LOGIC ERROR: Is the formula for DCF, WACC, or CAGR mathematically incorrect?
+    - UNIT MISMATCH: Is the code mixing 'Thousands' and 'Millions' incorrectly?
 
-RESPONSE PROTOCOL:
-- If the code is perfect: Respond with 'PASS' and a brief summary of the findings.
-- If there is an error: Respond with 'FAIL' followed by a specific 'CORRECTION_INSTRUCTION'. 
-  Example: 'FAIL: You used 2.5B for revenue, but Research Artifact #2 shows 26.1B. Update your variable and re-run.'
-"""
-```
-The "Discrepancy" Checklist (The Human-in-the-Loop View)
+    RESPONSE PROTOCOL:
+    - If the code is perfect: Respond with 'PASS' and a brief summary of the findings.
+    - If there is an error: Respond with 'FAIL' followed by a specific 'CORRECTION_INSTRUCTION'. 
+    Example: 'FAIL: You used 2.5B for revenue, but Research Artifact #2 shows 26.1B. Update your variable and re-run.'
+    """
+    ```
+    The "Discrepancy" Checklist (The Human-in-the-Loop View)
 
-Before you run the subgraph, here are the three "Red Flags" your Auditor is now trained to catch:
+    Before you run the subgraph, here are the three "Red Flags" your Auditor is now trained to catch:
 
-Feature | The Hallucination (Current) | The Requirement (Goal)
----------- |  ----------- | -----------------
-Revenue Source | data_center_revenue = 2_500 | data_center_revenue = 26200
-Output Method,"mean_value |  median_value" | "print(json.dumps({""mean"": mean_value...}))"
-Variable Injection | import os (Blocked) | Use ARTIFACT_DIR constant
+    Feature | The Hallucination (Current) | The Requirement (Goal)
+    -------------- |  ----------- | -----------------
+    Revenue Source | `data_center_revenue = 2500` | `data_center_revenue = 26200`
+    Output Method (`mean_value`) |  `median_value` |  `print(json.dumps({"mean": mean_value,...}))`
+    Variable Injection | `import os (Blocked)` | Use ARTIFACT_DIR constant
 
 
-If the Quant Agent fails once, it might get defensive. By passing the exact Research Content and the Auditor's Feedback in the retry prompt, you are giving the LLM a "hint" at the correct answer.
+    If the Quant Agent fails once, it might get defensive. By passing the exact Research Content and the Auditor's Feedback in the retry prompt, you are giving the LLM a "hint" at the correct answer.
 
-```python
-# Inside auditor_node
-if "FAIL" in response.content:
-    return {
-        "audit_status": "failed",
-        "audit_feedback": response.content, # This goes to the Quant Agent next
-        "retry_count": state.retry_count + 1
-    }
-else:
-    return {"audit_status": "passed"}
-```
+    ```python
+    # Inside auditor_node
+    if "FAIL" in response.content:
+        return {
+            "audit_status": "failed",
+            "audit_feedback": response.content, # This goes to the Quant Agent next
+            "retry_count": state.retry_count + 1
+        }
+    else:
+        return {"audit_status": "passed"}
+    ```
 
 1. The "Post-Mortem": Why did it hit Max Retries?
 
-If the agent failed three times, it usually means one of two things:
+    If the agent failed three times, it usually means one of three things:
 
-The Prompt Gap: The Quant Agent isn't "seeing" the research data correctly in its context window.
-
-The Auditor is Too Mean: Your Auditor might be flagging something the LLM doesn't know how to fix (like a complex library dependency).
+    - The Prompt Gap: The Quant Agent isn't "seeing" the research data correctly in its context window.
+    - The Auditor is Too Mean: Your Auditor might be flagging something the LLM doesn't know how to fix (like a complex library dependency).
+    - Quant is not exactly seeing what to fix. Keep message history updated.
 
 2. How to "Debug" the Loop
 
-Since you are using LangSmith (or just logging your state), look at the transition between Retry #2 and Retry #3.
-
-Check for the "Context Refresh":
-When the quant_agent ran the second time, did it actually acknowledge the Auditor's feedback?
-
-Bad Agent: "I will now run the simulation..." (Ignoring feedback)
-Good Agent: "I see the Auditor flagged the \$2.5B revenue. I am updating my script to use the $26.2B found in the research."
+    Since you are using LangSmith (or just logging your state), look at the transition between Retry #2 and Retry #3. Check for the "Context Refresh":
+    - When the quant_agent ran the second time, did it actually acknowledge the Auditor's feedback?
+    - Bad Agent: "I will now run the simulation..." (Ignoring feedback)
+    - Good Agent: "I see the Auditor flagged the \$2.5B revenue. I am updating my script to use the $26.2B found in the research."
 
 3. Tuning the "Hand-off" back to the Planner
 
-Now that the flow is back at the Planner/Scheduler, you have a choice. How should the system handle a "Verified Failure"?
+    If the flow is back at the Scheduler, you have a choice. How should the system handle a "Verified Failure"?
 
-Option A: The Re-Plan
-The Planner sees status: "failed" and decides to assign the task to a different agent or skip the simulation and just provide a qualitative summary.
+    - Option A: The Re-Plan
 
-Option B: The Human-in-the-Loop (HITL)
-At the Max Retries exit, you can insert a "Break" where the system pings you:
+        The Planner sees status: "failed" and decides to assign the task to a different agent or skip the simulation and just provide a qualitative summary.
 
-"I tried to value NVIDIA 3 times but my Auditor keeps rejecting the math. Here is the code. Can you fix it?"
+    - Option B: The Human-in-the-Loop (HITL)
+    
+        At the Max Retries exit, you can insert a "Break" where the system pings you:
 
-
-
-The "Model Tier" Strategy
-
-In a production multi-agent system, we usually mix and match models based on the "Cognitive Load" of the task:
+            "I tried to value NVIDIA 3 times but my Auditor keeps rejecting the math. Here is the code. Can you fix it?"
 
 
-Agent | Complexity | Recommended Model | Why?
-------| ----------| ------------ | ----------------
-Researcher | Low/Medium | GPT-4o-mini / Gemini Flash | Great at extraction and summarization.
-Quant Analyst | High | GPT-4o / Gemini Pro | Needs high-fidelity logic and valid Python syntax.
-Auditor | High | GPT-4o / Claude 3.5 Sonnet | "Needs to be ""smarter"" than the Quant to catch its lies."
-Planner | Medium | GPT-4o-mini | Orchestration is mostly pattern matching.
 
-Small models often struggle with "Contextual Grounding." They "know" what a DCF looks like from their training data, so they revert to "Example" code rather than looking at the research_context you provided. Larger models have better Attention Mechanisms—they prioritize your provided facts over their training "defaults."
+
 
 ###### The "Unit Mismatch" Safety Net
 
@@ -2017,30 +1835,48 @@ if state.audit_status == "failed":
     messages.append(HumanMessage(content=correction_prompt))
 ```
 
-#### The "Self-Correction" Milestone
+#### Self-Correction Milestone
 
 Think about what just happened under the hood:
 
-Attempt 1: The agent was "lazy" or "hallucinated" (the \$2.5B vs $26B ghost).
+- Attempt 1: The agent was "lazy" or "hallucinated" (the \$2.5B vs $26B ghost).
 
-Audit: Your adversarial prompt caught the logic/format error.
+- Audit: Your adversarial prompt caught the logic/format error.
 
-Retry: Because you passed the audit_feedback back through Send, the agent had the "context" of its failure.
+- Retry: Because you passed the audit_feedback back through Send, the agent had the "context" of its failure.
 
-Success: It adjusted its code generation to meet the Auditor's requirements.
+- Success: It adjusted its code generation to meet the Auditor's requirements.
 
 This loop is exactly how you scale AI to handle high-stakes financial or technical data where a human can't check every single line of code.
 
-As an option, you can also think of a "Deep Search" Loop: If the Quant Agent ever says "I can't find the Interest Expense in the artifacts," do you have a path to send it back to the Researcher for more specific data?
+As an option, you can also think of a **Deep Search Loop**: If the Quant Agent ever says "I can't find the Interest Expense in the artifacts," have a path to send it back to the Researcher for more specific data!!
 
 
 
+
+
+
+--------------------------
+
+The "Model Tier" Strategy
+
+In a production multi-agent system, we usually mix and match models based on the "Cognitive Load" of the task:
+
+
+Agent | Complexity | Recommended Model | Why?
+------| ----------| ------------ | ----------------
+Researcher | Low/Medium | GPT-4o-mini / Gemini Flash | Great at extraction and summarization.
+Quant Analyst | High | GPT-4o / Gemini Pro | Needs high-fidelity logic and valid Python syntax.
+Auditor | High | GPT-4o / Claude 3.5 Sonnet | "Needs to be ""smarter"" than the Quant to catch its lies."
+Planner | Medium | GPT-4o-mini | Orchestration is mostly pattern matching.
+
+Small models often struggle with "Contextual Grounding." They "know" what a DCF looks like from their training data, so they revert to "Example" code rather than looking at the research_context you provided. Larger models have better Attention Mechanisms—they prioritize your provided facts over their training "defaults."
 
 ----------
 
 
 ### Analyst Node: The Final Synthesis
-This is your "closer." The Quant Agent produces raw JSON; the Researcher produces raw facts. The Analyst turns them into a narrative.
+This is your "closer". The Quant Agent produces raw JSON; the Researcher produces raw facts. The Analyst turns them into a narrative.
 
 The analyst agent should:
 1️⃣ Collect outputs from all agents
@@ -3753,7 +3589,106 @@ For a portfolio project, your current architecture is already impressive.
 Even small things like that show robust system thinking.
 
 
+---------------------------------
+## About LangGraph
 
+### States:
+
+For a senior-level, production-ready system in 2026, the industry standard is Pydantic for the internal Graph State. Use Pydantic models for each section to enforce semantic guardrails.
+
+While TypedDict is lightweight, it only provides type-hinting. Pydantic provides runtime validation. In a multi-agent system, if the Researcher agent outputs a malformed string instead of a list of URLs, a TypedDict will let it pass (causing a crash later), whereas Pydantic will catch the error at the node boundary, allowing your Reflection logic to trigger a retry.
+
+1. The "State of the Art" State Strategy
+
+We will use a Hierarchical State pattern.
+
+- MasterState: The global state shared across the main graph.
+
+- SubgraphStates: Local states for specific logic (like the Evaluation loop) that "sync" back to the MasterState.
+
+2. Why this is "Production Ready"
+
+- Runtime Safety: If the Quantitative agent tries to inject a float into the plan (which expects a List[str]), Pydantic will raise a ValidationError immediately.
+
+- The Reducer Pattern (Annotated): Notice operator.add or merge_lists. This is crucial for Parallel Research. If your Web Search and Vector Search finish at the same time, LangGraph uses this function to combine their results into the MasterState without data loss.
+
+- Traceability: Because these are Pydantic objects, they serialize perfectly into JSON for LangSmith or a SQL Database, making your "Human-in-the-loop" resume/pause functionality seamless.
+
+In LangGraph, the state object passed into each node is an instance of the schema you defined (often a TypedDict). For example, if your schema is inherited from `StateMessage`, you can access them with dict methods (`state["messages"]` works) not `.` method for Pydantic schemas (`state.messages`: Error).
+
+
+### Send command
+The error occurs because when you use `Send`(node_name, payload), LangGraph passes that entire payload dictionary as the first positional argument to your node function.
+Your analyst function is likely defined to expect a task_id string, but LangGraph is trying to hand it the whole state dictionary (the payload).
+
+You need to update your agent nodes definition to accept the state (the payload you sent) and then extract the task_id from it.
+
+1. The Send Logic: When you do Send("analyst", {"task_id": "123"}), LangGraph treats {"task_id": "123"} as the local state for that specific branched invocation of the analyst node.
+2. The Function Signature: LangGraph always calls a node by passing *the state* as the first argument. If your function header is def analyst(task_id), Python thinks the dictionary {"task_id": "123"} is the value for `task_id`. It then looks for a second argument that doesn't exist, leading to the "missing 1 required positional argument" confusion.
+
+To recieve `task_id` which is not a key in global state, we need to make it clear for recievers, foe example by doing:
+
+```python
+class AgentInput(MasterState):
+    task_id: int
+
+async def analyst(state: AgentInput):
+    ...
+```
+
+but note these 2 things:
+1. The Send call must include everything
+
+When you use Send, LangGraph does not automatically copy the global state into the new branch. You have to manually "spread" the current state into the dictionary you are sending:
+
+```python
+return [
+    Send(task.agent, {
+        **state,           # This passes all MasterState fields (messages, topic, etc.)
+        "task_id": task.id # This adds the specific task_id for the analyst
+    }) 
+    for task in state.plan if task.status == "running"
+]
+```
+
+### Updating Tasks by Reducers
+By default, LangGraph overwrites a state key with whatever a node returns. If your analyst node returns an update but doesn't include the full plan, or if multiple analysts return updates simultaneously, they might overwrite each other's data, leaving the list empty or incomplete. 
+
+In LangGraph, the **Reducer** is called every time a node returns data for that key. When  `planning_architect` finishes, it returns a list of Task objects, but your reducer is expecting a list of `TaskUpdate` objects to merge.
+
+LangGraph often passes state updates as dictionaries rather than Pydantic objects during the reduction phase. If you see errors about `.id` not existing, change `up.id` to up["id"] or ensure you are casting them back to objects inside the reducer.
+
+### Send
+LangGraph expects nodes to return a dictionary that maps to your state keys. In LangGraph, even if you are only performing a "fan-out" (branching), the node must return a dictionary where the **Send** objects are the value for a specific key (usually the one that triggers the next step) OR you simply return the list of Send objects as the entire return value if that node is specifically a **Command** or a functional router.
+
+Wrap it in a Dictionary If your scheduler is a standard node in the graph, it must return the Send objects inside a dictionary.
+
+```python
+return {
+    "plan": [Send(task.agent, {**state, "task_id": task.id}) for task in tasks_to_run]
+}
+```
+
+In LangGraph, Send objects can only be returned from a Conditional Edge function, not from a Standard Node.
+
+```python
+return [Send(task.agent, {**state, "task_id": task.id}) for task in tasks_to_run]
+```
+ 
+Why it is better to use conditional edge for fanning out:
+- Mermaid Visualization: Because you explicitly mapped the names (e.g., "analyst": "analyst"), the graph will show a clear fan-out from the scheduler to all agents.
+- Decoupling: Your scheduler node focuses on data, while your edge focuses on flow.
+- No "Ghost" Invocations: Since there are no direct edges, your agents will only ever be called when the router explicitly sends them a task_id.
+
+Why this works:
+- The Fan-Out: The scheduler (via route_to_agents) sends tasks to multiple agents at once.
+- The Collection: As each agent finishes, it returns its `TaskUpdate`.
+- The Loop: The edge takes the agent back to the scheduler. The scheduler looks at the updated plan, sees which tasks are now "ready" (because their dependencies met), and fans out again.
+- The Exit: When `route_to_agents` sees no more tasks to run, it returns END.
+
+
+
+--------------------------------
 
 
 
