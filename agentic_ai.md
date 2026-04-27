@@ -1,27 +1,115 @@
 <h1 class='title'>Agentic AI </h1>
 
-#### Table of Content
+**Table of Content**
 
-- [Plan for a Project](#plan-for-a-project)
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+  - [Plan for a Project](#plan-for-a-project)
+- [AI Agents](#ai-agents)
+      - [What can AI Agent Frameworks do more?](#what-can-ai-agent-frameworks-do-more)
   - [Foundational Models](#foundational-models)
     - [Initializing an agent](#initializing-an-agent)
     - [Streaming Output](#streaming-output)
-  - [Prompt](#prompt)
-    - [Few-shot examples](#few-shot-examples)
-    - [Structured Prompts](#structured-prompts)
-  - [Tools](#tools)
-  - [Search Web](#search-web)
+  - [In-context Learning](#in-context-learning)
+    - [Prompts](#prompts)
+      - [Elements of prompt templates](#elements-of-prompt-templates)
+      - [Prompt Engineering](#prompt-engineering)
+        - [System Prompt](#system-prompt)
+        - [Few-shot examples](#few-shot-examples)
+        - [Structured Prompts](#structured-prompts)
   - [LangSmith](#langsmith)
   - [Memory](#memory)
       - [Customized States](#customized-states)
-  - [Model Context Protocol (MCP)](#model-context-protocol-mcp)
-    - [Online MCP Servers](#online-mcp-servers)
-  - [In-context Learning](#in-context-learning)
-        - [Advantage](#advantage)
-        - [Disadvantage](#disadvantage)
-    - [Prompts](#prompts)
-      - [Elements of prompt templates](#elements-of-prompt-templates)
-      - [Prompt engineering](#prompt-engineering)
+  - [Tools](#tools)
+      - [Search Web](#search-web)
+    - [Model Context Protocol (MCP)](#model-context-protocol-mcp)
+      - [MCP Core Components](#mcp-core-components)
+      - [Benefits of MCP](#benefits-of-mcp)
+      - [Online MCP Servers](#online-mcp-servers)
+    - [Agent-to-Agent Protocol (A2A)](#agent-to-agent-protocol-a2a)
+      - [A2A Core Components](#a2a-core-components)
+      - [Benefits of A2A](#benefits-of-a2a)
+        - [Example](#example)
+    - [Natural Language Web (NLWeb)](#natural-language-web-nlweb)
+      - [Components of NLWeb](#components-of-nlweb)
+    - [Tool/Function Calling](#toolfunction-calling)
+        - [What is the Tool Use Design Pattern?](#what-is-the-tool-use-design-pattern)
+        - [What are the use cases it can be applied to?](#what-are-the-use-cases-it-can-be-applied-to)
+        - [What are the elements/building blocks needed to implement the tool use design pattern?](#what-are-the-elementsbuilding-blocks-needed-to-implement-the-tool-use-design-pattern)
+        - [Function/Tool Calling](#functiontool-calling)
+        - [Create a Function Schema:](#create-a-function-schema)
+- [Building Trustworthy Agents](#building-trustworthy-agents)
+      - [Structured meta prompting system](#structured-meta-prompting-system)
+        - [Structured](#structured)
+        - [Structured meta prompting](#structured-meta-prompting)
+    - [Attackers](#attackers)
+        - [Task & Instruction Manipulation (Prompt Injection)](#task--instruction-manipulation-prompt-injection)
+        - [Access to Critical Systems](#access-to-critical-systems)
+        - [Resource and Service Overloading](#resource-and-service-overloading)
+        - [Knowledge Base Poisoning](#knowledge-base-poisoning)
+        - [Cascading Errors](#cascading-errors)
+  - [Multi Agents Design Patterns](#multi-agents-design-patterns)
+        - [Advantages of Using Multi-Agents Over a Singular Agent](#advantages-of-using-multi-agents-over-a-singular-agent)
+        - [Implementing the Multi-Agent Design Pattern](#implementing-the-multi-agent-design-pattern)
+      - [Visibility into Multi-Agent Interactions](#visibility-into-multi-agent-interactions)
+      - [Multi-Agent Patterns](#multi-agent-patterns)
+  - [Agentic Design Patterns](#agentic-design-patterns)
+      - [Pattern 1: Clear Agent Instructions](#pattern-1-clear-agent-instructions)
+      - [Pattern 2: Structured Output with Pydantic Models](#pattern-2-structured-output-with-pydantic-models)
+      - [Pattern 3: Single Responsibility Agents](#pattern-3-single-responsibility-agents)
+    - [Orchestrator–Worker (Hierarchical)](#orchestratorworker-hierarchical)
+    - [Multi-Agent Collaboration (Peer-to-Peer)](#multi-agent-collaboration-peer-to-peer)
+    - [Shared State](#shared-state)
+      - [Some subclass patterns](#some-subclass-patterns)
+        - [Orchestrator–Worker (Hierarchical)](#orchestratorworker-hierarchical-1)
+        - [Group chat](#group-chat)
+        - [Hand-off](#hand-off)
+        - [Collaborative Filtering](#collaborative-filtering)
+      - [Assignment](#assignment)
+    - [A2A Protocol](#a2a-protocol)
+      - [Summary](#summary)
+        - [Orchestrator Architecture (Centralized Control)](#orchestrator-architecture-centralized-control)
+        - [A2A Architecture (Decentralized)](#a2a-architecture-decentralized)
+        - [The middle ground: Controlled A2A](#the-middle-ground-controlled-a2a)
+        - [⚖️ Tradeoff summary](#️-tradeoff-summary)
+- [Deploy AI Agents into Production](#deploy-ai-agents-into-production)
+      - [Traces and Spans](#traces-and-spans)
+      - [Why Observability Matters in Production Environments](#why-observability-matters-in-production-environments)
+      - [Key Metrics to Track](#key-metrics-to-track)
+      - [Instrument your Agent](#instrument-your-agent)
+      - [Agent Evaluation](#agent-evaluation)
+        - [Offline Evaluation](#offline-evaluation)
+        - [Online Evaluation](#online-evaluation)
+        - [Combining the two](#combining-the-two)
+        - [Common Issues](#common-issues)
+      - [Managing Costs](#managing-costs)
+- [Memory](#memory-1)
+    - [Understanding AI Agent Memory](#understanding-ai-agent-memory)
+    - [Why is Memory Important?](#why-is-memory-important)
+    - [Types of Memory](#types-of-memory)
+        - [Working Memory](#working-memory)
+        - [Short Term Memory](#short-term-memory)
+        - [Long Term Memory](#long-term-memory)
+        - [Persona Memory](#persona-memory)
+        - [Workflow/Episodic Memory](#workflowepisodic-memory)
+        - [Entity Memory](#entity-memory)
+        - [Structured RAG (Retrieval Augmented Generation)](#structured-rag-retrieval-augmented-generation)
+    - [Implementing and Storing Memory](#implementing-and-storing-memory)
+      - [Specialized Memory Tools](#specialized-memory-tools)
+        - [Mem0](#mem0)
+        - [Cognee](#cognee)
+        - [Storing Memory with RAG](#storing-memory-with-rag)
+        - [Making AI Agents Self-Improve](#making-ai-agents-self-improve)
+        - [Optimizations for Memory](#optimizations-for-memory)
+- [Agnetic RAG](#agnetic-rag)
+    - [Defining Agentic RAG](#defining-agentic-rag)
+    - [Owning the Reasoning Process](#owning-the-reasoning-process)
+    - [Iterative Loops, Tool Integration, and Memory](#iterative-loops-tool-integration-and-memory)
+    - [Handling Failure Modes and Self-Correction](#handling-failure-modes-and-self-correction)
+    - [Boundaries of Agency](#boundaries-of-agency)
+    - [Practical Use Cases and Value](#practical-use-cases-and-value)
 - [Introduction to LangChain](#introduction-to-langchain)
     - [Language Models](#language-models)
       - [Chat Models](#chat-models)
@@ -36,7 +124,7 @@
     - [Tools and applications](#tools-and-applications)
       - [LangChain for prompt engineering](#langchain-for-prompt-engineering)
     - [LangChain Chains and Agents for Building Applications](#langchain-chains-and-agents-for-building-applications)
-      - [Memory](#memory-1)
+      - [Memory](#memory-2)
       - [Agents](#agents)
   - [Choose the right model for your use case](#choose-the-right-model-for-your-use-case)
   - [Comparing AI system Designs](#comparing-ai-system-designs)
@@ -67,10 +155,10 @@
       - [AI Agent](#ai-agent)
         - [Large Language Model (LLMs)](#large-language-model-llms)
         - [Tool(s)](#tools-1)
-        - [Memory](#memory-2)
+        - [Memory](#memory-3)
         - [Action](#action)
         - [Connection to the external world](#connection-to-the-external-world)
-        - [Example](#example)
+        - [Example](#example-1)
       - [Agents in LangChain](#agents-in-langchain)
         - [Using built-in agent types](#using-built-in-agent-types)
         - [Creating agents with OpenAI functions](#creating-agents-with-openai-functions)
@@ -147,7 +235,8 @@
       - [Pros and Cons](#pros-and-cons)
       - [When to use which framework?](#when-to-use-which-framework)
       - [Conclusion](#conclusion)
-      - [Note](#note)
+  - [Orchestrating Complex AI Workflows](#orchestrating-complex-ai-workflows)
+  - [What are Hierarchical AI Agents?](#what-are-hierarchical-ai-agents)
 - [Introduction to LangGraph](#introduction-to-langgraph)
       - [Why graph-based agents?](#why-graph-based-agents)
       - [When to use LangGraph](#when-to-use-langgraph)
@@ -288,11 +377,13 @@
         - [When to Use LangChain](#when-to-use-langchain)
         - [When to Use LangGraph](#when-to-use-langgraph-1)
         - [FastAPI wrapper arounf LangGraph app](#fastapi-wrapper-arounf-langgraph-app)
+- [7 Skills to Build Agentic AI](#7-skills-to-build-agentic-ai)
+
+<!-- /code_chunk_output -->
 
 
 
-
-#### Plan for a Project
+### Plan for a Project
 Phase 1 (Week 1–2): Mental Model Solidification
 Goal: Vocabulary + clarity + architecture confidence.
 
@@ -314,12 +405,9 @@ You will master:
     - Task success metrics
     - Failure logging
     - Human-in-the-loop feedback
-- Deliverable:
-    - You can whiteboard an agent system confidently.
-    - No code obsession yet.
+
 
 Phase 2 (Week 3–4): Build ONE Structured Agent
-Not toy. Not messy.
 One clean architecture.
 Example (aligned with your profile):
 Option A: Enterprise Document Intelligence Agent
@@ -592,21 +680,8 @@ You can confidently say:
 - “I deployed it containerized.”
 
 That’s AI Systems Engineer level.
-Not tutorial level.
 
-📚 About the IBM Certificate
-Use it selectively.
-Skip or skim:
-Basic GenAI intro
-Basic RAG intro
-Focus on:
-Fundamentals of Building AI Agents
-Agentic AI with LangChain / LangGraph
-MCP concepts (important vocabulary)
-Multi-agent orchestration overview
-Treat it as vocabulary + terminology reinforcement.
-Not your main project.
-Your project is the centerpiece.
+
 
 ###### 📅 Time Scope (Realistic)
 6–8 weeks total:
@@ -620,22 +695,14 @@ No scope creep.
 
 
 
-----------------------
-----------------
-----------
-
-
-
-
-
-### AI Agents
+## AI Agents
 
 An AI agent is a program that uses a large language model (LLM) as its reasoning engine and can take actions in the real world — calling APIs, querying databases, or running code — to accomplish a goal on behalf of a user.
 
 An AI Agent is a collection of parts working together. At its core, every agent has three pieces:
-- Environment — The space the agent works in. For a travel booking agent, this would be the booking platform itself.
-- Sensors — How the agent reads the current **state** of its environment. Our travel agent might check hotel availability or flight prices.
-- Actuators — How the agent takes **action**. The travel agent might book a room, send a confirmation, or cancel a reservation.
+- Environment: The space the agent works in. For a travel booking agent, this would be the booking platform itself.
+- Sensors: How the agent reads the current **state** of its environment. Our travel agent might check hotel availability or flight prices.
+- Actuators: How the agent takes **action**. The travel agent might book a room, send a confirmation, or cancel a reservation.
 
 Agents existed before LLMs, but LLMs are what make modern agents so powerful. They can understand natural language, reason about context, and turn a vague user request into a concrete plan of action.
 
@@ -754,11 +821,11 @@ This method is used by all major chatbots to improve preceived latecny and user 
 
 In-context learning doesn’t require additional training. A new task is learned from a small set of examples presented within the context or prompt at inference time. 
 
-###### Advantage
+**Advantage**
 - No fine tuning needed
 - Reduces the resources and time while improving performance
 
-###### Disadvantage
+**Disadvantage**
 - Limited to what can fit in-context 
 - Complex tasks could require fine tuning for some models
 
@@ -780,8 +847,7 @@ We usually use prompt templates when we need to repeat a prompt for different in
 -  Output of model
    -  Part of the prompt where the LLM's response is expected. It's a clear marker that tells the AI where to deliver its analysis.
 
-By combining these elements effectively, you can tailor LLMs to perform tasks ranging from answering queries and
-analyzing data to generating content. 
+By combining these elements effectively, you can tailor LLMs to perform tasks ranging from answering queries and analyzing data to generating content. 
 
 
 ##### Prompt Engineering
@@ -1135,18 +1201,36 @@ ToolMessage(content='{"query": "current mayor of San Francisco", "follow_up_ques
 
 Thsi tool call enables the model to answer correctly.
 
-### Model Context Protocol (MCP)
-MCP is defined by Anthropic the group who made it as an open protocol that standardizes how your LLM applications connect to and work  with your tools and data sources. It allows us to plug in various tools to our agent to add functionality just like USBs.
+#### Model Context Protocol (MCP)
+The Model Context Protocol (MCP) is an open standard that provides standardized way for applications to provide context and tools to LLMs. This enables a "universal adaptor" to different data sources and tools that AI Agents can connect to in a consistent way. 
 
 Creating tools and providing context to different model providers used to look a lot like this. A never ending web of API calls and databases to connect to your agents for every application you try to build. Thats why this universal model context protocol for model providers and tool builders to use.
 
-The MCP host hosts an MCP client, which communicates to the MCP server. In our case, the host can be AI application or an agent. MCP servers can expose tools and resources (read-only data) and prompt templates or whatever our agent needs.
+##### MCP Core Components
 
-Once we have built an MCP server with our tools and context, its very easy to share with other projects and developers and streamlining future agent builds. There is s ahuge open source servers that other people have built which we can easily insert into our agent and other types of AI applications compatible with MCP servers like your favourite chat bots or IDEs.
+MCP operates on a client-server architecture and the core components are:
 
-The following code can start a MCP server which is defined in module `resources/2.1_mcp_server.py`. Setting up a MCP serve is very similar to that of a FastAPI server. The syntax is very familiar to me.  
+• *Hosts* are LLM applications (for example a code editor like VSCode) that start the connections to an MCP Server.
+
+• *Clients* are components within the host application that maintain one-to-one connections with servers.
+
+• *Servers* are lightweight programs that expose specific capabilities.
+
+Included in the protocol are three core primitives which are the capabilities of an MCP Server:
+
+• **Tools**: These are discrete actions or functions an AI agent can call to perform an action. For example, a weather service might expose a "get weather" tool, or an e-commerce server might expose a "purchase product" tool. MCP servers advertise each tool's name, description, and input/output schema in their capabilities listing.
+
+• **Resources**: These are read-only data items or documents that an MCP server can provide, and clients can retrieve them on demand. Examples include file contents, database records, or log files. Resources can be text (like code or JSON) or binary (like images or PDFs).
+
+• **Prompts**: These are predefined templates that provide suggested prompts, allowing for more complex workflows.
+
+
+Once we have built an MCP server with our tools and context, it's very easy to share with other projects and developers and streamlining future agent builds. There is a huge open source servers that other people have built which we can easily insert into our agent and other types of AI applications compatible with MCP servers like your favourite chat bots or IDEs.
+
+The following code can start a MCP server which is defined in module. 
 
 ```python
+# resources/2.1_mcp_server.py
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
 client = MultiServerMCPClient(
@@ -1159,7 +1243,7 @@ client = MultiServerMCPClient(
     }
 )
 ```
-One important configuration is transport protocol. Thsi could be `STDIO` or `StreamingHTTP` depending on the server. For more info, check out MCP documentation. We can get the tools, resources and prompts available at this server:
+Setting up and syntax a MCP serve is very similar to that of a FastAPI server.  One important configuration is transport protocol. Thsi could be `STDIO` or `StreamingHTTP` depending on the server. For more info, check out MCP documentation. We can get the tools, resources and prompts available at this server:
 
 ```python
 tools = await client.get_tools()
@@ -1207,7 +1291,19 @@ If we see the response, we notice that the agent made a tool call to our tools i
 tool_calls=[{'name': 'search_web', 'args': {'query': 'langchain-mcp-adapters library'}
 ```
 
-#### Online MCP Servers
+##### Benefits of MCP
+
+MCP offers significant advantages for AI Agents:
+
+- *Dynamic Tool Discovery*: Agents can dynamically receive a list of available tools from a server along with descriptions of what they do. This contrasts with traditional APIs, which often require static coding for integrations, meaning any API change necessitates code updates. MCP offers an "integrate once" approach, leading to greater adaptability.
+
+- *Interoperability Across LLMs*: MCP works across different LLMs, providing flexibility to switch core models to evaluate for better performance.
+
+- *Standardized Security*: MCP includes a standard authentication method, improving scalability when adding access to additional MCP servers. This is simpler than managing different keys and authentication types for various traditional APIs.
+
+
+
+##### Online MCP Servers
 The biggest advantage of MCP servers is to connect your agent to other people's MCP servers. There are 100k+ MCP servers you could find online most are open sourced and free and some are not. You just find a config file for the server you need and insert it in `MultiServerMCPClient` arg field and there you have it. Its that easy to connect your agent to the server. The significance here is that you do not need to run your MCP API. The agent will call the server for you.
 
 ```python
@@ -1245,79 +1341,104 @@ response['messages'][-1].content
 
 Our agent made a tool call `tool_calls=[{'name': 'get_current_time', 'args': {'timezone': 'America/New_York'}` to find the accurate time. For another example, take a look at  this course: [MCP for Building Rich-Context AI APPs with Antropic](https://learn.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic/lesson/dbabg/creating-an-mcp-server).
 
+#### Agent-to-Agent Protocol (A2A)
 
+While MCP focuses on connecting LLMs to tools, the Agent-to-Agent (A2A) protocol takes it a step further by enabling communication and collaboration between different AI agents. A2A connects AI agents across different organizations, environments and tech stacks to complete a shared task.
 
+We’ll examine the components and benefits of A2A, along with an example of how it could be applied in our travel application.
 
-## Agentic Design Patterns
+##### A2A Core Components
 
+A2A focuses on enabling communication between agents and having them work together to complete a subtask of user. Each component of the protocol contributes to this:
 
-###### Pattern 1: Clear Agent Instructions
+1. Agent Card
+
+    Similar to how an MCP server shares a list of tools, an Agent Card has:
+    - The Name of the Agent .
+    - A description of the general tasks it completes.
+    - A list of specific skills with descriptions to help other agents (or even human users) understand when and why they would want to call that agent.
+    - The current Endpoint URL of the agent
+    - The version and capabilities of the agent such as streaming responses and push notifications.
+
+2. Agent Executor
+
+    The Agent Executor is responsible for passing the context of the user chat to the remote agent, the remote agent needs this to understand the task that needs to be completed. In an A2A server, an agent uses its own Large Language Model (LLM) to parse incoming requests and execute tasks using its own internal tools.
+
+3. Artifact
+
+    Once a remote agent has completed the requested task, its work product is created as an artifact. An artifact contains the result of the agent's work, a description of what was completed, and the text context that is sent through the protocol. After the artifact is sent, the connection with the remote agent is closed until it is needed again.
+
+4. Event Queue
+
+    This component is used for handling updates and passing messages. It is particularly important in production for agentic systems to prevent the connection between agents from being closed before a task is completed, especially when task completion times can take a longer time.
+
+##### Benefits of A2A
+
+- *Enhanced Collaboration*: It enables agents from different vendors and platforms to interact, share context, and work together, facilitating seamless automation across traditionally disconnected systems.
+
+- *Model Selection Flexibility*: Each A2A agent can decide which LLM it uses to service its requests, allowing for optimized or fine-tuned models per agent, unlike a single LLM connection in some MCP scenarios.
+
+- *Built-in Authentication*: Authentication is integrated directly into the A2A protocol, providing a robust security framework for agent interactions.
+
+###### Example
+
+Let's expand on our travel booking scenario, but this time using A2A.
+
+1. User Request to Multi-Agent: 
+
+    A user interacts with a "Travel Agent" A2A client/agent, perhaps by saying, "Please book an entire trip to Honolulu for next week, including flights, a hotel, and a rental car".
+
+2. Orchestration by Travel Agent: 
     
-The most impactful pattern is also the simplest: writing clear, detailed instructions for your agent. Good instructions define:
-- Who the agent is (persona and tone)
-- What it should do (step-by-step responsibilities)
-- How it should behave (constraints and style)
+    The Travel Agent receives this complex request. It uses its LLM to reason about the task and determine that it needs to interact with other specialized agents.
 
-```python
-SystemPrompt="""You are a luxury travel concierge named Alex. Your role is to:
-1. Understand the traveler's preferences (budget, climate, activities)
-2. Check destination availability before making recommendations
-3. Provide detailed, personalized travel suggestions
-4. Always mention visa requirements and best travel seasons
-Be warm, professional, and enthusiastic about travel."""
-```
+3. Inter-Agent Communication: 
 
-###### Pattern 2: Structured Output with Pydantic Models
+    The Travel Agent then uses the A2A protocol to connect to downstream agents, such as an "Airline Agent," a "Hotel Agent," and a "Car Rental Agent" that are created by different companies.
 
-Free-form text is useful for conversation, but downstream systems need structured data. By pairing *Pydantic models* with a tool function, we can:
-- Define an exact schema for the agent's output
-- Validate responses automatically
-- Integrate agent results into application logic reliably
+4. Delegated Task Execution: 
 
-Two Options: Structured Output vs. Tool Calling:
-- `with_structured_output` (Recommended): Best for reliability. It uses "Strict Mode" (on OpenAI) which forces the model to follow the schema exactly.
-- `bind_tools`: Slightly less reliable for deep nesting because the model treats it as a function call. It might occasionally omit a nested field if it doesn't think it's necessary.
+    The Travel Agent sends specific tasks to these specialized agents (e.g., "Find flights to Honolulu," "Book a hotel," "Rent a car"). Each of these specialized agents, running their own LLMs and utilizing their own tools (which could be MCP servers themselves), performs its specific part of the booking.
 
-```python
-from pydantic import BaseModel, Field
-from typing import List, Optional
+5. Consolidated Response: 
 
-class Ingredient(BaseModel):
-    name: str = Field(description="Name of the ingredient")
-    amount: float = Field(description="Quantity needed")
-    unit: str = Field(description="Unit of measurement (e.g., grams, cups)")
+    Once all downstream agents complete their tasks, the Travel Agent compiles the results (flight details, hotel confirmation, car rental booking) and sends a comprehensive, chat-style response back to the user.
 
-class Recipe(BaseModel):
-    title: str = Field(description="Name of the dish")
-    ingredients: List[Ingredient] = Field(description="List of required ingredients")
 
-structured_llm = llm.with_structured_output(Recipe)
-# Or: 
-# structured_llm= llm.bind_tools([Recipe])
-try:
-    result = structured_llm.invoke("How do I make a simple omelette?")
-    print(result)
-except Exception as e:
-    print(f"Failed after 3 attempts: {e}")
-```
+#### Natural Language Web (NLWeb)
 
-> *Validation Errors*: If the model makes a mistake, Pydantic will raise a validation error. You should wrap your call in a `try/except` block or use a retry mechanism to handle failures.
+Websites have long been the primary way for users to access information and data across the internet.
 
-Modern LLMs like GPT-4o or Claude 3.5 Sonnet are generally excellent at handling deep hierarchies. Smaller or older models may "hallucinate" the structure or flatten it if it's too complex.  
-- `TrustCall` was specifically built to handle the *self-correction* and *patching* of complex schemas more efficiently than standard retries. TrustCall is often integrated within LangGraph workflows to manage these iterative correction loops automatically for deeply nested data
+Let us look at the different components of NLWeb, the benefits of NLWeb and an example how our NLWeb works by looking at our travel application.
 
->*Best practice*: Keep the schema as flat as possible .Don't use too deep nested schemas (> 5 layers). 
+##### Components of NLWeb
 
-###### Pattern 3: Single Responsibility Agents
+NLWeb Application (Core Service Code): The system that processes natural language questions. It connects the different parts of the platform to create responses. You can think of it as the engine that powers the natural language features of a website.
 
-Complex tasks benefit from splitting work across multiple focused agents, each with a single responsibility:
+NLWeb Protocol: This is a basic set of rules for natural language interaction with a website. It sends back responses in JSON format (often using Schema.org). Its purpose is to create a simple foundation for the AI Web, in the same way that HTML made it possible to share documents online.
 
-- A Destination Expert that knows about places and availability
-- A Logistics Planner that handles flights, hotels, and itineraries
+MCP Server (Model Context Protocol Endpoint): Each NLWeb setup also works as an MCP server. This means it can share tools (like an “ask” method) and data with other AI systems. In practice, this makes the website’s content and abilities usable by AI agents, allowing the site to become part of the wider “agent ecosystem.”
 
-This mirrors the software engineering principle of *separation of concerns* — each agent is easier to test, maintain, and improve independently.
+Embedding Models: These models are used to convert website content into numerical representations called vectors (embeddings). These vectors capture meaning in a way computers can compare and search. They are stored in a special database, and users can choose which embedding model they want to use.
 
-## Tool/Function Calling
+Vector Database (Retrieval Mechanism): This database stores the embeddings of the website content. When someone asks a question, NLWeb checks the vector database to quickly find the most relevant information. It gives a fast list of possible answers, ranked by similarity. NLWeb works with different vector storage systems such as Qdrant, Snowflake, Milvus, Azure AI Search, and Elasticsearch.
+
+
+Consider our travel booking website again, but this time, it's powered by NLWeb.
+
+*Data Ingestion*: The travel website's existing product catalogs (e.g., flight listings, hotel descriptions, tour packages) are formatted using Schema.org or loaded via RSS feeds. NLWeb's tools ingest this structured data, create embeddings, and store them in a local or remote vector database.
+
+*Natural Language Query (Human)*: A user visits the website and, instead of navigating menus, types into a chat interface: "Find me a family-friendly hotel in Honolulu with a pool for next week".
+
+*NLWeb Processing*: The NLWeb application receives this query. It sends the query to an LLM for understanding and simultaneously searches its vector database for relevant hotel listings.
+
+*Accurate Results*: The LLM helps to interpret the search results from the database, identify the best matches based on "family-friendly," "pool," and "Honolulu" criteria, and then formats a natural language response. Crucially, the response refers to actual hotels from the website's catalog, avoiding made-up information.
+
+*AI Agent Interaction*: Because NLWeb serves as an MCP server, an external AI travel agent could also connect to this website's NLWeb instance. The AI agent could then use the ask MCP method to query the website directly: ask("Are there any vegan-friendly restaurants in the Honolulu area recommended by the hotel?"). The NLWeb instance would process this, leveraging its database of restaurant information (if loaded), and return a structured JSON response.
+
+
+
+#### Tool/Function Calling
 Function calling is the primary way we enable Large Language Models (LLMs) to interact with tools. You will often see 'Function' and 'Tool' used interchangeably because 'functions' (blocks of reusable code) are the 'tools' agents use to carry out tasks.
 
 
@@ -1656,7 +1777,7 @@ In my system, I used structured meta prompting by enforcing schema-based communi
 Structured meta prompting is the practice of designing prompts as structured, multi-layered instructions rather than free text. It includes defining roles, constraints, reasoning steps, and output schemas so the model behaves predictably. In agent systems, this is critical for controlling planning, enforcing tool usage, and validating outputs. In my project, I used schema-based prompts and structured outputs to ensure reliable coordination between agents and reduce hallucinations.
 
 
-##### Attackers
+#### Attackers
 
  Organize threats by surface:
 
@@ -1696,9 +1817,7 @@ Mitigation: One method to avoid this is to have the AI Agent operate in a limite
 Building trustworthy AI agents requires careful design, robust security measures, and continuous iteration. By implementing structured meta prompting systems, understanding potential threats, and applying mitigation strategies, developers can create AI agents that are both safe and effective. Additionally, incorporating a human-in-the-loop approach ensures that AI agents remain aligned with user needs while minimizing risks. As AI continues to evolve, maintaining a proactive stance on security, privacy, and ethical considerations will be key to fostering trust and reliability in AI-driven systems.
 
 
------------
-
-## Multi Agents Design Patterns
+### Multi Agents Design Patterns
 
 Multi agents are a design pattern that allows multiple agents to work together to achieve a common goal. This pattern is widely used in various fields, including robotics, autonomous systems, and distributed computing.
 
@@ -1746,6 +1865,7 @@ Let's look at each of these aspects more in detail.
 
 - *Performance Metrics*: Performance metrics can help you track the effectiveness of the multi-agent system. For example, you could track the time taken to complete a task, the number of tasks completed per unit of time, and the accuracy of the recommendations made by the agents. This information can help you identify areas for improvement and optimize the system.
 
+
 ##### Multi-Agent Patterns
 
 All agent systems are built from combinations of:
@@ -1754,7 +1874,73 @@ All agent systems are built from combinations of:
 - State model (where info lives)
 - Execusion model (sync / async / parallel)
 
+### Agentic Design Patterns
 
+##### Pattern 1: Clear Agent Instructions
+    
+The most impactful pattern is also the simplest: writing clear, detailed instructions for your agent. Good instructions define:
+- Who the agent is (persona and tone)
+- What it should do (step-by-step responsibilities)
+- How it should behave (constraints and style)
+
+```python
+SystemPrompt="""You are a luxury travel concierge named Alex. Your role is to:
+1. Understand the traveler's preferences (budget, climate, activities)
+2. Check destination availability before making recommendations
+3. Provide detailed, personalized travel suggestions
+4. Always mention visa requirements and best travel seasons
+Be warm, professional, and enthusiastic about travel."""
+```
+
+##### Pattern 2: Structured Output with Pydantic Models
+
+Free-form text is useful for conversation, but downstream systems need structured data. By pairing *Pydantic models* with a tool function, we can:
+- Define an exact schema for the agent's output
+- Validate responses automatically
+- Integrate agent results into application logic reliably
+
+Two Options: Structured Output vs. Tool Calling:
+- `with_structured_output` (Recommended): Best for reliability. It uses "Strict Mode" (on OpenAI) which forces the model to follow the schema exactly.
+- `bind_tools`: Slightly less reliable for deep nesting because the model treats it as a function call. It might occasionally omit a nested field if it doesn't think it's necessary.
+
+```python
+from pydantic import BaseModel, Field
+from typing import List, Optional
+
+class Ingredient(BaseModel):
+    name: str = Field(description="Name of the ingredient")
+    amount: float = Field(description="Quantity needed")
+    unit: str = Field(description="Unit of measurement (e.g., grams, cups)")
+
+class Recipe(BaseModel):
+    title: str = Field(description="Name of the dish")
+    ingredients: List[Ingredient] = Field(description="List of required ingredients")
+
+structured_llm = llm.with_structured_output(Recipe)
+# Or: 
+# structured_llm= llm.bind_tools([Recipe])
+try:
+    result = structured_llm.invoke("How do I make a simple omelette?")
+    print(result)
+except Exception as e:
+    print(f"Failed after 3 attempts: {e}")
+```
+
+> *Validation Errors*: If the model makes a mistake, Pydantic will raise a validation error. You should wrap your call in a `try/except` block or use a retry mechanism to handle failures.
+
+Modern LLMs like GPT-4o or Claude 3.5 Sonnet are generally excellent at handling deep hierarchies. Smaller or older models may "hallucinate" the structure or flatten it if it's too complex.  
+- `TrustCall` was specifically built to handle the *self-correction* and *patching* of complex schemas more efficiently than standard retries. TrustCall is often integrated within LangGraph workflows to manage these iterative correction loops automatically for deeply nested data
+
+>*Best practice*: Keep the schema as flat as possible .Don't use too deep nested schemas (> 5 layers). 
+
+##### Pattern 3: Single Responsibility Agents
+
+Complex tasks benefit from splitting work across multiple focused agents, each with a single responsibility:
+
+- A Destination Expert that knows about places and availability
+- A Logistics Planner that handles flights, hotels, and itineraries
+
+This mirrors the software engineering principle of *separation of concerns* — each agent is easier to test, maintain, and improve independently.
 
 Let's dive into some concrete patterns we can use to create multi-agent apps. Here are some interesting patterns worth considering:
 
@@ -1897,7 +2083,7 @@ Interview phrasing:
 “Handoff is essentially controlled task routing between specialized agents.”
 
 
-###### Collaborative Filtering (⚠️ different meaning here)
+###### Collaborative Filtering
 This one comes from recommender systems. This pattern is useful when you want to create an application where multiple agents can collaborate to make recommendations to users. Why you would want multiple agents to collaborate is because each agent can have different expertise and can contribute to the recommendation process in different ways.
 
 In agent context, it usually means:
@@ -2273,12 +2459,379 @@ Remove the orchestrator from the data path, not from the control plane.
 ## Deploy AI Agents into Production
 
 
+##### Traces and Spans
 
----------------------------------
-----------------
----------
------
+Observability tools such as *Langfuse* or Microsoft Foundry usually represent agent runs as traces and spans.
+
+- **Trace** represents a complete agent task from start to finish (like handling a user query).
+- **Spans** are individual steps within the trace (like calling a language model or retrieving data).
+
+Without observability, an AI agent can feel like a "black box" - its internal state and reasoning are opaque, making it difficult to diagnose issues or optimize performance. With observability, agents become "glass boxes," offering transparency that is vital for building trust and ensuring they operate as intended.
+
+
+##### Why Observability Matters in Production Environments
+
+Transitioning AI agents to production environments introduces a new set of challenges and requirements. Observability is no longer a "nice-to-have" but a critical capability:
+
+- *Debugging and Root-Cause Analysis*: When an agent fails or produces an unexpected output, observability tools provide the traces needed to pinpoint the source of the error. This is especially important in complex agents that might involve multiple LLM calls, tool interactions, and conditional logic.
+- *Latency and Cost Management*: AI agents often rely on LLMs and other external APIs that are billed per token or per call. Observability allows for precise tracking of these calls, helping to identify operations that are excessively slow or expensive. This enables teams to optimize prompts, select more efficient models, or redesign workflows to manage operational costs and ensure a good user experience.
+- *Trust, Safety, and Compliance*: In many applications, it's important to ensure that agents behave safely and ethically. Observability provides an audit trail of agent actions and decisions. This can be used to detect and mitigate issues like prompt injection, the generation of harmful content, or the mishandling of personally identifiable information (PII). For example, you can review traces to understand why an agent provided a certain response or used a specific tool.
+- *Continuous Improvement Loops*: Observability data is the foundation of an iterative development process. By monitoring how agents perform in the real world, teams can identify areas for improvement, gather data for fine-tuning models, and validate the impact of changes. This creates a feedback loop where production insights from online evaluation inform offline experimentation and refinement, leading to progressively better agent performance.
+
+
+##### Key Metrics to Track
+
+To monitor and understand agent behavior, a range of metrics and signals should be tracked. While the specific metrics might vary based on the agent's purpose, some are universally important.
+
+Here are some of the most common metrics that observability tools monitor:
+
+- **Latency**: How quickly does the agent respond? Long waiting times negatively impact user experience. You should measure latency for tasks and individual steps by tracing agent runs. For example, an agent that takes 20 seconds for all model calls could be accelerated by using a faster model or by running model calls in parallel.
+
+- **Costs**: What’s the expense per agent run? AI agents rely on LLM calls billed per token or external APIs. Frequent tool usage or multiple prompts can rapidly increase costs. For instance, if an agent calls an LLM five times for marginal quality improvement, you must assess if the cost is justified or if you could reduce the number of calls or use a cheaper model. Real-time monitoring can also help identify unexpected spikes (e.g., bugs causing excessive API loops).
+
+- **Request Errors**: How many requests did the agent fail? This can include API errors or failed tool calls. To make your agent more robust against these in production, you can then set up fallbacks or retries. E.g. if LLM provider A is down, you switch to LLM provider B as backup.
+
+- **User Feedback**: Implementing direct user evaluations provide valuable insights. This can include explicit ratings (👍thumbs-up/👎down, ⭐1-5 stars) or textual comments. Consistent negative feedback should alert you as this is a sign that the agent is not working as expected.
+
+- **Implicit User Feedback**: User behaviors provide indirect feedback even without explicit ratings. This can include immediate question rephrasing, repeated queries or clicking a retry button. E.g. if you see that users repeatedly ask the same question, this is a sign that the agent is not working as expected.
+
+- **Accuracy**: How frequently does the agent produce correct or desirable outputs? Accuracy definitions vary (e.g., problem-solving correctness, information retrieval accuracy, user satisfaction). The first step is to define what success looks like for your agent. You can track accuracy via automated checks, evaluation scores, or task completion labels. For example, marking traces as "succeeded" or "failed".
+
+- **Automated Evaluation Metrics**: You can also set up automated evals. For instance, you can use an LLM to score the output of the agent e.g. if it is helpful, accurate, or not. There are also several open source libraries that help you to score different aspects of the agent. E.g. RAGAS for RAG agents or LLM Guard to detect harmful language or prompt injection.
+
+In practice, a combination of these metrics gives the best coverage of an AI agent’s health. In this chapters example notebook, we'll show you how these metrics looks in real examples but first, we'll learn how a typical evaluation workflow looks like.
+
+##### Instrument your Agent
+
+To gather tracing data, you’ll need to *instrument your code*. The goal is to instrument the agent code to emit traces and metrics that can be captured, processed, and visualized by an observability platform.
+
+**OpenTelemetry (OTel)**: OpenTelemetry has emerged as an industry standard for LLM observability. It provides a set of APIs, SDKs, and tools for generating, collecting, and exporting telemetry data.
+
+There are many instrumentation libraries that wrap existing agent frameworks and make it easy to export OpenTelemetry spans to an observability tool.  
+
+
+##### Agent Evaluation
+
+Observability gives us metrics, but evaluation is the process of analyzing that data (and performing tests) to determine how well an AI agent is performing and how it can be improved. In other words, once you have those traces and metrics, how do you use them to judge the agent and make decisions?
+
+Regular evaluation is important because AI agents are often non-deterministic and can evolve (through updates or drifting model behavior) – without evaluation, you wouldn’t know if your “smart agent” is actually doing its job well or if it’s regressed.
+
+There are two categories of evaluations for AI agents: online evaluation and offline evaluation. Both are valuable, and they complement each other. We usually begin with offline evaluation, as this is the minimum necessary step before deploying any agent.
+
+###### Offline Evaluation
+
+This involves evaluating the agent in a controlled setting, typically using test datasets, not live user queries. You use curated datasets where you know what the expected output or correct behavior is, and then run your agent on those.
+
+For instance, if you built a math word-problem agent, you might have a test dataset of 100 problems with known answers. Offline evaluation is often done during development (and can be part of CI/CD pipelines) to check improvements or guard against regressions. The benefit is that it’s repeatable and you can get clear accuracy metrics since you have ground truth. You might also simulate user queries and measure the agent’s responses against ideal answers or use automated metrics as described above.
+
+The key challenge with offline eval is ensuring your test dataset is comprehensive and stays relevant – the agent might perform well on a fixed test set but encounter very different queries in production. Therefore, you should keep test sets updated with new edge cases and examples that reflect real-world scenarios​. A mix of small “smoke test” cases and larger evaluation sets is useful: small sets for quick checks and larger ones for broader performance metrics​.
+
+###### Online Evaluation
+
+This refers to evaluating the agent in a live, real-world environment, i.e. during actual usage in production. Online evaluation involves monitoring the agent’s performance on real user interactions and analyzing outcomes continuously.
+
+For example, you might track success rates, user satisfaction scores, or other metrics on live traffic. The advantage of online evaluation is that it captures things you might not anticipate in a lab setting – you can observe model drift over time (if the agent’s effectiveness degrades as input patterns shift) and catch unexpected queries or situations that weren’t in your test data​. It provides a true picture of how the agent behaves in the wild.
+
+Online evaluation often involves collecting implicit and explicit user feedback, as discussed, and possibly running shadow tests or A/B tests (where a new version of the agent runs in parallel to compare against the old). The challenge is that it can be tricky to get reliable labels or scores for live interactions – you might rely on user feedback or downstream metrics (like did the user click the result).
+
+###### Combining the two
+
+Online and offline evaluations are not mutually exclusive; they are highly complementary. Insights from online monitoring (e.g., new types of user queries where the agent performs poorly) can be used to augment and improve offline test datasets. Conversely, agents that perform well in offline tests can then be more confidently deployed and monitored online.
+
+In fact, many teams adopt a loop:
+
+`evaluate offline -> deploy -> monitor online -> collect new failure cases -> add to offline dataset -> refine agent -> repeat`.
+
+###### Common Issues
+
+As you deploy AI agents to production, you may encounter various challenges. Here are some common issues and their potential solutions:
+
+Issue	Potential Solution
+AI Agent not performing tasks consistently	- Refine the prompt given to the AI Agent; be clear on objectives.
+- Identify where dividing the tasks into subtasks and handling them by multiple agents can help.
+- AI Agent running into continuous loops	- Ensure you have clear termination terms and conditions so the Agent knows when to stop the process.
+- For complex tasks that require reasoning and planning, use a larger model that is specialized for reasoning tasks.
+- AI Agent tool calls are not performing well	- Test and validate the tool's output outside of the agent system.
+- Refine the defined parameters, prompts, and naming of tools.
+- Multi-Agent system not performing consistently	- Refine prompts given to each agent to ensure they are specific and distinct from one another.
+- Build a hierarchical system using a "routing" or controller agent to determine which agent is the correct one.
+- Many of these issues can be identified more effectively with observability in place. The traces and metrics we discussed earlier help pinpoint exactly where in the agent workflow problems occur, making debugging and optimization much more efficient.
+
+##### Managing Costs
+
+Here are some strategies to manage the costs of deploying AI agents to production:
+
+*Using Smaller Models*: Small Language Models (SLMs) can perform well on certain agentic use-cases and will reduce costs significantly. As mentioned earlier, building an evaluation system to determine and compare performance vs larger models is the best way to understand how well an SLM will perform on your use case. Consider using SLMs for simpler tasks like intent classification or parameter extraction, while reserving larger models for complex reasoning.
+
+*Using a Router Model*: A similar strategy is to use a diversity of models and sizes. You can use an LLM/SLM or serverless function to route requests based on complexity to the best fit models. This will also help reduce costs while also ensuring performance on the right tasks. For example, route simple queries to smaller, faster models, and only use expensive large models for complex reasoning tasks.
+
+*Caching Responses*: Identifying common requests and tasks and providing the responses before they go through your agentic system is a good way to reduce the volume of similar requests. You can even implement a flow to identify how similar a request is to your cached requests using more basic AI models. This strategy can significantly reduce costs for frequently asked questions or common workflows.
+
+
+
+
+
+
+[Microsoft - Agentic AI Course - Github](https://github.com/microsoft/ai-agents-for-beginners/tree/main)
+
+
+
+
+## Memory
+
+
+After completing this lesson, you will know how to:
+
+- Differentiate between various types of AI agent memory, including working, short-term, and long-term memory, as well as specialized forms like persona and episodic memory.
+
+- Understand the principles behind self-improving AI agents and how robust memory management systems contribute to continuous learning and adaptation.
+
+#### Understanding AI Agent Memory
+
+At its core, memory for AI agents refers to the mechanisms that allow them to retain and recall information. This information can be specific details about a conversation, user preferences, past actions, or even learned patterns.
+
+Without memory, AI applications are often stateless, meaning each interaction starts from scratch. This leads to a repetitive and frustrating user experience where the agent "forgets" previous context or preferences.
+
+#### Why is Memory Important?
+
+An agent's intelligence is deeply tied to its ability to recall and utilize past information. Memory allows agents to be:
+
+- **Reflective**: Learning from past actions and outcomes
+
+- **Interactive**: Maintaining context over an ongoing conversation
+
+- **Proactive and Reactive**: Anticipating needs or responding appropriately based on historical data
+
+- **Autonomous**: Operating more independently by drawing on stored knowledge.
+
+The goal of implementing memory is to make agents more reliable and capable.
+
+#### Types of Memory
+
+###### Working Memory
+
+Think of this as a piece of scratch paper an agent uses during a single, ongoing task or thought process. It holds immediate information needed to compute the next step.
+
+For AI agents, working memory often captures the most relevant information from a conversation, even if the full chat history is long or truncated. It focuses on extracting key elements like requirements, proposals, decisions, and actions.
+
+- Example: In a travel booking agent, working memory might capture the user's current request, such as "I want to book a trip to Paris". This specific requirement is held in the agent's immediate context to guide the current interaction.
+
+###### Short Term Memory
+
+This type of memory retains information for the duration of a single conversation or session. It stores a **thread** of conversation. It's the context of the current chat, allowing the agent to refer back to previous turns in the dialogue.
+
+- Example: If a user asks, "How much would a flight to Paris cost?" and then follows up with "What about accommodation there?", short-term memory ensures the agent knows "there" refers to "Paris" within the same conversation.
+
+###### Long Term Memory
+
+This is information that persists across multiple conversations or sessions. It allows agents to remember user preferences, historical interactions, or general knowledge over extended periods. This is important for personalization.
+
+- Example: A long-term memory might store that "Ben enjoys skiing and outdoor activities, likes coffee with a mountain view, and wants to avoid advanced ski slopes due to a past injury". This information, learned from previous interactions, influences recommendations in future travel planning sessions, making them highly personalized.
+
+To remember user preferences across sessions, we need a *persistent store that lives outside the conversation thread*. The agent accesses this store through tools — functions it can call to save and retrieve information. In production you would back this with a database or vector index and expose it as tools the agent can use.
+
+
+
+###### Persona Memory
+
+This specialized memory type helps an agent develop a consistent "personality" or "persona". It allows the agent to remember details about itself or its intended role, making interactions more fluid and focused.
+
+- Example: If the travel agent is designed to be an "expert ski planner," persona memory might reinforce this role, influencing its responses to align with an expert's tone and knowledge.
+
+###### Workflow/Episodic Memory
+
+This memory stores the sequence of steps an agent takes during a complex task, including successes and failures. It's like remembering specific "episodes" or past experiences to learn from them.
+
+- Example: If the agent attempted to book a specific flight but it failed due to unavailability, episodic memory could record this failure, allowing the agent to try alternative flights or inform the user about the issue in a more informed way during a subsequent attempt.
+
+###### Entity Memory
+
+This involves extracting and remembering specific entities (like people, places, or things) and events from conversations. It allows the agent to build a structured understanding of key elements discussed.
+
+- Example: From a conversation about a past trip, the agent might extract "Paris," "Eiffel Tower," and "dinner at Le Chat Noir restaurant" as entities. In a future interaction, the agent could recall "Le Chat Noir" and offer to make a new reservation there.
+
+###### Structured RAG (Retrieval Augmented Generation)
+
+While RAG is a broader technique, "Structured RAG" is highlighted as a powerful memory technology. It extracts dense, structured information from various sources (conversations, emails, images) and uses it to enhance precision, recall, and speed in responses. Unlike classic RAG that relies solely on semantic similarity, Structured RAG works with the inherent structure of information.
+
+- Example: Instead of just matching keywords, Structured RAG could parse flight details (destination, date, time, airline) from an email and store them in a structured way. This allows precise queries like "What flight did I book to Paris on Tuesday?"
+
+#### Implementing and Storing Memory
+
+Implementing memory for AI agents involves a systematic process of memory management, which includes *generating*, *storing*, *retrieving*, *integrating*, *updating*, and *deleting* (forgetting) information. Retrieval is a particularly crucial aspect.
+
+##### Specialized Memory Tools
+
+###### Mem0
+
+One way to store and manage agent memory is using specialized tools like Mem0. Mem0 works as a persistent memory layer, allowing agents to recall relevant interactions, store user preferences and factual context, and learn from successes and failures over time. The idea here is that stateless agents turn into stateful ones.
+
+It works through a two-phase memory pipeline: extraction and update. First, messages added to an agent's thread are sent to the Mem0 service, which uses a Large Language Model (LLM) to summarize conversation history and extract new memories. Subsequently, an LLM-driven update phase determines whether to add, modify, or delete these memories, storing them in a hybrid data store that can include vector, graph, and key-value databases. This system also supports various memory types and can incorporate graph memory for managing relationships between entities.
+
+###### Cognee
+
+Another powerful approach is using Cognee, an open-source semantic memory for AI agents that transforms structured and unstructured data into queryable knowledge graphs backed by embeddings. Cognee provides a dual-store architecture combining vector similarity search with graph relationships, enabling agents to understand not just what information is similar, but how concepts relate to each other.
+
+It excels at hybrid retrieval that blends vector similarity, graph structure, and LLM reasoning - from raw chunk lookup to graph-aware question answering. The system maintains living memory that evolves and grows while remaining queryable as one connected graph, supporting both short-term session context and long-term persistent memory.
+
+The Cognee notebook tutorial (13-agent-memory-cognee.ipynb) demonstrates building this unified memory layer, with practical examples of ingesting diverse data sources, visualizing the knowledge graph, and querying with different search strategies tailored to specific agent needs.
+
+###### Storing Memory with RAG
+
+Beyond specialized memory tools like mem0 , you can leverage robust search services like Azure AI Search as a backend for storing and retrieving memories, especially for structured RAG.
+
+This allows you to ground your agent's responses with your own data, ensuring more relevant and accurate answers. Azure AI Search can be used to store user-specific travel memories, product catalogs, or any other domain-specific knowledge.
+
+Azure AI Search supports capabilities like Structured RAG, which excels at extracting and retrieving dense, structured information from large datasets like conversation histories, emails, or even images. This provides "superhuman precision and recall" compared to traditional text chunking and embedding approaches.
+
+###### Making AI Agents Self-Improve
+
+A common pattern for self-improving agents involves introducing a "knowledge agent". This separate agent observes the main conversation between the user and the primary agent. Its role is to:
+
+- Identify valuable information: Determine if any part of the conversation is worth saving as general knowledge or a specific user preference.
+
+- Extract and summarize: Distill the essential learning or preference from the conversation.
+
+- Store in a knowledge base: Persist this extracted information, often in a vector database, so it can be retrieved later.
+
+- Augment future queries: When the user initiates a new query, the knowledge agent retrieves relevant stored information and appends it to the user's prompt, providing crucial context to the primary agent (similar to RAG).
+
+###### Optimizations for Memory
+
+- Latency Management: To avoid slowing down user interactions, a cheaper, faster model can be used initially to quickly check if information is valuable to store or retrieve, only invoking the more complex extraction/retrieval process when necessary.
+
+- Knowledge Base Maintenance: For a growing knowledge base, less frequently used information can be moved to "cold storage" to manage costs.
+
+
+## Agnetic RAG
+
+This lesson will cover
+
+- *Agentic RAG*: The emerging paradigm in AI where large language models (LLMs) autonomously plan their next steps while pulling information from external data sources
+- *Iterative Maker-Checker Style*: Comprehend the loop of iterative calls to the LLM, interspersed with tool calls and structured outputs, designed to improve correctness and handle malformed queries.
+- *Practical Applications*: Identify scenarios where Agentic RAG shines, such as correctness-first environments, complex database interactions, and extended workflows.
+
+
+<!-- Agentic Retrieval-Augmented Generation (Agentic RAG) is an emerging AI paradigm where large language models (LLMs) autonomously plan their next steps while pulling information from external sources. Unlike static retrieval-then-read patterns, Agentic RAG involves iterative calls to the LLM, interspersed with tool or function calls and structured outputs. The system evaluates results, refines queries, invokes additional tools if needed, and continues this cycle until a satisfactory solution is achieved. This iterative “maker-checker” style improves correctness, handles malformed queries, and ensures high-quality results.
+
+The system actively owns its reasoning process, rewriting failed queries, choosing different retrieval methods, and integrating multiple tools—such as vector search, SQL databases, or custom APIs—before finalizing its answer. The distinguishing quality of an agentic system is its *ability to own its reasoning process*. Traditional RAG implementations rely on pre-defined paths, but an agentic system autonomously determines the sequence of steps based on the quality of the information it finds. -->
+
+
+#### Defining Agentic RAG
+
+Agentic Retrieval-Augmented Generation (Agentic RAG) is an emerging paradigm in AI development where LLMs not only pull information from external data sources but also autonomously plan their next steps. Agentic RAG involves *a loop of iterative calls to the LLM, interspersed with tool or function calls and structured outputs*. At every turn, the system evaluates the results it has obtained, decides whether to refine its queries, invokes additional tools if needed, and continues this cycle until it achieves a satisfactory solution.
+
+This iterative “maker-checker” style of operation is designed to improve correctness, handle malformed queries to structured databases (e.g. NL2SQL), and ensure balanced, high-quality results. Rather than relying solely on carefully engineered prompt chains, the system actively owns its reasoning process. It can rewrite queries that fail, choose different retrieval methods, and integrate multiple tools—such as vector search in Azure AI Search, SQL databases, or custom APIs—before finalizing its answer. This removes the need for overly complex orchestration frameworks. Instead, a relatively simple loop of “LLM call → tool use → LLM call → …” can yield sophisticated and well-grounded outputs.
+
+#### Owning the Reasoning Process
+
+The distinguishing quality that makes a system “agentic” is its ability to own its reasoning process. Traditional RAG implementations often depend on humans pre-defining a path for the model: a chain-of-thought that outlines what to retrieve and when. But when a system is truly agentic, it internally decides how to approach the problem. It’s not just executing a script; it’s autonomously determining the sequence of steps based on the quality of the information it finds. For example, if it’s asked to create a product launch strategy, it doesn’t rely solely on a prompt that spells out the entire research and decision-making workflow. Instead, the agentic model independently decides to:
+
+- Retrieve current market trend reports using Bing Web Grounding
+- Identify relevant competitor data using Azure AI Search.
+- Correlate historical internal sales metrics using Azure SQL Database.
+- Synthesize the findings into a cohesive strategy orchestrated via Azure OpenAI Service.
+- Evaluate the strategy for gaps or inconsistencies, prompting another round of retrieval if necessary. All of these steps—refining queries, choosing sources, iterating until “happy” with the answer—are decided by the model, not pre-scripted by a human.
+
+#### Iterative Loops, Tool Integration, and Memory
+
+An agentic system relies on a looped interaction pattern:
+
+- **Initial Call**: The user’s goal (aka. user prompt) is presented to the LLM.
+- **Tool Invocation**: If the model identifies missing information or ambiguous instructions, it selects a tool or retrieval method—like a vector database query (e.g. Azure AI Search Hybrid search over private data) or a structured SQL call—to gather more context.
+- **Assessment & Refinement**: After reviewing the returned data, the model decides whether the information suffices. If not, it refines the query, tries a different tool, or adjusts its approach.
+- **Repeat Until Satisfied**: This cycle continues until the model determines that it has enough clarity and evidence to deliver a final, well-reasoned response.
+- **Memory & State**: Because the system maintains state and memory across steps, it can recall previous attempts and their outcomes, avoiding repetitive loops and making more informed decisions as it proceeds.
+
+Over time, this creates a sense of evolving understanding, enabling the model to navigate complex, multi-step tasks without requiring a human to constantly intervene or reshape the prompt.
+
+
+#### Handling Failure Modes and Self-Correction
+
+Agentic RAG’s autonomy also involves robust self-correction mechanisms. When the system hits dead ends—such as retrieving irrelevant documents or encountering malformed queries—it can:
+
+- *Iterate and Re-Query*: Instead of returning low-value responses, the model attempts new search strategies, rewrites database queries, or looks at alternative data sets.
+- *Use Diagnostic Tools*: The system may invoke additional functions designed to help it debug its reasoning steps or confirm the correctness of retrieved data. Tools like Azure AI Tracing will be important to enable robust observability and monitoring.
+- *Fallback on Human Oversight*: For high-stakes or repeatedly failing scenarios, the model might flag uncertainty and request human guidance. Once the human provides corrective feedback, the model can incorporate that lesson going forward.
+
+This iterative and dynamic approach allows the model to improve continuously, ensuring that it’s not just a one-shot system but one that learns from its missteps during a given session.
+
+
+```mermaid
 ---
+config:
+  theme: base
+  themeVariables:
+    dgeLabelBackground: 'transparent'
+    primaryTextColor: '#dd00ff'
+    edgeLabelBackground: 'transparent'
+    fontFamily: "Montserrat"
+  themeCSS: |
+    display: block;
+    margin: auto auto;
+    .edgeLabel, .edgeLabel span, .label text { 
+      fill: #ff4800 !important; 
+      color: #edcb8a !important; 
+      font-weight: bold;
+    }
+    .transition { 
+      stroke: #8425f9 !important; 
+    }
+    marker path {
+      fill: #f9f6f4 !important;
+      stroke: #ff3c00 !important;
+    }
+---
+
+stateDiagram-v2
+    direction LR
+    A: Execute Action
+    B: New Search
+    C: Rewrite Query
+    D: Try Alternative Source
+    E: Request Human Help
+    F: Execute Action
+    G: Continue Process
+    A --> G: Successful
+    G --> END
+    A --> B: Irrelevant
+    A --> C: Malformed
+    A --> D: Missing Data
+    A --> E: Critical
+    B --> F
+    C --> F
+    D --> F
+    E --> F
+```
+
+
+#### Boundaries of Agency
+
+Despite its autonomy within a task, Agentic RAG is not analogous to Artificial General Intelligence. Its “agentic” capabilities are confined to the tools, data sources, and policies provided by human developers. It can’t invent its own tools or step outside the domain boundaries that have been set. Rather, it excels at dynamically orchestrating the resources at hand. Key differences from more advanced AI forms include:
+
+- *Domain-Specific Autonomy*: Agentic RAG systems are focused on achieving user-defined goals within a known domain, employing strategies like query rewriting or tool selection to improve outcomes.
+- *Infrastructure-Dependent*: The system’s capabilities hinge on the tools and data integrated by developers. It can’t surpass these boundaries without human intervention.
+- *Respect for Guardrails*: Ethical guidelines, compliance rules, and business policies remain very important. The agent’s freedom is always constrained by safety measures and oversight mechanisms (hopefully?)
+
+#### Practical Use Cases and Value
+
+Agentic RAG shines in scenarios requiring iterative refinement and precision:
+
+- *Correctness-First Environments*: In compliance checks, regulatory analysis, or legal research, the agentic model can repeatedly verify facts, consult multiple sources, and rewrite queries until it produces a thoroughly vetted answer.
+- *Complex Database Interactions*: When dealing with structured data where queries might often fail or need adjustment, the system can autonomously refine its queries using Azure SQL or Microsoft Fabric OneLake, ensuring the final retrieval aligns with the user’s intent.
+- *Extended Workflows*: Longer-running sessions might evolve as new information surfaces. Agentic RAG can continuously incorporate new data, shifting strategies as it learns more about the problem space.
+Governance, Transparency, and Trust
+
+As these systems become more autonomous in their reasoning, governance and transparency are crucial:
+
+*Explainable Reasoning*: The model can provide an audit trail of the queries it made, the sources it consulted, and the reasoning steps it took to reach its conclusion. Tools like Azure AI Content Safety and Azure AI Tracing / GenAIOps can help maintain transparency and mitigate risks.
+*Bias Control and Balanced Retrieval*: Developers can tune retrieval strategies to ensure balanced, representative data sources are considered, and regularly audit outputs to detect bias or skewed patterns using custom models for advanced data science organizations using Azure Machine Learning.
+*Human Oversight and Compliance*: For sensitive tasks, human review remains essential. Agentic RAG doesn’t replace human judgment in high-stakes decisions—it augments it by delivering more thoroughly vetted options.
+
+Having tools that provide a clear record of actions is essential. Without them, debugging a multi-step process can be very difficult.
+
+
+
 
 ## Introduction to LangChain
 

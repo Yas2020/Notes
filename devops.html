@@ -1,43 +1,15 @@
 <!DOCTYPE html><html><head>
-      <title>Devops</title>
+      <title>devops</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/katex.min.css">
       
       
       
       
       
       <style>
-        body::after {
-          content: "Created by Yas2020";
-          position: fixed;
-          bottom: 10px;
-          right: 10px;
-          font-size: 12px;
-          color: gray;
-          opacity: 0.7;
-          pointer-events: none;
-        }
-        /* CSS to fix the button at the top-right corner */
-        #backToHomeBtn {
-            position: fixed;
-            top: 20px;       /* Distance from the top */
-            right: 20px;     /* Distance from the right */
-            padding: 10px 20px;
-            background-color: #4c74af; /* Green background */
-            color: white;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            z-index: 1000;  /* Ensures button stays on top */
-        }
-
-        #backToHomeBtn:hover {
-            background-color: #45a049; /* Darker green on hover */
-        }
       code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
 /* Please visit the URL below for more information: */
 /*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
@@ -48,41 +20,72 @@
   font-family: 'Tangerine';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/tangerine/v17/IurY6Y5j_oScZZow4VOxCZZJ.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/tangerine/v18/IurY6Y5j_oScZZow4VOxCZZJ.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Ubuntu Mono';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/ubuntumono/v17/KFOjCneDtsqEr0keqCMhbCc6CsE.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/ubuntumono/v19/KFOjCneDtsqEr0keqCMhbCc6CsE.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;
   font-stretch: normal;
-  src: url(https://fonts.gstatic.com/s/opensans/v43/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4gaVc.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/opensans/v44/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4gaVc.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Kode Mono';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/kodemono/v2/A2BLn5pb0QgtVEPFnlYkkaoBgw4qv9odq5myxD2ZbA.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/kodemono/v4/A2BLn5pb0QgtVEPFnlYkkaoBgw4qv9odq5myxD2ZbA.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Cutive Mono';
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/cutivemono/v21/m8JWjfRfY7WVjVi2E-K9H6RCTms.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/cutivemono/v23/m8JWjfRfY7WVjVi2E-K9H6RCTms.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: normal;
+  src: url(https://fonts.gstatic.com/s/merriweather/v33/u-4D0qyriQwlOrhSvowK_l5UcA6zuSYEqOzpPe3HOZJ5eX1WtLaQwmYiScCmDxhtNOKl8yDr3icaFF3w.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Georgia';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/l/font?kit=-zkl91Ksy8U47Wnsfmm8xA&skey=ca45512e77838097&v=v18) format('truetype');
+}
+@font-face {
+  font-family: 'Verdana';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/l/font?kit=dFa_ZfqA86A4lLhf7qRHeg&skey=28f652d19e80fbde&v=v15) format('truetype');
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787weuxJBkqg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Hw5aX8.ttf) format('truetype');
 }
 .markdown-preview.markdown-preview {
-  font-family: UbuntuMono, Open Sans, Fira Sans, serif;
-  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, SF Pro, Lora, Georgia, Arial, Helvetica, Verdana, Open Sans, Roboto;
+  font-size: 15pt;
 }
 .markdown-preview.markdown-preview.prince {
   font-family: UbuntuMono, Open Sans, Fira Sans, serif;
   line-height: 1.4;
-  font-size: 10pt;
+  font-size: 12pt;
   color: #000;
 }
 @page {
@@ -123,6 +126,14 @@
   margin-bottom: 5px;
   margin-top: 5px;
 }
+.markdown-preview.markdown-preview h1 {
+  font-size: 60pt;
+  color: #1a4fcc;
+  font-family: Montserrat;
+  text-shadow: 2px 2px 3px #aaa;
+  text-align: center;
+  line-height: 1.3;
+}
 .markdown-preview.markdown-preview .title {
   font-size: 100pt;
   font-family: 'Tangerine';
@@ -136,22 +147,35 @@
   page-break-after: always;
   /* Ensure title is on its own page */
 }
-.markdown-preview.markdown-preview h1 {
-  font-size: 30pt;
-  color: #1a4fcc;
-  border-bottom-width: 1px;
-}
 .markdown-preview.markdown-preview h2 {
-  font-weight: 700;
-  color: #3f77e0;
+  font-size: 40pt;
+  font-family: Montserrat;
+  font-weight: 500;
+  color: #3743e8;
 }
 .markdown-preview.markdown-preview h3 {
-  font-weight: 700;
-  color: #6da2f2;
+  font-size: 35pt;
+  font-family: Montserrat;
+  font-weight: 500;
+  color: #2d88f6;
 }
 .markdown-preview.markdown-preview h4 {
-  font-weight: 700;
-  color: #a9c8f8;
+  font-size: 30pt;
+  font-family: Montserrat;
+  font-weight: 500;
+  color: #37d1f3;
+}
+.markdown-preview.markdown-preview h5 {
+  font-size: 25pt;
+  font-family: Montserrat;
+  font-weight: 400;
+  color: #25f1cb;
+}
+.markdown-preview.markdown-preview h6 {
+  font-size: 20pt;
+  font-family: Montserrat;
+  font-weight: 400;
+  color: #2ef302;
 }
 .markdown-preview.markdown-preview ul li {
   /* list-style-type: ; */
@@ -161,10 +185,11 @@
   text-align: justify;
 }
 .markdown-preview.markdown-preview ol {
-  list-style-type: upper-roman;
-  /* or decimal, lower-alpha, upper-alpha, etc. */
+  list-style-type: decimal;
+  /* upper-roman or decimal, lower-alpha, upper-alpha, etc. */
   list-style-position: outside;
   /* or inside */
+  color: #0f1d68;
 }
 .markdown-preview.markdown-preview table {
   justify-items: center;
@@ -186,12 +211,13 @@
   background-color: #0430aa;
   color: white;
 }
-.markdown-preview.markdown-preview th,
 .markdown-preview.markdown-preview td {
-  border-bottom: 1px solid #ddd;
+  background-color: #e5e5e6a6;
+  color: #2b4247;
 }
 .markdown-preview.markdown-preview th,
 .markdown-preview.markdown-preview td {
+  border-bottom: 1px solid #ddd;
   padding: 10px;
   text-align: center;
 }
@@ -205,12 +231,10 @@
 }
 .markdown-preview.markdown-preview code {
   font-family: Monospace, Menlo, Monaco, Consolas;
-  font-size: 12pt;
   color: #c15211;
 }
 .markdown-preview.markdown-preview pre.language-python.python code {
   font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
-  font-size: 12pt;
   line-height: 1.357em;
   color: #14c111;
   white-space: pre-wrap;
@@ -222,7 +246,6 @@
 }
 .markdown-preview.markdown-preview pre.language-text code {
   font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
-  font-size: 10pt;
   line-height: 1.357em;
   color: #14c111;
   white-space: pre-wrap;
@@ -232,11 +255,9 @@
 }
 .markdown-preview.markdown-preview pre.language-o.o {
   background-color: #f7f7f5;
-  margin-top: -25px;
 }
 .markdown-preview.markdown-preview pre.language-o.o code {
   font-family: Cutive Mono, Kode Mono, Monaco, "Droid Sans Fallback";
-  font-size: 11pt;
   font-weight: 800;
   line-height: 1.357em;
   color: #93a293;
@@ -255,15 +276,171 @@
     font-size: 10px;
   }
 }
+/* MOVE THIS TO THE VERY BOTTOM OF THE FILE (OUTSIDE ALL OTHER BRACES) */
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview {
+  font-size: 18pt;
+  left: 0 !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding-left: 12% !important;
+  padding-right: 12% !important;
+  /* Tablet Screens */
+  /* Mobile Screens */
+}
+@media (max-width: 1024px) {
+  body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview {
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+  }
+}
+@media (max-width: 480px) {
+  body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) h1 {
+  font-size: 60pt;
+  color: #1a4fcc;
+  font-family: Montserrat;
+  text-shadow: 2px 2px 3px #aaa;
+  text-align: center;
+  line-height: 1.3;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .title {
+  font-size: 100pt;
+  font-family: 'Tangerine';
+  color: #305d8a;
+  text-shadow: 3px 3px 0 #b08888;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: bold;
+  page-break-after: always;
+  /* Ensure title is on its own page */
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) h2 {
+  font-size: 40pt;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) h3 {
+  font-size: 35pt;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) h4 {
+  font-size: 30pt;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) h5 {
+  font-size: 25pt;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) h6 {
+  font-size: 21pt;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) ul li {
+  /* list-style-type: ; */
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 10px;
+  text-align: justify;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) ol {
+  list-style-type: decimal;
+  /* upper-roman or decimal, lower-alpha, upper-alpha, etc. */
+  list-style-position: outside;
+  /* or inside */
+  color: #0f1d68;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) table {
+  display: table !important;
+  /* Forces it to behave as a block-level table */
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: auto !important;
+  /* Prevents it from stretching to 100% */
+  border-collapse: collapse;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) table > thead > tr > th {
+  text-align: center;
+  border-bottom: 1px solid;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) table > thead > tr > th,
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) table > thead > tr > td,
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) table > tbody > tr > th,
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) table > tbody > tr > td {
+  padding: 5px 10px;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) table > tbody > tr + tr > td {
+  border-top: 1px solid;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) th {
+  background-color: #0430aa;
+  color: white;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) td {
+  background-color: #e5e5e6a6;
+  color: #2b4247;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) th,
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) td {
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) blockquote {
+  background: rgba(127, 127, 127, 0.1);
+  border-color: rgba(0, 122, 204, 0.5);
+  margin: 0 7px 0 5px;
+  padding: 0 16px 0 10px;
+  border-left-width: 5px;
+  border-left-style: solid;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) code {
+  font-family: Monospace, Menlo, Monaco, Consolas;
+  color: #c15211;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) pre.language-python.python code {
+  font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
+  line-height: 1.357em;
+  color: #14c111;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) pre.language-text {
+  background-color: #f7f7f5;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) pre.language-text code {
+  font-family: Monospace, Menlo, Monaco, "Droid Sans Fallback";
+  line-height: 1.357em;
+  color: #14c111;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  border-radius: 10px;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) pre.language-o.o {
+  background-color: #f7f7f5;
+  margin-top: -25px;
+}
+body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) pre.language-o.o code {
+  font-family: Cutive Mono, Kode Mono, Monaco, "Droid Sans Fallback";
+  font-weight: 800;
+  line-height: 1.357em;
+  color: #93a293;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
 
       </style>
-      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
+      <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function () {
     // your code here
   });
-</script></head><body for="html-export">
-    
-    
+</script>
+    </head>
+    <body for="html-export">
       <div class="crossnote markdown-preview  ">
       
 <h1 class="title">DevOps</h1> 
@@ -293,10 +470,13 @@
 <li><a href="#what-benefits-does-devops-have-in-business">What benefits does DevOps have in business?</a></li>
 <li><a href="#configuration-management">Configuration Management?</a></li>
 <li><a href="#four-actionable-metrics-for-devops">Four Actionable Metrics for DevOps</a></li>
-<li><a href="#what-is-version-control">What is Version Control?</a></li>
+<li><a href="#what-is-version-control">What is Version Control?</a>
+<ul>
 <li><a href="#how-do-you-setup-a-script-to-run-every-time-a-repository-receives-new-commits-through-push">How do you setup a script to run every time a repository receives new commits through push?</a></li>
 <li><a href="#what-is-the-difference-between-git-merge-and-git-rebase">What is the difference between Git Merge and Git Rebase?</a></li>
 <li><a href="#aws-codecommit-vs-git">AWS CodeCommit VS Git?</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#infrastructure-as-code">Infrastructure as Code</a>
@@ -542,36 +722,30 @@
 <li>Leveraging automation (nobody can deploy manually microservices) such as CI/CD</li>
 <li>Programmable platform (you can not wait for somebody to provision a server)</li>
 </ul>
-<p>DevOps is not just development and operation working together while remaining is a separate silos. DevOps is not a separate team (if you know anything about agile, you don’t make an agile team), DevOps is not tools either, its not one size fit all</p>
+<p>DevOps is not just development and operation working together while remaining is a separate silos. DevOps is not a separate team (if you know anything about agile, you don’t make an agile team), DevOps is not tools either, its not one size fit all.</p>
 <p>There are 3 pillar to agility:</p>
 <ul>
-<li>DevOps (cultural change, automated pipeline, infrastructure as a code, immutable infrastructure)</li>
-<li>Microservices (loose coupling/binding, RESTful API, design to resist failure, test by breaking/failing fast)</li>
-<li>Containers (portability, fast startup, developer centric)</li>
+<li><strong>DevOps</strong> (cultural change, automated pipeline, infrastructure as a code, immutable infrastructure)</li>
+<li><strong>Microservices</strong> (loose coupling/binding, RESTful API, design to resist failure, test by breaking/failing fast)</li>
+<li><strong>Containers</strong> (portability, fast startup, developer centric)</li>
 </ul>
 <h3 id="application-evolution">Application Evolution </h3>
 <p align="center">
     <img src="./assets/devops/application_evolution.png" alt="drawing" width="700" height="300" style="center">
 </p>
 <h3 id="problems-with-traditional-development-practices">Problems with Traditional Development Practices </h3>
-<ul>
-<li>Proven slow and inefficient, and fail to support teams' efforts to quickly deliver stable, high-quality applications</li>
-<li>Challenges of Waterfall development, monolithic applications, manual processes, and siloed team structures cause bottlenecks and delays</li>
-</ul>
-<p>Waterfall development projects are</p>
+<p>Waterfall development projects are:</p>
 <ul>
 <li>slow, not iterative, resistant to change, and have long release cycles</li>
 <li>requirements are rigid, set at project start, and will likely not change</li>
 <li>development phases are siloed, each starting after the previous phase has ended</li>
 <li>testing and security come after implementation, making corrective actions irresponsive and expensive.</li>
 </ul>
-<p>In the waterfall model, we have limitations of one-way working and lack of communication with customers.</p>
-<p>This was overcome in Agile by including the communication between the customer and the company by taking feedback. But in this model, another issue is faced regarding communication between the Development team and operations team due to which there is a delay in the speed of production.</p>
-<p>This is where DevOps is introduced. It bridges the gap between the development team and the operation team by including the automation feature. Due to this, the speed of production is increased. By including automation, testing is integrated into the development stage which resulted in finding the bugs at the very initial stage which increased the speed and efficiency.</p>
+<p>In the waterfall model, we have limitations of one-way working and lack of communication with customers. This was overcome in Agile by including the communication between the customer and the company by taking feedback. But in this model, another issue is faced regarding communication between the Development team and operations team due to which there is a delay in the speed of production. This is where DevOps is introduced. It bridges the gap between the development team and the operation team by including the automation feature. Due to this, the speed of production is increased. By including automation, testing is integrated into the development stage which resulted in finding the bugs at the very initial stage which increased the speed and efficiency.</p>
 <h3 id="monolith">Monolith </h3>
 <p><strong>Monolithic</strong> applications are hard to update and deploy, complexity increases as app grows, less flexible to adapt to new technology. The reason for these are because they:</p>
 <ul>
-<li>are developed and deployed as a unit (most or all within the same process), so when changes are made, the entire application must be redeployed</li>
+<li>are developed and deployed as one unit (most or all within the same process), so when changes are made, the entire application must be redeployed</li>
 <li>managed in internal layers for:
 <ul>
 <li>Security</li>
@@ -600,21 +774,20 @@
 <li>Scaling horizontally and precisely (for only one component)</li>
 <li>Event driven - can help broadcast the state change</li>
 </ul>
-<p>Microservices can also communicate with each other via a combination of remote procedure calls (RPC), event streaming, or message brokers. RPCs like gRPC provide a faster response but the impact on the microservices is bigger when the service goes down. Event streaming provides better isolation between services but it takes longer to process.</p>
-<p>Finally, instead of implementing end-user authentication, throttle, orchestrate, transform, route, and analytics in each service, you should use an <strong>API Gateway</strong>, a key component of micoservice design. An API gateway is an API management tool that sits between a client and your collection of backend services. This will become central to the above-mentioned non-functional concerns and will avoid re-engineering them with each service. API Gateway relies on an identity provider service to handle the authentication and authorization of each request coming through. To locate a service to route the request to, API Gateway consult a service registry and discover service. Microservices register with this service registry and discover the location of other micoservices through the discovery service.</p>
+<p>Microservices can also communicate with each other via a combination of Remote Procedure Calls (RPC), event streaming, or message brokers. RPCs like gRPC provide a faster response but the impact on the microservices is bigger when the service goes down. Event streaming provides better isolation between services but it takes longer to process.</p>
+<p>Finally, instead of implementing end-user authentication, throttle, orchestrate, transform, route, and analytics in each service, you should use an <strong>API Gateway</strong>, a key component of micoservice design. An API gateway is an API management tool that sits between a client and your collection of backend services. This will become central to the above-mentioned non-functional concerns and will avoid re-engineering them with each service. API Gateway relies on an Identity Provider Service to handle the authentication and authorization of each request coming through. To locate a service to route the request to, API Gateway consult a service registry and discover service. Microservices register with this service registry and discover the location of other micoservices through the discovery service.</p>
 <h4 id="drawbacks">Drawbacks: </h4>
 <ul>
-<li>Security requirements: each service needs its own security paradigm, for example: TLS to secure network communication</li>
+<li>Security requirements: each service needs its own security paradigm, for example TLS to secure network communication</li>
 <li>Debugging is a challenge: multiple services running independently makes it challenging to find the root cause</li>
 <li>Transferring to microservices architecture from monolithic often requires breaking up a monolithic database into its logical components. This could mean a separate schema in a bigger data cluster. Breaking up a database means it can no longer maintain foreign key relationship and enforce referential integrity between tables. The burden of maintaining dat integrity is moved into the application layer.</li>
 </ul>
-<p>The aim of microservices is to solve the three most frequent challenges, that is, enhance customer experience, be flexible to new requirements, and reduce costs by providing business functions as fine-grained services.</p>
-<p>Once you move to a microservices architecture, you will have more than one application with each having different code, test, and deploy cycles. Attempting to build microservices without either:</p>
+<p>The aim of microservices is to solve the three most frequent challenges, that is, enhance customer experience, be flexible to new requirements, and reduce costs by providing business functions as fine-grained services. Once you move to a microservices architecture, you will have more than one application with each having different code, test, and deploy cycles. Attempting to build microservices without either:</p>
 <ul>
 <li>proper deployment and monitoring automation, or</li>
 <li>managed cloud services to support your now sprawling, heterogenous infrastructure</li>
 </ul>
-<p>is asking for a lot of unnecessary trouble. So, when you are building microservices, always use DevOps or cloud services because Manual processes throughout the application lifecycle are slow, inconsistent, and error-prone.</p>
+<p>is asking for a lot of unnecessary trouble. So, when you are building microservices, always use DevOps or cloud services because manual processes throughout the application lifecycle are slow, inconsistent, and error-prone.</p>
 <p>On the other hand, to fully leverage DevOps, you need to think differently about the application design:</p><center><em>You need to think about cloud native microservices!</em></center><p></p>
 <ul>
 <li>Each service is independent of the other and is a particular domain of the application</li>
@@ -625,28 +798,26 @@
 <p align="center">
     <img src="./assets/devops/microservices.png" alt="drawing" width="500" height="400" style="center">
 </p>
-<p>This is cloud native design using microservices which take advantage of horizontal scalability the cloud has to offer.</p>
-<p>In cloud native design, the applications are a collection of <strong>stateless micorservices</strong>. Stateless doesn’t mean the application doesn’t have state but it means each service maintains its own database. If the state are shared, you don’t have microservices but you just have distributed monolith. <em>The stateless in microservices allows scaling horizontally possible</em>. I can scale one service without touching others. You can and should use CD pipeline to help manage continuous delivery of these services.</p>
-<p>Microservice architecture style is an approach to developing a single application as a suite of small services, each running in its own process and communicating with lightweight mechanisms, often an HTTP resource API. These services are built around business capabilities and independently deployable by full automated deployment machinery.<br>
-<br><br></p>
+<p>This is cloud native design using microservices which take advantage of horizontal scalability the cloud has to offer. In cloud native design, the applications are a collection of <strong>stateless micorservices</strong>. Stateless doesn’t mean the application doesn’t have state but it means each service maintains its own database. If the state are shared, you don’t have microservices but you just have distributed monolith. <em>The stateless in microservices allows scaling horizontally possible</em>. I can scale one service without touching others. You can and should use CD pipeline to help manage continuous delivery of these services.</p>
+<p>Microservice architecture style is an approach to developing a single application as a suite of small services, each running in its own process and communicating with lightweight mechanisms, often an HTTP resource API. These services are built around business capabilities and independently deployable by full automated deployment machinery.</p>
 <p align="center">
     <img src="./assets/devops/monolith-microservices.png" alt="drawing" width="700" height="300" style="center">
 </p>
-<p>In monolithic design, if I need to change the design of a table I would need to communicate with different departments because they depend on it for order and shipping. With microservices, I don’t need to call other teams because they are simply calling my api. They don’t care what my table looks like whether it is SQL database or NoSQL database. They want their data and I will deliver their data.</p>
+<p>In monolithic design, if I need to change the design of a table I would need to communicate with different departments because they depend on it for order and shipping. With microservices, I don’t need to call other teams because they are simply calling my API. They don’t care what my table looks like whether it is SQL database or NoSQL database. They want their data and I will deliver their data.</p>
 <h2 id="challenges-of-microservices-embracing-failures">Challenges of Microservices: Embracing Failures </h2>
 <p>Once you develop your application as a stateless collection of microservices, there are a lot of moving parts. This means there is a lot that can go wrong:</p>
 <ul>
 <li>
-<p>Services can be occasionally slow to respond or even have outages, so you can not always rely on them when you need them. You don’t want your application to fail just because one of the services is slow or there is a lot of network latency on a particular day. This is why you need to design for failure at the application level. You must build your application to be resilient to failure and scale horizontally. Embrace failure! In DevOps we talk about mean <em>time to recovery</em> instead of mean time to failure to make sure when failure happens and it will, you can recover quickly.</p>
+<p>Services can be occasionally slow to respond or even have outages, so you can not always rely on them when you need them. You don’t want your application to fail just because one of the services is slow or there is a lot of network latency on a particular day. This is why you need to design for failure at the application level. You must build your application to be r<em>esilient to failure</em> and <em>scale horizontally.</em> Embrace failure! In DevOps we talk about mean <em>time to recovery</em> instead of mean time to failure to make sure when failure happens and it will, you can recover quickly.</p>
 </li>
 <li>
 <p>Application failure is not an operational concern but it is the developer concern. The developer needs to build that resilience right from the start. There are some patterns of making your application resilient:</p>
 <ul>
 <li>
-<p><strong>Plan to be throttled</strong>. let's say you pick a plan that allow 20 units of reads per second. Once you exceed that limit the service is going to throttle you! You will get a 429 "TooMany Request Error" instead of "200 OK". In this case, you need to plan to retry (with exponential backoff). This logic needs to be in your application code. The idea is to degrade gracefully. If you cant, cache when appropriate so you don’t have to make  these remote calls to these services if the answer is not been changed.</p>
+<p><strong>Plan to be throttled</strong>. let's say you pick a plan that allow 20 units of reads per second. Once you exceed that limit the service is going to throttle you! You will get a 429 "TooMany Request Error" instead of "200 OK". In this case, you need to plan to retry (with exponential backoff). This logic needs to be in your application code. The idea is to degrade gracefully. If you cant, cache when appropriate so you don’t have to make  these remote calls to these services if the answer is not changed.</p>
 </li>
 <li>
-<p><strong>Retry pattern</strong>: this enables the application to handle transient failures when it tries to connect to a service or a network resort by transparently retrying and failing the operation. You can not say ppl should deploy the database before they start my service because it expects the database to be there when it starts. That is a fragile design! And is not appropriate for cloud native applications. If the database is not there, you application should wait patiently and then retry again. You must be able to connect, reconnect, fail the connect and then connect again. That s how you design robust microservices. The key here is retrying. Back off exponentially and retry again until you get connected (increase the wait time by some factor)<br><br></p>
+<p><strong>Retry pattern</strong>: this enables the application to handle transient failures when it tries to connect to a service or a network resort by transparently retrying and failing the operation. You can not say ppl should deploy the database before they start my service because it expects the database to be there when it starts. That is a fragile design! And is not appropriate for cloud native applications. If the database is not there, you application should wait patiently and then retry again. You must be able to connect, reconnect, fail the connect and then connect again. That s how you design robust microservices. The key here is retrying. <strong>Back off exponentially</strong> and retry again until you get connected (increase the wait time by some factor)<br><br></p>
 </li>
 </ul>
 <p align="center">
@@ -795,7 +966,7 @@
 <li>secrets like passwords and encryption keys</li>
 </ul>
 <p>It’s easy for these configuration values to become an afterthought, leading to the configuration to become disorganized and scattered. Imagine numerous post-it notes with passwords and URLs blowing around an office. Configuration management solves this challenge by creating a “source of truth” with a central location for configuration.</p>
-<p>Git is a fantastic platform for managing configuration data. Moving configuration data into a Git repository enables version control and the repository to act as a source of truth. Managing unexpected changes through the use of code review and version control helps to minimize downtime as it enables rollback or “undo” functionality to configuration, which helps avoid unexpected breakage.</p>
+<p><strong>Git</strong> is a fantastic platform for managing configuration data. Moving configuration data into a Git repository enables version control and the repository to act as a source of truth. Managing unexpected changes through the use of code review and version control helps to minimize downtime as it enables rollback or “undo” functionality to configuration, which helps avoid unexpected breakage.</p>
 <p>Configuration Management (CM) is a practice in DevOps that involves organizing and maintaining the configuration of software systems and infrastructure. It includes</p>
 <ul>
 <li>
@@ -850,7 +1021,7 @@
 <li>compare changes over time, who introduced a problem and when</li>
 </ul>
 <p>A popular VCS is Git and GitHub which provides a Distributed Version Control system and is the industry standard.</p>
-<h3 id="how-do-you-setup-a-script-to-run-every-time-a-repository-receives-new-commits-through-push">How do you setup a script to run every time a repository receives new commits through push? </h3>
+<h4 id="how-do-you-setup-a-script-to-run-every-time-a-repository-receives-new-commits-through-push">How do you setup a script to run every time a repository receives new commits through push? </h4>
 <p>Using hooks! There are three ways to configure a script to run every time a repository receives new commits through push, one needs to define either a <em>pre-receive, update, or a post-receive hook</em> depending on when exactly the script needs to be triggered.</p>
 <ul>
 <li>Pre-receive hook in the destination repository is invoked when commits are pushed to it. Any script bound to this hook will be executed before any references are updated. This is a useful hook to run scripts that help enforce development policies such as scan for secrets.</li>
@@ -858,9 +1029,9 @@
 <li>post-receive hook in the repository is invoked after the updates have been accepted into the destination repository. This is an ideal place to configure simple deployment scripts, invoke some continuous integration systems, dispatch notification emails to repository maintainers, etc.</li>
 </ul>
 <p>Hooks are local to every Git repository and are not versioned. Scripts can either be created within the hooks directory inside the “.git” directory, or they can be created elsewhere and links to those scripts can be placed within the directory.</p>
-<h3 id="what-is-the-difference-between-git-merge-and-git-rebase">What is the difference between Git Merge and Git Rebase? </h3>
+<h4 id="what-is-the-difference-between-git-merge-and-git-rebase">What is the difference between Git Merge and Git Rebase? </h4>
 <p>Both are merging mechanisms but the difference between the Git Merge and Git Rebase is, in Git Merge logs will be showing the complete history of commits. However, when one does Git Rebase, the logs are rearranged. The rearrangement is done to make the logs look linear and simple to understand. This is also a drawback since other team members will not understand how the different commits were merged into one another.</p>
-<h3 id="aws-codecommit-vs-git">AWS CodeCommit VS Git? </h3>
+<h4 id="aws-codecommit-vs-git">AWS CodeCommit VS Git? </h4>
 <p>There is no need to host, maintain, and backup your own source control servers.</p>
 <ul>
 <li>It automatically encrypts your files in transit and at rest</li>
@@ -868,9 +1039,9 @@
 <li>It increases the speed and frequency of your development lifecycle by keeping repositories close to your builds</li>
 </ul>
 <h2 id="infrastructure-as-code">Infrastructure as Code </h2>
-<p>Configure infrastructure using an executable script known as code. We’re talking about textual code that you can hand to an IaC tool. And that tool reads the code and then builds your servers, and networks, and storage, etc., essentially the core infrastructure elements that you need. Using these tools with this textual code means that everyone gets the same environment every time, so it’s <em>consistent and repeatable</em>. Textual code is normally written in the YAML format, which is a very common way to write and declare IaC. So, why are we discussing Infrastructure as Code in this course? Well, performing these system configurations manually is <strong>error-prone</strong>, not to mention, <em>time-consuming</em>.</p>
-<p>You can use templates or commands to describe how to install and configure the system according to your needs, how much storage you want, how much processing power you want, and so on. In the early days of DevOps, Configuration Management Systems (or CMSs) made this possible, and they predated the newer IaC tools.</p>
-<p>Infrastructure as code tools can be either declarative or imperative:</p>
+<p><strong>Configure infrastructure using an executable script: code</strong>.</p>
+<p>We’re talking about textual code that you can hand to an IaC tool. And that tool reads the code and then builds your servers, and networks, and storage, etc., essentially the core infrastructure elements that you need. Using these tools with this textual code means that everyone gets the same environment every time, so it’s <strong>consistent</strong> and <strong>repeatable</strong>. Textual code is normally written in the YAML format, which is a very common way to write and declare IaC. So, why are we discussing Infrastructure as Code? Well, performing these system configurations manually is <strong>error-prone</strong>, not to mention, <em>time-consuming</em>.</p>
+<p>You can use templates or commands to describe how to install and configure the system according to your needs, how much storage you want, how much processing power you want, and so on. In the early days of DevOps, Configuration Management Systems (or CMSs) made this possible, and they predated the newer IaC tools. Infrastructure as code tools can be either declarative or imperative:</p>
 <ul>
 <li>With the declarative approach, you specify the desired state of the infrastructure resources you want to provision, and then the IaC tool determines how to achieve this state. It handles dependencies and executes commands in the proper order without you having to specify the order of execution. Tools that use this approach include <strong>Terraform, Puppet, SaltStack, CloudFormation</strong>, and to some extent, Ansible.</li>
 <li>The imperative approach, in contrast, requires that you define the specific order of the commands needed to achieve the desired state. It’s up to you to get the dependencies correct as the tool will execute commands in the order you specify. Tools like <strong>Chef</strong> are imperative and to some extent, Ansible can be as well.</li>
@@ -905,7 +1076,7 @@
 <li><strong>Service drift</strong> is a major source of failure: services updated by new ppl may be different or not matching</li>
 <li><strong>Services are cattle not pets</strong>: don’t spend time fixing servers - replace them by identical servers that are working properly</li>
 <li><strong>Infrastructure is transient</strong>. It only exist for the time you need it then removed when not used</li>
-<li><strong>Build through parallel infrastructure</strong> - like in blue green deployment</li>
+<li><strong>Build through parallel infrastructure</strong> - like in blue-green deployment</li>
 </ul>
 <h3 id="immutable-delivery-with-containers">Immutable Delivery with Containers </h3>
 <ul>
@@ -945,46 +1116,50 @@
 <h3 id="continuous-integration-ci">Continuous Integration (CI) </h3>
 <p>The main features of CI are: <strong>Short-lived branches</strong>, <strong>frequent pull requests</strong>, and <strong>automated CI tools</strong></p>
 <ul>
-<li>CI is continues building, testing, and merging to main branch. CI consists of the Plan, Code, Build, and Test phases. This is where developers plan and then code the solution, and then build it and test it in several repeating cycles until it’s complete. And then the solution is ready to be delivered</li>
-<li>Developers push code often (daily). Commit regularly. The more time passed between merges, the greater risk of merge conflicts. Working for a week on code and check it in at once increases conflict between features. These conflicts can be difficult and time consuming to resolved</li>
-<li>They work in short-lived feature branches that are merged into the master once the feature is complete. This means you integrate features as it is completed and The branch is deleted after it’s merged as its only purpose was to develop that small feature. It reduces drift that may occur between feature branches and the main branch</li>
-<li>Frequent pull requests back to the main branch is a best practice. It allow team members to communicate about the changes and review the code they are making</li>
+<li>CI is continuous building, testing, and merging to main branch. CI consists of the Plan, Code, Build, and Test phases. This is where developers plan and then code the solution, and then build it and test it in several repeating cycles until it’s complete. And then the solution is ready to be delivered.</li>
+<li>Developers push code often (daily). Commit regularly. The more time passed between merges, the greater risk of merge conflicts which can be difficult and time consuming to resolved.</li>
+<li>They work in short-lived feature branches that are merged into the master once the feature is complete. This means you integrate features as it is completed and the branch is deleted after it’s merged.</li>
+<li>Frequent pull requests back to the main branch is a best practice. It allow team members to communicate about the changes and review the code they are making.</li>
 </ul>
 <p align="center">
-    <img src="./assets/devops/main-ci-features.png" alt="drawing" width="500" height="200" style="center">
+    <img src="./assets/devops/main-ci-features.png" alt="drawing" width="600" height="250" style="center">
 </p>
 <h4 id="ci-automation">CI Automation </h4>
-<p>Continuous Integration can be automated. But what does that mean? Automated CI tools subscribe to events such as pull requests and file changes using webhooks that can then trigger a workflow. That workflow can be anything, such as building an application. Once complete, these tools report back with messages of a successful or failed build</p>
+<p>Continuous Integration can be automated. Automated CI tools subscribe to events such as pull requests and file changes using webhooks that can then trigger a workflow. That workflow can be anything, such as building an application. Once complete, these tools report back with messages of a successful or failed build</p>
 <ul>
-<li>Build and test every pull request automatically. The system should build the changes of the current working version to verify that the integration works correctly</li>
+<li><strong>Build and test every pull request automatically</strong>. The system should build the changes of the current working version to verify that the integration works correctly</li>
 <li>CI tools monitor changes in the version control to get started with building and testing</li>
 <li>Test should run after the build to ensure all the features are working properly</li>
-<li>Never merge a pull request with failing tests</li>
+<li><strong>Never merge a pull request with failing tests</strong></li>
 </ul>
 <h4 id="benefits-of-ci">Benefits of CI </h4>
 <ul>
-<li>Faster reaction times to changes</li>
-<li>Reduces the risk of integration - less changes make less room for breaking things</li>
-<li>Higher quality of code: you get higher code quality with CI/CD, because things are constantly being reviewed and constantly being tested, and every pull request is an opportunity for a code review.</li>
-<li>The code in the version control works - The master branch should always be deployable. So you can not start testing when the code is merge in the master brach. Its late!</li>
-<li>Never merge untest code into the master branch</li>
+<li><strong>Faster reaction times to changes</strong></li>
+<li><strong>Reduces the risk of integration</strong> - less changes make less room for breaking things</li>
+<li><strong>Higher quality of code</strong>: you get higher code quality with CI/CD, because things are constantly being reviewed and constantly being tested, and every pull request is an opportunity for a code review.</li>
+<li>The code in the version control works - <strong>The master branch should always be deployable</strong>. So you can not start testing when the code is merged in the master brach. Its late!</li>
+<li><strong>Never merge untest code into the master branch</strong></li>
 </ul>
 <h4 id="tools">Tools </h4>
-<p>Jenkins is CI/CD software that is installed on a server where the central build will take place. It is one of the oldest, most popular, and most complex of all the CI/CD tools. Circle CI is a CI/CD platform that can be used to implement DevOps practices. It performs deployments for Continuous Delivery and you define workflows inside a ‘circle.yaml’ file. GitHub Actions is a CI/CD platform that enables you to automate your build, test, and deploy GitHub workflows. Unlike other tools, it only works with GitHub.</p>
+<ul>
+<li><strong>Jenkins</strong> is CI/CD software that is installed on a server where the central build will take place. It is one of the oldest, most popular, and most complex of all the CI/CD tools.</li>
+<li><strong>Circle CI</strong> is a CI/CD platform that can be used to implement DevOps practices. It performs deployments for Continuous Delivery and you define workflows inside a ‘circle.yaml’ file.</li>
+<li><strong>GitHub Actions</strong> is a CI/CD platform that enables you to automate your build, test, and deploy GitHub workflows. Unlike other tools, it only works with GitHub.</li>
+</ul>
 <p>A CI pipeline needs:</p>
 <ul>
 <li><strong>Code Repository</strong></li>
 <li><strong>Build Server</strong>: build from the source code - GitHubActions</li>
 <li><strong>Integration Server</strong> to automate the build and run the quality automated test - This orchestration capability is provided by all cloud providers</li>
-<li><strong>Artifact Repository</strong> to store binaries, the artifacts of the application- Java jar file, Python wheels, Docker images that have been tested and proven to work</li>
+<li><strong>Artifact Repository</strong> to store binaries, the artifacts of the application- <strong>Java jar file</strong>, <strong>Python wheels</strong>, <strong>Docker images</strong> that have been tested and proven to work</li>
 </ul>
 <p>Automatic configuration and development - provided by most cloud providers</p>
   <p align="center">
-        <img src="./assets/devops/cicd.png" alt="drawing" width="500" height="300" style="center">
+        <img src="./assets/devops/cicd.png" alt="drawing" width="600" height="400" style="center">
     </p>
 <p>The word continuous deployment is reserved for deployment into production environment.</p>
   <p align="center">
-        <img src="./assets/devops/cicd2.png" alt="drawing" width="500" height="300" style="center">
+        <img src="./assets/devops/cicd2.png" alt="drawing" width="600" height="400" style="center">
     </p>
 <h3 id="continuous-integration-components">Continuous Integration Components </h3>
 <h4 id="code-standards">Code Standards </h4>
@@ -1002,7 +1177,7 @@
 <h4 id="static-code-analysis">Static Code Analysis </h4>
 <p>Static code analysis can be paired with code standards as a method to ensure coding standards are followed as code is checked into the repository.&nbsp;In a CI/CD pipeline, code is automatically analyzed by tools on each check-in to the repository and verified against the organization’s coding standards. These tools do not replace peer reviews of code but rather can be used to flag potential problems early in the development lifecycle.</p>
 <h4 id="linting">Linting </h4>
-<p>A linter is a program that examines your code looking for syntax problems or bugs that can lead to errors when you run the code. A linter can be integrated into build automation or authoring tools. Historical linting functions have often moved into modern compilers.Modern linting tools have evolved to scan for undeclared variables, deprecated functions, spacing and formatting conventions, misuse of scope, and other potential code issues.&nbsp;Example:PyLint, Flake8, Ruff</p>
+<p>A linter is a program that examines your code looking for <strong>syntax problems or bugs</strong> that can lead to errors when you run the code. A linter can be integrated into build automation or authoring tools. Historical linting functions have often moved into modern compilers. Modern linting tools have evolved to scan for undeclared variables, deprecated functions, spacing and formatting conventions, misuse of scope, and other potential code issues.&nbsp;Example: PyLint, Flake8, Ruff</p>
 <h4 id="unit-testing">Unit Testing </h4>
 <p>Unit testing quickly identifies and isolates issues in individual units of application code. Every commit made to each branch should initiate an automated test. The unit tests run on the compiled code. This ensures that as developers commit code to the repository, the changes don’t break the old code. One measure of unit testing quality is <strong>code coverage</strong>. Code coverage is a measure of how much of the source code is tested. Best practices:</p>
 <ul>
@@ -1063,8 +1238,7 @@ Developers frequently commit to a shared repository using a version control syst
 <p>The git branching workflow is crucial in version control and collaboration when working on software development projects. The workflow allows the teams to work on different features, bug fixes, or experiment in isolation without disrupting one another's code.</p>
 <h3 id="continuous-delivery-cd">Continuous Delivery (CD) </h3>
 <p>Continuous Delivery is made up of Release, Deploy, and Operate phases, where the solution is released, and the binaries are deployed into a given environment in repeating cycles, and the solution is then in live operation from that point on. CD is a series of practices to ensure the code can be rapidly and safely deployed into production by delivering every change to a production-like environment (like development, test, stage environment that mimics the production environment). For example, if the production environment is containers on Kubernetes, you should deploy in Kubernetes as well. ‘Continuous Delivery’ is when you deploy it somewhere, like a development server, a staging server, a test server, or a pre-production server, whereas ‘Continuous Deployment’ is reserved for when you actually continuously push to production</p>
-<p>The goal of continuous deliver to ensure that every change is ready to go into production. But before that, usually a manual approval is needed. To do this, we can implement a decision process to ensure the production is authorized. This decision can be made by a person and executed by tools. This is a business decision rather than technical.</p>
-<p>At this stage where we are in a staging environment (production like), and before deploying into production, we might want to conduct some serious testing to ensure performance/compliance or user experience is satisfied or to collect inofrmation about other aspects of our app. Here are some common types of testing:</p>
+<p>The goal of continuous deliver to ensure that every change is ready to go into production. But before that, <strong>usually a manual approval is needed</strong>. To do this, we can implement a decision process to ensure the production is authorized. This decision can be made by a person and executed by tools. This is a business decision rather than technical. At this stage where we are in a staging environment (production like), and before deploying into production, we might want to conduct some serious testing to ensure performance/compliance or user experience is satisfied or to collect inofrmation about other aspects of our app. Here are some common types of testing:</p>
 <h4 id="types-of-testing">Types of Testing </h4>
 <ul>
 <li>
@@ -1153,7 +1327,7 @@ Increases workloads quickly and repeatedly, helps determine if dramatic increase
 Tests whether the software complies with relevant regulations</p>
 </li>
 <li>
-<p><strong>Synthetic testing</strong>: Synthetic testing&nbsp;is a method of understanding your user’s experience in an application by&nbsp;predicting behavior.&nbsp;Synthetic testing&nbsp;is often accomplished by using web browser emulation or scripted recordings of web transactions. Scripts are created to simulate the path or action an end user would take on a site. Those paths are then continuously monitored for performance, availability, and response time measures. Synthetic testing is useful because it can help you&nbsp;identify problems before a user experiences them. Monitoring results push to a monitoring service, which can then trigger alerts in the case of failures or slowdowns. Synthetic testing can run in a CI/CD pipeline to block a release that would break the product. Alternatively, it can run as part of the CD process, evaluating the state of the application immediately after a deployment is finished.&nbsp;The uses of synthetic testing is</p>
+<p><strong>Synthetic testing</strong>: Synthetic testing&nbsp;is a method of understanding your user’s experience in an application by&nbsp;predicting behavior.&nbsp;Synthetic testing&nbsp;is often accomplished by using <strong>web browser emulation</strong> or scripted recordings of web transactions. Scripts are created to simulate the path or action an end user would take on a site. Those paths are then continuously monitored for performance, availability, and response time measures. Synthetic testing is useful because it can help you&nbsp;identify problems before a user experiences them. Monitoring results push to a monitoring service, which can then trigger alerts in the case of failures or slowdowns. <em>Synthetic testing can run in a CI/CD pipeline to block a release that would break the product. Alternatively, it can run as part of the CD process, evaluating the state of the application immediately after a deployment is finished</em>.&nbsp;The uses of synthetic testing is</p>
 <ul>
 <li>Monitor application uptime</li>
 <li>Establish baseline of performance across countries</li>
@@ -1179,10 +1353,10 @@ Tests whether the software complies with relevant regulations</p>
 </ul>
 <p>Example Security Test:</p>
 <ul>
-<li>Common vulnerability exploits</li>
-<li>Open-port scanning</li>
-<li>Secrets scanning</li>
-<li>Runtime security risks</li>
+<li><strong>Common vulnerability exploits</strong></li>
+<li><strong>Open-port scanning</strong></li>
+<li><strong>Secrets scanning</strong></li>
+<li><strong>Runtime security risks</strong></li>
 </ul>
 <p>Tools:</p>
 <ul>
@@ -1222,8 +1396,8 @@ With a rolling deployment, <em>your production fleet is divided into groups so t
 <p>The benefits of Continuous Delivery are many and varied and they include the following:</p>
 <ul>
 <li>Enabling your development teams to automate the steps that transport software through the various stages of the software development lifecycle (or SDLC)</li>
-<li>Automation leads to reducing the deployment time by nonstop testing and deployment cycles. The more you deploy, the more confidence you have that your next deployment will work, and the less time you spend debugging deployments</li>
-<li>Reducing the costs that are normally common with standard deployment strategies. This could be people costs, infrastructure costs, and the cost of lost time due to manual failures. Continuous Delivery enables your development team to scale their software deployments based on the size of the project.</li>
+<li>Automation leads to r<strong>educing the deployment time</strong> by nonstop testing and deployment cycles. The more you deploy, the more confidence you have that your next deployment will work, and the less time you spend debugging deployments</li>
+<li><strong>Reducing the costs</strong> that are normally common with standard deployment strategies. This could be people costs, infrastructure costs, and the cost of lost time due to manual failures. Continuous Delivery enables your development team to scale their software deployments based on the size of the project.</li>
 <li>And enabling you to deploy code automatically into the various stages of the software development lifecycle. Once you have deployed to the development environment without incident, and to the test environment, and then the staging environment all without incident, the chances are pretty good that when you deploy to production that will also be without incident</li>
 </ul>
 <h4 id="health-checks">Health checks </h4>
@@ -1262,13 +1436,12 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 </ul>
 </li>
 </ul>
-<p>Health checks can be implemented in the deployment of your application in several different ways. For example, with AWS CodeDeploy and the help of your application specification (AppSpec) file.</p>
-<p>You can initiate an action after each stage or a subset of stages. You can check if an application’s main page generates a 200 OK response before allowing production traffic to flow to it. You could specify a test that is performed on a server before an application is installed. This will ensure your environment is performing the way you expect before allowing the installation to continue.</p>
+<p>Health checks can be implemented in the deployment of your application in several different ways. For example, with AWS CodeDeploy and the help of your application specification (AppSpec) file. You can initiate an action after each stage or a subset of stages. You can check if an application’s main page generates a 200 OK response before allowing production traffic to flow to it. You could specify a test that is performed on a server before an application is installed. This will ensure your environment is performing the way you expect before allowing the installation to continue.</p>
 <p>While health checks can identify problems, the key to a successful continuous delivery strategy is to also implement remediations when these tests fail. You can build logic into your tests that indicate to CD pipeline that the deployment was unsuccessful and start the rollback process.</p>
 <h2 id="components-of-devops-pipeline">Components of DevOps Pipeline </h2>
-<p>A DevOps pipeline is a workflow that automates software delivery. It is a series of interconnected steps that enable efficient and consistent execution of tasks such as building, testing, deploying and releasing software. It automates the software delivery lifecycle by streamlining and standardizing the process. A DevOps pipeline enables continuous integration of code changes, integrates with repositories, automates testing and building, and facilitates conflict resolution and bug detection. Pipelines are essential for implementing continuous integration and continuous deployment or CI/CD practices in DevOps. Organizations utilize continuous integration and continuous delivery pipelines for a comprehensive build and delivery process.</p>
+<p><strong>A DevOps pipeline is a workflow that automates software delivery</strong>. A DevOps pipeline enables continuous integration of code changes, integrates with repositories, automates testing and building, and facilitates conflict resolution and bug detection. Pipelines are essential for implementing continuous integration and continuous deployment in DevOps. Organizations utilize continuous integration and continuous delivery pipelines for a comprehensive build and delivery process.</p>
 <ul>
-<li>The CI pipeline validates packages and builds essential components, creating deployable artifacts like container images and helm charts. It ensures versioning and resource preparation</li>
+<li>The CI pipeline <strong>validates packages</strong> and <strong>builds essential components</strong>, <strong>creating deployable artifacts</strong> like <strong>container images</strong> and <strong>helm charts</strong>. It ensures versioning and resource preparation.</li>
 <li>The CD pipeline is mainly responsible for deploying the prepared artifacts into specific target environments, thereby ensuring a smooth transition from development to production</li>
 </ul>
 <p align="center">
@@ -1283,8 +1456,8 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <li>Pull requests in the application repository trigger the <strong>PR pipeline</strong>. It runs automated tests to validate code changes, ensuring the integrity of the code base</li>
 <li>The issue tracker integrates with the CI pipeline and highlights associated issues or tasks linked to the pull request and facilitates issue resolution</li>
 <li>The application repository stores the source code which the CI pipeline pulls for build and testing operations</li>
-<li>The Code Risk Analyzer analyzes the code for potential risks, vulnerabilities, or code quality issues. It provides feedback and recommendations based on static code analysis</li>
-<li>Slack integration enables efficient communications by sending notifications and reports to the development team</li>
+<li>The Code Risk Analyzer analyzes the code for <strong>potential risks</strong>, <strong>vulnerabilities</strong>, or <strong>code quality issues</strong>. It provides feedback and recommendations based on static code analysis</li>
+<li><strong>Slack integration</strong> enables efficient communications by sending notifications and reports to the development team</li>
 <li>DevOps Insights collects data from the CI pipeline, generating reports to identify bottlenecks and areas for improvement</li>
 <li><a href="https://en.wikipedia.org/wiki/SonarQube">SonarQube</a>, a code quality management platform, performs static code analysis, measures code coverage and assesses maintainability</li>
 <li>A secrets manager securely stores sensitive information and integrates with the CI pipeline to provide authorized access during build and deployment</li>
@@ -1341,7 +1514,7 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <p>Elasticsearch is a full-text search and analysis engine, based on the Apache Lucene open source search engine. Logstash is a log aggregator that collects data from various input sources, executes different transformations and enhancements and then ships the data to various supported output destinations. It’s important to know that many modern implementations of ELK do not include Logstash. To replace its log processing capabilities, most turn to lightweight alternatives like Fluentd, which can also collect logs from data sources and forward them to Elasticsearch. Kibana is a visualization layer that works on top of Elasticsearch, providing users with the ability to analyze and visualize the data. And last but not least — Beats are lightweight agents that are installed on edge hosts to collect different types of data for forwarding into the stack. Just like how Prometheus and Grafana work together most of the time, you'll find Elasticsearch and Kibana working in tandem, because Kibana is a specialized visualizer for Elasticsearch.</p>
 </li>
 <li>
-<p>And the third part of your observability helps you understand where the problem is, especially with a microservices environment are <strong>traces</strong>. Traces give you the span information, how your packet in the application is traveling, how long it is taking it to go from A to B. Let's say you have five services and a workflow connecting these services in a sequence. When you have a problem like your application is slowing down, how do you find out where the problem is? You'll have to go and check each span. Let's say one is two milliseconds, next takes 1 milliseconds, but next, in this particular span, is taking about seven milliseconds. Now you know where it is taking longer, where you would optimize. So, once you look at a trace, you can actually check the logs for that application, or you can look at the metrics you have collected for that application, either with Kibana or with Prometheus. There are many open tracing infrastructure, there are tools like <strong>Jaeger</strong> which help you visualize your traces as well.</p>
+<p>And the third part of your observability helps you understand where the problem is, especially with a microservices environment are <strong>traces</strong>. Traces give you the <strong>span information</strong>, how your packet in the application is traveling, how long it is taking it to go from A to B. Let's say you have five services and a workflow connecting these services in a sequence. When you have a problem like your application is slowing down, how do you find out where the problem is? You'll have to go and check each span. Let's say one is two milliseconds, next takes 1 milliseconds, but next, in this particular span, is taking about seven milliseconds. Now you know where it is taking longer, where you would optimize. So, once you look at a trace, you can actually check the logs for that application, or you can look at the metrics you have collected for that application, either with Kibana or with Prometheus. There are many open tracing infrastructure, there are tools like <strong>Jaeger</strong> which help you visualize your traces as well.</p>
 </li>
 </ul>
 <h2 id="introduction-to-monitoring">Introduction to Monitoring </h2>
@@ -1355,9 +1528,9 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <ul>
 <li><strong>Access</strong>: Monitoring <em>ensures that an application is healthy and responds to all requests</em> accurately and quickly. It <em>helps avoiding major outages or  partial outages or interruptions</em></li>
 <li><strong>User Experience</strong>: An application can appear healthy by responding to requests, but monitoring might uncover that the application is responding in an <em>extremely slow manner</em>. This is why you need to also do <strong>performance monitoring</strong>. Application performance monitoring tools continuously monitor performance and <em>send alerts</em> when an application is not performing as it should.</li>
-<li><strong>Scope</strong>: real-time monitoring reveals the scope of usage. Helps developers and businesses see where and how their application is being used on different computers, web browsers, smart phones, or tablets. Real-time monitoring determines the scope of usage</li>
-<li><strong>cost</strong>: Monitoring can also reduce costs due to unavailability of the app or poor performance so users of the application have the experience they are expecting</li>
-<li><strong>Safty</strong>:  Monitoring can ensure that applications are safe from any unwelcome or unwanted intrusions</li>
+<li><strong>Scope</strong>: real-time monitoring reveals the <strong>scope of usage</strong>. Helps developers and businesses see where and how their application is being used on different computers, web browsers, smart phones, or tablets. Real-time monitoring determines the scope of usage</li>
+<li><strong>Cost</strong>: Monitoring can also reduce costs due to unavailability of the app or poor performance so users of the application have the experience they are expecting</li>
+<li><strong>Safety</strong>:  Monitoring can ensure that applications are safe from any unwelcome or unwanted intrusions</li>
 </ul>
 <h3 id="application-monitoring-terms">Application Monitoring Terms </h3>
 <ul>
@@ -1374,7 +1547,7 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <p><strong>Tracing</strong>: Developers can also track how one event connects across multiple nodes to detect the origins of errors by using distributed tracing</p>
 </li>
 <li>
-<p>Dependency&amp;Flow: another way of monitoring apps with a visual representation of how information travels between services</p>
+<p><strong>Dependency&amp;Flow</strong>: another way of monitoring apps with a visual representation of how information travels between services</p>
 </li>
 </ul>
 <p align="center">
@@ -1394,26 +1567,38 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <p>Uptime, or availability monitoring, continuously checks the application to confirm that it’s up and responding to the data and service requests it receives. Availability is a fundamental metric of system monitoring because if the application is unavailable or unreachable when it’s needed, no other data will matter</p>
 </li>
 <li>
-<p><strong>Dependency monitoring</strong> starts with mapping the resources that an application depends on. Applications running over distributed IT infrastructures can be dependent on a variety of network nodes, other application components, and services. These dependencies are mapped by evaluating the incoming network connections</p>
+<p><strong>Dependency monitoring</strong> starts with mapping the resources that an application depends on. Applications running over distributed IT infrastructures can be dependent on a variety of network nodes, other application components, and services. These dependencies are mapped by evaluating the incoming network connections. For example: If your application isn’t working properly, your dependency monitoring tool could tell you where the error originates from, based on the mapped connections to your application. In this example, the server is offline. Monitoring dependencies allows you to watch your applications and identify any issues with their performance, so you can give your users the best experience with your application</p>
 </li>
 </ol>
-<p>For example: If your application isn’t working properly, your dependency monitoring tool could tell you where the error originates from, based on the mapped connections to your application. In this example, the server is offline. Monitoring dependencies allows you to watch your applications and identify any issues with their performance, so you can give your users the best experience with your application</p>
 <p align="center">
         <img src="./assets/devops/monitoring-dependencies.png" alt="drawing" width="500" height="300" style="center">
 </p>
-<p>3 - <strong>Integration monitoring</strong>. Most likely, your apps won’t be stand-alone applications. Instead, they will allow for integration with third parties. Modern applications and services rely on third-party integrations, and developers should monitor these external systems for data processing, resource capacity, and other functional processes. Integration monitoring identifies the availability and uptime performance of the third-party integrations. And it’s important for you to monitor those integrated apps and services, so your application can perform at its best</p>
-<p align="center">
-        <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="600" height="300" style="center">
-</p>
-<p>4 - <strong>Web performance monitoring</strong> is designed to monitor the availability of a web server or service, but it also provides more in-depth details. These tools can capture information such as <strong>page loading time</strong>, the <strong>location of errors</strong> that are generated, and <strong>individual load times</strong> of various web elements. This information helps developers fine-tune a website or a web-based application’s performance</p>
-<p align="center">
-        <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="600" height="300" style="center">
-</p>
-<p>5 - <strong>Business Activity Monitoring</strong> (or B-A-M) tools take key business performance metrics and track them over time. For example, these metrics could include information about retail sales, application downloads or the volume of financial transactions. This type of monitoring is useful because it helps businesses understand how their application is used and how it impacts business</p>
-<p>6 - <strong>Application Performance Monitoring</strong> (or APM) observes how well apps behave in an IT environment. The scope of APM is extended from the application to the underlying infrastructure components and dependencies. APM aggregates and analyzes inbound network data to evaluate the state of the IT environment and identify the problem root cause when apps perform sub-optimally. This monitoring also ensures that your software launches fast and responds to commands in a timely manner. APM metrics include: <strong>Resource consumption</strong>, <strong>Error rates</strong> at the software level, App <strong>response times</strong>, and App <strong>request rates</strong>, and also the <strong>user experience</strong></p>
-<p>Sometimes applications behave differently than they do in application testing environments, so</p>
-<p>7 - <strong>Real User Monitoring</strong> (or RUM) provides an accurate perspective on how users perceive and respond to applications or service performance. For example, the number of users staying on a website for more than a few seconds might tell you many things, like satisfaction with the site and how quickly the page loads. RUM is designed to record such interactions and provide the historical performance of a service delivered to users over the network. Security attacks and network infringements impact the flow of data traffic and network behavior. So it’s important to track unusual activities that occur. Security monitoring collects network log data, which can be analyzed and potential threats can be blocked before they impact the business</p>
-<p>8 - <strong>Security Monitoring</strong>: Security attacks and network infringements impact the flow of data traffic and network behavior. So it’s important to track unusual activities that occur. Security monitoring collects <strong>network log data</strong>, which can be analyzed and potential threats can be blocked before they impact the business</p>
+<ol start="3">
+<li>
+<p><strong>Integration monitoring</strong>. Most likely, your apps won’t be stand-alone applications. Instead, they will allow for integration with third parties. Modern applications and services rely on third-party integrations, and developers should monitor these external systems for data processing, resource capacity, and other functional processes. Integration monitoring identifies the availability and uptime performance of the third-party integrations. And it’s important for you to monitor those integrated apps and services, so your application can perform at its best</p>
+ <p align="center">
+         <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="600" height="300" style="center">
+ </p>
+</li>
+<li>
+<p><strong>Web performance monitoring</strong> is designed to monitor the availability of a web server or service, but it also provides more in-depth details. These tools can capture information such as <strong>page loading time</strong>, the <strong>location of errors</strong> that are generated, and <strong>individual load times</strong> of various web elements. This information helps developers fine-tune a website or a web-based application’s performance</p>
+ <p align="center">
+         <img src="./assets/devops/monitoring-integration.png" alt="drawing" width="600" height="300" style="center">
+ </p>
+</li>
+<li>
+<p><strong>Business Activity Monitoring</strong> (or B-A-M) tools take key business performance metrics and track them over time. For example, these metrics could include information about retail sales, application downloads or the volume of financial transactions. This type of monitoring is useful because it helps businesses understand how their application is used and how it impacts business</p>
+</li>
+<li>
+<p><strong>Application Performance Monitoring</strong> (or APM) observes how well apps behave in an IT environment. The scope of APM is extended from the application to the underlying infrastructure components and dependencies. APM aggregates and analyzes inbound network data to evaluate the state of the IT environment and identify the problem root cause when apps perform sub-optimally. This monitoring also ensures that your software launches fast and responds to commands in a timely manner. APM metrics include: <strong>Resource consumption</strong>, <strong>Error rates</strong> at the software level, App <strong>response times</strong>, and App <strong>request rates</strong>, and also the <strong>user experience</strong></p>
+</li>
+<li>
+<p><strong>Real User Monitoring</strong> (or RUM) provides an accurate perspective on how users perceive and respond to applications or service performance. For example, <em>the number of users staying on a website for more than a few seconds</em> might tell you many things, like satisfaction with the site and how quickly the page loads. RUM is designed to record such interactions and provide the historical performance of a service delivered to users over the network.</p>
+</li>
+<li>
+<p><strong>Security Monitoring</strong>: Security attacks and network infringements impact the flow of data traffic and network behavior. So it’s important to track unusual activities that occur. Security monitoring collects <strong>network log data</strong>, which can be analyzed and potential threats can be blocked before they impact the business</p>
+</li>
+</ol>
 <h3 id="golden-signals-of-monitoring">Golden Signals of Monitoring </h3>
 <p>Now imagine the application you’ve developed stops working correctly. How do you determine what the problem is? By monitoring your app, you’re able to identify where a problem is and isolate it.</p>
 <p align="center">
@@ -1431,7 +1616,7 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <p>So this might indicate that there are some intermittent problems. The graph also shows that system 2 is never hitting the target latency, which indicates that there’s a serious issue with it. With this data, you know you should look at system 2 to resolve any latency problems.</p>
 </li>
 <li>
-<p>Traffic is associated with the number of users who visit the site. But with application monitoring, the term “traffic” refers to how in-demand your service is. When you measure traffic, you have a better understanding of your users and you can fine-tune their experience.</p>
+<p>Traffic (or throughput) is associated with the number of users who visit the site. But with application monitoring, the term “traffic” refers to how in-demand your service is. When you measure traffic, you have a better understanding of your users and you can fine-tune their experience.</p>
  <p align="center">
          <img src="./assets/devops/monitoring-traffic.png" alt="drawing" width="600" height="300" style="center">
  </p>
@@ -1445,7 +1630,7 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <p>You should be tracking obvious errors. These include all server errors, like an HTTP 500 Internal Server Error, and Client errors, like an HTTP 404 Page Not Found error. But you should also watch for other errors that might be harder to catch. For example, a request might return an HTTP 200 OK status code. However, if the request doesn’t return the right content, it’s considered an error because the request was completed incorrectly. You need to track these errors and also identify errors to match your service-level objectives.</p>
 </li>
 <li>
-<p>The fourth Golden Signal is “saturation”. This measures the percentage of use of a system, like how much memory or CPU resources your system utilizes. If a web application is approaching 100 percent saturation, performance degradation is likely, and your users will be negatively impacted. On the other hand, if saturation is consistently at 50 percent or less, you might be over-provisioning and paying too much for services that you’re not using. By measuring the saturation of a web application, you get insights on how to optimize the services you’re using. Be sure to set a utilization target, as it will help ensure the service performance and availability. And you should be aware that an increase in latency is often a leading indicator of saturation.</p>
+<p>The fourth Golden Signal is “saturation” (or infra usage monitoring). This measures the percentage of use of a system, like how much memory or CPU resources your system utilizes. If a web application is approaching 100 percent saturation, performance degradation is likely, and your users will be negatively impacted. On the other hand, if saturation is consistently at 50 percent or less, you might be over-provisioning and paying too much for services that you’re not using. By measuring the saturation of a web application, you get insights on how to optimize the services you’re using. Be sure to set a utilization target, as it will help ensure the service performance and availability. And you should be aware that an increase in latency is often a leading indicator of saturation.</p>
 <p>Because large systems can get complicated with too many components, issues, and alerts to monitor, it’s in your best interest to use the four Golden Signals. When you track latency, traffic, errors, and saturation, you can focus on your application's most critical performance indicators and proactively monitor applications. With the Golden Signals, you can: Troubleshoot components of a system to find the root cause and fix problems. Alert your team about an incident, so they can identify the problem and work towards a remediation, and Aid in capacity-planning to monitor and improve things for your applications or services.</p>
 </li>
 </ol>
@@ -1460,36 +1645,34 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
     </p>
 <ul>
 <li>
-<p><strong>Metrics</strong>:</p>
+<p><strong>Metrics</strong>: represent observed and collected raw measurements of resources used. Some metrics are presented as a <strong>total capacity</strong>, while others are represented as a <strong>rate</strong> that indicates how busy a component is. Metrics are useful because they provide insight into the behavior and health of your systems, especially when <strong>analyzed in aggregate</strong>. Metrics are the basic values used in understanding historical trends, correlate diverse factors, and measure changes in your performance, consumption, or error rates. While monitoring is the process of collecting, aggregating, and watching different services, observing is analyzing those values to improve awareness of your components’ characteristics and behavior.</p>
+</li>
+<li>
+<p><strong>Observability</strong> is about <strong>analyzing the metrics</strong> to incease awareness about the system. Also includes recognizing and understanding patterns between data collected, aggregated information, and resources and values across services. For example, if an application experiences a spike in error rates, an administrator observing the monitoring system can discover what event contributed to the spike.</p>
+</li>
+<li>
+<p><strong>Alerting</strong> is the responsive component of a monitoring system that performs actions based on changes in metric values. Alerts definitions are composed of two parts: <strong>a metric-based condition or threshold</strong>, and an <strong>action to perform</strong> when the value falls outside of the acceptable conditions. The main purpose of alerting is to bring human attention to the status of systems if there are any issues or problems.</p>
+</li>
+</ul>
+<p>Some important qualities of an ideal monitoring system are:</p>
 <ul>
-<li>represent resource observed and collected raw measurements of resources used</li>
-<li>low-level usage summaries to higher level, specific data</li>
-<li>total capacity of a component</li>
-<li>view of behaviour and health of systems</li>
-<li>understand historical trends</li>
-<li>measre changes in performance, consumption and error rates</li>
+<li>Independently operates on its own infrastructure. It is a reliable system.</li>
+<li>Easy-to-use dashboards views are available.</li>
+<li>Effective maintenance of historical data to help establish trends, patterns, and consistencies over long timelines. You have the ability to correlate from different sources.</li>
+<li>Tracking new metrics or a new infrastructure is easy to start</li>
+<li>Flexible and powerful alerting is available.</li>
 </ul>
-<p>Some metrics are presented as a total capacity, while others are represented as a rate that indicates how busy a component is. Metrics are useful because they provide insight into the behavior and health of your systems, especially when analyzed in aggregate. Metrics are the basic values used in understanding historical trends, correlate diverse factors, and measure changes in your performance, consumption, or error rates. While monitoring is the process of collecting, aggregating, and watching different services, observing is analyzing those values to improve awareness of your components’ characteristics and behavior.</p>
-</li>
-<li>
-<p><strong>Observability</strong> is about analyzing the metrics to incease awareness about the system. Also includes recognizing and understanding patterns between data collected, aggregated information, and resources and values across services. For example, if an application experiences a spike in error rates, an administrator observing the monitoring system can discover what event contributed to the spike.</p>
-</li>
-<li>
-<p><strong>Alerting</strong> is the responsive component of a monitoring system that performs actions based on changes in metric values. Alerts definitions are composed of two parts: a metric-based condition or threshold, and an action to perform when the value falls outside of the acceptable conditions. Alerts allow administrators to disengage from the system so they do not need to watch the applications nonstop.</p>
-</li>
-</ul>
-<p>The main purpose of alerting is to bring human attention to the status of systems if there are any issues or problems. Some important qualities of an ideal monitoring system are: Independently operates on its own infrastructure. It is a reliable system. Easy-to-use dashboards views are available. Effective maintenance of historical data to help establish trends, patterns, and consistencies over long timelines. You have the ability to correlate from different sources. Tracking new metrics or a new infrastructure is easy to start, and Flexible and powerful alerting is available.</p>
 <h3 id="types-of-metrics-in-a-monitoring-system">Types of Metrics in a Monitoring System </h3>
-<p>One of the main components of a monitoring system is metrics. Why are metrics important to track? Metrics represent how your applications use resources and provide insight into your systems' behavior and health. Important metrics you should track are host-based, application, network and connectivity, and server pool.Metrics tracking can help you plan and analyze your monitoring strategy since systems usually function hierarchically, with more complex layers building on top of the more primitive infrastructure.</p>
+<p>One of the main components of a monitoring system is metrics. Why are metrics important to track?</p>
 <ul>
 <li>
-<p><strong>Host-based metrics</strong>: measure CPU, Memory, Disk space, Processes. Indicators are anything involved in evaluating the health and performance of an individual machine, disregarding for the moment its application stacks and services. Host-based metrics are mainly comprised of usage or performance of the operating system or hardware.</p>
+<p><strong>Host-based metrics</strong>: measure <strong>CPU, Memory, Disk space, Processes</strong>. Indicators are anything involved in evaluating the health and performance of an individual machine, disregarding for the moment its application stacks and services. Host-based metrics are mainly comprised of usage or performance of the operating system or hardware.</p>
 </li>
 <li>
-<p><strong>Application metrics</strong> focus on units of processing or work that depend on resources like services or applications. The specific types of metrics to look at depends on what the service is providing, what dependencies it has, and what other components it interacts with. Metrics at this level indicate an application's health, performance, or load. Indicators to look for include: error and success rates, service failures and restarts, performance and latency of responses, and resource usage. These indicators help determine whether an application is functioning correctly and with efficiency.</p>
+<p><strong>Application metrics</strong> focus on units of processing or work that depend on resources like services or applications. The specific types of metrics to look at depends on what the service is providing, what dependencies it has, and what other components it interacts with. Metrics at this level indicate an application's health, performance, or load. Indicators to look for include: <strong>error</strong> and <strong>success rates</strong>, <strong>service failures</strong> and restarts, performance and <strong>latency of responses</strong>, and <strong>resource usage</strong>. These indicators help determine whether an application is functioning correctly and with efficiency.</p>
 </li>
 <li>
-<p><strong>Network&amp;Connectivity metrics</strong>: For most types of infrastructure, network and connectivity indicators are important gauges of outward-facing availability, but they are also essential signs that services are accessible to other machines for any systems that span more than one machine. Like the other metrics, networks should be checked for their overall functional correctness and their ability to deliver necessary performance by looking at: connectivity, error rates and packet loss, latency, and bandwidth utilization. Monitoring your networking layer can help you improve the availability and responsiveness of both your internal and external services.</p>
+<p><strong>Network &amp; Connectivity metrics</strong>: For most types of infrastructure, network and connectivity indicators are important gauges of outward-facing availability, but they are also essential signs that services are accessible to other machines for any systems that span more than one machine. Like the other metrics, networks should be checked for their overall functional correctness and their ability to deliver necessary performance by looking at: <strong>connectivity</strong>, <strong>error rates</strong> and <strong>packet loss</strong>, latency, and <strong>bandwidth utilization</strong>. Monitoring your networking layer can help you improve the availability and responsiveness of both your internal and external services.</p>
 </li>
 <li>
 <p><strong>Server pool metrics</strong>: When dealing with horizontally scaled infrastructure, server pools are another layer of infrastructure you will need to add metrics for. While metrics about individual servers are useful, service is better represented at scale as the ability of a collection of machines to perform work and respond adequately to requests. This metric type is in many ways just a higher-level extrapolation of application and server metrics, but the resources in this case are homogeneous servers instead of machine-level components. Collecting data that summarizes the health of collections of servers is important for understanding the actual capabilities of your system to handle load and respond to changes.</p>
@@ -1503,15 +1686,6 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <li>Resource exhaustion</li>
 </ul>
 <p>Of course, there are many other types of metrics that can be helpful to collect. Conceptualizing the most important information at varying levels of focus can help you identify the most useful indicators for predicting or identifying problems.</p>
-<p>A few factors that can affect what you choose to collect and act on are:</p>
-<ul>
-<li>Resources available for tracking: Depending on your human resources, infrastructure, and budget, you will have to limit the scope of what you keep track of to what you can afford to implement and reasonably manage.</li>
-<li>The complexity and purpose of your application: The complexity of your application or systems can greatly impact what you choose to track. Items that might be mission critical for some software might not be important in others.</li>
-<li>The deployment environment: While robust monitoring is most important for production systems, staging and testing systems also benefit from monitoring, though there may be differences in severity, granularity, and the overall metrics measured.</li>
-<li>The potential usefulness of the metric: One of the most important factors affecting whether something is measured is its potential to help in the future. Each additional metric tracked increases the complexity of the system and takes up resources. The necessity of data can change over time as well, requiring reevaluation at regular intervals.</li>
-<li>How essential stability is: For certain types of personal or early-stage projects, stability and uptime might not be priorities.</li>
-</ul>
-<p>Keep in mind that the factors that influence your decisions will depend on your available resources, the maturity of your project, and the level of service you require.</p>
 <h2 id="importance-of-monitoring">Importance of Monitoring </h2>
 <p>Monitoring is essential for operations:</p>
 <ul>
@@ -1629,19 +1803,13 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <p>Prometheus</p>
 <ul>
 <li>
-<p>is an open-source monitoring, and alerting solution, built by a company called SoundCloud</p>
+<p>is an open-source <strong>monitoring, and alerting solution</strong>, built by a company called SoundCloud</p>
 </li>
 <li>
 <p>Monitors your servers, virtual machines, applications and databases</p>
 </li>
 <li>
-<p>Analyzes, tracks, and reports system health, application behavior and prediction, and performance</p>
-</li>
-<li>
 <p>Provides detailed, actionable metrics using a robust data model and query language</p>
-</li>
-<li>
-<p>Is reliable, go-to system, so you can diagnose problems quickly during an outage or regular monitoring of applications</p>
 </li>
 <li>
 <p>Once configured, Prometheus works by automatically discovering services running in your infrastructure. Or you can manually define the services you want metrics pulled from</p>
@@ -1653,8 +1821,7 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 </p></li>
 </ul>
 <p></p>
-<p>Because metrics don't automatically spring forth from applications, developers must add the instrumentation that produces them Application instrumentation requires client libraries.</p>
-<p>With two or three lines of code, you can define a metric and insert your instrumentation inside the source code you control. This method is called direct instrumentation.</p>
+<p>Because metrics don't automatically spring forth from applications, developers must add the <strong>instrumentation</strong> that produces them Application instrumentation requires client libraries.</p>
 <ul>
 <li>
 <p>You can perform instrumentation using client libraries. In client libraries, Prometheus includes official libraries for Go, Python, and Ruby, and Third-party libraries, which support C+, .Net, Node.js, and others such as Haskell, Erlang, Rust, Java, and Scala.</p>
@@ -1663,17 +1830,17 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <p>Or, with two or three lines of code, you can define a metric and insert your instrumentation inside the source code you control. This method is called direct instrumentation.</p>
 </li>
 <li>
-<p>Or using exporters. Another way to obtain metrics from an application is through an exporter which is a piece of software you deploy beside the application from which you want to obtain metrics. Think of an exporter as a one-to-one proxy that converts data between the metrics interface of an application and the Prometheus exposition (or text) format<br>
+<p>Or using <strong>exporters</strong>. Another way to obtain metrics from an application is through an exporter which is a piece of software you deploy beside the application from which you want to obtain metrics. Think of an exporter as a one-to-one proxy that converts data between the metrics interface of an application and the Prometheus exposition (or text) format<br>
 . It takes in requests from Prometheus. It gathers metrics from the application and then transforms that data into the correct Prometheus format. Finally, it returns the data via a response to the Prometheus server.</p>
 </li>
 </ul>
 <p>Prometheus servers are autonomous and don't rely on distributed or networked storage or other remote services. They can be deployed in the cloud or on-premises.</p>
 <ul>
 <li>
-<p>Some Prometheus implementations can use a dedicated time-series database to store Prometheus data rather than relying on the Prometheus server itself. Prometheus uses a time-series database which simplifies the taking of incremental backups of monitoring data. Prometheus provides native support to some services, which means monitoring agents are not required. A few examples are: Kubernetes, etcd, SkyDNS, and other database management systems and application systems.</p>
+<p>Some Prometheus implementations can use a dedicated time-series database to store Prometheus data rather than relying on the Prometheus server itself. Prometheus uses a <strong>time-series database</strong> which simplifies the taking of incremental backups of monitoring data.</p>
 </li>
 <li>
-<p>Alert manager is a flexible metrics collection and alerting tool that can be combined with Prometheus. When an alert condition is detected, the Prometheus server generates the alert and sends it to alert manager. Alertmanager handles these alerts and sends the alert notifications using email, on-call notification systems, and chat platforms.</p>
+<p><strong>Alert manager</strong> is a flexible metrics collection and alerting tool that can be combined with Prometheus. When an alert condition is detected, the Prometheus server generates the alert and sends it to alert manager. Alertmanager handles these alerts and sends the alert notifications using email, on-call notification systems, and chat platforms.</p>
 </li>
 </ul>
 <p>You'll benefit from using Prometheus if one of your primary goals is to collect and evaluate metrics, especially for recording purely numeric time-series data. Prometheus provides for multidimensional data collection and querying. Additionally, it's a good fit for both machine-centric monitoring as well as monitoring of highly dynamic service-oriented architectures. A properly tuned and deployed Prometheus cluster can collect millions of metrics every second, which makes it well suited for complex workloads. Prometheus is typically used in combination with Grafana.</p>
@@ -1743,7 +1910,7 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <h3 id="introduction-to-grafana">Introduction to Grafana </h3>
 <p>Grafana</p>
 <ul>
-<li>is a professional cross-platform, open-source data visualization and metrics analysis tool</li>
+<li>is a professional cross-platform, open-source <strong>data visualization and metrics analysis</strong> tool</li>
 <li>provides time-series analytics for analyzing and monitoring data metrics over time</li>
 <li>use it to query, visualize, alert on, and understand metrics no matter where your data is stored</li>
 <li>transforms your time-series database (or TSDB) into graphs and visualizations that help you make sense of massive amounts of monitored data</li>
@@ -1753,8 +1920,7 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <p align="center">
   <img src="./assets/devops/monitoring-grafana1.png" alt="drawing" width="600" height="300" style="center">
 </p>
-<p>Grafana is a browser-based application. You can easily install it on-premises or on any cloud platform you choose. However, Grafana only works on data stored in databases. It doesn’t perform data collection. It connects to a data source retrieves metrics.</p>
-<p>Grafana’s customizable dashboards facilitate the interpretation of massive amounts of data.</p>
+<p>Grafana is a <strong>browser-based application</strong>. You can easily install it on-premises or on any cloud platform you choose. However, <strong>Grafana only works on data stored in databases</strong>. <em>It doesn’t perform data collection</em>. It connects to a data source to retrieve metrics. Grafana’s customizable dashboards facilitate the interpretation of massive amounts of data.</p>
 <p>Grafana provides native support for dozens of databases, including: Microsoft SQL Server, AWS CloudWatch, Graphite, Prometheus, ElasticSearch, MySQL, PostgreSQL, and others.</p>
 <p>Some of the benefits of using Grafana are that it:</p>
 <ul>
@@ -1797,9 +1963,9 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 </ul>
 <h3 id="introduction-to-logging">Introduction to Logging </h3>
 <ul>
-<li>Log messages provide important information for developers when debugging an application and for system administrators maintaining applications in production</li>
-<li>An application log contains information about events that have occurred within a software application. These events are logged by the application and saved. They can include errors, informational events and warnings</li>
-<li>In the past, application logs were sent to files, but cloud-native applications treat logs as event streams and log to stdout so that they can easily be processed by data collectors.</li>
+<li>Log messages provide important information for developers when <strong>debugging</strong> an application and for system administrators <strong>maintaining</strong> applications in production</li>
+<li>An application log contains information about <strong>events</strong> that have occurred within a software application. These events are logged by the application and saved. They can include errors, informational events and warnings</li>
+<li>In the past, application logs were sent to files, but cloud-native applications treat logs as <strong>event streams</strong> and log to stdout so that they can easily be processed by data collectors.</li>
 </ul>
 <h4 id="application-logs">Application Logs </h4>
 <ul>
@@ -1846,14 +2012,14 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <h4 id="why-is-application-logging-important">Why is application logging important? </h4>
 <ul>
 <li>
-<p>Diagnostics:</p>
+<p><strong>Diagnostics</strong>:</p>
 <ul>
 <li>Use application logs to perform analytics on your software. Some examples of information that might be useful to track and analyze are customer transactions, security threats, timeouts, and consumer behavior. Log management tools can give you valuable insights from the information you’re already collecting</li>
 <li>Application logs can also be used for diagnosing issues. You can use application logs to identify and resolve bugs in a production environment. This process takes place regularly during software development. And it’s critical for ensuring long-term optimal performance of an application</li>
 </ul>
 </li>
 <li>
-<p>Auditing:</p>
+<p><strong>Auditing</strong>:</p>
 <ul>
 <li>Logged messages involve significant events in the application</li>
 <li>Information relating to management and finance</li>
@@ -1898,10 +2064,10 @@ Other unusual software bugs that require a process bounce: Deadlocks, memory lea
 <h4 id="what-is-distributed-tracing">What is Distributed Tracing? </h4>
 <p>Distributed tracing</p>
 <ul>
-<li>Is a method used to profile and monitor applications that are composed of many micro-services</li>
-<li>Allows developers to track requests, as they traveled through various services in the application, and helps to identify performance bottlenecks and errors</li>
-<li>Tracing can also be used to monitor service dependencies, and ensure that all parts of a system are functioning correctly</li>
-<li>Provides end-to-end visibility into the entire system</li>
+<li>Is a method used to profile and monitor applications that are composed of many microservices</li>
+<li>Allows developers to track requests, as they traveled through various services in the application, and helps to <strong>identify performance bottlenecks</strong> and <strong>errors</strong></li>
+<li>Tracing can also be used to <strong>monitor service dependencies</strong>, and ensure that all parts of a system are functioning correctly</li>
+<li>Provides <em><strong>end-to-end visibility into the entire system</strong></em></li>
 </ul>
 <p>A <strong>trace</strong> is a collection of spans, individual timed events that represent a single logical request or workflow.</p>
 <p>A <strong>span</strong> represents a single operation within a trace. It has a start and end time and may include metadata such as the name of the service performing the operation, and ID for the operation, and any tags that provide additional context.</p>
@@ -2151,7 +2317,7 @@ Maybe in this case “True” is being cast to 1. So I guess the best cast that 
 <h3 id="tdd-tools">TDD Tools </h3>
 <p><strong>PyUnit</strong> is one of the two most popular frameworks for Python testing. The other one is <strong>Pytest</strong>. With other Python testing frameworks, you can use multiple levels of setups and teardowns. And setups and teardowns are two Python methods together that allow you to define instructions to run before and after each of the tests.<br>
 Some other important testing tools in Python is <strong>nose</strong> (updated to <strong>Pynose</strong>). It is a test runner. While PyUnit has its own test runner, Nose allows you to add color and formatting and other test output. You actually get the Red/Green/Refactor. Lines really do turn red as opposed to in PyUnit where everything is just black and white or whatever color scheme your terminal happens to be. I like Nose because it makes the output easier to read. Nose also has the ability to call the coverage tool. This tool supports code coverage, which is the percentage of code that gets executed when you run automated testing. I especially like this feature because every time I run my test case, I get a code coverage report. From this report, I can see if my coverage went up or my coverage went down or it stayed the same. The coverage tool also has options to report on the lines of code that have not been executed during a test run. You can use this report to find those missing lines of code and know where to write more test cases. We are going to use PyUnit, Nose, and coverage in the labs. This way, you will have a complete set of tools to help you build a test suite that covers all of your code.</p>
-<p>PyUnit, PyTest for Python. Unittest is built in python module which is very helpful for organizing tests. Write a class with appropriate name which inherits from <em>TestCase</em> class. This class has some prebuilt methods that run in specific order. These methods include setUp() that executes first, tearDown() that executes last. These methods are called <em>test features</em>. Test fixture allows you to specify the initial state of the system before a test case is run. setUp() and tearDown() will execute before and after each test, respectively.</p>
+<p>PyUnit, PyTest for Python. Unittest is built in python module which is very helpful for organizing tests. Write a class with appropriate name which inherits from <code>TestCase</code> class. This class has some prebuilt methods that run in specific order. These methods include <code>setUp()</code> that executes first, <code>tearDown()</code> that executes last. These methods are called <em>test fixtures</em>. Test fixture allows you to specify the initial state of the system before a test case is run. setUp() and tearDown() will execute before and after each test, respectively.</p>
 <p>Also it has simple but very useful <code>assert</code> types of methods such as: <code>assertEqual</code>, <code>assertAlmostEqual</code>, <code>assertRaises</code> for rasing different types of errors or custome errors.</p>
 <h3 id="methods-for-test-driven-development">Methods for Test Driven Development </h3>
 <p>Lets say we want to test functionality of a stack data structure. I start writing my test cases by declaring a class that is a subclass of TestCase that we imported from unittest. I’ve called this class StackTestCase.</p>
@@ -2556,7 +2722,7 @@ Location where the test reports are stored (see the Test reporting module below)
 </li>
 </ul>
 <h3 id="synthetic-testing-with-canaries">Synthetic testing with canaries </h3>
-<p>Synthetic testing&nbsp;is automated testing that emulates user activity on your application every minute of every day. This allows you to continually verify your customer experience even when you don't have customer traffic on your applications.</p>
+<p>Synthetic testing&nbsp;is automated testing that <strong>emulates user activity on your application</strong> every minute of every day. This allows you to continually verify your customer experience even when you don't have customer traffic on your applications.</p>
 <p>You can use&nbsp;<strong>Amazon CloudWatch Synthetics</strong> to create canaries, (configurable scripts that run on a schedule, to monitor your endpoints and APIs). They follow the same routes and perform the same actions as a customer. By using canaries, you can discover issues before your customers do. Canaries work over HTTP and HTTPS protocols as well as APIs. You can run a canary once or on a regular schedule. Scheduled canaries can be set to run continuously, with tests performed as often as once per minute. Below are other benefits of CloudWatch Synthetics.</p>
 <ul>
 <li>Customization: CloudWatch Synthetics can be customized to check for page-load errors, load latencies for UI assets, transaction completions, broken or dead links, complex wizard flows, or checkout flows in your applications. In case of application errors, there are multiple debugging artifacts including screenshots, HTTP Archive (HAR) files, and log files. You can even check for unauthorized changes from phishing, code injection, and cross-site scripting.</li>
@@ -2901,10 +3067,10 @@ AWS CloudFormation Resource constructs are the lowest-level (L1) constructs. The
 <h2 id="secure-sdlc">Secure SDLC </h2>
 <p>The Software Development Lifecycle (or SDLC) is a framework that specifies the steps involved in software development at each stage. SDLC is a well-structured sequence of stages that leads to the rapid development of high-quality software that has been completely tested and is ready for production. Different stages of the SDLC are:</p>
 <ul>
-<li><strong>Requirements</strong>, where the project team begins to comprehend the customer's expectations for the project</li>
-<li><strong>Design</strong>, where decisions are based on the requirements list that you created during the Requirements stage</li>
-<li><strong>Develop</strong>, where a design is put into action</li>
-<li><strong>Test</strong>, where developers test their code and programming to see whether it meets client needs or if the functionality is smooth</li>
+<li><strong>Requirements</strong>, where the project team begins to <em>comprehend the customer's expectations</em> for the project</li>
+<li><strong>Design</strong>, where <em>decisions are based on the requirements</em> list that you created during the Requirements stage</li>
+<li><strong>Develop</strong>, where a design is put into <em>action</em></li>
+<li><strong>Test</strong>, where developers <em>test their code</em> and programming to see whether it meets client needs or if the functionality is smooth</li>
 <li><strong>Deploy</strong>, which you execute when the product is ready to go live after it has been tested by the project team and has passed each testing phase</li>
 </ul>
 <p>Secure SDLC describes how security fits into the different phases of the software development lifecycle. This process of involving security testing and its best practice in the existing development model includes: <strong>Risk assessment</strong>, <strong>Threat modeling and design review</strong>, <strong>Static analysis</strong>, <strong>Security testing</strong> and <strong>code review</strong>, And <strong>security assessment</strong> and <strong>security configuration</strong>.</p>
@@ -2916,7 +3082,7 @@ AWS CloudFormation Resource constructs are the lowest-level (L1) constructs. The
 <li>
 <p>Requirements phase:</p>
 <ul>
-<li>Determine operational standards: perform risk assessment and consider how people might attack the code. Make sure you've determined the security needs and standards, as well as the type of information you're dealing with</li>
+<li>Determine operational standards: perform risk assessment and consider how people might <strong>attack the code</strong>. Make sure you've determined the security needs and standards, as well as the type of information you're dealing with</li>
 <li>Define the security requirements: identify the information to protect</li>
 <li>Include monitoring and metrics: perform attack profiling to determine what might be going on throughout the design threat modeling process</li>
 </ul>
@@ -2925,14 +3091,14 @@ AWS CloudFormation Resource constructs are the lowest-level (L1) constructs. The
 <p>Design stage:</p>
 <ul>
 <li>Perform threat modelling to secure your design architecture: During design threat modeling, ask, what are some of the elements that could make your architecture vulnerable? How can you securely design for the precautions that can be taken during this stage</li>
-<li>Secure the deployment pipeline: ensure that you have a secure design, that you've automated all the tests correctly, and that your CI/CD pipeline is searching for vulnerabilities</li>
-<li>Create unit tests to counter common threats: With DevOps, security team members can instruct Dev team members about common threat types and help them create unit tests to counter them.</li>
+<li>Secure the deployment pipeline: ensure that you have a secure design, that you've automated all the tests correctly, and that your <strong>CI/CD pipeline is searching for vulnerabilities</strong></li>
+<li>Create <strong>unit tests to counter common threats</strong>: With DevOps, security team members can instruct Dev team members about common threat types and help them create unit tests to counter them.</li>
 </ul>
 </li>
 <li>
 <p>Develop stage:</p>
 <ul>
-<li>Perform static analysis with tools that will check for security vulnerabilities in your code, look at it, and proclaim it insecure</li>
+<li><strong>Perform static analysis</strong> with tools that will check for security vulnerabilities in your code, look at it, and proclaim it insecure</li>
 <li>Include automation and validation of data to guarantee that the information in the system is both correct and useful</li>
 <li>Use security tasks and security in scrum. Scrum is a scrum framework variation that emphasizes secure software development throughout the SDLC</li>
 </ul>
@@ -2940,16 +3106,16 @@ AWS CloudFormation Resource constructs are the lowest-level (L1) constructs. The
 <li>
 <p>Test stage:</p>
 <ul>
-<li>Incorporate vulnerability scans: undertake security testing on your code, and you conduct a risk assessment before you launch it</li>
+<li><strong>Incorporate vulnerability scans</strong>: undertake security testing on your code, and you conduct a risk assessment before you launch it</li>
 <li>Strive for failure: If you can break your application, attackers are likely to be able to do so as well</li>
-<li>Parallelize security testing: To save time, run tests in parallel to shorten the test window by using code scanners alongside unit tests and functional verification tests (or FVTs)</li>
+<li><strong>Parallelize security testing</strong>: To save time, run tests in parallel to shorten the test window by using code scanners alongside unit tests and functional verification tests (or FVTs)</li>
 </ul>
 </li>
 <li>
 <p>Deploy stage in production:</p>
 <ul>
-<li>Use automated launch of deployment scripts</li>
-<li>Use deploy and roll back, which means that for a file upload deployment, rollback will essentially revert the changes. So, if a file was previously uploaded, it will be erased; if a modification was made, it will be undone; and if a file was removed, it will be placed back</li>
+<li>Use <strong>automated launch of deployment scripts</strong></li>
+<li>Use <strong>deploy and roll back</strong>, which means that for a file upload deployment, rollback will essentially revert the changes. So, if a file was previously uploaded, it will be erased; if a modification was made, it will be undone; and if a file was removed, it will be placed back</li>
 <li>Perform production security tests, which imitate real-world hacking methods and approaches to reveal hidden flaws in your device or application. These tests can give you genuine insights and practical outcomes.</li>
 </ul>
 </li>
@@ -2993,27 +3159,27 @@ AWS CloudFormation Resource constructs are the lowest-level (L1) constructs. The
 </li>
 </ol>
 <h2 id="understanding-the-role-of-network-security">Understanding the role of Network Security </h2>
-<p>The Internet is a complicated network of networks that stretches around the globe via interconnected cables. All kinds of data traverse the Internet, such as emails, phone calls, streaming events, etc. The pioneers of the Internet had to create a system to allow for present and future types of communications to be used by everyone globally. They devised the Open Systems Interconnection, or the OSI model to solve that. The OSI model consists of seven layers to describe the process of sending and receiving data:</p>
+<p>The Internet is a complicated network of networks that stretches around the globe via interconnected cables. All kinds of data traverse the Internet, such as emails, phone calls, streaming events, etc. The pioneers of the Internet had to create a system to allow for present and future types of communications to be used by everyone globally. They devised the <strong>Open Systems Interconnection (OSI)</strong> model to solve that. The OSI model consists of seven layers to describe the process of sending and receiving data:</p>
 <ul>
 <li>
 <p><strong>Physical</strong>: it's purpose is to transmit bits of raw data across a physical connection</p>
 </li>
 <li>
-<p><strong>Data Link</strong>: It takes the raw bit from the physical layer and organize it into frames and it ensures that the frames are delivered to the correct destination. The Ethernet primarily lives in this layer.The data frames are sequentially transmitted in groups of 100 or 1000 bytes. After the data frames are received, the receiver sends back an acknowledgment frame to confirm a correct reception of the data</p>
+<p><strong>Data Link</strong>: It takes the raw bit from the physical layer and organize it into <strong>frames</strong> and it ensures that the frames are delivered to the correct destination. The Ethernet primarily lives in this layer. The data frames are sequentially transmitted in groups of 100 or 1000 bytes. After the data frames are received, the receiver sends back an acknowledgment frame to confirm a correct reception of the data</p>
 </li>
 <li>
-<p><strong>Network</strong>: It is responsible routing data frames across different networks. In other hands, it handles data transmission and the control of the subnet. The network layer determines how many packets are routed to a destination from a source (route tables)</p>
+<p><strong>Network</strong>: It is responsible routing data frames across different networks. In other hands, it handles data transmission and the <strong>control of the subnet</strong>. The network layer determines how many packets are routed to a destination from a source (<strong>route tables</strong>)</p>
 </li>
 <li>
-<p><strong>Transport</strong>: accepts transmissions or data from the upper layers (application, presentation, session layers) and then chops them into smaller units or packets for passing to the network layer. Transport layer assures that all the units arrive correctly from end-to-end. This layer provides an error-free point-to-point channel that delivers data in the same order as they were sent. At connection time, the transport layer will choose the type of service. T<br>
+<p><strong>Transport</strong>: accepts transmissions or data from the upper layers (application, presentation, session layers) and then chops them into smaller units or <strong>packets</strong> for passing to the network layer. Transport layer assures that all the units arrive correctly from end-to-end. This layer provides an <strong>error-free</strong> point-to-point channel that delivers data in the **same order **as they were sent. At connection time, the transport layer will choose the type of service.<br>
 This is the layer where TCP and UDP live. TCP provides reliable end-to-end communication between 2 devices by dividing data into small manageable segments and sending each segments individually. Each segment has a sequence number attached to it. The receiver uses the sequence number to reassemble the data in the correct order. TCP also provides error checking to ensure the data is not corrupted dustin transmission.</p>
 <p>UDP is another popular protocol in the transport layer but its simpler and faster then TCP. Unlike TCP, UDP doesn’t not provide the same level of  error checking and reliability. It simply send packets of data from one to another. The receiving end is responsible for determining whether the packet is received correctly. If an error detected the reciver simply discard the packet. The remaining layers are Session, Presentation and Application Layer.</p>
 </li>
 <li>
-<p><strong>Session</strong>: establishes multiple sessions from different machines while establishing consistent sessions if a crash occurs. This layer delivers benefits such as dialog control or transmission turn tracking and token management, which eliminates two users simultaneously attempting the same important operation. The session layer also provides synchronization for reestablishing sessions from long transmissions and allowing them to resume from the last point</p>
+<p><strong>Session</strong>: establishes multiple sessions from different machines while establishing <strong>consistent sessions</strong> if a crash occurs. This layer delivers benefits such as dialog control or transmission turn tracking and token management, which eliminates two users simultaneously attempting the same important operation. The session layer also provides synchronization for reestablishing sessions from long transmissions and allowing them to resume from the last point</p>
 </li>
 <li>
-<p><strong>Presentation</strong>: focuses on the syntax and semantics of data being transmitted from one point to another. The serialization and deserialization process is performed on the data stream to rebuild the original format at the final destination. For instance, formats or file types such as jpeg, gif and ASCII text are widely and frequently used in the presentation layer. In addition, this layer also provides data compression encryption and decryption</p>
+<p><strong>Presentation</strong>: focuses on the <strong>syntax and semantics of data</strong> being transmitted from one point to another. The serialization and deserialization process is performed on the data stream to rebuild the original format at the final destination. For instance, formats or file types such as jpeg, gif and ASCII text are widely and frequently used in the presentation layer. In addition, this layer also provides data compression encryption and decryption</p>
 </li>
 <li>
 <p><strong>Application</strong>: is the top layer of the OSI model. Mainly, developers use this layer for building and deploying applications. Browsers, web pages and other web-based applications transmit data on the application layer. Besides the web, file transfer, email, and network news are other applications that use Layer 7</p>
@@ -3021,8 +3187,7 @@ This is the layer where TCP and UDP live. TCP provides reliable end-to-end commu
 </ul>
 <p>As a developer, you should be aware of and focus on the top three layers of the OSI model: Layer 5, the Session layer, Layer 6, the Presentation layer, and Layer 7, the Application layer. When a client requests a resource from a server, a connection is made between the client and the server, which occurs on the session layer of the OSI model. You can incorporate secure socket encryption at the presentation layer to keep user submitted data safe from potential man in the middle attacks. Another method for securing applications by developers is using port 443 and the secured version of HTTP, known as HTTPs. In eliminating unsecured communications on the application level, you as a software developer can build the necessary trust with your application users. The OSI model is an effective tool for understanding and discussing network communication concepts and is the basis for many modern network standards and technologies.</p>
 <p>Now let’s see how data moves through layers when transmitting through network:</p>
-<p>When a user send a HTTP request to the server over the network, the HTTP header is added to the data at application layer. Then a TCP header is added to the data. It is encapsulated in the TCP segments at the transform layer. The header contains the source port, destination port and sequence number.<br>
-The segments then encapsulated with IP header at the network layer. The header contains the source and the destination IP addresses. A MAC header is added to the data link layer with the source and destination MAC addresses. The real world case, the MAC addresses is not usually for the source and destination but it is the MAC addresses of the routing devices in the next hop in a usually long journey across the internet.</p>
+<p>When a user send a HTTP request to the server over the network, the HTTP header is added to the data at application layer. Then a TCP header is added to the data. It is encapsulated in the TCP segments at the transform layer. The header contains the source port, destination port and sequence number. The segments then encapsulated with IP header at the network layer. The header contains the source and the destination IP addresses. A MAC header is added to the data link layer with the source and destination MAC addresses. The real world case, the MAC addresses is not usually for the source and destination but it is the MAC addresses of the routing devices in the next hop in a usually long journey across the internet.</p>
 <p>When the web server receives the raw bits from the network, it reverses the process. The headers are removed layer by layer until the data is reached. The server then processes the data and returns the response.</p>
 <p align="center">
 <img src="./assets/application-security/osi.png" alt="drawing" width="700" height="400" style="center">
@@ -3047,19 +3212,19 @@ The segments then encapsulated with IP header at the network layer. The header c
 <p>Safeguard the backend layer by securing the Cloud infrastructure. Be sure you protect administrator credentials when developing applications to connect to Cloud-based databases. Create security groups or Network Access Control List that restrict access to certain Cloud resources:</p>
 <ul>
 <li>
-<p>In your code, implement <em>two-factor authentication</em> for all users of web applications. Be it phone or text authentication, you should also include strong authentication. Two-factor authentication is also important to authenticate third parties, such as GitHub and respective Cloud providers.</p>
+<p>In your code, implement <strong>two-factor authentication</strong> for all users of web applications. Be it phone or text authentication, you should also include strong authentication. Two-factor authentication is also important to authenticate third parties, such as GitHub and respective Cloud providers.</p>
 </li>
 <li>
-<p>Secure the communications between clients and servers using a secure shell or SSH, HTTPS, Secure Sockets Layer, and Transport Layer Security (SSL/TLS). Data transferred over secure connections with SSL and TLS, guarantee that hackers attempting man-in-the-middle attacks do not intercept communications.</p>
+<p><strong>Secure the communications between clients and servers</strong> using a secure shell or SSH, HTTPS, Secure Sockets Layer, and Transport Layer Security (SSL/TLS). Data transferred over secure connections with SSL and TLS, guarantee that hackers attempting man-in-the-middle attacks do not intercept communications.</p>
 </li>
 <li>
-<p>If Cloud sources are implemented for developing applications, Identification and Access Management, or IAM, should be configured for securing Cloud assets according to the needs and roles when developing. IAM roles are an important security mechanism to grant permissions to applications and systems within Cloud infrastructures. Finally, secret passwords, admin credentials, certificates, and encryption keys should be stored in secret storage services such as HashiCorp Vault or AWS secret manager</p>
+<p>If Cloud sources are implemented for developing applications, <strong>Identification and Access Management (IAM)</strong>, should be configured for securing Cloud assets according to the needs and roles when developing. IAM roles are an important security mechanism to grant permissions to applications and systems within Cloud infrastructures. Finally, secret passwords, admin credentials, certificates, and encryption keys should be stored in <strong>secret storage services</strong> such as HashiCorp Vault or AWS secret manager</p>
 </li>
 <li>
-<p>Logging is considered another security layer, analyzing and storing for future inspection by application developers. It's also important to remember that every application should have a logging system to collect log messages for identifying any anomalies. Anomalies are unexpected events occurring within an application or system such as an attempt to log in as an administrator of a system without the necessary credentials. Lastly, access to the log messages should not be provided to all system users, but only those who can be trusted and need access for reviewing and analyzing.</p>
+<p><strong>Logging</strong> is considered another security layer, analyzing and storing for future inspection by application developers. It's also important to remember that every application should have a logging system to collect log messages for identifying any anomalies. Anomalies are unexpected events occurring within an application or system such as an attempt to log in as an administrator of a system without the necessary credentials. Lastly, access to the log messages should not be provided to all system users, but only those who can be trusted and need access for reviewing and analyzing.</p>
 </li>
 <li>
-<p>The final layer of defense is intrusion detection. Intrusion detection is the ongoing detection of any cyberattacks, threats, and intrusions that compromise an application or a system. The three methods of intrusion detection are <em>endpoint security</em>, <em>network security</em>, and <em>system-call auditing</em>:</p>
+<p>The final layer of defense is <strong>intrusion detection</strong>. Intrusion detection is the ongoing detection of any cyberattacks, threats, and intrusions that compromise an application or a system. The three methods of intrusion detection are <em>endpoint security</em>, <em>network security</em>, and <em>system-call auditing</em>:</p>
 <ul>
 <li>Endpoint security protect systems, servers, and various types of devices connected to a network</li>
 <li>Network security is monitoring a network using a network tool such as <em>Nmap</em> and <em>Snort</em>.</li>
@@ -3101,7 +3266,7 @@ The segments then encapsulated with IP header at the network layer. The header c
 </li>
 </ul>
 <h2 id="vulnerability-scanning">Vulnerability Scanning </h2>
-<p>Vulnerability scanning is the search for security vulnerabilities from within the code and from the outside of an application. Vulnerability scanners search in a variety of code languages such as C or C++, Java, Python, and PHP. Some common code vulnerabilities to scan for include structured query language (or SQL) injection, cross-site scripting and path traversal of files and directories in web applications.</p>
+<p><strong>Vulnerability scanning is the search for security vulnerabilities from within the code and from the outside of an application.</strong> Vulnerability scanners search in a variety of code languages such as C or C++, Java, Python, and PHP. Some common code vulnerabilities to scan for include structured query language (or SQL) injection, cross-site scripting and path traversal of files and directories in web applications.</p>
 <ul>
 <li>
 <p>Vulnerability scans on the specific platform configuration, the patch levels, or the application composition. For a web application, vulnerability scans may require access to user credentials to scan the flow of an application according to how users interact with the application. Vulnerability scans should span the entire application flow, across the whole application, the stack, and all supporting platforms.</p>
@@ -3223,14 +3388,14 @@ Example:&nbsp;<code>nmap -sX target</code></p>
 </li>
 </ul>
 <h2 id="security-testing">Security Testing </h2>
-<p>Security tests are s of application code and their packaged library dependencies. Procedures for comparing the states of an application or a system. Security testing provides a secure code baseline for development. You should perform security tests on all new code to reduce the risk of impacts. Any code changes may create vulnerabilities in previously secure code.</p>
+<p><strong>Security tests are scan of application code and their packaged library dependencies</strong>. Procedures for comparing the states of an application or a system. Security testing provides a secure code baseline for development. You should perform security tests on all new code to reduce the risk of impacts. Any code changes may create vulnerabilities in previously secure code.</p>
 <p>Secure testing takes place during the Test stage along with code review. Although secure code should be a top priority during the Test phase, s of application code and their packaged library dependencies. Security testing should be part of your secure coding processes throughout the SDLC.</p>
 <p>To perform security testing, the first step is to provide a secure baseline during development. Once a baseline has been established, you can compare the states of an application or a system. Functional security testing should be an integral part of your security testing processes. Functional security testing is the expectation of behavior when you test software or a system. To perform functional security testing, you need a list of your functional requirements. Functional security testing helps you ensure that the code meets your security requirements.</p>
 <p>Two types of functional testing are: Ad hoc testing. And exploratory testing. Ad hoc testing is specialized testing upon discovery of a vulnerability. Exploratory testing takes place outside of formal testing. Examples of exploratory testing are testing a theory or testing an idea. In automated security testing, two popular testing procedures are unit testing and integration testing. Unit tests are for testing classes and methods to evaluate application programming interface (or API) contracts. You can perform unit testing on individual classes with limited scope. Integration tests are for testing the integration of several code classes within an application. You can perform integration tests across application tiers and a wide testing scope. You can also use automated frameworks for automating security tests of an application or system.</p>
 <p>Three examples of security testing automation frameworks are BDD-Security, Mittn, and Guantlt.</p>
 <p>BDD-Security is a security testing framework that uses behavior-driven development. Mittn is a popular tool suite to include in continuous integration. And Gauntlt is a security framework that hooks into security tools for simplified integration. Using mitigation strategies helps reduce risks and impacts of security threats and vulnerabilities. As you develop code, use these five key mitigation strategies. s of application code and their packaged library dependencies. First, use JavaScript Object Notation (or JSON) for your API data payloads. Unlike Extensible Markup Language (or XML), JSON allows simplistic data encoding in key-value pairs instead of complex nested elements and slower parsing. Next, s of application code and their packaged library dependencies. Implement secure coding practices. Communicate security standards across your team and within your organization. s of application code and their packaged library dependencies. Use vulnerability scanners to find vulnerabilities in code. You can also automate vulnerability scanning. Include threat modeling to gain a clear understanding of the behavior of bad actors. Threat modeling helps predict what could be compromised and determine how to immediately contain the threat. And maintain awareness of the Open Web Application Security Project (or OWASP) Top 10 security vulnerability concerns. This regularly updated list will help you perform security testing in development with the most critical security risks in mind before you deploy code to production.</p>
 <h2 id="static-analysis">Static Analysis </h2>
-<p>Static analysis examines all code or runtime binaries to help detect common vulnerabilities. It's a debugging method that automatically inspects source code before execution. Static application security testing (or SAST) examines source code to identify security flaws that render your organization's applications vulnerable to attack. It is extremely effective in detecting problems in code and do not require code to be complete.</p>
+<p><strong>Static analysis examines all code or runtime binaries to help detect common vulnerabilities</strong>. It's a debugging method that automatically inspects source code before execution. <strong>Static Application Security Testing (SAST)</strong> examines source code to identify security flaws that render your organization's applications vulnerable to attack. It is extremely effective in detecting problems in code and do not require code to be complete.</p>
 <p>Static analysis can take a long time because it thoroughly scans the code. Where does static analysis belong in the software development lifecycle (or SDLC)? Static code analysis takes place early in the development process before software testing begins. For DevOps enterprises, static analysis occurs during the Develop stage And establishes an automatic feedback loop. So, you will become aware of any issues with your code from the start. And it will be simpler for you to resolve those issues.</p>
 <p>Static Application Security Testing (SAST) is SAST is also known as white-box testing as it involves testing the internal structure and workings of an application. This helps prevent security breaches and minimizes the risk of costly security incidents. One of the primary benefits of SAST is that it can identify vulnerabilities that may not be detected by other testing methods such as dynamic testing or manual testing. This is because SAST analyzes the entire codebase. There are several types of vulnerabilities that SAST can identify, including:</p>
 <ul>
@@ -3284,10 +3449,10 @@ See <a href="https://github.com/MichaelCade/90DaysOfDevOps/blob/main/2023/day09.
 <h2 id="dynamic-analysis">Dynamic Analysis </h2>
 <ul>
 <li>
-<p>Dynamic analysis is the process of testing and evaluating an application as it is executing. Dynamic analysis is typically run against fully built applications. While you would most often perform static analysis in development, you perform dynamic analysis in staging, pre-prod, or even after you deploy the code to production (best to be done in pre-production)</p>
+<p><strong>Dynamic analysis is the process of testing and evaluating an application as it is executing</strong>. Dynamic analysis is typically run against fully built applications. While you would most often perform static analysis in development, you perform dynamic analysis in staging, pre-prod, or even after you deploy the code to production (best to be done in pre-production)</p>
 </li>
 <li>
-<p>DAST evaluates the application from the outside in through the front end. DAST is not functional testing. It acts like an attacker. It simulates attacks to detect potential threats and vulnerabilities. Because DAST does not have access to the source code, it performs black-box testing, analyzing behaviors of inputs and outputs</p>
+<p><strong>DAST evaluates the application from the outside in through the front end</strong>. DAST is not functional testing. It acts like an attacker. It simulates attacks to detect potential threats and vulnerabilities. Because DAST does not have access to the source code, it performs black-box testing, analyzing behaviors of inputs and outputs</p>
 </li>
 </ul>
 <p>Here are three key benefits of using dynamic analysis:</p>
@@ -4154,63 +4319,51 @@ I do all of my development in Docker containers so that I have an isolated known
 <p>12 factors can be grouped into <strong>Code</strong>, <strong>Deploy</strong> and <strong>Operate</strong>.</p>
 <h2 id="the-twelve-factors">The Twelve Factors </h2>
 <ul>
-<li>I. Codebase
-<blockquote>
+<li>I. Codebase<blockquote>
 <p>One codebase tracked in revision control, many deploys</p>
 </blockquote>
 </li>
-<li>II. Dependencies
-<blockquote>
+<li>II. Dependencies<blockquote>
 <p>Explicitly declare and isolate dependencies</p>
 </blockquote>
 </li>
-<li>III. Config
-<blockquote>
+<li>III. Config<blockquote>
 <p>Store config in the environment</p>
 </blockquote>
 </li>
-<li>IV. Backing services
-<blockquote>
+<li>IV. Backing services<blockquote>
 <p>Treat backing services as attached resources</p>
 </blockquote>
 </li>
-<li>V. Build, release, run
-<blockquote>
+<li>V. Build, release, run<blockquote>
 <p>Strictly separate build and run stages</p>
 </blockquote>
 </li>
-<li>VI. Processes
-<blockquote>
+<li>VI. Processes<blockquote>
 <p>Execute the app as one or more stateless processes</p>
 </blockquote>
 </li>
-<li>VII. Port binding
-<blockquote>
+<li>VII. Port binding<blockquote>
 <p>Export services via port binding</p>
 </blockquote>
 </li>
-<li>VIII. Concurrency
-<blockquote>
+<li>VIII. Concurrency<blockquote>
 <p>Scale out via the process model</p>
 </blockquote>
 </li>
-<li>IX. Disposability
-<blockquote>
+<li>IX. Disposability<blockquote>
 <p>Maximize robustness with fast startup and graceful shutdown</p>
 </blockquote>
 </li>
-<li>X. Dev/prod parity
-<blockquote>
+<li>X. Dev/prod parity<blockquote>
 <p>Keep development, staging, and production as similar as possible</p>
 </blockquote>
 </li>
-<li>XI. Logs
-<blockquote>
+<li>XI. Logs<blockquote>
 <p>Treat logs as event streams</p>
 </blockquote>
 </li>
-<li>XII. Admin processes
-<blockquote>
+<li>XII. Admin processes<blockquote>
 <p>Run admin/management tasks as one-off processes</p>
 </blockquote>
 </li>
@@ -4457,13 +4610,11 @@ I do all of my development in Docker containers so that I have an isolated known
       </div>
       
       
-    <button id="backToHomeBtn" onclick="goToHome()">Back to Profile</button>
     
-  </body>
-  <script>
-   function goToHome() {
-       window.location.href = 'https://Yas2020.github.io/#portfolio';  // Replace with your home page URL
-   }
- </script>
-     
-  </html>
+    
+    
+    
+    
+    
+  
+    </body></html>

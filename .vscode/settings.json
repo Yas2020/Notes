@@ -14,7 +14,9 @@
     "markdown.preview.doubleClickToSwitchToEditor": false,
     "markdown.preview.markEditorSelection": false,
     "markdown.preview.scrollEditorWithPreview": false,
-    "markdown.preview.scrollPreviewWithEditor": false
+    "markdown.preview.scrollPreviewWithEditor": false,
+    "markdown-preview-enhanced.previewTheme": "github-light.css",
+    "markdown-toc.updateOnSave":true
 } // {
 //     "markdown.validate.enabled": false,
 //     "markdown.styles": [
