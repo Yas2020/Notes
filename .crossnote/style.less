@@ -50,7 +50,7 @@
   // background-color: #1c1c1c;
   // color: #c0b8af;
   strong {
-        color: #b2943c; /* Example: A bright amber/gold */
+        color: #c7a336; /* Example: A bright amber/gold */
         font-weight: bold;
         // text-shadow: 2 2 18px rgba(255, 94, 0, 0.3) !important;
     }
@@ -141,14 +141,14 @@
     font-size: 38pt;
     font-family: Montserrat;
     font-weight: 500;
-    color: rgb(97, 51, 247);
+    color: rgb(103, 56, 255);
   }
 
   h3{
     font-size: 33pt;
     font-family: Montserrat;
     font-weight: 500;
-    color: rgb(51, 28, 225);
+    color: rgb(53, 53, 241);
   }
 
   h4{
@@ -180,7 +180,7 @@
       margin-left: 10px;
       text-align: justify;
       // color: #cbb2b9 !important;
-      color: #93b4ac !important;  /* Sage Mint */
+      color: #91b1a9 !important;  /* Sage Mint */
       // color: #baa4d5 !important; /* Lavender */
       // color: #b2cbc3 !important; /* Seafoam Sage */
       // font-weight:normal !important;
@@ -244,8 +244,8 @@
   
   table > thead > tr > th {
     text-align: center;
-    border-bottom: 1px solid;
-    border-top: 1px solid;
+    // border-bottom: 1px solid;
+    // border-top: 1px solid;
   }
   
   table > thead > tr > th,
@@ -265,15 +265,15 @@
   }
 
   td {
-    background-color: #d0c8cd;
-    color: rgb(17, 37, 42);
+    background-color: #e0d3db;
+    color: rgb(27, 79, 92);
   }
   
   th, td {
-    border-top: 1px solid #586e75;
-    border-bottom: 1px solid #586e75;
-    border-left: 1px solid #586e75;  
-    border-right: 1px solid #586e75; 
+    border-top: 1px solid #d7a6a0;
+    border-bottom: 1px solid #c9887f;
+    border-left: 1px solid #d7a6a0;  
+    border-right: 1px solid #d7a6a0; 
     padding: 10px;
     text-align: center;
   }
@@ -294,93 +294,233 @@
     }
   }
 
+
+.mermaid {
+    // background-color: #efdbdb; // Add padding or background
+    border-radius: 20px;
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important; // Fallback for some renderers
+    width: 100% !important;
+    padding: 30px 5px;
+    margin: auto auto;
+    
+    // Use [id^="mermaid-"] to target the SVG regardless of the random number ID
+    svg[id*="mermaid-"] {
+      font-family: Helvetica, sans-serif !important;
+
+      * {
+        font-family: inherit !important;
+      }
+      tspan {
+        font-family: "Your Font Name", sans-serif !important;
+        fill: #47af47 !important; // Overrides the internal 'fill: black'
+      }
+    
+      // 1. Target the Boxes (rect)
+      // Note: The HTML shows class "actor actor-bottom"
+      rect.actor {
+        fill: #daa7a7 !important;    // Your desired box color
+        stroke: #2bd8e1 !important;  // Your desired border color
+        stroke-width: 2px !important;
+      }
+
+      // 2. Target the Text inside the boxes
+      // The HTML uses text.actor-box > tspan
+      text.actor-box, 
+      text.actor-box tspan,
+      .messageText, 
+      .noteText tspan {
+          fill: #cf28a8 !important;    // Your desired text color
+          color: #eeeeee !important;
+          font-weight: 350 !important;
+        }
+
+        // 3. Target the sequence lines and arrows
+        .messageLine0, .messageLine1, .actor-line {
+          stroke: #00adb5 !important;
+        }
+        
+        // 4. Target the arrowheads specifically
+        [id$="-arrowhead"] path, 
+        [id$="-crosshead"] path {
+          fill: #00adb5 !important;
+          stroke: #00adb5 !important;
+        }
+
+    //  -------------------------------------------- 
+    // --- ADD THESE for stateDiagram-v2 ---
+    //  --------------------------------------------
+  
+      // 1. Target the State Boxes
+      .node rect, 
+      .node circle, 
+      .node polygon {
+        fill: #c19e9e !important;    // Match your box color
+        stroke: #dbdb02 !important;  // Match your border color
+      }
+
+      // 2. Target State Labels and Text
+      // State diagrams wrap text in .label or .nodeLabel
+      .label, 
+      .nodeLabel,
+      .label text, 
+      .label tspan {
+        fill: #eeeeee !important;
+        color: #0b43e9 !important;
+        font-family: Helvetica, monospace !important; // Reuse your font
+        font-weight: 350;
+      }
+
+     .edgeLabel p, span.edgeLabel { 
+      background-color: transparent !important;
+      color: #94dc04 !important; 
+      font-weight: 300;
+    }
+
+      // 3. Target Transitions/Arrows
+      // In stateDiagrams, lines are often .transition or .edgePath
+      .transition, 
+      .edgePath .path, 
+      .flowchart-link {
+        stroke: #b200b5 !important;
+      }
+      .transition { 
+        stroke: #f925e4 !important; 
+      }
+      marker path {
+          fill: #f9f6f4 !important;
+          stroke: #ff3c00 !important;
+        }
+
+      // 4. Arrowheads for transitions
+      .marker, 
+      [id$="-extensionStart"] path, 
+      [id$="-extensionEnd"] path {
+        fill: #e3ebeb !important;
+        stroke: #85b500 !important;
+      }
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
   code {
     /* Use a slightly lighter blue with low opacity */
-    // background-color: rgba(255, 255, 255, 0.08) !important;
-    background: transparent !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    // background: transparent !important;
     
     /* Contrast the text: use a bright cyan or white */
     color:#bb5141;
     
     /* Add a very subtle border for definition */
-    // border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     
     /* Fine-tuning for inline aesthetics */
     // padding: 0.1em 0.2em;
     // border-radius: 4px;
     font-family: 'Courier New', Courier, monospace;
+    // font-weight: 400;
     // font-size: 90%;
   }
   
-  // code {
-  //   background-color: rgba(194, 194, 183, .05);
-  //   // background-blend-mode:overlay;
-  //   // background: transparent;
-  //   font-family: Monospace, Menlo, Monaco, Consolas;
-  //   // font-size: 14pt;
-  //   // line-height: 1.357em;
-  //   color:#bb5141;
-  //   white-space: pre-wrap;
-  //   word-wrap: break-word;
-  //   overflow-wrap: break-word;
-  // };
+  // Dracula Theme Colors
+  @background: #282a36;
+  @current-line: #44475a;
+  @foreground: #f8f8f2;
+  @comment: #6272a4;
+  @cyan: #8be9fd;
+  @green: #50fa7b;
+  @orange: #ffb86c;
+  @pink: #ff79c6;
+  @purple: #bd93f9;
+  @red: #ff5555;
+  @yellow: #f1fa8c;
+
+  @python-bg: #05232b;
+  @python-text: #c6d0cc;
+  @python-keyword: #f52a9d;
+  @python-function: #2a00f7;
+  @python-string: #81cc5b;
+  @python-comment: #586e75;
+  @python-number: #d33662;
+  @python-operator: #f0f8fa;
 
   pre {
-    background-image: none !important;
-    // backdrop-filter: blur(4px);
-    background: transparent !important;
-    // box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    background-color: #051a1f !important; /* Slightly lighter/
-    darker than your main bg */
-    font-family: Fira Code, Courier New, Monospace, Menlo, Monaco !important;
-    border-radius: 6px;
-    margin: 10px 5px 15px 5px;
-    padding: 1em;
-    border: 1px solid #586e75;
+      background-image: none !important;
+      // backdrop-filter: blur(4px);
+      background: transparent !important;
+      // box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      background-color: @python-bg !important; /* Slightly lighter/
+      darker than your main bg */
+      color: @foreground;
+      font-family: Fira Code, Courier New, Monospace, Menlo, Monaco !important;
+
+      padding: 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto; // Enables scrolling for long lines
+      font-size: 0.95rem;
+      line-height: 1.5;
+      border: 1px solid @current-line;
   }
+
   
+  
+   /* 2. Container Style */
+  .language-python.python code {
+      font-family: 'Fira Code', 'Courier New', Monospace, Menlo, Monaco !important;
+      font-weight: 100 !important;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      background: @python-bg !important; /* Set your main background here */
+      color: @python-text;
+      text-shadow: none !important;
+      border: 0px;
+      padding: 10px;
+      display: block; /* Ensures the background covers the whole block */
+  }
 
- 
-    .language-python.python code{
-        // font-family: Fira Code, Courier New, Monospace, Menlo, Monaco !important;
-        font-weight: 100 !important;
-        // font-size: 12pt;
-        // background-color: #05232b;
-        // line-height: 1.357em;
-        color:#c6d0cc;  
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        background: transparent !important; /* Removes background behind individual words */
-        // font-weight: normal !important;      /* Removes the forced bolding */
-        text-shadow: none !important;       /* Removes "glow" or "glossy" text effects */
-        border: 0px solid rgba(255, 255, 255, 0.1);
-        // border-radius: 0px !important;
-        // border-radius: 10px;
-      }
-
-      .token.operator {
-        background: none !important;
-      }
-
+  /* 3. Syntax Highlighting Logic */
+  .token, .hljs {
+      &.keyword { color: @python-keyword !important; }
+      &.string { color: @python-string !important; }
+      &.comment { color: @python-comment !important; font-style: italic !important; }
+      &.function, &.title { color: @python-function !important; }
+      &.number { color: @python-number !important; }
       
-
-      /* 2. Syntax Highlighting (Apply these globally inside the preview) */
-      .hljs-keyword, .token.keyword { color: #f52a9d !important; }
-      .hljs-title,   .token.function { color: #4b28f9 !important; }
-      .hljs-string,  .token.string  { color: #81cc5b !important; }
-      .hljs-comment, .token.comment { color: #586e75 !important; font-style: italic !important; }
-      .hljs-number,  .token.number  { color: #d33662 !important; }
-
-
-      /* 3. Brackets & Punctuation Fix */
-      .hljs-punctuation, 
-      .token.punctuation, 
-      .token.operator {
-        color: #f0f8fa !important; 
-        background: transparent !important;
-        font-weight: normal !important;
+      /* Brackets, Operators, Punctuation */
+      &.operator, 
+      &.punctuation, 
+      &.property { 
+          color: @python-operator !important; 
+          background: transparent !important;
+          font-weight: normal !important;
       }
+  }
+
+  /* Specific Fix for Highlight.js / Prism overlap */
+  .hljs-keyword { color: @python-keyword !important; }
+  .hljs-title   { color: @python-function !important; }
+  .hljs-string  { color: @python-string !important; }
+  .hljs-comment { color: @python-comment !important; }
+  .hljs-number  { color: @python-number !important; }
+
     
   
   pre.language-text {

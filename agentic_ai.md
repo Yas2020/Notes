@@ -8,53 +8,80 @@
 
   - [Plan for a Project](#plan-for-a-project)
 - [AI Agents](#ai-agents)
-      - [What can AI Agent Frameworks do more?](#what-can-ai-agent-frameworks-do-more)
   - [Foundational Models](#foundational-models)
     - [Initializing an agent](#initializing-an-agent)
     - [Streaming Output](#streaming-output)
-  - [In-context Learning](#in-context-learning)
+    - [In-context Learning](#in-context-learning)
     - [Prompts](#prompts)
       - [Elements of prompt templates](#elements-of-prompt-templates)
       - [Prompt Engineering](#prompt-engineering)
         - [System Prompt](#system-prompt)
         - [Few-shot examples](#few-shot-examples)
         - [Structured Prompts](#structured-prompts)
-  - [LangSmith](#langsmith)
   - [Memory](#memory)
-      - [Customized States](#customized-states)
+    - [Why is Memory Important?](#why-is-memory-important)
+    - [Types of Memory](#types-of-memory)
+      - [Working Memory](#working-memory)
+      - [Short Term Memory](#short-term-memory)
+      - [Long Term Memory](#long-term-memory)
+      - [Other Types](#other-types)
+        - [Structured RAG (Retrieval Augmented Generation)](#structured-rag-retrieval-augmented-generation)
+        - [Persona Memory](#persona-memory)
+        - [Workflow/Episodic Memory](#workflowepisodic-memory)
+        - [Entity Memory](#entity-memory)
+    - [Implementing and Storing Memory](#implementing-and-storing-memory)
+      - [Specialized Memory Tools](#specialized-memory-tools)
+        - [Mem0](#mem0)
+        - [Cognee](#cognee)
+        - [Storing Memory with RAG](#storing-memory-with-rag)
+    - [Making AI Agents Self-Improve](#making-ai-agents-self-improve)
+    - [Optimizations for Memory](#optimizations-for-memory)
+  - [Context Engineering](#context-engineering)
+    - [Strategies for Effective Context Engineering](#strategies-for-effective-context-engineering)
+        - [Planning Strategies](#planning-strategies)
+      - [Practical Strategies](#practical-strategies)
+        - [Core Components](#core-components)
+        - [Key Strategies & Pillars](#key-strategies--pillars)
+        - [How Context Engineering Manages Memory](#how-context-engineering-manages-memory)
+        - [The Core Lifecycle: Write, Select, Compress, Isolate](#the-core-lifecycle-write-select-compress-isolate)
+    - [Common Context Failures](#common-context-failures)
+      - [Context Poisoning](#context-poisoning)
+      - [Context Distraction](#context-distraction)
+      - [Context Confusion](#context-confusion)
+      - [Context Clash](#context-clash)
   - [Tools](#tools)
       - [Search Web](#search-web)
     - [Model Context Protocol (MCP)](#model-context-protocol-mcp)
       - [MCP Core Components](#mcp-core-components)
       - [Benefits of MCP](#benefits-of-mcp)
       - [Online MCP Servers](#online-mcp-servers)
-    - [Agent-to-Agent Protocol (A2A)](#agent-to-agent-protocol-a2a)
-      - [A2A Core Components](#a2a-core-components)
-      - [Benefits of A2A](#benefits-of-a2a)
+    - [Other Protocols](#other-protocols)
+      - [Agent-to-Agent Protocol (A2A)](#agent-to-agent-protocol-a2a)
+        - [A2A Core Components](#a2a-core-components)
+        - [Benefits of A2A](#benefits-of-a2a)
         - [Example](#example)
-    - [Natural Language Web (NLWeb)](#natural-language-web-nlweb)
-      - [Components of NLWeb](#components-of-nlweb)
+      - [Natural Language Web (NLWeb)](#natural-language-web-nlweb)
+        - [Components of NLWeb](#components-of-nlweb)
     - [Tool/Function Calling](#toolfunction-calling)
         - [What is the Tool Use Design Pattern?](#what-is-the-tool-use-design-pattern)
         - [What are the use cases it can be applied to?](#what-are-the-use-cases-it-can-be-applied-to)
-        - [What are the elements/building blocks needed to implement the tool use design pattern?](#what-are-the-elementsbuilding-blocks-needed-to-implement-the-tool-use-design-pattern)
-        - [Function/Tool Calling](#functiontool-calling)
-        - [Create a Function Schema:](#create-a-function-schema)
+        - [Building blocks for implementing the tool use design pattern](#building-blocks-for-implementing-the-tool-use-design-pattern)
+        - [Tool Schema](#tool-schema)
 - [Building Trustworthy Agents](#building-trustworthy-agents)
-      - [Structured meta prompting system](#structured-meta-prompting-system)
-        - [Structured](#structured)
-        - [Structured meta prompting](#structured-meta-prompting)
-    - [Attackers](#attackers)
-        - [Task & Instruction Manipulation (Prompt Injection)](#task--instruction-manipulation-prompt-injection)
-        - [Access to Critical Systems](#access-to-critical-systems)
-        - [Resource and Service Overloading](#resource-and-service-overloading)
-        - [Knowledge Base Poisoning](#knowledge-base-poisoning)
-        - [Cascading Errors](#cascading-errors)
-  - [Multi Agents Design Patterns](#multi-agents-design-patterns)
+  - [Structured meta prompting system](#structured-meta-prompting-system)
+      - [Structured](#structured)
+      - [Structured meta prompting](#structured-meta-prompting)
+  - [Attackers](#attackers)
+      - [Task & Instruction Manipulation (Prompt Injection)](#task--instruction-manipulation-prompt-injection)
+      - [Access to Critical Systems](#access-to-critical-systems)
+      - [Resource and Service Overloading](#resource-and-service-overloading)
+      - [Knowledge Base Poisoning](#knowledge-base-poisoning)
+      - [Cascading Errors](#cascading-errors)
+- [Multi Agents Design Patterns](#multi-agents-design-patterns)
         - [Advantages of Using Multi-Agents Over a Singular Agent](#advantages-of-using-multi-agents-over-a-singular-agent)
         - [Implementing the Multi-Agent Design Pattern](#implementing-the-multi-agent-design-pattern)
-      - [Visibility into Multi-Agent Interactions](#visibility-into-multi-agent-interactions)
-      - [Multi-Agent Patterns](#multi-agent-patterns)
+    - [Visibility into Multi-Agent Interactions](#visibility-into-multi-agent-interactions)
+    - [Multi-Agent Patterns](#multi-agent-patterns)
   - [Agentic Design Patterns](#agentic-design-patterns)
       - [Pattern 1: Clear Agent Instructions](#pattern-1-clear-agent-instructions)
       - [Pattern 2: Structured Output with Pydantic Models](#pattern-2-structured-output-with-pydantic-models)
@@ -75,34 +102,16 @@
         - [The middle ground: Controlled A2A](#the-middle-ground-controlled-a2a)
         - [⚖️ Tradeoff summary](#️-tradeoff-summary)
 - [Deploy AI Agents into Production](#deploy-ai-agents-into-production)
-      - [Traces and Spans](#traces-and-spans)
-      - [Why Observability Matters in Production Environments](#why-observability-matters-in-production-environments)
-      - [Key Metrics to Track](#key-metrics-to-track)
-      - [Instrument your Agent](#instrument-your-agent)
-      - [Agent Evaluation](#agent-evaluation)
-        - [Offline Evaluation](#offline-evaluation)
-        - [Online Evaluation](#online-evaluation)
-        - [Combining the two](#combining-the-two)
-        - [Common Issues](#common-issues)
-      - [Managing Costs](#managing-costs)
-- [Memory](#memory-1)
-    - [Understanding AI Agent Memory](#understanding-ai-agent-memory)
-    - [Why is Memory Important?](#why-is-memory-important)
-    - [Types of Memory](#types-of-memory)
-        - [Working Memory](#working-memory)
-        - [Short Term Memory](#short-term-memory)
-        - [Long Term Memory](#long-term-memory)
-        - [Persona Memory](#persona-memory)
-        - [Workflow/Episodic Memory](#workflowepisodic-memory)
-        - [Entity Memory](#entity-memory)
-        - [Structured RAG (Retrieval Augmented Generation)](#structured-rag-retrieval-augmented-generation)
-    - [Implementing and Storing Memory](#implementing-and-storing-memory)
-      - [Specialized Memory Tools](#specialized-memory-tools)
-        - [Mem0](#mem0)
-        - [Cognee](#cognee)
-        - [Storing Memory with RAG](#storing-memory-with-rag)
-        - [Making AI Agents Self-Improve](#making-ai-agents-self-improve)
-        - [Optimizations for Memory](#optimizations-for-memory)
+    - [Traces and Spans](#traces-and-spans)
+    - [Why Observability Matters in Production Environments](#why-observability-matters-in-production-environments)
+    - [Key Metrics to Track](#key-metrics-to-track)
+    - [Instrument your Agent](#instrument-your-agent)
+    - [Agent Evaluation](#agent-evaluation)
+      - [Offline Evaluation](#offline-evaluation)
+      - [Online Evaluation](#online-evaluation)
+      - [Combining the two](#combining-the-two)
+      - [Common Issues](#common-issues)
+    - [Managing Costs](#managing-costs)
 - [Agnetic RAG](#agnetic-rag)
     - [Defining Agentic RAG](#defining-agentic-rag)
     - [Owning the Reasoning Process](#owning-the-reasoning-process)
@@ -110,6 +119,70 @@
     - [Handling Failure Modes and Self-Correction](#handling-failure-modes-and-self-correction)
     - [Boundaries of Agency](#boundaries-of-agency)
     - [Practical Use Cases and Value](#practical-use-cases-and-value)
+- [Multi agent architecture](#multi-agent-architecture)
+    - [Design Principles](#design-principles)
+    - [Core components](#core-components-1)
+    - [Multi-agent Design Options](#multi-agent-design-options)
+    - [Memory](#memory-1)
+    - [Agents Communication](#agents-communication)
+    - [Observability](#observability)
+    - [Evaluation-Driven Observability](#evaluation-driven-observability)
+      - [Multi-agent Evaluation Challenges](#multi-agent-evaluation-challenges)
+      - [Evaluation types and methodologies](#evaluation-types-and-methodologies)
+        - [Code-based evaluation](#code-based-evaluation)
+        - [LLM-as-a-judge evaluation](#llm-as-a-judge-evaluation)
+      - [Evaluation phases](#evaluation-phases)
+        - [Offline evaluation](#offline-evaluation-1)
+        - [Online evaluation](#online-evaluation-1)
+      - [Evaluation feedback loop](#evaluation-feedback-loop)
+      - [Critical evaluation areas](#critical-evaluation-areas)
+        - [High-risk operations](#high-risk-operations)
+        - [Security and compliance](#security-and-compliance)
+      - [Evaluation strategies by system component](#evaluation-strategies-by-system-component)
+        - [Orchestrator agent evaluation](#orchestrator-agent-evaluation)
+        - [Specialized agents evaluation](#specialized-agents-evaluation)
+        - [Registry evaluation](#registry-evaluation)
+    - [Security](#security)
+      - [Core Security Principles](#core-security-principles)
+      - [Enterprise Data Protection in RAG Scenario](#enterprise-data-protection-in-rag-scenario)
+      - [Compliance Considerations](#compliance-considerations)
+      - [Future Additions](#future-additions)
+    - [Governance](#governance)
+      - [How to overcome the governance challenges](#how-to-overcome-the-governance-challenges)
+        - [Steps to Address Governance](#steps-to-address-governance)
+        - [Define Responsible AI Policies and Accountability Structures](#define-responsible-ai-policies-and-accountability-structures)
+        - [Implement Guardrails Across the AI Lifecycle](#implement-guardrails-across-the-ai-lifecycle)
+        - [Govern Data Access and Use](#govern-data-access-and-use)
+        - [Establish Evaluation and Red-Teaming Processes](#establish-evaluation-and-red-teaming-processes)
+        - [Provide Training and Documentation](#provide-training-and-documentation)
+  - [Multi-Agent Patterns Reference](#multi-agent-patterns-reference)
+      - [Semantic Router with LLM Fallback](#semantic-router-with-llm-fallback)
+      - [Dynamic Agent Registry (Service Mesh for Agents)](#dynamic-agent-registry-service-mesh-for-agents)
+      - [Semantic Kernel Orchestration with Skills](#semantic-kernel-orchestration-with-skills)
+      - [Local & Remote Agent Execution](#local--remote-agent-execution)
+      - [Layered (Onion) Architecture](#layered-onion-architecture)
+      - [MCP Integration Layer](#mcp-integration-layer)
+      - [RAG (Retrieval-Augmented Generation)](#rag-retrieval-augmented-generation)
+      - [Conversation-Aware Orchestration](#conversation-aware-orchestration)
+      - [Agent-to-Agent Communication](#agent-to-agent-communication)
+      - [Skill Chaining with Planning Support](#skill-chaining-with-planning-support)
+  - [Reference Architecture](#reference-architecture)
+    - [Components' breakdown](#components-breakdown)
+      - [User Application](#user-application)
+      - [Orchestrator (Semantic Kernel)](#orchestrator-semantic-kernel)
+      - [Classifier (NLU, SLM, LLM)](#classifier-nlu-slm-llm)
+      - [Agent Registry](#agent-registry)
+      - [Knowledge-base Layer](#knowledge-base-layer)
+      - [Supervisor Agent](#supervisor-agent)
+      - [Agent #1, #2, #3, #4 (with MCP Client)](#agent-1-2-3-4-with-mcp-client)
+        - [MCP Client Component](#mcp-client-component)
+        - [Differences between Local and Remote Agents](#differences-between-local-and-remote-agents)
+      - [Conversation History](#conversation-history)
+      - [Agent State](#agent-state)
+        - [Registry Storage](#registry-storage)
+      - [Integration Layer & MCP Server](#integration-layer--mcp-server)
+        - [Key sub components](#key-sub-components)
+    - [Sequence diagram](#sequence-diagram)
 - [Introduction to LangChain](#introduction-to-langchain)
     - [Language Models](#language-models)
       - [Chat Models](#chat-models)
@@ -368,7 +441,7 @@
       - [Synthetic tools](#synthetic-tools)
       - [Best practices](#best-practices)
         - [Client design:](#client-design)
-        - [Security:](#security)
+        - [Security:](#security-1)
         - [Transport:](#transport)
         - [LLM integration:](#llm-integration)
     - [Notes from LangChain Official Documentation](#notes-from-langchain-official-documentation)
@@ -378,6 +451,7 @@
         - [When to Use LangGraph](#when-to-use-langgraph-1)
         - [FastAPI wrapper arounf LangGraph app](#fastapi-wrapper-arounf-langgraph-app)
 - [7 Skills to Build Agentic AI](#7-skills-to-build-agentic-ai)
+  - [LangSmith](#langsmith)
 
 <!-- /code_chunk_output -->
 
@@ -710,7 +784,6 @@ Agents existed before LLMs, but LLMs are what make modern agents so powerful. Th
 
 - *Memory + Knowledge*: Agents can have short-term memory (the current conversation) and long-term memory (a customer database, past interactions). The travel agent might "remember" that you prefer window seats.
 
-##### What can AI Agent Frameworks do more? 
 
 Traditional AI Frameworks can help you integrate AI into your apps and make these apps better. For example AI can analyze user behavior and preferences to provide personalized recommendations, content, and experiences. Streaming services like Netflix use AI to suggest movies and shows based on viewing history, enhancing user engagement and satisfaction.
 
@@ -817,7 +890,7 @@ for token, metadata in agent.stream(
 This method is used by all major chatbots to improve preceived latecny and user experience. 
 
 
-###  In-context Learning
+####  In-context Learning
 
 In-context learning doesn’t require additional training. A new task is learned from a small set of examples presented within the context or prompt at inference time. 
 
@@ -948,9 +1021,6 @@ A good prompt helps LLMs to focus on their tasks and return a more high quality 
 
 
 
-### LangSmith
-To get insight into how your agents are running, use LangSmith to trace all queries and observe latencies, token usage, tools called and their inputs and outputs. Connect to the API endpoint (with its API key) to debug your agents when things get a little bit more complex as you add more tools and the tasks are less deterministic. With the free tier, you have up to 5000 free tokens per month which is more than enough for development and side projects. 
-
 
 ### Memory
 
@@ -1038,7 +1108,8 @@ response["message"][-1].content
 
 In fact you can see 4 messages in the response including the previous ones. It retained the memory of our conversation and appended it to its list of messages and they are all included in this response because all the checkpoints are grouped by `thread_id=1`. Now we have memory.
 
-##### Customized States
+<!-- ##### Customized States -->
+
 By default, the states track a list of messages only. But we can add custom fields like `user_id`, `langage` if we would like them to be tracked overtime. These fields dont even have to be text! Text is not the only type of inputs LLMs can receive these days. The states could include images or audios etc so agents can see or hear! Encode you image and audios in `Base64`. Thsi enables us to represent binary data and transmit text-based communication channels. 
 
 In the following snippet, we have encoded a picture of moon with a urban scene and invoking the model with a query about this picture. The image `img_b64` is encoded as `Base64` before.  
@@ -1071,6 +1142,263 @@ In the background, a massive moon or planet dominates the sky, hinting at a neig
 ```
 
 You can do the same thing for Audio files. Convert them to `Base64` and pass them to LLMs with and a query.
+
+
+
+#### Why is Memory Important?
+
+At its core, memory for AI agents refers to the mechanisms that allow them to retain and recall information. This information can be specific details about a conversation, user preferences, past actions, or even learned patterns. Memory palys a crutial role in self-improving AI agents and robust memory management systems contribute directly to continuous learning and adaptation.
+
+
+Without memory, AI applications are often stateless, meaning each interaction starts from scratch. This leads to a repetitive and frustrating user experience where the agent "forgets" previous context or preferences. An agent's intelligence is deeply tied to its ability to recall and utilize past information. Memory allows agents to be:
+
+- **Reflective**: Learning from past actions and outcomes
+
+- **Interactive**: Maintaining context over an ongoing conversation
+
+- **Proactive and Reactive**: Anticipating needs or responding appropriately based on historical data
+
+- **Autonomous**: Operating more independently by drawing on stored knowledge.
+
+The goal of implementing memory is to make agents more reliable and capable.
+
+#### Types of Memory
+
+##### Working Memory
+
+Working memory is the context or prompt at the time of invoking an LLM. LLMs are stateless. Every time you "invoke" it, the model starts with a blank slate. Think of it a RAM in a computer, it is fast and powerful but disappears when the session ends.
+
+To create the illusion of "memory" or "conversation," developers must manually re-feed the previous context back into the model with every new request. Here is how that looks in practice for an agent:
+
+Because we have to keep re-sending the whole history, we eventually hit a limit (token limit). If the conversation is too long, the oldest parts must be deleted to make room for new ones. 
+
+The more "memory" (context) you send back in, the more expensive and slower the invocation becomes, because the model has to re-read everything from scratch every single time.
+
+
+Agents solve this "amnesia" by using external Vector Databases or Memory Summarization to decide exactly which pieces of the past are important enough to put back into the working memory for the next invocation.
+
+
+##### Short Term Memory
+
+Because LLMs are stateless—meaning they forget everything once an invocation is finished—developers build short-term memory as a persistent state outside the model. 
+
+- The Conversation Buffer: The most common form of short-term memory is simply the list of recent messages. When you send a new message, the system attaches these past messages to it so the AI "remembers" what was just discussed.
+- The Scratchpad: It acts like a temporary cache for the current task, storing intermediate reasoning steps or tool results (e.g., if an agent searches for a flight and then a hotel, it stores the flight details in short-term memory to use for the hotel search).
+
+This type of memory retains information for the duration of a single conversation or session. It stores a **thread** of conversation. It's the context of the current chat, allowing the agent to refer back to previous turns in the dialogue.
+
+In LangChain and LangGraph, `InMemorySaver` is the primary tool used to implement short-term memory (also called thread-level persistence).  It stores data in your system's RAM. If you restart your application or the server crashes, all memory is wiped. This is  ideal for prototyping, local development, and testing. For production environments, LangChain recommends using persistent checkpointers like PostgresSaver or SqliteSaver so that memory survives server restarts. This is form of Long Term Memory.
+
+
+##### Long Term Memory
+
+This is information that persists across multiple conversations or sessions. It allows agents to remember user preferences, historical interactions, or general knowledge over extended periods. This is important for personalization.
+
+To remember user preferences across sessions, we need a *persistent store that lives outside the conversation thread*. The agent accesses this store through tools — functions it can call to save and retrieve information. In production you would back this with a database or vector index and expose it as tools the agent can use.
+
+##### Other Types
+
+###### Structured RAG (Retrieval Augmented Generation)
+
+While RAG is a broader technique, "Structured RAG" is highlighted as a powerful memory technology. It extracts dense, structured information from various sources (conversations, emails, images) and uses it to enhance precision, recall, and speed in responses. Unlike classic RAG that relies solely on semantic similarity, Structured RAG works with the inherent structure of information.
+
+- Example: Instead of just matching keywords, Structured RAG could parse flight details (destination, date, time, airline) from an email and store them in a structured way. This allows precise queries like "What flight did I book to Paris on Tuesday?"
+
+###### Persona Memory
+
+This specialized memory type helps an agent develop a consistent "personality" or "persona". It allows the agent to remember details about itself or its intended role, making interactions more fluid and focused.
+
+- Example: If the travel agent is designed to be an "expert ski planner," persona memory might reinforce this role, influencing its responses to align with an expert's tone and knowledge.
+
+###### Workflow/Episodic Memory
+
+This memory stores the sequence of steps an agent takes during a complex task, including successes and failures. It's like remembering specific "episodes" or past experiences to learn from them.
+
+- Example: If the agent attempted to book a specific flight but it failed due to unavailability, episodic memory could record this failure, allowing the agent to try alternative flights or inform the user about the issue in a more informed way during a subsequent attempt.
+
+###### Entity Memory
+
+This involves extracting and remembering specific entities (like people, places, or things) and events from conversations. It allows the agent to build a structured understanding of key elements discussed.
+
+- Example: From a conversation about a past trip, the agent might extract "Paris," "Eiffel Tower," and "dinner at Le Chat Noir restaurant" as entities. In a future interaction, the agent could recall "Le Chat Noir" and offer to make a new reservation there.
+
+
+
+#### Implementing and Storing Memory
+
+Implementing memory for AI agents involves a systematic process of memory management, which includes *generating*, *storing*, *retrieving*, *integrating*, *updating*, and *deleting* (forgetting) information. Retrieval is a particularly crucial aspect.
+
+##### Specialized Memory Tools
+
+###### Mem0
+
+One way to store and manage agent memory is using specialized tools like Mem0. Mem0 works as a persistent memory layer, allowing agents to recall relevant interactions, store user preferences and factual context, and learn from successes and failures over time. The idea here is that stateless agents turn into stateful ones.
+
+It works through a two-phase memory pipeline: extraction and update. First, messages added to an agent's thread are sent to the Mem0 service, which uses a Large Language Model (LLM) to summarize conversation history and extract new memories. Subsequently, an LLM-driven update phase determines whether to add, modify, or delete these memories, storing them in a hybrid data store that can include vector, graph, and key-value databases. This system also supports various memory types and can incorporate graph memory for managing relationships between entities.
+
+###### Cognee
+
+Another powerful approach is using Cognee, an open-source semantic memory for AI agents that transforms structured and unstructured data into queryable knowledge graphs backed by embeddings. Cognee provides a dual-store architecture combining vector similarity search with graph relationships, enabling agents to understand not just what information is similar, but how concepts relate to each other.
+
+It excels at hybrid retrieval that blends vector similarity, graph structure, and LLM reasoning - from raw chunk lookup to graph-aware question answering. The system maintains living memory that evolves and grows while remaining queryable as one connected graph, supporting both short-term session context and long-term persistent memory.
+
+The Cognee notebook tutorial (13-agent-memory-cognee.ipynb) demonstrates building this unified memory layer, with practical examples of ingesting diverse data sources, visualizing the knowledge graph, and querying with different search strategies tailored to specific agent needs.
+
+###### Storing Memory with RAG
+
+Beyond specialized memory tools like mem0 , you can leverage robust search services like Azure AI Search as a backend for storing and retrieving memories, especially for structured RAG.
+
+This allows you to ground your agent's responses with your own data, ensuring more relevant and accurate answers. Azure AI Search can be used to store user-specific travel memories, product catalogs, or any other domain-specific knowledge.
+
+Azure AI Search supports capabilities like Structured RAG, which excels at extracting and retrieving dense, structured information from large datasets like conversation histories, emails, or even images. This provides "superhuman precision and recall" compared to traditional text chunking and embedding approaches.
+
+#### Making AI Agents Self-Improve
+
+A common pattern for self-improving agents involves introducing a "knowledge agent". This separate agent observes the main conversation between the user and the primary agent. Its role is to:
+
+- Identify valuable information: Determine if any part of the conversation is worth saving as general knowledge or a specific user preference.
+
+- Extract and summarize: Distill the essential learning or preference from the conversation.
+
+- Store in a knowledge base: Persist this extracted information, often in a vector database, so it can be retrieved later.
+
+- Augment future queries: When the user initiates a new query, the knowledge agent retrieves relevant stored information and appends it to the user's prompt, providing crucial context to the primary agent (similar to RAG).
+
+#### Optimizations for Memory
+
+- Latency Management: To avoid slowing down user interactions, a cheaper, faster model can be used initially to quickly check if information is valuable to store or retrieve, only invoking the more complex extraction/retrieval process when necessary.
+
+- Knowledge Base Maintenance: For a growing knowledge base, less frequently used information can be moved to "cold storage" to manage costs.
+
+
+
+###  Context Engineering
+
+For AI Agents, context is what drives the planning of an AI Agent to take certain actions. Context Engineering is the practice of making sure the AI Agent has the right information to complete the next step of the task. The context window is limited in size, so as agent builders we need to build systems and processes to manage adding, removing, and condensing the information in the context window.
+
+Memory is the central concern of context engineering. While LLMs are natively stateless—meaning they forget everything once a session ends, context engineering provides the external "scaffolding" that gives them both short-term and long-term memory.
+
+
+#### Strategies for Effective Context Engineering
+
+###### Planning Strategies
+
+Good context engineering starts with good planning. Here is an approach that will help you start to think about how to apply the concept of context engineering:
+
+Define Clear Results: The results of the tasks that AI Agents will be assigned should be clearly defined. Answer the question - "What will the world look like when the AI Agent is done with its task?" In other words, what change, information, or response should the user have after interacting with the AI Agent.
+
+Map the Context: Once you have defined the results of the AI Agent, you need to answer the question of "What information does the AI Agent need in order to complete this task?". This way you can start to map the context of where that information can be located.
+
+Create Context Pipelines: Now that you know where the information is, you need to answer the question "How will the Agent get this information?". This can be done in a variety of ways including RAG, use of MCP servers and other tools.
+
+
+##### Practical Strategies
+
+Planning is important but once the information starts to flow into our agent's context window, we need to have practical strategies to manage it:
+
+###### Core Components
+Context engineering treats the context window as a finite resource that must be optimized for high-signal information. Key elements include: 
+
+- *Dynamic Retrieval (RAG)*: Pulling in relevant documents or data from external sources just-in-time.
+
+- *Memory Management*: Designing how the system remembers previous interactions (short-term) and persists user preferences or facts across sessions (long-term).
+
+- *Tool Integration*: Defining what external capabilities (e.g., web search, code execution) the agent can use and how their results are fed back into the context.
+
+- *State Tracking*: Maintaining the current status of complex, multi-step tasks so the model knows what has already been done and what to do next. 
+
+
+###### Key Strategies & Pillars
+To maintain model performance and avoid "context rot" (degradation in accuracy as context grows), engineers use several strategies:
+
+- *Context Selection*: Identifying the smallest set of high-signal tokens needed for a specific step rather than dumping all available data.
+- *Context Compression*: Summarizing or trimming history and tool outputs to preserve space while keeping essential decisions.
+- *Context Ordering*: Placing critical rules and immediate tasks at the beginning or end of the window to combat the "lost in the middle" phenomenon.
+- *Context Isolation*: Using specialized sub-agents with their own focused contexts to solve complex parts of a problem independently. 
+
+
+###### How Context Engineering Manages Memory
+Engineers treat the context window (the model's limited input space) as "RAM" or working memory. Because this space is expensive and finite, context engineering uses several memory management layers: 
+
+- *Short-Term (Working) Memory*: This is the live conversation history and current task state held directly in the context window. To prevent "amnesia" when the window fills up, engineers use trimming (deleting old turns) or summarization (condensing history).
+- *Long-Term (Persistent) Memory*: This stores user preferences, past decisions, and facts in external databases (like vector or graph databases). Context engineering determines which specific pieces of this long-term archive should be "paged" into the model's active context for the current task.
+- *Procedural Memory*: This involves storing the "how-to" of a system—the available tools, rules, and workflows—and injecting them into the context so the model knows its own capabilities. 
+
+
+
+###### The Core Lifecycle: Write, Select, Compress, Isolate 
+Modern context management follows four foundational strategies to handle information flow: 
+
+- *Write (Externalize)*: Store information outside the active prompt or the context window (e.g., in "scratchpads," vector databases, or structured files). The agent can later retrieve it during the session if needed. This allows agents to "think on paper" and offload long-term facts without bloating the immediate window. 
+- *Select (Retrieve)*: Use Retrieval-Augmented Generation (RAG) to inject only semantically relevant information at runtime. Move beyond simple similarity by using re-ranking—applying a second pass to sort retrieved chunks by actual task utility.
+- *Compress (Distill)*: When history becomes too long, use hierarchical summarization (condensing old turns into executive summaries) or pruning (removing irrelevant tool outputs or noisy log data).
+- *Isolate (Compartmentalize)*: Use multi-agent architectures to split complex tasks. Each specialized sub-agent (e.g., a "researcher" or "coder") operates with its own clean, focused context window, preventing "context poisoning" from unrelated data. 
+
+Some additional techniques are:
+
+*Prompt Caching*: Keep system instructions and core documentation static to leverage "prefix caching." This can reduce token costs by up to 10x on supported providers like Anthropic.
+
+*Append-Only Logic*: Design your context to be additive rather than re-ordering previous logs. This maintains cache validity and speeds up response times.
+
+*Context Evals*: Context engineering should be treated like software development. Use "LLM-as-judge" frameworks or tools like Comet Opik to measure context precision (how much relevant info was retrieved) and context recall (if the answer was actually present in the context).
+
+*Error Retention*: Don't scrub past mistakes from the history. Leaving a failed tool attempt and its error trace in the context helps the model adapt its next move and avoid repeating the error. 
+
+
+Sandbox Environments: If an agent needs to run some code or process large amounts of information in a document, this can take a large amount of tokens to process the results. Instead of having this all stored in the context window, the agent can use a sandbox environment that is able to run this code and only read the results and other relevant information.
+
+
+
+#### Common Context Failures
+
+##### Context Poisoning
+
+What it is: When a hallucination (false information generated by the LLM) or an error enters the context and is repeatedly referenced, causing the agent to pursue impossible goals or develop nonsense strategies.
+
+What to do: Implement context validation and quarantine. Validate information before it's added to long-term memory. If potential poisoning is detected, start fresh context threads to prevent the bad information from spreading.
+
+Travel Booking Example: Your agent hallucinates a direct flight from a small local airport to a distant international city that doesn't actually offer international flights. This non-existent flight detail gets saved into the context. Later, when you ask the agent to book, it keeps trying to find tickets for this impossible route, leading to repeated errors.
+
+Solution: Implement a step that validates flight existence and routes with a real-time API before adding the flight detail to the agent's working context. If the validation fails, the erroneous information is "quarantined" and not used further.
+
+##### Context Distraction
+
+What it is: When the context becomes so large that the model focuses too much on the accumulated history instead of using what it learned during training, leading to repetitive or unhelpful actions. Models may begin making mistakes even before the context window is full.
+
+What to do: Use context summarization. Periodically compress accumulated information into shorter summaries, keeping important details while removing redundant history. This helps "reset" the focus.
+
+Travel Booking Example: You've been discussing various dream travel destinations for a long time, including a detailed recounting of your backpacking trip from two years ago. When you finally ask to "find me a cheap flight for next month**,"** the agent gets bogged down in the old, irrelevant details and keeps asking about your backpacking gear or past itineraries, neglecting your current request.
+
+Solution: After a certain number of turns or when the context grows too large, the agent should summarize the most recent and relevant parts of the conversation – focusing on your current travel dates and destination – and use that condensed summary for the next LLM call, discarding the less relevant historical chat.
+
+##### Context Confusion
+
+What it is: When unnecessary context, often in the form of too many available tools, causes the model to generate bad responses or call irrelevant tools. Smaller models are especially prone to this.
+
+What to do: Implement tool loadout management using RAG techniques. Store tool descriptions in a vector database and select only the most relevant tools for each specific task. Research shows limiting tool selections to fewer than 30.
+
+Travel Booking Example: Your agent has access to dozens of tools: book_flight, book_hotel, rent_car, find_tours, currency_converter, weather_forecast, restaurant_reservations, etc. You ask, "What's the best way to get around Paris?" Due to the sheer number of tools, the agent gets confused and attempts to call book_flight within Paris, or rent_car even though you prefer public transport, because the tool descriptions might overlap or it simply can't discern the best one.
+
+Solution: Use RAG over tool descriptions. When you ask about getting around Paris, the system dynamically retrieves only the most relevant tools like rent_car or public_transport_info based on your query, presenting a focused "loadout" of tools to the LLM.
+
+##### Context Clash
+
+What it is: When conflicting information exists within the context, leading to inconsistent reasoning or bad final responses. This often happens when information arrives in stages, and early, incorrect assumptions remain in the context.
+
+What to do: Use context pruning and offloading. Pruning means removing outdated or conflicting information as new details arrive. Offloading gives the model a separate "scratchpad" workspace to process information without cluttering the main context.
+
+Travel Booking Example: You initially tell your agent, "I want to fly economy class." Later in the conversation, you change your mind and say, "Actually, for this trip, let's go business class." If both instructions remain in the context, the agent might receive conflicting search results or get confused about which preference to prioritize.
+
+Solution: Implement context pruning. When a new instruction contradicts an old one, the older instruction is removed or explicitly overridden in the context. Alternatively, the agent can use a scratchpad to reconcile conflicting preferences before deciding, ensuring only the final, consistent instruction guides its actions.
+
+See 
+- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) 
+- [Context Engineering for Observability: How to Deliver the Right Data to LLMs](https://www.mezmo.com/learn-observability/context-engineering-for-observability-how-to-deliver-the-right-data-to-llms)
+
+for more info.
+
+
+
 
 ### Tools
 
@@ -1210,19 +1538,19 @@ Creating tools and providing context to different model providers used to look a
 
 MCP operates on a client-server architecture and the core components are:
 
-• *Hosts* are LLM applications (for example a code editor like VSCode) that start the connections to an MCP Server.
+- *Hosts* are LLM applications (for example a code editor like VSCode) that start the connections to an MCP Server.
 
-• *Clients* are components within the host application that maintain one-to-one connections with servers.
+- *Clients* are components within the host application that maintain one-to-one connections with servers.
 
-• *Servers* are lightweight programs that expose specific capabilities.
+- *Servers* are lightweight programs that expose specific capabilities.
 
 Included in the protocol are three core primitives which are the capabilities of an MCP Server:
 
-• **Tools**: These are discrete actions or functions an AI agent can call to perform an action. For example, a weather service might expose a "get weather" tool, or an e-commerce server might expose a "purchase product" tool. MCP servers advertise each tool's name, description, and input/output schema in their capabilities listing.
+- **Tools**: These are discrete actions or functions an AI agent can call to perform an action. For example, a weather service might expose a "get weather" tool, or an e-commerce server might expose a "purchase product" tool. MCP servers advertise each tool's name, description, and input/output schema in their capabilities listing.
 
-• **Resources**: These are read-only data items or documents that an MCP server can provide, and clients can retrieve them on demand. Examples include file contents, database records, or log files. Resources can be text (like code or JSON) or binary (like images or PDFs).
+- **Resources**: These are read-only data items or documents that an MCP server can provide, and clients can retrieve them on demand. Examples include file contents, database records, or log files. Resources can be text (like code or JSON) or binary (like images or PDFs).
 
-• **Prompts**: These are predefined templates that provide suggested prompts, allowing for more complex workflows.
+- **Prompts**: These are predefined templates that provide suggested prompts, allowing for more complex workflows.
 
 
 Once we have built an MCP server with our tools and context, it's very easy to share with other projects and developers and streamlining future agent builds. There is a huge open source servers that other people have built which we can easily insert into our agent and other types of AI applications compatible with MCP servers like your favourite chat bots or IDEs.
@@ -1341,24 +1669,26 @@ response['messages'][-1].content
 
 Our agent made a tool call `tool_calls=[{'name': 'get_current_time', 'args': {'timezone': 'America/New_York'}` to find the accurate time. For another example, take a look at  this course: [MCP for Building Rich-Context AI APPs with Antropic](https://learn.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic/lesson/dbabg/creating-an-mcp-server).
 
-#### Agent-to-Agent Protocol (A2A)
+#### Other Protocols
+
+##### Agent-to-Agent Protocol (A2A)
 
 While MCP focuses on connecting LLMs to tools, the Agent-to-Agent (A2A) protocol takes it a step further by enabling communication and collaboration between different AI agents. A2A connects AI agents across different organizations, environments and tech stacks to complete a shared task.
 
 We’ll examine the components and benefits of A2A, along with an example of how it could be applied in our travel application.
 
-##### A2A Core Components
+###### A2A Core Components
 
 A2A focuses on enabling communication between agents and having them work together to complete a subtask of user. Each component of the protocol contributes to this:
 
 1. Agent Card
 
     Similar to how an MCP server shares a list of tools, an Agent Card has:
-    - The Name of the Agent .
-    - A description of the general tasks it completes.
-    - A list of specific skills with descriptions to help other agents (or even human users) understand when and why they would want to call that agent.
+    - The Name of the Agent
+    - A description of the general tasks it completes
+    - A list of specific skills with descriptions to help other agents (or even human users) understand when and why they would want to call that agent
     - The current Endpoint URL of the agent
-    - The version and capabilities of the agent such as streaming responses and push notifications.
+    - The version and capabilities of the agent such as streaming responses and push notifications
 
 2. Agent Executor
 
@@ -1372,7 +1702,7 @@ A2A focuses on enabling communication between agents and having them work togeth
 
     This component is used for handling updates and passing messages. It is particularly important in production for agentic systems to prevent the connection between agents from being closed before a task is completed, especially when task completion times can take a longer time.
 
-##### Benefits of A2A
+###### Benefits of A2A
 
 - *Enhanced Collaboration*: It enables agents from different vendors and platforms to interact, share context, and work together, facilitating seamless automation across traditionally disconnected systems.
 
@@ -1405,13 +1735,13 @@ Let's expand on our travel booking scenario, but this time using A2A.
     Once all downstream agents complete their tasks, the Travel Agent compiles the results (flight details, hotel confirmation, car rental booking) and sends a comprehensive, chat-style response back to the user.
 
 
-#### Natural Language Web (NLWeb)
+##### Natural Language Web (NLWeb)
 
 Websites have long been the primary way for users to access information and data across the internet.
 
 Let us look at the different components of NLWeb, the benefits of NLWeb and an example how our NLWeb works by looking at our travel application.
 
-##### Components of NLWeb
+###### Components of NLWeb
 
 NLWeb Application (Core Service Code): The system that processes natural language questions. It connects the different parts of the platform to create responses. You can think of it as the engine that powers the natural language features of a website.
 
@@ -1457,7 +1787,7 @@ AI Agents can leverage tools to complete complex tasks, retrieve information, or
 - Customer Support: Agents can interact with CRM systems, ticketing platforms, or knowledge bases to resolve user queries.
 - Content Generation and Editing: Agents can leverage tools like grammar checkers, text summarizers, or content safety evaluators to assist with content creation tasks.
 
-###### What are the elements/building blocks needed to implement the tool use design pattern?
+###### Building blocks for implementing the tool use design pattern
 
 These building blocks allow the AI agent to perform a wide range of tasks. Let's look at the key elements needed to implement the Tool Use Design Pattern:
 
@@ -1487,7 +1817,7 @@ These building blocks allow the AI agent to perform a wide range of tasks. Let's
 
 Next, let's look at Function/Tool Calling in more detail.
 
-###### Function/Tool Calling
+###### Tool Schema
 
 In order for a function's code to be invoked, an LLM must compare the users request against the functions description. To do this, a **tool schema** containing the descriptions of all the available functions is sent to the LLM. The LLM then selects the most appropriate function for the task and returns its name and arguments. The selected function is invoked, it's response is sent back to the LLM, which uses the information to respond to the users request. To implement function calling for agents, you will need:
 
@@ -1495,11 +1825,7 @@ In order for a function's code to be invoked, an LLM must compare the users requ
 - A schema containing function descriptions
 - The code for each function described
 
-Let's use the example of getting the current time in a city to illustrate:
-
-###### Create a Function Schema:
-
-Define a JSON schema that contains the 
+Let's use the example of getting the current time in a city to illustrate. Define a JSON schema that contains the 
 - function name, 
 - description of what the function does, and 
 - the names and descriptions of the function parameters
@@ -1620,7 +1946,7 @@ Function Calling is at the heart of most, if not all agent tool use design, howe
 
 Trustworthy agents are systems whose outputs are *reliable*, *safe*, *verifiable*, and *controllable*, especially when interacting with external tools or making decisions.
 
-1. Layer 1 — Input / User Control
+1. Layer 1: Input / User Control
 
     - validate inputs
     - restrict scope
@@ -1693,11 +2019,13 @@ Trustworthy agents are systems whose outputs are *reliable*, *safe*, *verifiable
     - escalation
     - approval before execution
 
-##### Structured meta prompting system
+### Structured meta prompting system
 Design prompts in a controlled, programmatic, multi-layered way, instead of writing one big free-text prompt.
 
 Two key ideas:
-###### Structured
+
+##### Structured
+
 Not raw text. 
 - Uses schemas, templates, fields, roles
 - Without structure:
@@ -1708,6 +2036,7 @@ Not raw text.
     - predictable behavior
     - easier validation
     - safer tool usage
+
 🔧 Concrete example (very important)
 
 Example: ❌ Unstructured prompt
@@ -1719,7 +2048,7 @@ Problems:
 - no control
 - hard to validate
 
-###### Structured meta prompting
+##### Structured meta prompting
     
 Prompts that control how other prompts behave
 you’re not just asking for an answer—you’re guiding the process
@@ -1736,13 +2065,13 @@ Example:
     - analyze
     - generate report
 - Output Schema
-```json
-    {
-    "summary": "...",
-    "risks": [...],
-    "metrics": {...}
-    }
-```
+    ```json
+        {
+        "summary": "...",
+        "risks": [...],
+        "metrics": {...}
+        }
+    ```
 Now the model:
 - follows a structure
 - produces machine-checkable output
@@ -1777,36 +2106,36 @@ In my system, I used structured meta prompting by enforcing schema-based communi
 Structured meta prompting is the practice of designing prompts as structured, multi-layered instructions rather than free text. It includes defining roles, constraints, reasoning steps, and output schemas so the model behaves predictably. In agent systems, this is critical for controlling planning, enforcing tool usage, and validating outputs. In my project, I used schema-based prompts and structured outputs to ensure reliable coordination between agents and reduce hallucinations.
 
 
-#### Attackers
+### Attackers
 
  Organize threats by surface:
 
-###### Task & Instruction Manipulation (Prompt Injection)
+##### Task & Instruction Manipulation (Prompt Injection)
 
 Description: Attackers attempt to change the instructions or goals of the AI agent through prompting or manipulating inputs.
 
 Mitigation: Execute validation checks and input filters to detect potentially dangerous prompts before they are processed by the AI Agent. Since these attacks typically require frequent interaction with the Agent, limiting the number of turns in a conversation is another way to prevent these types of attacks.
 
-###### Access to Critical Systems
+##### Access to Critical Systems
 
 Description: If an AI agent has access to systems and services that store sensitive data, attackers can compromise the communication between the agent and these services. These can be direct attacks or indirect attempts to gain information about these systems through the agent.
 
 Mitigation: AI agents should have access to systems on a need-only basis to prevent these types of attacks. Communication between the agent and system should also be secure. Implementing authentication and access control is another way to protect this information.
 
-###### Resource and Service Overloading
+##### Resource and Service Overloading
 
 Description: AI agents can access different tools and services to complete tasks. Attackers can use this ability to attack these services by sending a high volume of requests through the AI Agent, which may result in system failures or high costs.
 
 Mitigation: Implement policies to limit the number of requests an AI agent can make to a service. Limiting the number of conversation turns and requests to your AI agent is another way to prevent these types of attacks.
 
-###### Knowledge Base Poisoning
+##### Knowledge Base Poisoning
 
 Description: This type of attack does not target the AI agent directly but targets the knowledge base and other services that the AI agent will use. This could involve corrupting the data or information that the AI agent will use to complete a task, leading to biased or unintended responses to the user.
 
 Mitigation: Perform regular verification of the data that the AI agent will be using in its workflows. Ensure that access to this data is secure and only changed by trusted individuals to avoid this type of attack.
 
 
-###### Cascading Errors
+##### Cascading Errors
 
 Description: AI agents access various tools and services to complete tasks. Errors caused by attackers can lead to failures of other systems that the AI agent is connected to, causing the attack to become more widespread and harder to troubleshoot.
 
@@ -1817,7 +2146,7 @@ Mitigation: One method to avoid this is to have the AI Agent operate in a limite
 Building trustworthy AI agents requires careful design, robust security measures, and continuous iteration. By implementing structured meta prompting systems, understanding potential threats, and applying mitigation strategies, developers can create AI agents that are both safe and effective. Additionally, incorporating a human-in-the-loop approach ensures that AI agents remain aligned with user needs while minimizing risks. As AI continues to evolve, maintaining a proactive stance on security, privacy, and ethical considerations will be key to fostering trust and reliability in AI-driven systems.
 
 
-### Multi Agents Design Patterns
+## Multi Agents Design Patterns
 
 Multi agents are a design pattern that allows multiple agents to work together to achieve a common goal. This pattern is widely used in various fields, including robotics, autonomous systems, and distributed computing.
 
@@ -1825,7 +2154,7 @@ There are many scenarios where employing multiple agents is beneficial especiall
 
 - *Large workloads*: Large workloads can be divided into smaller tasks and assigned to different agents, allowing for parallel processing and faster completion. An example of this is in the case of a large data processing task.
 - *Complex tasks*: Complex tasks, like large workloads, can be broken down into smaller subtasks and assigned to different agents, each specializing in a specific aspect of the task. A good example of this is in the case of autonomous vehicles where different agents manage navigation, obstacle detection, and communication with other vehicles.
-*Diverse expertise*: Different agents can have diverse expertise, allowing them to handle different aspects of a task more effectively than a single agent. For this case, a good example is in the case of healthcare where agents can manage diagnostics, treatment plans, and patient monitoring.
+- *Diverse expertise*: Different agents can have diverse expertise, allowing them to handle different aspects of a task more effectively than a single agent. For this case, a good example is in the case of healthcare where agents can manage diagnostics, treatment plans, and patient monitoring.
 
 ###### Advantages of Using Multi-Agents Over a Singular Agent
 
@@ -1851,7 +2180,7 @@ Before you can implement the multi-agent design pattern, you need to understand 
 - *Multi-Agent Patterns*: There are different patterns for implementing multi-agent systems, such as centralized, decentralized, and hybrid architectures. You need to decide on the pattern that best fits your use case.
 - *Human in the loop*: In most cases, you will have a human in the loop and you need to instruct the agents when to ask for human intervention. This could be in the form of a user asking for a specific hotel or flight that the agents have not recommended or asking for confirmation before booking a flight or hotel.
 
-##### Visibility into Multi-Agent Interactions
+#### Visibility into Multi-Agent Interactions
 
 It's important that you have visibility into how the multiple agents are interacting with each other. This visibility is essential for debugging, optimizing, and ensuring the overall system's effectiveness. To achieve this, you need to have tools and techniques for tracking agent activities and interactions. This could be in the form of logging and monitoring tools, visualization tools, and performance metrics.
 
@@ -1866,7 +2195,7 @@ Let's look at each of these aspects more in detail.
 - *Performance Metrics*: Performance metrics can help you track the effectiveness of the multi-agent system. For example, you could track the time taken to complete a task, the number of tasks completed per unit of time, and the accuracy of the recommendations made by the agents. This information can help you identify areas for improvement and optimize the system.
 
 
-##### Multi-Agent Patterns
+#### Multi-Agent Patterns
 
 All agent systems are built from combinations of:
 - Control pattern (who decides what: orchestrator vs distributed)
@@ -2459,7 +2788,7 @@ Remove the orchestrator from the data path, not from the control plane.
 ## Deploy AI Agents into Production
 
 
-##### Traces and Spans
+#### Traces and Spans
 
 Observability tools such as *Langfuse* or Microsoft Foundry usually represent agent runs as traces and spans.
 
@@ -2469,7 +2798,7 @@ Observability tools such as *Langfuse* or Microsoft Foundry usually represent ag
 Without observability, an AI agent can feel like a "black box" - its internal state and reasoning are opaque, making it difficult to diagnose issues or optimize performance. With observability, agents become "glass boxes," offering transparency that is vital for building trust and ensuring they operate as intended.
 
 
-##### Why Observability Matters in Production Environments
+#### Why Observability Matters in Production Environments
 
 Transitioning AI agents to production environments introduces a new set of challenges and requirements. Observability is no longer a "nice-to-have" but a critical capability:
 
@@ -2479,7 +2808,7 @@ Transitioning AI agents to production environments introduces a new set of chall
 - *Continuous Improvement Loops*: Observability data is the foundation of an iterative development process. By monitoring how agents perform in the real world, teams can identify areas for improvement, gather data for fine-tuning models, and validate the impact of changes. This creates a feedback loop where production insights from online evaluation inform offline experimentation and refinement, leading to progressively better agent performance.
 
 
-##### Key Metrics to Track
+#### Key Metrics to Track
 
 To monitor and understand agent behavior, a range of metrics and signals should be tracked. While the specific metrics might vary based on the agent's purpose, some are universally important.
 
@@ -2501,7 +2830,7 @@ Here are some of the most common metrics that observability tools monitor:
 
 In practice, a combination of these metrics gives the best coverage of an AI agent’s health. In this chapters example notebook, we'll show you how these metrics looks in real examples but first, we'll learn how a typical evaluation workflow looks like.
 
-##### Instrument your Agent
+#### Instrument your Agent
 
 To gather tracing data, you’ll need to *instrument your code*. The goal is to instrument the agent code to emit traces and metrics that can be captured, processed, and visualized by an observability platform.
 
@@ -2510,7 +2839,7 @@ To gather tracing data, you’ll need to *instrument your code*. The goal is to 
 There are many instrumentation libraries that wrap existing agent frameworks and make it easy to export OpenTelemetry spans to an observability tool.  
 
 
-##### Agent Evaluation
+#### Agent Evaluation
 
 Observability gives us metrics, but evaluation is the process of analyzing that data (and performing tests) to determine how well an AI agent is performing and how it can be improved. In other words, once you have those traces and metrics, how do you use them to judge the agent and make decisions?
 
@@ -2518,7 +2847,7 @@ Regular evaluation is important because AI agents are often non-deterministic an
 
 There are two categories of evaluations for AI agents: online evaluation and offline evaluation. Both are valuable, and they complement each other. We usually begin with offline evaluation, as this is the minimum necessary step before deploying any agent.
 
-###### Offline Evaluation
+##### Offline Evaluation
 
 This involves evaluating the agent in a controlled setting, typically using test datasets, not live user queries. You use curated datasets where you know what the expected output or correct behavior is, and then run your agent on those.
 
@@ -2526,7 +2855,7 @@ For instance, if you built a math word-problem agent, you might have a test data
 
 The key challenge with offline eval is ensuring your test dataset is comprehensive and stays relevant – the agent might perform well on a fixed test set but encounter very different queries in production. Therefore, you should keep test sets updated with new edge cases and examples that reflect real-world scenarios​. A mix of small “smoke test” cases and larger evaluation sets is useful: small sets for quick checks and larger ones for broader performance metrics​.
 
-###### Online Evaluation
+##### Online Evaluation
 
 This refers to evaluating the agent in a live, real-world environment, i.e. during actual usage in production. Online evaluation involves monitoring the agent’s performance on real user interactions and analyzing outcomes continuously.
 
@@ -2534,7 +2863,7 @@ For example, you might track success rates, user satisfaction scores, or other m
 
 Online evaluation often involves collecting implicit and explicit user feedback, as discussed, and possibly running shadow tests or A/B tests (where a new version of the agent runs in parallel to compare against the old). The challenge is that it can be tricky to get reliable labels or scores for live interactions – you might rely on user feedback or downstream metrics (like did the user click the result).
 
-###### Combining the two
+##### Combining the two
 
 Online and offline evaluations are not mutually exclusive; they are highly complementary. Insights from online monitoring (e.g., new types of user queries where the agent performs poorly) can be used to augment and improve offline test datasets. Conversely, agents that perform well in offline tests can then be more confidently deployed and monitored online.
 
@@ -2542,7 +2871,7 @@ In fact, many teams adopt a loop:
 
 `evaluate offline -> deploy -> monitor online -> collect new failure cases -> add to offline dataset -> refine agent -> repeat`.
 
-###### Common Issues
+##### Common Issues
 
 As you deploy AI agents to production, you may encounter various challenges. Here are some common issues and their potential solutions:
 
@@ -2557,7 +2886,7 @@ AI Agent not performing tasks consistently	- Refine the prompt given to the AI A
 - Build a hierarchical system using a "routing" or controller agent to determine which agent is the correct one.
 - Many of these issues can be identified more effectively with observability in place. The traces and metrics we discussed earlier help pinpoint exactly where in the agent workflow problems occur, making debugging and optimization much more efficient.
 
-##### Managing Costs
+#### Managing Costs
 
 Here are some strategies to manage the costs of deploying AI agents to production:
 
@@ -2568,139 +2897,8 @@ Here are some strategies to manage the costs of deploying AI agents to productio
 *Caching Responses*: Identifying common requests and tasks and providing the responses before they go through your agentic system is a good way to reduce the volume of similar requests. You can even implement a flow to identify how similar a request is to your cached requests using more basic AI models. This strategy can significantly reduce costs for frequently asked questions or common workflows.
 
 
-
-
-
-
 [Microsoft - Agentic AI Course - Github](https://github.com/microsoft/ai-agents-for-beginners/tree/main)
 
-
-
-
-## Memory
-
-
-After completing this lesson, you will know how to:
-
-- Differentiate between various types of AI agent memory, including working, short-term, and long-term memory, as well as specialized forms like persona and episodic memory.
-
-- Understand the principles behind self-improving AI agents and how robust memory management systems contribute to continuous learning and adaptation.
-
-#### Understanding AI Agent Memory
-
-At its core, memory for AI agents refers to the mechanisms that allow them to retain and recall information. This information can be specific details about a conversation, user preferences, past actions, or even learned patterns.
-
-Without memory, AI applications are often stateless, meaning each interaction starts from scratch. This leads to a repetitive and frustrating user experience where the agent "forgets" previous context or preferences.
-
-#### Why is Memory Important?
-
-An agent's intelligence is deeply tied to its ability to recall and utilize past information. Memory allows agents to be:
-
-- **Reflective**: Learning from past actions and outcomes
-
-- **Interactive**: Maintaining context over an ongoing conversation
-
-- **Proactive and Reactive**: Anticipating needs or responding appropriately based on historical data
-
-- **Autonomous**: Operating more independently by drawing on stored knowledge.
-
-The goal of implementing memory is to make agents more reliable and capable.
-
-#### Types of Memory
-
-###### Working Memory
-
-Think of this as a piece of scratch paper an agent uses during a single, ongoing task or thought process. It holds immediate information needed to compute the next step.
-
-For AI agents, working memory often captures the most relevant information from a conversation, even if the full chat history is long or truncated. It focuses on extracting key elements like requirements, proposals, decisions, and actions.
-
-- Example: In a travel booking agent, working memory might capture the user's current request, such as "I want to book a trip to Paris". This specific requirement is held in the agent's immediate context to guide the current interaction.
-
-###### Short Term Memory
-
-This type of memory retains information for the duration of a single conversation or session. It stores a **thread** of conversation. It's the context of the current chat, allowing the agent to refer back to previous turns in the dialogue.
-
-- Example: If a user asks, "How much would a flight to Paris cost?" and then follows up with "What about accommodation there?", short-term memory ensures the agent knows "there" refers to "Paris" within the same conversation.
-
-###### Long Term Memory
-
-This is information that persists across multiple conversations or sessions. It allows agents to remember user preferences, historical interactions, or general knowledge over extended periods. This is important for personalization.
-
-- Example: A long-term memory might store that "Ben enjoys skiing and outdoor activities, likes coffee with a mountain view, and wants to avoid advanced ski slopes due to a past injury". This information, learned from previous interactions, influences recommendations in future travel planning sessions, making them highly personalized.
-
-To remember user preferences across sessions, we need a *persistent store that lives outside the conversation thread*. The agent accesses this store through tools — functions it can call to save and retrieve information. In production you would back this with a database or vector index and expose it as tools the agent can use.
-
-
-
-###### Persona Memory
-
-This specialized memory type helps an agent develop a consistent "personality" or "persona". It allows the agent to remember details about itself or its intended role, making interactions more fluid and focused.
-
-- Example: If the travel agent is designed to be an "expert ski planner," persona memory might reinforce this role, influencing its responses to align with an expert's tone and knowledge.
-
-###### Workflow/Episodic Memory
-
-This memory stores the sequence of steps an agent takes during a complex task, including successes and failures. It's like remembering specific "episodes" or past experiences to learn from them.
-
-- Example: If the agent attempted to book a specific flight but it failed due to unavailability, episodic memory could record this failure, allowing the agent to try alternative flights or inform the user about the issue in a more informed way during a subsequent attempt.
-
-###### Entity Memory
-
-This involves extracting and remembering specific entities (like people, places, or things) and events from conversations. It allows the agent to build a structured understanding of key elements discussed.
-
-- Example: From a conversation about a past trip, the agent might extract "Paris," "Eiffel Tower," and "dinner at Le Chat Noir restaurant" as entities. In a future interaction, the agent could recall "Le Chat Noir" and offer to make a new reservation there.
-
-###### Structured RAG (Retrieval Augmented Generation)
-
-While RAG is a broader technique, "Structured RAG" is highlighted as a powerful memory technology. It extracts dense, structured information from various sources (conversations, emails, images) and uses it to enhance precision, recall, and speed in responses. Unlike classic RAG that relies solely on semantic similarity, Structured RAG works with the inherent structure of information.
-
-- Example: Instead of just matching keywords, Structured RAG could parse flight details (destination, date, time, airline) from an email and store them in a structured way. This allows precise queries like "What flight did I book to Paris on Tuesday?"
-
-#### Implementing and Storing Memory
-
-Implementing memory for AI agents involves a systematic process of memory management, which includes *generating*, *storing*, *retrieving*, *integrating*, *updating*, and *deleting* (forgetting) information. Retrieval is a particularly crucial aspect.
-
-##### Specialized Memory Tools
-
-###### Mem0
-
-One way to store and manage agent memory is using specialized tools like Mem0. Mem0 works as a persistent memory layer, allowing agents to recall relevant interactions, store user preferences and factual context, and learn from successes and failures over time. The idea here is that stateless agents turn into stateful ones.
-
-It works through a two-phase memory pipeline: extraction and update. First, messages added to an agent's thread are sent to the Mem0 service, which uses a Large Language Model (LLM) to summarize conversation history and extract new memories. Subsequently, an LLM-driven update phase determines whether to add, modify, or delete these memories, storing them in a hybrid data store that can include vector, graph, and key-value databases. This system also supports various memory types and can incorporate graph memory for managing relationships between entities.
-
-###### Cognee
-
-Another powerful approach is using Cognee, an open-source semantic memory for AI agents that transforms structured and unstructured data into queryable knowledge graphs backed by embeddings. Cognee provides a dual-store architecture combining vector similarity search with graph relationships, enabling agents to understand not just what information is similar, but how concepts relate to each other.
-
-It excels at hybrid retrieval that blends vector similarity, graph structure, and LLM reasoning - from raw chunk lookup to graph-aware question answering. The system maintains living memory that evolves and grows while remaining queryable as one connected graph, supporting both short-term session context and long-term persistent memory.
-
-The Cognee notebook tutorial (13-agent-memory-cognee.ipynb) demonstrates building this unified memory layer, with practical examples of ingesting diverse data sources, visualizing the knowledge graph, and querying with different search strategies tailored to specific agent needs.
-
-###### Storing Memory with RAG
-
-Beyond specialized memory tools like mem0 , you can leverage robust search services like Azure AI Search as a backend for storing and retrieving memories, especially for structured RAG.
-
-This allows you to ground your agent's responses with your own data, ensuring more relevant and accurate answers. Azure AI Search can be used to store user-specific travel memories, product catalogs, or any other domain-specific knowledge.
-
-Azure AI Search supports capabilities like Structured RAG, which excels at extracting and retrieving dense, structured information from large datasets like conversation histories, emails, or even images. This provides "superhuman precision and recall" compared to traditional text chunking and embedding approaches.
-
-###### Making AI Agents Self-Improve
-
-A common pattern for self-improving agents involves introducing a "knowledge agent". This separate agent observes the main conversation between the user and the primary agent. Its role is to:
-
-- Identify valuable information: Determine if any part of the conversation is worth saving as general knowledge or a specific user preference.
-
-- Extract and summarize: Distill the essential learning or preference from the conversation.
-
-- Store in a knowledge base: Persist this extracted information, often in a vector database, so it can be retrieved later.
-
-- Augment future queries: When the user initiates a new query, the knowledge agent retrieves relevant stored information and appends it to the user's prompt, providing crucial context to the primary agent (similar to RAG).
-
-###### Optimizations for Memory
-
-- Latency Management: To avoid slowing down user interactions, a cheaper, faster model can be used initially to quickly check if information is valuable to store or retrieve, only invoking the more complex extraction/retrieval process when necessary.
-
-- Knowledge Base Maintenance: For a growing knowledge base, less frequently used information can be moved to "cold storage" to manage costs.
 
 
 ## Agnetic RAG
@@ -2758,30 +2956,6 @@ This iterative and dynamic approach allows the model to improve continuously, en
 
 
 ```mermaid
----
-config:
-  theme: base
-  themeVariables:
-    dgeLabelBackground: 'transparent'
-    primaryTextColor: '#dd00ff'
-    edgeLabelBackground: 'transparent'
-    fontFamily: "Montserrat"
-  themeCSS: |
-    display: block;
-    margin: auto auto;
-    .edgeLabel, .edgeLabel span, .label text { 
-      fill: #ff4800 !important; 
-      color: #edcb8a !important; 
-      font-weight: bold;
-    }
-    .transition { 
-      stroke: #8425f9 !important; 
-    }
-    marker path {
-      fill: #f9f6f4 !important;
-      stroke: #ff3c00 !important;
-    }
----
 
 stateDiagram-v2
     direction LR
@@ -2831,6 +3005,998 @@ As these systems become more autonomous in their reasoning, governance and trans
 Having tools that provide a clear record of actions is essential. Without them, debugging a multi-step process can be very difficult.
 
 
+## Multi agent architecture
+
+[Source](https://github.com/microsoft/multi-agent-reference-architecture/tree/main)
+
+Generative AI is shifting rapidly from research to production, with enterprises seeking robust, maintainable and scalable solutions to solve complex problems. In this landscape, the design of multi-agent systems, where numerous specialized AI agents cooperate to solve problems, has become critically important: enables modularity, domain expertise, and agility, offering adaptability as business needs and AI capabilities evolve.
+
+These systems reflect the natural structure of organizations: different roles, responsibilities, and domains mapped to individual or composite agents, each optimized for specific knowledge or workflows.
+
+#### Design Principles
+
+The following design principles are especially crucial for multi-agent systems, as identified through real-world implementations in large enterprises. These principles address challenges unique to environments where multiple agents interact, collaborate, and exchange information. Treat them as guiding foundations rather than rigid requirements:
+
+
+Name	| Description
+------ | ---------
+**Separation of Concerns** |	In multi-agent systems, it’s essential that each agent has a distinct and well-defined responsibility. This clarity enables focused development, scalable deployment, reduced cross-cutting changes, and makes it possible for agents to encapsulate deep domain expertise.
+**Secure by Design**	| With multiple agents communicating and acting within the same ecosystem, robust security is paramount. This includes strict authentication, authorization, and policy enforcement for every agent interface. It’s also necessary to carefully manage sensitive data flows between agents, minimize data retention, and clearly define data handling practices to prevent unintended leakage or escalation of privilege.
+**Observability & Traceability** |	Multi-agent workflows generate complex, interdependent behaviors. Agents should be instrumented so their actions, data exchanges, and decisions can be traced end-to-end across the system using common identifiers and correlated metrics. This level of observability enables efficient troubleshooting, auditing, and deep understanding of system operations—far beyond what is required in single-agent scenarios.
+**Agent Registration & Lifecycle Governance** |	Agents should be explicitly registered, versioned, and validated before being included in production environment. Registration should capture agent capabilities, security posture, and lifecycle state to prevent duplication, control upgrades, and reduce risks from rogue or malfunctioning agents.
+**Failure Isolation & Graceful Degradation**	| Failures in one agent should not cascade to others. Consider fallback mechanisms, retries, or degraded modes of operation to ensure the workflow can continue, even in the presence of partial failures.
+**Context Management**	| Establish clear rules and policies regarding what context or conversational state is shared among agents and for how long. Carefully control context propagation to avoid privacy issues, data leakage, or logic confusion.
+
+#### Core components
+
+```mermaid
+stateDiagram-v2
+    A: Orchestrator Agent
+    B: Specialized Agent Registry
+    C: Memory
+    D: Agent Pool
+    E: Specialized Agent 1
+    F: Specialized Agent 2
+    state D  {
+        E 
+        F
+    }
+
+    [*] --> A
+    A --> C
+    A --> B
+    A --> D
+    D --> C
+```
+
+
+**Orchestrator** agent acts as the central coordinator within the multi-agent workflow. It receives incoming requests—whether from users or external services—and formulates a high-level plan composed of individual tasks. These tasks are then delegated to appropriate specialized agents, each responsible for a specific function. Once the specialized agents complete their tasks and return their results, the orchestrator aggregates and synthesizes their outputs into a coherent final response.
+
+Although direct communication between specialized agents might seem convenient at first, it's recommended to route all communication through the orchestrator to maintain clarity and control. Avoid direct agent-to-agent messaging unless necessary; if agents are tightly coupled, group them into a single composite agent exposed to the orchestrator as one unit.
+
+Specialized agents are domain-focused experts within the multi-agent system. Each one is responsible for a distinct area of expertise. These agents can range in complexity: some may be simple wrappers around a language model, while others may coordinate their own sub-agents to complete more detailed tasks. For instance, a "Hotel Booking Agent" might internally manage sub-agents for comparing prices, checking availability, and reading reviews—working together to deliver the best lodging option.
+
+A specialized agent is not the same as a task or a tool. While an agent may use multiple tools or perform several steps to achieve a complex goal, it's a common mistake to treat tiny, granular tasks—like "call an API" or "parse a response"—as standalone agents. This creates unnecessary fragmentation and complexity. Instead, agents should be structured around meaningful, cohesive capabilities—not isolated tool calls.
+
+Agents registry serves as a centralized data service and source of truth for managing all specialized agents available in the system for the orchestrator. It functions like a dynamic directory—cataloging each agent's identity, capabilities, operational status, version, and metadata tags. This registry enables efficient discovery and auditability. 
+
+- More info for design pattern for agent registry, see [Multi-agent-reference-architecture](https://github.com/microsoft/multi-agent-reference-architecture/blob/main/docs/agent-registry/Agent-Registry.md)
+- Additional reference of orchestration patterns: [Semantic Kernel: Multi-agent Orchestration](https://devblogs.microsoft.com/semantic-kernel/semantic-kernel-multi-agent-orchestration/)
+
+
+#### Multi-agent Design Options
+
+Here we break down two primary design approaches:
+
+- **Modular Monolith**: A standalone application where orchestrator and specialized agents are organized as well-defined modules. This approach emphasizes simplicity, shared memory, and low-latency communication.
+- **Microservices**: A distributed system where each agent (or group of agents) is encapsulated as a service. This model enables independent deployment, granular scalability and flexibility to use different tools, frameworks, or programming languages for each service.
+
+Each approach has trade-offs in terms of performance, scalability, maintainability, team coordination, and operational complexity. 
+
+
+#### Memory
+
+Memory is a foundational aspect of multi-agent systems, shaping how agents understand context, make decisions, and collaborate effectively. This chapter introduces two core memory types in multi-agent systems:
+
+- Short-term Memory (STM): Enables agents to maintain recent context within an active session (also known as conversation history), supporting coherent interaction and task coordination across agents.
+- Long-term Memory (LTM): Provides persistence of information across sessions, allowing agents to recall knowledge, preferences, and outcomes over time to provide personalized experiences.
+
+Designing STM and LTM in multi-agent systems brings unique challenges around synchronization, ownership, privacy, and data consistency. The following sections outline key patterns and trade-offs for integrating effective memory into your architecture.
+
+
+#### Agents Communication
+
+This chapter introduces two foundational paradigms for agent interaction: **request-based** and **message-driven** communication. These models shape how agents coordinate, scale, and recover in distributed systems.
+
+- **Request-Based Communication**: Agents communicate by sending direct requests to one another—through synchronous or asynchronous interactions— offering predictability and simplicity, making it well-suited for tightly coupled or latency-sensitive scenarios.
+- **Message-Driven Communication**: Agents communicate asynchronously via a broker or event bus, exchanging commands, events, or responses. This promotes loose coupling, scalability, and resilience—especially in distributed or dynamic environments.
+
+Many systems adopt hybrid models, combining request-based communication with asynchronous messaging to balance control, flexibility, and fault tolerance (e.g. agents emitting events to be consumed by external systems).
+
+#### Observability
+
+Building observable multi-agent systems requires expanding the traditional pillars of logs, metrics, and traces to address the unique challenges of AI. This involves capturing specialized signals such as agent actions, tool usage, model invocations, and response patterns, to effectively debug, monitor, and optimize agent performance across key areas:
+
+- **Agent Communication**: Tracking inter-agent message flows, coordination patterns, and communication bottlenecks
+- **Performance Monitoring**: Measuring response times, resource utilization, and throughput across distributed agents
+- **Error Handling**: Detecting failures, cascading errors, and recovery mechanisms in agent workflows
+**Security & Compliance**: Monitoring for unauthorized access, data leaks, and regulatory compliance across agent interactions
+
+#### Evaluation-Driven Observability
+
+Observability gives us metrics, but evaluation is the process of analyzing that data (and performing tests) to determine how well an AI agent is performing and how it can be improved. In other words, once we have traces and metrics, how we can use them to judge the agent and make decisions?
+
+
+##### Multi-agent Evaluation Challenges
+
+While observability provides the instrumentation to collect metrics and traces, evaluation analyzes that data to determine how well agents are performing against defined success criteria and business requirements.
+
+
+Multi-agent systems introduce evaluation complexities like:
+
+- Path optimization: Agents may reach correct solutions through inefficient routes, making it difficult to assess optimal performance
+- Error propagation: Upstream failures can cascade through agent interactions, obscuring the root cause of downstream issues
+- Emergent behavior: Collective agent interactions produce behaviors that cannot be predicted from individual agent analysis
+- Non-deterministic outputs: The same input may produce different valid responses, complicating traditional success metrics
+
+##### Evaluation types and methodologies
+
+###### Code-based evaluation
+
+This approach uses deterministic and programmatic criteria (like unit testing) to validate system behavior, for example:
+
+Evaluation Type	| Purpose	| Example
+-------- | --------- | ----------
+API Response Validation	| Ensures endpoint responses match expected results.	| A POST `/agent/start` call should return HTTP 200 and include `task_id`.
+Output Format Verification	| Validates structure and data types of responses.	| An agent’s reply must include action, result, and status fields.
+Performance Benchmarking	| Measures response times and resource usage.	| The agent must respond within 500ms under 100 requests per second.
+Security Compliance  Checks | 	Verifies adherence to security standards. |	Ensure tokens aren’t logged and sensitive headers are encrypted.
+
+
+###### LLM-as-a-judge evaluation
+
+Unlike code-based evaluation, which uses deterministic rules, this method leverages Large Language Models (LLMs) to assess the *semantic*, *stylistic*, and *contextual* quality of responses—dimensions that are difficult or impossible to capture with hard-coded assertions.
+
+Evaluation Aspect	| Purpose	| Example
+---------- | ----------- | ------------
+Relevance Scoring |	Measures how well the response answers the input.	| An agent asked to summarize an article should produce a coherent summary.
+Tone and Style Evaluation |	Assesses whether the response aligns with expected tone or voice. |	A customer support agent should respond politely and professionally.
+Bias Detection	| Identifies implicit or explicit bias in output.	| Flag responses that reinforce gender stereotypes or political bias.
+Hallucination Detection	| Flags statements that are factually incorrect.	| Detect when an agent invents citations or misrepresents known facts.
+
+##### Evaluation phases
+
+###### Offline evaluation
+
+Pre-deployment testing using curated datasets and controlled environments:
+
+- Benchmark dataset comparison with expected input/output pairs
+- Regression testing against historical performance baselines
+- Edge case validation using synthetic scenarios
+- Load testing for scalability assessment
+
+Maintain comprehensive test datasets that evolve with your system. Regular updates with new edge cases and failure examples ensure evaluation relevance.
+
+###### Online evaluation
+
+Production monitoring with real user interactions:
+
+- Real-time performance tracking
+- User satisfaction measurement
+- Anomaly detection and alerting
+- Continuous feedback collection
+
+##### Evaluation feedback loop
+
+Adopt an iterative loop that blends offline analysis, live monitoring, and data-driven refinement:
+
+
+```mermaid
+stateDiagram-v2
+    A: Offline Evaluation
+    B: Deploy Agent Version
+    C: <center>Online Evaluation & Monitoring<center/>
+    D: <center>Collect Data and Examples<center/>
+    E: Data Enrichment
+    F: Iteration & Refinement
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> A
+```
+
+
+##### Critical evaluation areas
+
+###### High-risk operations
+
+Systems that modify databases, trigger external actions, or handle sensitive data require enhanced evaluation rigor:
+
+- *Accuracy validation*: Verify correctness of all data modifications
+- *Authorization checks*: Ensure proper access control enforcement
+- *Audit trails*: Maintain comprehensive logs of all system changes
+- *Rollback testing*: Validate recovery mechanisms for failed operations
+
+###### Security and compliance
+
+- *Access control*: Validate authentication and authorization between agents
+*Data protection*: Test privacy preservation and data handling protocols
+- *Adversarial resilience*: Assess system behavior under attack scenarios
+- *Regulatory compliance*: Verify adherence to industry standards and regulations
+
+Don't select metrics simply because they're available in your toolbox. Choose evaluation strategies that align with your specific use case and business requirements.
+
+##### Evaluation strategies by system component
+
+###### Orchestrator agent evaluation
+
+- *Intent resolution*: Validate correct routing and task decomposition decisions
+- *Plan optimization*: Assess efficiency of generated execution plans
+- *Response synthesis*: Evaluate quality of final output aggregation
+- *Error handling*: Test recovery mechanisms when specialized agents fail
+
+###### Specialized agents evaluation
+
+- *Task completion*: Measure accuracy and completeness of domain-specific outputs
+- *Tool call*: Validate correct function/tool calling and API interactions
+- *Response quality*: Assess output relevance, accuracy, and formatting
+- *Boundary handling*: Test behavior at capability limits and edge cases
+
+###### Registry evaluation
+
+- *Discovery accuracy*: Verify correct agent selection for given capabilities
+- *Metadata integrity*: Validate agent descriptions and capability mappings
+- *Performance tracking*: Monitor agent availability and response times
+- *Version management*: Test compatibility across different agent versions
+
+For reference:
+
+- [Agent Evaluation in 2025: Complete Guide](https://orq.ai/blog/agent-evaluation)
+- [AI Agent Observability and Evaluation](https://huggingface.co/learn/agents-course/bonus-unit2/what-is-agent-observability-and-evaluation)
+- [LLM Evaluation](https://langfuse.com/docs/scores/overview)
+- [Evaluating Multi-Agent Systems](https://arize.com/docs/phoenix/learn/evaluating-multi-agent-systems)
+
+#### Security
+
+This document outlines the security considerations and best practices for implementing multi-agent systems in enterprise environments. The architecture prioritizes *responsible AI* usage, *data protection*, *access control*, and *observability* at every layer.
+
+##### Core Security Principles
+
+- **Identity Enforcement**
+    - Agents and orchestrators authenticate via identity providers.
+    - Role-based access control (RBAC) governs agent execution and orchestration permissions.
+    - Ensure mutual authentication between agents using enterprise identity systems (Entra ID, SPIFFE, etc.).
+    - Use X.509 certificates or JWTs signed by an internal CA to verify agent provenance.
+    - Support rotating credentials for long-lived agents.
+
+- **Scoped Agent Capabilities**
+    - Agent registry enforces capability declarations and metadata tagging.
+    - Only approved capabilities can be executed in runtime.
+
+- **Data Governance & Storage Policies**
+    - All storage layers (state, conversation history, registry) support encryption-at-rest.
+    - Retention policies are configurable per agent or orchestrator.
+
+- **Secure Communication**
+    - All communication between agents, orchestrator, and external tools is encrypted via HTTPS or mutual TLS.
+    - MCP protocol supports signed payloads and call tracing.
+
+- **Policy-Controlled Tool Invocation**
+    - MCP server validates tool access policies before invocation.
+    - Integration layer enforces audit logging for all tool calls.
+
+- **Memory Management and Redaction**
+    - Short-term memory is scoped to current conversation thread.
+    - Long-term memory undergoes PII redaction and consent-based storage.
+
+- **LLM Usage & Guardrails**
+    - Prompt templates include safety instructions.
+    - Responses are filtered by safety classifiers and optionally passed through moderation APIs.
+
+- **Auditability and Observability**
+    - Every orchestration and agent call is logged with metadata: timestamp, caller identity, input hash, output hash.
+    - Logs are shipped to centralized observability platform
+
+- **Adversarial Testing & Red Teaming**
+    - Simulate attacks (prompt injection, message corruption, impersonation).
+    - Use chaos security engineering to validate robustness of inter-agent communication.
+- **Agent Versioning and Rollback Strategy**
+    - Version every agent’s logic, prompt configuration, and communication contract (e.g., using SemVer).
+    - Support graceful coexistence of multiple versions (e.g., v1 agents in production, v2 agents in testing).
+    - Use feature flags or routing rules to selectively enable agent versions per customer or region.
+    - Always enable immediate rollback to a previous version if anomalies are detected (e.g., via GitOps or CI/CD workflows).
+
+- **Business Continuity and User Safety**
+    - Establish SLOs for agent performance (latency, availability, decision quality).
+    - Define user impact metrics before deployment (e.g., error rate, abandonment rate, CSAT).
+    - Automate runtime health checks and user experience monitoring tied to release gates.
+    - Include manual override mechanisms (e.g., pause/disable an agent class) without affecting the overall system.
+
+##### Enterprise Data Protection in RAG Scenario
+
+- Document Indexing Layer
+    - When indexing documents, ensure to include sensitivity and/or permissions (owner, edittable, etc) information in included as a retrievable field.
+
+- Retrieval Layer
+    - When retrieving/vector search for documents, filter on relevant sensitivity or permissions based on agent or user role or identity
+
+- Agent (using RAG) Layer
+    - Before generating response from the resulting document, ensure the retrieved documents are viewable by the user as another layer of protection
+
+- Identity Layer
+    - Ensure that the user identity has roles or permissions associated and the identity is secured by following the "Identity Enforcement" section of this guide
+
+##### Compliance Considerations
+
+- Support for GDPR/CCPA consent flows.
+- Optional on-premise deployment for sensitive workloads.
+- Integration with enterprise data loss prevention (DLP) systems.
+
+##### Future Additions
+
+Integration with confidential computing enclaves (TEE).
+Fine-grained token scopes for agents.
+Agent-level anomaly detection models.
+
+
+#### Governance
+
+One of the key aspects of adopting any new technology in an enterprise environment is governance. This becomes even more critical with the adoption of Generative AI (GenAI). While GenAI represents a powerful and transformative technology, its value does not emerge in isolation. On its own, it is just a sophisticated engine — without access to high-quality, governed data, its potential remains untapped.
+
+This becomes especially evident when comparing deterministic systems to AI-driven solutions. Traditional (deterministic) applications are rule-based, predictable, and typically operate within predefined inputs and outputs. Their governance often revolves around access control, compliance, and auditability of code and workflows. However, multi-agent systems powered by GenAI introduce additional governance concerns:
+
+- Data provenance and usage policies: AI agents must access data responsibly and in alignment with enterprise policies.
+
+- Output accountability: As agents act autonomously or semi-autonomously, ensuring traceability and responsibility for generated outputs is essential.
+
+- Operational boundaries: It’s critical to define the scope of what agents are allowed to do, particularly in dynamic orchestration settings.
+
+- Model oversight: The lifecycle of the models used (training, fine-tuning, evaluation) must be managed under clear governance to avoid misuse or drift.
+
+Without strong governance in place, organizations risk uncontrolled automation, data exposure, hallucinated outputs, and non-compliance with regulations. Establishing a governance framework early ensures responsible innovation, maintains trust, and paves the way for enterprise-scale adoption of GenAI and multi-agent architectures.
+
+##### How to overcome the governance challenges
+
+To govern GenAI-powered multi-agent systems effectively, enterprises must establish a clear and actionable **Responsible AI (RAI)** framework. A governance plan should not only align with ethical and regulatory standards but also enable scalable innovation without compromising security, compliance, or trust.
+
+One strong reference is the Microsoft Responsible AI Standard (v2), which outlines foundational practices to ensure that AI systems are built responsibly. Building on these principles, organizations can create a governance roadmap as follows:
+
+###### Steps to Address Governance
+
+```mermaid
+stateDiagram-v2
+    A: <center>Define Responsible AI Policies and Accountability Structures<center/>
+    B: <center>Implement Guardrails across the AI Lifecycle<center/>
+    C: <center>Govern Data Access and Use<center/>
+    D: <center>Establish Evaluation and Red-Teaming Processes<center/>
+    E: <center>Provide Training and Documentation<center/>
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+```
+
+
+
+
+###### Define Responsible AI Policies and Accountability Structures
+
+- Adopt RAI principles such as fairness, reliability, privacy, inclusiveness, transparency, and accountability.
+- Establish a cross-functional governance committee with representation from legal, compliance, IT, security, and AI teams.
+- Define clear roles and responsibilities for model development, approval, deployment, and monitoring.
+
+###### Implement Guardrails Across the AI Lifecycle
+
+- Use tools like Azure AI Content Safety and Prompt Shields to detect and filter unsafe or policy-violating outputs.
+- Monitor for model drift, prompt injection, or malicious orchestration in multi-agent systems using telemetry and evaluation pipelines.
+- Ensure auditability of agent actions via structured logging, versioning, and traceable decision trees, check Observability section.
+
+###### Govern Data Access and Use
+
+- Classify data according to sensitivity and restrict agent access based on data governance policies.
+- Apply role-based access control (RBAC) and monitor for unauthorized data usage.
+- Use data loss prevention (DLP) techniques and encryption to reduce exposure risk.
+
+###### Establish Evaluation and Red-Teaming Processes
+
+- Continuously evaluate system behavior through human-in-the-loop feedback loops.
+- [Conduct adversarial testing (red-teaming) to identify failure modes in agent collaboration or unintended capabilities](https://learn.microsoft.com/en-us/azure/foundry/concepts/ai-red-teaming-agent).
+- Track hallucination rates and bias impacts using Azure AI Evaluation tools or similar frameworks.
+
+###### Provide Training and Documentation
+
+- Train teams on your RAI framework and decision-making criteria.
+- Document system design choices, model limitations, data sources, and intended uses.
+- Ensure users and stakeholders understand system capabilities and boundaries, particularly in customer-facing scenarios.
+
+
+### Multi-Agent Patterns Reference
+
+[This document](https://github.com/microsoft/multi-agent-reference-architecture/blob/main/docs/reference-architecture/Patterns.md#multi-agent-patterns-reference) catalogs key design patterns used in the Multi-Agent Reference Architecture. Each pattern contributes to the system's modularity, scalability, governance, or performance.
+
+##### Semantic Router with LLM Fallback
+
+**Intent-based routing optimized for cost and performance**
+
+- Use a lightweight NLU or SLM classifier for initial routing.
+- If classifier confidence is low, escalate to a more expensive LLM.
+- Benefit: Reduces LLM usage while maintaining accuracy.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Orchestrator
+    participant NLU
+    participant LLM
+
+    User->>Orchestrator: Send query
+    Orchestrator->>NLU: Classify intent
+    alt Confident match
+        NLU-->>Orchestrator: Intent Label
+        Orchestrator-->>Agent: Route to matched agent
+    else Low confidence
+        Orchestrator->>LLM: Generate best-match intent
+        LLM-->>Orchestrator: Intent Label
+        Orchestrator-->>Agent: Route to matched agent
+    end
+```
+
+
+
+#####  Dynamic Agent Registry (Service Mesh for Agents)
+
+**Agent discovery based on capabilities and metadata**
+
+- Agents register with descriptors (capabilities, tags, embeddings).
+- Registry supports runtime resolution by orchestrator.
+- Benefit: Supports plug-and-play extensibility and self-healing behavior.
+
+```mermaid
+sequenceDiagram
+    participant Admin as Admin
+    participant AdminApp as Admin Interface
+    participant Orch as Orchestrator
+    participant AgReg as Agent Registry
+    participant ValM as Evaluation
+    participant Agent3 as Agent
+    participant StorL as Storage Layer
+
+    Admin->>AdminApp: Request to register new agent
+    AdminApp->>Orch: Send registration request
+    Orch->>+AgReg: Forward registration request
+    AgReg->>AgReg: Generate agent ID and credentials
+    AgReg->>Agent3: Probe agent endpoint
+    Agent3-->>AgReg: Return capability manifest
+    AgReg->>AgReg: Validate schema compliance
+    AgReg->>AgReg: Check security requirements
+    AgReg->>StorL: Store agent metadata
+    StorL-->>AgReg: Confirm storage
+    AgReg->>+ValM: Evaluate new configuration
+    ValM->>StorL: Request Evaluation Data Set
+    StorL-->>ValM: Evaluation Data Set
+    loop Orchestration Evaluation
+        ValM->>Agent3: Submit prompt
+        Agent3-->>ValM: Response
+    end
+    ValM-->>-AgReg: Evaluation response
+
+    alt Evaluation Passed
+        AgReg->>Agent3: Send registration confirmation
+        Agent3-->>AgReg: Acknowledge registration
+        AgReg->>StorL: Update registry storage
+        StorL-->>AgReg: Confirm update
+    else Evaluation Not Passed
+        AgReg->>Agent3: Send registration Denied
+        Agent3-->>AgReg: Acknowledge registration Denied
+        AgReg->>StorL: Update storage
+        StorL-->>AgReg: Confirm update
+    end
+    AgReg-->>-Orch: Return registration status
+    Orch-->>AdminApp: Report registration status
+    AdminApp-->>Admin: Display confirmation and agent details
+```
+
+##### Semantic Kernel Orchestration with Skills
+
+**Composable orchestration using reusable agent capabilities**
+
+- Each "skill" encapsulates an agent function.
+- Orchestrator chains skills with memory, planning, and goals.
+- Benefit: Encourages modular and context-aware execution.
+
+```mermaid
+sequenceDiagram
+    title Semantic Kernel Orchestration with Skills
+
+    participant User
+    participant Orch as SK-Orchestrator
+    participant Memory
+    participant Planner
+    participant Goal
+    participant SkillA as Skill: Search
+    participant SkillB as Skill: Summarize
+    participant SkillC as Skill: Recommend
+
+    User->>Orch: Submit query / task
+    Orch->>Memory: Retrieve context
+    Memory-->>Orch: Return relevant memory
+
+    Orch->>Planner: Analyze task and context
+    Planner-->>Orch: Return skill execution plan
+
+    Orch->>Goal: Evaluate intent and goal alignment
+    Goal-->>Orch: Confirm objective
+
+    Orch->>SkillA: Execute Skill: Search
+    SkillA-->>Orch: Return search results
+
+    Orch->>SkillB: Execute Skill: Summarize
+    SkillB-->>Orch: Return summary
+
+    Orch->>SkillC: Execute Skill: Recommend
+    SkillC-->>Orch: Return recommendation
+
+    Orch-->>User: Deliver final result
+```
+
+##### Local & Remote Agent Execution
+
+**Federated agent model with supervisor coordination**
+
+- Local supervisor delegates tasks to local or remote agents.
+- Secure channels maintain observability and traceability.
+- Benefit: Enables scalability across networks or geographies.
+
+
+```mermaid
+sequenceDiagram
+    title Local & Remote Agent Execution
+    participant User
+    participant UserApp as User Application
+    participant Orch as SK-Orchestrator
+    participant Class as Classifier
+    participant Super as Supervisor Agent
+    participant AgReg as Agent Registry
+    participant Agent1 as Agent 1 (Local)
+    participant Agent2 as Agent 2 (Remote)
+    participant KnowL as Knowledge Layer
+    participant StorL as Storage Layer
+    
+    User->>UserApp: 1. Submit complex query
+    UserApp->>Orch: 2. Forward request
+    Orch->>StorL: 3. Load conversation history
+    StorL-->>Orch: 4. Return context
+    Orch->>Class: 5. Classify query
+    Class->>Class: 6. Determine multi-agent needed
+    Class->>AgReg: 7. Get matching agents
+    AgReg-->>Class: 8. Return Agents 1 & 2
+    Class-->>Orch: 9. Return classification
+    
+    Orch->>Orch: 10. Allocate context window
+    Orch->>Super: 11. Coordinate multi-agent task
+    Super->>Super: 12. Decompose task
+    Super->>Agent1: 13. Process part 1
+    Super->>Agent2: 14. Process part 2
+    
+    Agent1->>KnowL: 15. Query knowledge
+    KnowL-->>Agent1: 16. Return information
+    Agent2->>KnowL: 17. Query knowledge
+    KnowL-->>Agent2: 18. Return information
+    
+    Agent1->>Agent1: 19. Generate response 1
+    Agent2->>Agent2: 20. Generate response 2
+    Agent1-->>Super: 21. Return part 1
+    Agent2-->>Super: 22. Return part 2
+    
+    Super->>Super: 23. Merge responses
+    Super->>Super: 24. Synthesize final response
+    Super-->>Orch: 25. Return unified response
+    
+    Orch->>StorL: 26. Store interaction
+    StorL-->>Orch: 27. Acknowledge
+    Orch-->>UserApp: 28. Return response
+    UserApp-->>User: 29. Display answer
+
+```
+
+##### Layered (Onion) Architecture
+
+**Separation of concerns by functional domain**
+
+- Layers include Orchestration, Agent, Knowledge, Storage, Integration.
+- Each layer has bounded responsibilities and APIs.
+- Benefit: Improves maintainability, scalability, and testability.
+
+##### MCP Integration Layer
+
+**Decoupled agent-to-tool invocation with governance**
+
+- MCP server abstracts tool APIs from agents.
+- Policies control access, parameters, and invocation flow.
+- Benefit: Adds auditability, policy enforcement, and centralized logic.
+
+```mermaid
+sequenceDiagram
+    title MCP Integration Layer – Decoupled Agent-to-Investment Tool Invocation
+
+    participant Agent as Agent (e.g. Investment Advisor)
+    participant MCP as MCP Server
+    participant Policy as Policy Engine
+    participant Tool as Tool API (e.g. StockQuotes, RiskAnalysis)
+    participant Audit as Audit Log
+
+    Agent->>MCP: Request to invoke "GetStockQuote" tool (e.g. for AAPL)
+    MCP->>Policy: Evaluate access rules and validate parameters
+    Policy-->>MCP: Access granted with constraints
+
+    MCP->>Tool: Call StockQuotes API with validated input
+    Tool-->>MCP: Return quote data (price, volume, trend)
+
+    MCP->>Audit: Log tool invocation and response
+    MCP-->>Agent: Return investment data result
+
+```
+
+#####  RAG (Retrieval-Augmented Generation)
+
+**Enhancing responses with contextual data from vector stores**
+
+- Pre-indexed content stored in vector DBs.
+- Orchestrator and agents query for grounding facts.
+- Benefit: Improves factual accuracy and reduces hallucination.
+
+```mermaid
+sequenceDiagram
+    participant Agent
+    participant VectorDB
+    participant Knowledge Store
+    participant LLM
+
+    Agent->>VectorDB: Query embeddings
+    VectorDB-->>Agent: Top-k docs
+    Agent->>LLM: Compose prompt with documents
+    LLM-->>Agent: Factual response
+
+```
+
+##### Conversation-Aware Orchestration
+
+**Adaptive behavior based on memory and context**
+
+- Conversation history is stored and retrieved by orchestrator.
+- Agents can use long-term and short-term memory cues.
+- Benefit: Supports personalization, continuity, and context-awareness.
+
+##### Agent-to-Agent Communication
+
+**Cooperative task delegation between agents**.
+
+- Agents interact via orchestrator or directly through scoped protocols.
+- Registry tracks active agents and routing preferences.
+- Benefit: Supports delegation, specialization, and parallelization.
+
+
+```mermaid
+sequenceDiagram
+    participant Orch as Orchestrator
+    participant Agent1
+    participant Agent2
+    participant Agent3
+    participant Stor as Storage
+    participant MQ as Message Queue
+
+    %% --- Pattern 1: Orchestrator Mediated Communication ---
+    Note over Agent1,Agent2: Pattern 1: Orchestrator Mediated
+    Agent1->>Orch: Request info from Agent 2
+    Orch->>Agent2: Forward request to Agent 2
+    Agent2-->>Orch: Send response
+    Orch->>Stor: Log inter-agent communication
+    Orch-->>Agent1: Forward response to Agent 1
+
+    %% --- Pattern 2: Direct via Stdin/out or A2A with Notification to Orchestrator ---
+    Note over Agent1,Agent3: Pattern 2: Direct (Stdin/Stdout or A2A) with Orchestrator Notification
+    Agent1->>Orch: Notify intent to contact Agent 3 (Remote)
+    Orch->>Agent1: Approve direct communication
+    Agent1->>Agent3: Direct request (via stdin/out or A2A)
+    Agent3-->>Agent1: Direct response
+    Agent1->>Orch: Report interaction completion
+    Orch->>Stor: Log interaction
+
+    %% --- Pattern 3: Pub/Sub Communication ---
+    Note over Agent1,MQ: Pattern 3: Pub/Sub Messaging
+    Agent1->>MQ: Publish message (topic: data_request)
+    MQ->>Agent2: Subscribed agent receives message
+    Agent2->>MQ: Publish response
+    MQ->>Agent1: Deliver response
+    MQ->>Stor: Log all communications
+```
+
+##### Skill Chaining with Planning Support
+
+**Goal-oriented execution via automatic chaining of capabilities**
+
+- Planner creates execution path from available skills.
+- Each skill is stateless, composable, and memory-aware.
+- Benefit: Unlocks complex multi-step interactions.
+
+
+```mermaid
+sequenceDiagram
+    participant Orchestrator
+    participant Skill 1
+    participant Skill 2
+    participant Memory
+
+    Orchestrator->>Memory: Load context
+    Orchestrator->>Skill 1: Execute
+    Skill 1-->>Orchestrator: Output 1
+    Orchestrator->>Skill 2: Execute
+    Skill 2-->>Orchestrator: Output 2
+    Orchestrator->>Memory: Save updated context
+
+```
+
+
+Below are the most foundational patterns that you can choose to shape an architecture. 
+
+- Semantic Router + LLM Fallback
+- Dynamic Agent Registry (Service Mesh for Agents)
+- Semantic Kernel Orchestrator with Skills
+- Local & Remote Agent Execution
+- Separation of Concerns Across Layers (Onion Architecture for Agent Systems)
+- MCP Integration for Agent-Tool Communication
+- RAG (Retrieval-Augmented Generation) Pipeline
+- Conversation-Aware Agent Orchestration (Contextual state + history memory)
+- Agent to Agent communication Agent to Agent Communication Patterns
+
+
+
+### Reference Architecture
+
+Bsed on patterens mentioned above,  [the architecture below](https://github.com/microsoft/multi-agent-reference-architecture/blob/main/docs/reference-architecture/Reference-Architecture.md#sequence-diagram) illustrates a modular and governed multi-agent system, supporting both local and remote agents through a central orchestration layer. At its core, the Orchestrator (e.g., Semantic Kernel) coordinates agent interactions, consults a classifier for intent routing, and uses a registry for agent discovery and lifecycle management. The system integrates with knowledge bases and vector databases, and maintains context and state through a persistent storage layer. Integration with external tools is supported through an MCP (Model Context Protocol) server. This design ensures flexibility, extensibility, and strong control boundaries between components, allowing seamless onboarding of new models, tools, and communication patterns.
+
+<p align="center">
+<img src="./assets/agentic_ai/architecture.png" alt="drawing" width="500" height="700" style="center" />
+</p>
+
+#### Components' breakdown
+
+##### User Application
+- The interface layer that facilitates user interaction with the multi-agent system.
+- It abstracts the complexity of the underlying architecture and provides a consistent, user-friendly experience.
+
+How it works: Typically implemented as web applications, mobile apps, chat interfaces, APIs, or embedded widgets in other applications. It handles:
+
+- User authentication and session management
+- Input formatting and validation
+- Response rendering and formatting
+- Error handling and user feedback
+- User preference management
+
+##### Orchestrator (Semantic Kernel)
+
+The central coordination component that manages the flow of requests and responses throughout the system. It provides unified management, ensuring appropriate routing, maintaining context, and handling the lifecycle of requests.
+
+How it works: The orchestrator receives requests from the User Application, determines how to process them, coordinates with the appropriate components, maintains state, and eventually returns responses.
+
+**Implementation**
+
+Often structured as a core orchestration service with:
+
+- Request/response lifecycle management
+- Context preservation across interactions
+- It determines the appropriate functions, plugins, or agents to invoke using planners or semantic functions.
+- Fallback and error recovery mechanisms
+
+Semantic Kernel provides:
+
+- Semantic function orchestration (organizing and sequencing AI functions)
+- Memory and context management
+- Plugin architecture for extensibility
+- Planners that can decompose complex tasks into simpler steps
+- Integration with various AI models and services
+- Native support for multi-agent scenarios
+- Cross-platform compatibility (multiple programming languages, check the features compatibility)
+
+##### Classifier (NLU, SLM, LLM)
+
+The component responsible for understanding user inputs and determining the appropriate routing within the system. It ensures that user requests are properly understood and directed to the most suitable agent, improving response quality and system efficiency.
+
+How it works: Analyzes the content, context, and intent of user inputs to categorize them and determine appropriate handling.
+
+The approach involves using options ranging from less to more expensive ones, NLU -> SLM -> LLM | SML based on certainty to determine the use of intent or continuation. If no intent is detected by the end of the process, return "IDK" (I Don’t Know).
+
+**Implementation**:
+
+It can be implemented using a variety of technologies, including but not limited to:
+
+- NLU (Natural Language Understanding): Extracts intent and entities
+- SLM (Statistical Language Models): Used for pattern recognition and classification
+- LLM | SLM (Large Language Models | Small Language Models): Provide sophisticated understanding of complex inputs
+
+##### Agent Registry
+
+See Agent Registry Page for more detail
+
+##### Knowledge-base Layer
+
+Repositories of structured and semi-structured knowledge that agents can reference. They provide domain-specific information that enhances agent capabilities beyond what's possible with generic AI models alone.
+
+How it works: Organizes knowledge into accessible formats, often including taxonomies, ontologies, and semantic relationships.
+
+**Implementation**:
+
+- Document databases
+- Knowledge graphs
+- Content management systems with APIs
+- Specialized domain knowledge bases
+- FAQ systems and support documentation
+- Expert-curated information repositories
+
+Recommended practices: Knowledge should be properly structured, tagged, versioned, and regularly updated to maintain accuracy and relevance.
+
+##### Supervisor Agent
+
+A specialized agent responsible for coordinating the activities of other agents to solve complex tasks. It enables decomposition of complex tasks into subtasks that can be handled by specialized agents, then synthesizes their outputs into coherent responses.
+
+How it works: Receives high-level tasks, breaks them down, delegates to appropriate specialized agents, monitors progress, aggregates results, and ensures overall task completion.
+
+**Implementation**:
+
+- Task planning algorithms
+- Dependency tracking systems
+- Agent selection and routing logic
+- Result aggregation and synthesis capabilities
+- Error handling and retry mechanisms
+- Conflict resolution for contradictory inputs
+- High-level reasoning models (usually LLMs or SLMs)
+
+Recommended practices
+
+- Monitor agent overlap in terms of knowledge domain and action scope to prevent redundancy and confusion.
+- Avoid keeping highly similar agents separate, as this can degrade the performance of the orchestrator or intent classifier.
+- Refactor or group similar agents under a shared interface or capability to streamline classification and routing.
+- Introduce agent supervisors as the architecture scales across domains—these components help manage and abstract groups of related agents.
+- Use hierarchical organization (e.g., supervisor → agent group) to maintain clarity, scalability, and ease of intent resolution.
+
+##### Agent #1, #2, #3, #4 (with MCP Client)
+
+Specialized AI agents designed to handle specific domains, tasks, or capabilities. Domain specialization allows for deeper expertise and better performance in specific areas compared to general-purpose agents.
+
+How it works: Each agent focuses on a particular domain (e.g., finance, healthcare, coding) or function (e.g., summarization, research, creative writing), applying specialized knowledge, models, or techniques to user requests.
+
+**Implementation**:
+
+- Domain-specific LLM fine-tuning
+- RAG (Retrieval-Augmented Generation) with domain knowledge
+- Specialized algorithms for domain-specific tasks
+- Local or remote execution depending on resource requirements
+- Self-assessment of capability and confidence levels
+
+###### MCP Client Component
+
+- Enables standardized communication with external tools via MCP
+- Manages discovery of available tools and capabilities
+- Handles authentication and authorization for tool access
+- Maintains connection state and manages re-connections
+- Formats requests and responses according to MCP specification
+- Provides tool usage analytics and error handling
+
+###### Differences between Local and Remote Agents
+
+- Local agents run within the same environment as the orchestrator
+- Remote agents operate across network boundaries
+- Remote agents require additional security and reliability considerations
+- Communication patterns differ (in-memory vs. network protocols)
+- Deployment and scaling strategies vary significantly
+- Resource management approaches differ substantially
+
+##### Conversation History
+
+A persistent store of user-agent interactions and conversation flows. It enables context-aware responses, supports learning from past interactions, and provides an audit trail of system behavior.
+
+How it works: Records each turn in a conversation, maintaining user inputs, agent responses, and associated metadata in a structured, queryable format.
+
+Implementation:
+
+- Specialized conversation stores or time-series databases
+- Hierarchical data models (user → session → conversation → turn)
+- Indexing for efficient context retrieval
+- Compression and archiving strategies for older data
+- Query optimization for contextual lookups
+- Privacy controls and data retention policies
+
+##### Agent State
+
+Persistent storage of agent operational status, configuration, and runtime state. It enables continuity across sessions, recovery from failures, and adaptation based on past experiences.
+
+How it works: Maintains both static configuration and dynamic runtime state for each agent, allowing them to resume operations and maintain learned behaviors.
+
+Implementation:
+
+- Key-value stores for fast state access
+- State versioning for consistency
+- Snapshot mechanisms for point-in-time recovery
+- Caching strategies for performance optimization
+- Conflict resolution for concurrent updates
+- State migration for version compatibility
+
+###### Registry Storage
+
+Specialized storage for the Agent Registry, maintaining agent metadata, capabilities, and operational history. It provides the persistent data layer for the Agent Registry, ensuring consistent agent information across system restarts and updates.
+
+How it works: Stores comprehensive information about each agent, including capabilities, endpoints, security credentials, performance metrics, and version history.
+
+**Implementation**:
+
+- Structured database (relational or document)
+- Query-optimized schema for capability lookups
+- Transaction support for consistent updates
+- Versioning for agent evolution tracking
+- Audit logging for security compliance
+- Backup and recovery mechanisms
+
+Best practices: Implementing appropriate access controls, regular backup procedures, and efficient querying patterns for agent discovery
+
+##### Integration Layer & MCP Server
+
+A standardized interface layer that connects agents to external tools, services, and data sources. It provides a consistent way for agents to access external capabilities without needing to implement custom integrations for each tool.
+
+How it works: Implements the Model Context Protocol (MCP) to expose tools as a standardized service that agents can discover and invoke.
+
+**Implementation**:
+
+- MCP server implementation exposing tool APIs
+- Authentication and authorization controls
+- Request validation and error handling
+- Tool discovery and capability description
+- Usage monitoring and rate limiting
+- Versioning and backward compatibility
+
+###### Key sub components
+
+- Tool Adapters: Convert native tool APIs to MCP-compatible formats
+- Security Gateway: Manages authentication and authorization
+- Request Router: Directs requests to appropriate tools
+- Response Formatter: Ensures consistent response formats
+- Monitoring System: Tracks usage, performance, and errors
+
+Best practices: Implementing robust security controls, comprehensive monitoring, and maintaining clear documentation of exposed tool capabilities.
+
+#### Sequence diagram
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant UserApp as User Application
+    participant Orch as Orchestrator
+    participant Class as Classifier
+    participant AgReg as Agent Registry
+    participant Super as Supervisor Agent
+    participant Agent1 as Agent 1 (Local)
+    participant Agent2 as Agent 2 (Local)
+    participant KnowL as Knowledge Layer
+    participant StorL as Storage Layer
+
+    User->>UserApp: 1. Submit complex query
+    UserApp->>Orch: 2. Forward request
+    Orch->>StorL: 3. Load conversation history
+    StorL-->>Orch: 4. Return context
+    Orch->>Class: 5. Classify query
+    Class->>Class: 6. Determine multi-agent needed
+    Class->>AgReg: 7. Get matching agents
+    AgReg-->>Class: 8. Return Agents 1 & 2
+    Class-->>Orch: 9. Return classification
+
+    Orch->>Orch: 10. Allocate context window
+    Orch->>Super: 11. Send user's request & agents info to be invoked
+    Super->>Super: 12. Decompose request based on agents' domains
+    Super->>Agent1: 13. Request within agent 1 domain
+    Super->>Agent2: 14. Request within agent 2 domain
+
+    Agent1->>KnowL: 15. Query knowledge
+    KnowL-->>Agent1: 16. Return information
+    Agent2->>KnowL: 17. Query knowledge
+    KnowL-->>Agent2: 18. Return information
+
+    Agent1->>Agent1: 19. Generate response Agent 1
+    Agent2->>Agent2: 20. Generate response Agent 2
+    Agent1-->>Super: 21. Return response Agent 1
+    Agent2-->>Super: 22. Return response Agent 2
+
+    Super->>Super: 23. Merge responses
+    Super->>Super: 24. Synthesize final response
+    Super-->>Orch: 25. Return unified response
+
+    Orch->>StorL: 26. Store interaction
+    StorL-->>Orch: 27. Acknowledge
+    Orch-->>UserApp: 28. Return response
+    UserApp-->>User: 29. Display answer
+```
 
 
 ## Introduction to LangChain
@@ -6821,3 +7987,8 @@ Skill number six is *evaluation* and *observability*. Let me give you a phrase t
 
 The final skill, number seven, is *product thinking*. This one's easy to overlook because it's not technical, but it might be the most important. Your agents exist to serve humans. And humans, we all have expectations. We want to know when the agent is confident versus uncertain. We want understand what it can do and can't do. We need graceful handling when things go wrong, not a cryptic error message. When should the agent ask for clarification? When should it escalate to an actual human? How do you build trust so people actually use it for real work? This is UX design for systems that are inherently unpredictable. The same agent might nail a task one day and fumble it the next. How do design an experience that accounts for that? How do set appropriate expectations without undermining confidence? Agent engineers think about the human on the other end, not just the code. 
 
+
+
+
+### LangSmith
+To get insight into how your agents are running, use LangSmith to trace all queries and observe latencies, token usage, tools called and their inputs and outputs. Connect to the API endpoint (with its API key) to debug your agents when things get a little bit more complex as you add more tools and the tasks are less deterministic. With the free tier, you have up to 5000 free tokens per month which is more than enough for development and side projects. 
