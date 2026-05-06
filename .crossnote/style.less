@@ -46,7 +46,7 @@
   // padding-left: 80px !important;
   // padding-right: 80px !important;
   background-color: #0a0b2b;
-  color: #adb6c1;
+  color: #a8b0ba;
   // background-color: #1c1c1c;
   // color: #c0b8af;
   strong {
@@ -180,7 +180,7 @@
       margin-left: 10px;
       text-align: justify;
       // color: #cbb2b9 !important;
-      color: #91b1a9 !important;  /* Sage Mint */
+      color: #93b8ae !important;  /* Sage Mint */
       // color: #baa4d5 !important; /* Lavender */
       // color: #b2cbc3 !important; /* Seafoam Sage */
       // font-weight:normal !important;
@@ -297,6 +297,7 @@
 
 .mermaid {
     // background-color: #efdbdb; // Add padding or background
+    font-family: Helvetica, sans-serif !important;
     border-radius: 20px;
     display: flex !important;
     justify-content: center !important;
@@ -307,20 +308,18 @@
     
     // Use [id^="mermaid-"] to target the SVG regardless of the random number ID
     svg[id*="mermaid-"] {
-      font-family: Helvetica, sans-serif !important;
+      // background: #fdfdfd;
 
-      * {
-        font-family: inherit !important;
+
+      .cluster rect {
+        fill: rgba(0, 0, 0, 0.05) !important;
+        stroke: none  !important;
       }
-      tspan {
-        font-family: "Your Font Name", sans-serif !important;
-        fill: #47af47 !important; // Overrides the internal 'fill: black'
-      }
-    
+
       // 1. Target the Boxes (rect)
       // Note: The HTML shows class "actor actor-bottom"
       rect.actor {
-        fill: #daa7a7 !important;    // Your desired box color
+        fill: #c1b0b0 !important;    // Your desired box color
         stroke: #2bd8e1 !important;  // Your desired border color
         stroke-width: 2px !important;
       }
@@ -356,8 +355,8 @@
       .node rect, 
       .node circle, 
       .node polygon {
-        fill: #c19e9e !important;    // Match your box color
-        stroke: #dbdb02 !important;  // Match your border color
+        fill: #c1b0b0 !important;    // Match your box color
+        stroke: #fbfb01 !important;  // Match your border color
       }
 
       // 2. Target State Labels and Text
@@ -367,9 +366,9 @@
       .label text, 
       .label tspan {
         fill: #eeeeee !important;
-        color: #0b43e9 !important;
+        color: #043ff1 !important;
         font-family: Helvetica, monospace !important; // Reuse your font
-        font-weight: 350;
+        font-weight: 400;
       }
 
      .edgeLabel p, span.edgeLabel { 
@@ -377,6 +376,7 @@
       color: #94dc04 !important; 
       font-weight: 300;
     }
+
 
       // 3. Target Transitions/Arrows
       // In stateDiagrams, lines are often .transition or .edgePath
@@ -404,25 +404,9 @@
   }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
   code {
     /* Use a slightly lighter blue with low opacity */
-    background-color: rgba(255, 255, 255, 0.08) !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
     // background: transparent !important;
     
     /* Contrast the text: use a bright cyan or white */
@@ -435,8 +419,8 @@
     // padding: 0.1em 0.2em;
     // border-radius: 4px;
     font-family: 'Courier New', Courier, monospace;
-    // font-weight: 400;
-    // font-size: 90%;
+    // font-weight: normal !important;
+    font-size: 97%;
   }
   
   // Dracula Theme Colors
@@ -474,12 +458,10 @@
       padding: 1.5rem;
       border-radius: 8px;
       overflow-x: auto; // Enables scrolling for long lines
-      font-size: 0.95rem;
+      // font-size: 0.95rem;
       line-height: 1.5;
       border: 1px solid @current-line;
   }
-
-  
   
    /* 2. Container Style */
   .language-python.python code {

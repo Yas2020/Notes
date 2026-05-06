@@ -41,8 +41,6 @@
         - [Planning Strategies](#planning-strategies)
       - [Practical Strategies](#practical-strategies)
         - [Core Components](#core-components)
-        - [Key Strategies & Pillars](#key-strategies--pillars)
-        - [How Context Engineering Manages Memory](#how-context-engineering-manages-memory)
         - [The Core Lifecycle: Write, Select, Compress, Isolate](#the-core-lifecycle-write-select-compress-isolate)
     - [Common Context Failures](#common-context-failures)
       - [Context Poisoning](#context-poisoning)
@@ -63,13 +61,14 @@
       - [Natural Language Web (NLWeb)](#natural-language-web-nlweb)
         - [Components of NLWeb](#components-of-nlweb)
     - [Tool/Function Calling](#toolfunction-calling)
-        - [What is the Tool Use Design Pattern?](#what-is-the-tool-use-design-pattern)
-        - [What are the use cases it can be applied to?](#what-are-the-use-cases-it-can-be-applied-to)
-        - [Building blocks for implementing the tool use design pattern](#building-blocks-for-implementing-the-tool-use-design-pattern)
+      - [What is the Tool Use Design Pattern?](#what-is-the-tool-use-design-pattern)
+      - [What are the use cases it can be applied to?](#what-are-the-use-cases-it-can-be-applied-to)
+      - [Building blocks for implementing the tool use](#building-blocks-for-implementing-the-tool-use)
         - [Tool Schema](#tool-schema)
 - [Building Trustworthy Agents](#building-trustworthy-agents)
+  - [Core Validation Components](#core-validation-components)
   - [Structured meta prompting system](#structured-meta-prompting-system)
-      - [Structured](#structured)
+    - [Structured](#structured)
       - [Structured meta prompting](#structured-meta-prompting)
   - [Attackers](#attackers)
       - [Task & Instruction Manipulation (Prompt Injection)](#task--instruction-manipulation-prompt-injection)
@@ -78,27 +77,24 @@
       - [Knowledge Base Poisoning](#knowledge-base-poisoning)
       - [Cascading Errors](#cascading-errors)
 - [Multi Agents Design Patterns](#multi-agents-design-patterns)
-        - [Advantages of Using Multi-Agents Over a Singular Agent](#advantages-of-using-multi-agents-over-a-singular-agent)
-        - [Implementing the Multi-Agent Design Pattern](#implementing-the-multi-agent-design-pattern)
-    - [Visibility into Multi-Agent Interactions](#visibility-into-multi-agent-interactions)
-    - [Multi-Agent Patterns](#multi-agent-patterns)
+  - [Advantages of Using Multi-Agents Over a Singular Agent](#advantages-of-using-multi-agents-over-a-singular-agent)
+  - [Implementing the Multi-Agent Design Pattern](#implementing-the-multi-agent-design-pattern)
+  - [Visibility into Multi-Agent Interactions](#visibility-into-multi-agent-interactions)
   - [Agentic Design Patterns](#agentic-design-patterns)
       - [Pattern 1: Clear Agent Instructions](#pattern-1-clear-agent-instructions)
       - [Pattern 2: Structured Output with Pydantic Models](#pattern-2-structured-output-with-pydantic-models)
       - [Pattern 3: Single Responsibility Agents](#pattern-3-single-responsibility-agents)
-    - [Orchestrator–Worker (Hierarchical)](#orchestratorworker-hierarchical)
+    - [Basic Architectural Design for Agents](#basic-architectural-design-for-agents)
+      - [Hierarchical Design](#hierarchical-design)
     - [Multi-Agent Collaboration (Peer-to-Peer)](#multi-agent-collaboration-peer-to-peer)
     - [Shared State](#shared-state)
-      - [Some subclass patterns](#some-subclass-patterns)
-        - [Orchestrator–Worker (Hierarchical)](#orchestratorworker-hierarchical-1)
-        - [Group chat](#group-chat)
+      - [Examples](#examples)
+        - [Orchestrator–Worker (Hierarchical)](#orchestratorworker-hierarchical)
+        - [Group Chat](#group-chat)
         - [Hand-off](#hand-off)
         - [Collaborative Filtering](#collaborative-filtering)
       - [Assignment](#assignment)
     - [A2A Protocol](#a2a-protocol)
-      - [Summary](#summary)
-        - [Orchestrator Architecture (Centralized Control)](#orchestrator-architecture-centralized-control)
-        - [A2A Architecture (Decentralized)](#a2a-architecture-decentralized)
         - [The middle ground: Controlled A2A](#the-middle-ground-controlled-a2a)
         - [⚖️ Tradeoff summary](#️-tradeoff-summary)
 - [Deploy AI Agents into Production](#deploy-ai-agents-into-production)
@@ -119,6 +115,8 @@
     - [Handling Failure Modes and Self-Correction](#handling-failure-modes-and-self-correction)
     - [Boundaries of Agency](#boundaries-of-agency)
     - [Practical Use Cases and Value](#practical-use-cases-and-value)
+  - [Enterprise RAG Architecture](#enterprise-rag-architecture)
+  - [Enterprise RAG Pipeline](#enterprise-rag-pipeline)
 - [Multi agent architecture](#multi-agent-architecture)
     - [Design Principles](#design-principles)
     - [Core components](#core-components-1)
@@ -1308,31 +1306,33 @@ Context engineering treats the context window as a finite resource that must be 
 - *State Tracking*: Maintaining the current status of complex, multi-step tasks so the model knows what has already been done and what to do next. 
 
 
-###### Key Strategies & Pillars
+<!-- ###### Key Strategies & Pillars
 To maintain model performance and avoid "context rot" (degradation in accuracy as context grows), engineers use several strategies:
 
 - *Context Selection*: Identifying the smallest set of high-signal tokens needed for a specific step rather than dumping all available data.
 - *Context Compression*: Summarizing or trimming history and tool outputs to preserve space while keeping essential decisions.
 - *Context Ordering*: Placing critical rules and immediate tasks at the beginning or end of the window to combat the "lost in the middle" phenomenon.
-- *Context Isolation*: Using specialized sub-agents with their own focused contexts to solve complex parts of a problem independently. 
+- *Context Isolation*: Using specialized sub-agents with their own focused contexts to solve complex parts of a problem independently.  -->
 
 
-###### How Context Engineering Manages Memory
+<!-- ###### How Context Engineering Manages Memory -->
 Engineers treat the context window (the model's limited input space) as "RAM" or working memory. Because this space is expensive and finite, context engineering uses several memory management layers: 
 
-- *Short-Term (Working) Memory*: This is the live conversation history and current task state held directly in the context window. To prevent "amnesia" when the window fills up, engineers use trimming (deleting old turns) or summarization (condensing history).
-- *Long-Term (Persistent) Memory*: This stores user preferences, past decisions, and facts in external databases (like vector or graph databases). Context engineering determines which specific pieces of this long-term archive should be "paged" into the model's active context for the current task.
-- *Procedural Memory*: This involves storing the "how-to" of a system—the available tools, rules, and workflows—and injecting them into the context so the model knows its own capabilities. 
+*Short-Term (Working) Memory*: This is the live conversation history and current task state held directly in the context window. To prevent "amnesia" when the window fills up, engineers use trimming (deleting old turns) or summarization (condensing history).
+
+*Long-Term (Persistent) Memory*: This stores user preferences, past decisions, and facts in external databases (like vector or graph databases). Context engineering determines which specific pieces of this long-term archive should be "paged" into the model's active context for the current task.
+
+*Procedural Memory*: This involves storing the "how-to" of a system—the available tools, rules, and workflows—and injecting them into the context so the model knows its own capabilities. 
 
 
 
 ###### The Core Lifecycle: Write, Select, Compress, Isolate 
 Modern context management follows four foundational strategies to handle information flow: 
 
-- *Write (Externalize)*: Store information outside the active prompt or the context window (e.g., in "scratchpads," vector databases, or structured files). The agent can later retrieve it during the session if needed. This allows agents to "think on paper" and offload long-term facts without bloating the immediate window. 
-- *Select (Retrieve)*: Use Retrieval-Augmented Generation (RAG) to inject only semantically relevant information at runtime. Move beyond simple similarity by using re-ranking—applying a second pass to sort retrieved chunks by actual task utility.
-- *Compress (Distill)*: When history becomes too long, use hierarchical summarization (condensing old turns into executive summaries) or pruning (removing irrelevant tool outputs or noisy log data).
-- *Isolate (Compartmentalize)*: Use multi-agent architectures to split complex tasks. Each specialized sub-agent (e.g., a "researcher" or "coder") operates with its own clean, focused context window, preventing "context poisoning" from unrelated data. 
+- **Write (Externalize)**: Store information outside the active prompt or the context window (e.g., in "scratchpads," vector databases, or structured files). The agent can later retrieve it during the session if needed. This allows agents to "think on paper" and offload long-term facts without bloating the immediate window. 
+- **Select (Retrieve)**: Use Retrieval-Augmented Generation (RAG) to inject only semantically relevant information at runtime. Move beyond simple similarity by using re-ranking—applying a second pass to sort retrieved chunks by actual task utility.
+- **Compress (Distill)**: When history becomes too long, use hierarchical summarization (condensing old turns into executive summaries) or pruning (removing irrelevant tool outputs or noisy log data).
+- **Isolate (Compartmentalize)**: Use multi-agent architectures to split complex tasks. Each specialized sub-agent (e.g., a "researcher" or "coder") operates with its own clean, focused context window, preventing "context poisoning" from unrelated data. 
 
 Some additional techniques are:
 
@@ -1345,7 +1345,7 @@ Some additional techniques are:
 *Error Retention*: Don't scrub past mistakes from the history. Leaving a failed tool attempt and its error trace in the context helps the model adapt its next move and avoid repeating the error. 
 
 
-Sandbox Environments: If an agent needs to run some code or process large amounts of information in a document, this can take a large amount of tokens to process the results. Instead of having this all stored in the context window, the agent can use a sandbox environment that is able to run this code and only read the results and other relevant information.
+*Sandbox Environments*: If an agent needs to run some code or process large amounts of information in a document, this can take a large amount of tokens to process the results. Instead of having this all stored in the context window, the agent can use a sandbox environment that is able to run this code and only read the results and other relevant information.
 
 
 
@@ -1402,7 +1402,7 @@ for more info.
 
 ### Tools
 
-What separates an agent from a standard chatbot is its ability to take actions and reat accordingly. ReAct agnets use this pattern since most of the industry coalesed around this matter, we'll just call ReAct agents, agents. The actions that an aent can take are defined by the tools that we provide to it. Tools can allow agents to access data, execute tasks, even call our agents, transforming it from a passive language model to the coordinator of a much more capable system. 
+What separates an agent from a standard chatbot is its ability to take actions and react accordingly. ReAct agnets use this pattern. A **ReAct** (Reasoning + Acting) agent is an AI framework that combines LLM reasoning with external tool usage to solve complex problems. Since most of the industry coalesed around this matter, we'll just call ReAct agents, agents. The actions that an agent can take are defined by the tools that we provide to it. Tools can allow agents to access data, execute tasks, even call our agents, transforming it from a passive language model to the coordinator of a much more capable system. 
 
 You can turn any function into a tool by adding `@tool` decorator, adding detailed description for the function which becomes the tool description. You can then use `.invoke(*arg, **kwarg)` to run the function as usual. This is exactly how agents run the tool. We usually specify a list of the tools for our LLM to use when creating agents. The agents understands to use the tools provided when appropirate:
 
@@ -1437,7 +1437,7 @@ response = agent.invoke(
 
 response['messages'][-1].content
 ```
-The last message is very neat and exactl as we expected:
+The last message is very neat and exactly as we expected:
 ```o
 The square root of 467 is approximately 21.61.
 ```
@@ -1454,6 +1454,35 @@ response['messages']
 ```
 
 You can see the model knows to use the tools. It creates an `AIMessage` with *no content* but containng a **tool call** part provifing the arguments the tool needs to run. The response is back to the model from the tool call message is called `ToolMessage`, which returns the result of applying the tools: `content='21.61018278497431'`.  Finally, the model polishes the final answer to the user request.
+
+Note that the framework (LangChain/LangGraph) Intercepts to run the function automatically. In fact, the code running on your machine sees that tool call request. It looks at its internal mapping, finds your Python function `square_root`, and executes it using your local CPU. Your framework takes the output (21.61...) and sends it back to the LLM as a new message. The LLM then sees that "observation" and continues the conversation. Without a framework like LangChain or LangGraph, the LLM will not run the code automatically. 
+
+In a standard API call (like to OpenAI or Anthropic), the process is manual. The LLM only acts as a parser—it returns a structured message (JSON) telling you which function it wants to call and with what arguments.  If you are not using a framework, you must handle the following steps in your own Python code:
+
+- Detect the Request: You must inspect the API response to see if it contains a tool_calls or function_call field instead of standard text.
+- Execute Locally: You manually extract the arguments (e.g., {"n": 467}) and call your square_root(467) function in your local environment.
+- Feed it Back: You must send a second request to the LLM that includes the function's result so the model can finally answer the user. 
+
+ **Manual Execution Workflow**
+
+Step |	Actor	| Action
+----- | ------- | -------
+1	| User	| Sends question: "What is the square root of 467?"
+2	| LLM	| Returns JSON: `{"tool": "square_root", "args": {"n": 467}}`.
+3	| Your Code	| Calls `square_root(467)` →  gets 21.61....
+4	|Your Code	| Sends 21.61... back to the LLM as a "tool" message.
+5	|LLM	| Returns final text: "The square root of 467 is 21.61.".
+
+The main reason people use LangChain or LangGraph is that they provide an "Agent Executor" that handles this loop for you automatically.
+
+Alternatively, you can bind tools to LLMs using `llm.bind_tools(tools)`. This only informs the model that those tools exist and provides their schemas. When you invoke a model with bound tools, it will return a message that suggests a tool call (containing the name and arguments), but it does not execute the tools automatically.  It is your responsibility to manually run the code and pass the result back. 
+
+- `bind_tools` acts like a "brain" that says, "I want to use the screwdriver now". You get total control over the execution. You can decide exactly when to run the tool, log the arguments before they run, or even use a different environment for the execution.
+    - Key Advantage: It is faster and lighter for single-shot tasks where you know exactly what the model should do.
+- `create_agent` provides the "hands" that actually pick up the screwdriver, turn the screw, and tell the brain if it worked. It handles the entire "Action-Observation" loop for you. It automatically executes the tool, feeds the result back to the model, and continues until a final answer is reached.
+    - Key Advantage: It supports multi-step reasoning (e.g., if a tool returns an error, the agent can try again or use a different tool).
+
+
 
 ##### Search Web
 There are tools to add even more complex capabilities to LLMs such as searching the web. LLMs cant do that on their own.
@@ -1527,12 +1556,12 @@ Now its correct. If we look at the detailed response we see that the model makes
 ToolMessage(content='{"query": "current mayor of San Francisco", "follow_up_questions": null, "answer": null, "images": [], "results": [{"url": "https://en.wikipedia.org/wiki/Mayor_of_San_Francisco", "title": "Mayor of San Francisco - Wikipedia", "content": "The current mayor is Democrat Daniel Lurie.", "score": 0.94251215, "raw_content": null}, {"url": "https://apnews.com/article/san-francisco-new-mayor-liberal-city-81ea0a7b37af6cbb68aea7ef5cc6a4f0", "title": "San Francisco\'s new mayor is starting to unite the fractured city", "content": "San Francisco Mayor Daniel Lurie, a political newcomer and Levi Strauss heir, has marked his first 100 days with a hands-on, business-friendly approach.", "score": 0.8745175, "raw_content": null}, {"url": "https://www.sf.gov/departments--office-mayor", "title": "Office of the Mayor - SF.gov", "content": "Daniel Lurie is the 46th Mayor of the City and County of San Francisco.", "score": 0.8446273, "raw_content": null}, {"url": "https://en.wikipedia.org/wiki/Daniel_Lurie", "title": "Daniel Lurie - Wikipedia", "content": "Daniel Lawrence Lurie (born February 4, 1977) is an American politician and philanthropist who is the 46th and incumbent mayor of San Francisco, serving since", "score": 0.8156003, "raw_content": null}, {"url": "https://www.sf.gov/profile--daniel-lurie", "title": "Daniel Lurie - SF.gov", "content": "Chair, and Mayor of San Francisco. Disaster Council · Office of the Mayor. Mayor Daniel Lurie sworn in as the City\'s 46th mayor on Jan 8. See recent news. Learn", "score": 0.81524754,  --- continued
 ```
 
-Thsi tool call enables the model to answer correctly.
+This tool call enables the model to answer correctly.
 
 #### Model Context Protocol (MCP)
 The Model Context Protocol (MCP) is an open standard that provides standardized way for applications to provide context and tools to LLMs. This enables a "universal adaptor" to different data sources and tools that AI Agents can connect to in a consistent way. 
 
-Creating tools and providing context to different model providers used to look a lot like this. A never ending web of API calls and databases to connect to your agents for every application you try to build. Thats why this universal model context protocol for model providers and tool builders to use.
+Creating tools and providing context to different model providers used to look a lot like a never ending web of API calls and databases to connect to your agents for every application you try to build. Thats why this universal model context protocol for model providers and tool builders to use.
 
 ##### MCP Core Components
 
@@ -1571,7 +1600,7 @@ client = MultiServerMCPClient(
     }
 )
 ```
-Setting up and syntax a MCP serve is very similar to that of a FastAPI server.  One important configuration is transport protocol. Thsi could be `STDIO` or `StreamingHTTP` depending on the server. For more info, check out MCP documentation. We can get the tools, resources and prompts available at this server:
+Setting up and syntax a MCP serve is very similar to that of a FastAPI server.  One important configuration is transport protocol. This could be `STDIO` or `StreamingHTTP` depending on the server. For more info, check out MCP documentation. We can get the tools, resources and prompts available at this server:
 
 ```python
 tools = await client.get_tools()
@@ -1623,11 +1652,11 @@ tool_calls=[{'name': 'search_web', 'args': {'query': 'langchain-mcp-adapters lib
 
 MCP offers significant advantages for AI Agents:
 
-- *Dynamic Tool Discovery*: Agents can dynamically receive a list of available tools from a server along with descriptions of what they do. This contrasts with traditional APIs, which often require static coding for integrations, meaning any API change necessitates code updates. MCP offers an "integrate once" approach, leading to greater adaptability.
+- **Dynamic Tool Discovery**: Agents can dynamically receive a list of available tools from a server along with descriptions of what they do. This contrasts with traditional APIs, which often require static coding for integrations, meaning any API change necessitates code updates. MCP offers an "integrate once" approach, leading to greater adaptability.
 
-- *Interoperability Across LLMs*: MCP works across different LLMs, providing flexibility to switch core models to evaluate for better performance.
+- **Interoperability across LLMs**: MCP works across different LLMs, providing flexibility to switch core models to evaluate for better performance.
 
-- *Standardized Security*: MCP includes a standard authentication method, improving scalability when adding access to additional MCP servers. This is simpler than managing different keys and authentication types for various traditional APIs.
+- **Standardized Security**: MCP includes a standard authentication method, improving scalability when adding access to additional MCP servers. This is simpler than managing different keys and authentication types for various traditional APIs.
 
 
 
@@ -1753,7 +1782,7 @@ Embedding Models: These models are used to convert website content into numerica
 
 Vector Database (Retrieval Mechanism): This database stores the embeddings of the website content. When someone asks a question, NLWeb checks the vector database to quickly find the most relevant information. It gives a fast list of possible answers, ranked by similarity. NLWeb works with different vector storage systems such as Qdrant, Snowflake, Milvus, Azure AI Search, and Elasticsearch.
 
-
+**Example**:
 Consider our travel booking website again, but this time, it's powered by NLWeb.
 
 *Data Ingestion*: The travel website's existing product catalogs (e.g., flight listings, hotel descriptions, tour packages) are formatted using Schema.org or loaded via RSS feeds. NLWeb's tools ingest this structured data, create embeddings, and store them in a local or remote vector database.
@@ -1773,21 +1802,25 @@ Function calling is the primary way we enable Large Language Models (LLMs) to in
 
 
 
-###### What is the Tool Use Design Pattern?
+##### What is the Tool Use Design Pattern?
 
-The Tool Use Design Pattern focuses on giving LLMs the ability to interact with external tools to achieve specific goals. Tools are code that can be executed by an agent to perform actions. A tool can be a simple function such as a calculator, or an API call to a third-party service such as stock price lookup or weather forecast. In the context of AI agents, tools are designed to be executed by agents in response to model-generated function calls.
+The Tool Use Design Pattern focuses on giving LLMs the ability to interact with external tools to achieve specific goals. *Tools are code that can be executed by an agent to perform actions*. A tool can be a simple function such as a calculator, or an API call to a third-party service such as stock price lookup or weather forecast. In the context of AI agents, tools are designed to be executed by agents in response to model-generated function calls.
 
-###### What are the use cases it can be applied to?
+##### What are the use cases it can be applied to?
 
 AI Agents can leverage tools to complete complex tasks, retrieve information, or make decisions. The tool use design pattern is often used in scenarios requiring dynamic interaction with external systems, such as databases, web services, or code interpreters. This ability is useful for a number of different use cases including:
 
-- Dynamic Information Retrieval: Agents can query external APIs or databases to fetch up-to-date data (e.g., querying a SQLite database for data analysis, fetching stock prices or weather information).
-- Code Execution and Interpretation: Agents can execute code or scripts to solve mathematical problems, generate reports, or perform simulations.
-- Workflow Automation: Automating repetitive or multi-step workflows by integrating tools like task schedulers, email services, or data pipelines.
-- Customer Support: Agents can interact with CRM systems, ticketing platforms, or knowledge bases to resolve user queries.
-- Content Generation and Editing: Agents can leverage tools like grammar checkers, text summarizers, or content safety evaluators to assist with content creation tasks.
+*Dynamic Information Retrieval*: Agents can query external APIs or databases to fetch up-to-date data (e.g., querying a SQLite database for data analysis, fetching stock prices or weather information).
 
-###### Building blocks for implementing the tool use design pattern
+*Code Execution and Interpretation*: Agents can execute code or scripts to solve mathematical problems, generate reports, or perform simulations.
+
+*Workflow Automation*: Automating repetitive or multi-step workflows by integrating tools like task schedulers, email services, or data pipelines.
+
+*Customer Support*: Agents can interact with CRM systems, ticketing platforms, or knowledge bases to resolve user queries.
+
+*Content Generation and Editing*: Agents can leverage tools like grammar checkers, text summarizers, or content safety evaluators to assist with content creation tasks.
+
+##### Building blocks for implementing the tool use 
 
 These building blocks allow the AI agent to perform a wide range of tasks. Let's look at the key elements needed to implement the Tool Use Design Pattern:
 
@@ -1946,85 +1979,93 @@ Function Calling is at the heart of most, if not all agent tool use design, howe
 
 Trustworthy agents are systems whose outputs are *reliable*, *safe*, *verifiable*, and *controllable*, especially when interacting with external tools or making decisions.
 
+### Core Validation Components
+- **Prompt Sanitization**: Checking user inputs against predefined rules or regex to filter out malicious commands, context poisoning attempts, or unwanted keywords.
+- **Tool-Input Validation**: Using structured data libraries like Pydantic to enforce strict schemas (data types, formats, ranges) when an agent calls external tools.
+- **Sandboxing**: Running agent commands in controlled environments (e.g., Linux sandboxes) that log all actions and require explicit user confirmation for sensitive tasks.
+- **Output Encoding & Guardrails**: Validating the agent's output before it reaches the final system to ensure it hasn't been compromised or produced harmful content.
+
 1. Layer 1: Input / User Control
 
-    - validate inputs
-    - restrict scope
-    - prevent prompt injection
+    Input validation for AI agents is the practice of inspecting data (from users, APIs, or files) before an agent processes it to prevent security risks like prompt injection and operational errors like hallucinations.
+
+    - Validate inputs
+    - Restrict scope
+    - Prevent prompt injection
 
     Example:
-    - schema validation
-    - allow-listed intents
+    - Schema validation
+    - Allow-listed intents
 
-2. Layer 2 — Planning / Reasoning 
+2. Layer 2: Planning / Reasoning 
 
     Control how the agent thinks
     Problems:
-    - hallucinated plans
-    - invalid task decomposition
+    - Hallucinated plans
+    - Invalid task decomposition
     
     Mitigation:
-    - structured outputs (Pydantic / JSON schema)
-    - plan validation (e.g., DAG correctness like you did)
+    - Structured outputs (Pydantic / JSON schema)
+    - Plan validation (e.g., DAG correctness like you did)
     
-    👉 This is where your project is strong
+    <!-- 👉 This is where your project is strong -->
 
 3. Layer 3 — Tool Use (VERY important)
     
     This is where real risk lives.
     Risks:
-    - wrong tool usage
-    - malicious inputs to tools
-    - unsafe execution (e.g., Python)
+    - Wrong tool usage
+    - Malicious inputs to tools
+    - Unsafe execution (e.g., Python)
     
     Mitigation:
-    - tool schema validation
-    - sandboxing (you used MCP sandbox → excellent)
-    - permissioning / scoped tools
+    - Tool schema validation
+    - Sandboxing (you used MCP sandbox → excellent)
+    - Permissioning / scoped tools
 
-4. Layer 4 — Execution & Environment
+4. Layer 4: Execution & Environment
 
-    - isolate execution
-    - prevent system crashes / abuse
+    - Isolate execution
+    - Prevent system crashes / abuse
 
     Examples:
-    - sandbox environments
-    - rate limits
-    - resource constraints
+    - Sandbox environments
+    - Rate limits
+    - Resource constraints
 
-5. Layer 5 — Output Validation (CRITICAL)
+5. Layer 5: Output Validation (CRITICAL)
 
     This is where trust is actually enforced.
 
     Techniques:
-    - secondary model (auditor / critic) ✅ (you implemented this)
-    - rule-based validation
-    - consistency checks with data sources
+    - Secondary model (auditor / critic) ✅ (you implemented this)
+    - Rule-based validation
+    - Consistency checks with data sources
 
     Pattern:
     - Agent → Output → Validator → Retry / Fail
 
-6. Layer 6 — Monitoring & Observability
-    - trace decisions
-    - log tool usage
-    - detect failures
+6. Layer 6: Monitoring & Observability
+    - Trace decisions
+    - Log tool usage
+    - Detect failures
 
     Tools:
     - LangSmith
-    - structured logs
+    - Structured logs
 
-7. Layer 7 — Human-in-the-loop (HITL)
+7. Layer 7: Human-in-the-loop (HITL)
 
     For high-risk cases:
-    - escalation
-    - approval before execution
+    - Escalation
+    - Approval before execution
 
 ### Structured meta prompting system
 Design prompts in a controlled, programmatic, multi-layered way, instead of writing one big free-text prompt.
 
 Two key ideas:
 
-##### Structured
+#### Structured
 
 Not raw text. 
 - Uses schemas, templates, fields, roles
@@ -2037,16 +2078,14 @@ Not raw text.
     - easier validation
     - safer tool usage
 
-🔧 Concrete example (very important)
-
-Example: ❌ Unstructured prompt
+🔧 Concrete example: ❌ Unstructured prompt
 “Analyze NVIDIA and give a report with insights and charts.”
 
 Problems:
-- vague
-- no format
-- no control
-- hard to validate
+- Vague
+- No format
+- No control
+- Hard to validate
 
 ##### Structured meta prompting
     
@@ -2054,48 +2093,50 @@ Prompts that control how other prompts behave
 you’re not just asking for an answer—you’re guiding the process
 
 Instead, you define:
-- Prompt = template + rules + schema
+
+>**Prompt = template + rules + schema**
+
 Example:
 - System Layer
     - role: financial analyst
     - constraints: no hallucination, cite sources
 - Task Layer
-    - break into steps:
+     break into steps:
     - gather data
     - analyze
     - generate report
 - Output Schema
     ```json
         {
-        "summary": "...",
-        "risks": [...],
-        "metrics": {...}
+            "summary": "...",
+            "risks": [...],
+            "metrics": {...}
         }
     ```
 Now the model:
 - follows a structure
 - produces machine-checkable output
 
-    In agent systems (this is key for interviews)
+<!-- In agent systems (this is key for interviews) -->
 
 Structured meta prompting is used to:
 1. Control reasoning
 
-    - step-by-step plans
+    - Step-by-step plans
     - DAG tasks (you did this)
 2. Control tool usage
     
-    - specify when to call tools
-    - enforce tool input schemas
+    - Specify when to call tools
+    - Enforce tool input schemas
 3. Control outputs
 
     - JSON / Pydantic schemas
-    - deterministic parsing
+    - Deterministic parsing
 4. Prevent errors / attacks
 
-    - reduce prompt injection impact
-    - isolate instructions
-    - validate outputs
+    - Reduce prompt injection impact
+    - Isolate instructions
+    - Validate outputs
 
 🔗 Tie to your project (very strong move)
 You can say:
@@ -2118,7 +2159,7 @@ Mitigation: Execute validation checks and input filters to detect potentially da
 
 ##### Access to Critical Systems
 
-Description: If an AI agent has access to systems and services that store sensitive data, attackers can compromise the communication between the agent and these services. These can be direct attacks or indirect attempts to gain information about these systems through the agent.
+Description: If an AI agent has access to systems and services that store sensitive data, attackers can compromise the communication between the agent and the services. These can be direct attacks or indirect attempts to gain information about these systems through the agent.
 
 Mitigation: AI agents should have access to systems on a need-only basis to prevent these types of attacks. Communication between the agent and system should also be secure. Implementing authentication and access control is another way to protect this information.
 
@@ -2156,12 +2197,11 @@ There are many scenarios where employing multiple agents is beneficial especiall
 - *Complex tasks*: Complex tasks, like large workloads, can be broken down into smaller subtasks and assigned to different agents, each specializing in a specific aspect of the task. A good example of this is in the case of autonomous vehicles where different agents manage navigation, obstacle detection, and communication with other vehicles.
 - *Diverse expertise*: Different agents can have diverse expertise, allowing them to handle different aspects of a task more effectively than a single agent. For this case, a good example is in the case of healthcare where agents can manage diagnostics, treatment plans, and patient monitoring.
 
-###### Advantages of Using Multi-Agents Over a Singular Agent
+### Advantages of Using Multi-Agents Over a Singular Agent
 
 A single agent system could work well for simple tasks, but for more complex tasks, using multiple agents can provide several advantages:
 
-- *Specialization*: Each agent can be specialized for a specific task. Lack of specialization in a single agent means you have an agent that can do everything but might get confused on what to do when faced with a complex task. It might for example end up doing a task that it is not best suited for.
-
+- *Specialization*: Each agent can be specialized for a specific task. Lack of specialization in a single agent means you have an agent that can do everything but might get confused on what to do when faced with a complex task.
 - *Scalability*: It is easier to scale systems by adding more agents rather than overloading a single agent.
 - *Fault Tolerance*: If one agent fails, others can continue functioning, ensuring system reliability.
 
@@ -2169,18 +2209,18 @@ Let's take an example, let's book a trip for a user. A single agent system would
 
 Compare this to a travel bureau run as a mom-and-pop store versus a travel bureau run as a franchise. The mom-and-pop store would have a single agent handling all aspects of the trip booking process, while the franchise would have different agents handling different aspects of the trip booking process.
 
-###### Implementing the Multi-Agent Design Pattern
+### Implementing the Multi-Agent Design Pattern
 
 Before you can implement the multi-agent design pattern, you need to understand the building blocks that make up the pattern.
 
-- *Agent Communication*: Agents for finding flights, booking hotels, and rental cars need to communicate and share information about the user's preferences and constraints. You need to decide on the protocols and methods for this communication. What this means concretely is that the agent for finding flights needs to communicate with the agent for booking hotels to ensure that the hotel is booked for the same dates as the flight. That means that the agents need to share information about the user's travel dates, meaning that you need to decide which agents are sharing info and how they are sharing info.
+- *Agent Communication*: Agents for finding flights, booking hotels, and rental cars need to communicate and share information about the user's preferences and constraints. You need to decide on the protocols and methods for this communication. What this means concretely is that the agent for finding flights needs to communicate with the agent for booking hotels to ensure that the hotel is booked for the same dates as the flight. 
 - *Coordination Mechanisms*: Agents need to coordinate their actions to ensure that the user's preferences and constraints are met. A user preference could be that they want a hotel close to the airport whereas a constraint could be that rental cars are only available at the airport. This means that the agent for booking hotels needs to coordinate with the agent for booking rental cars to ensure that the user's preferences and constraints are met. This means that you need to decide how the agents are coordinating their actions.
 - *Agent Architecture*: Agents need to have the internal structure to make decisions and learn from their interactions with the user. This means that the agent for finding flights needs to have the internal structure to make decisions about which flights to recommend to the user. This means that you need to decide how the agents are making decisions and learning from their interactions with the user. Examples of how an agent learns and improves could be that the agent for finding flights could use a machine learning model to recommend flights to the user based on their past preferences.
 - *Visibility into Multi-Agent Interactions*: You need to have visibility into how the multiple agents are interacting with each other. This means that you need to have tools and techniques for tracking agent activities and interactions. This could be in the form of logging and monitoring tools, visualization tools, and performance metrics.
 - *Multi-Agent Patterns*: There are different patterns for implementing multi-agent systems, such as centralized, decentralized, and hybrid architectures. You need to decide on the pattern that best fits your use case.
 - *Human in the loop*: In most cases, you will have a human in the loop and you need to instruct the agents when to ask for human intervention. This could be in the form of a user asking for a specific hotel or flight that the agents have not recommended or asking for confirmation before booking a flight or hotel.
 
-#### Visibility into Multi-Agent Interactions
+### Visibility into Multi-Agent Interactions
 
 It's important that you have visibility into how the multiple agents are interacting with each other. This visibility is essential for debugging, optimizing, and ensuring the overall system's effectiveness. To achieve this, you need to have tools and techniques for tracking agent activities and interactions. This could be in the form of logging and monitoring tools, visualization tools, and performance metrics.
 
@@ -2195,15 +2235,14 @@ Let's look at each of these aspects more in detail.
 - *Performance Metrics*: Performance metrics can help you track the effectiveness of the multi-agent system. For example, you could track the time taken to complete a task, the number of tasks completed per unit of time, and the accuracy of the recommendations made by the agents. This information can help you identify areas for improvement and optimize the system.
 
 
-#### Multi-Agent Patterns
+
+### Agentic Design Patterns
 
 All agent systems are built from combinations of:
 - Control pattern (who decides what: orchestrator vs distributed)
 - Communication protocol (how info moves: direct vs shared state)
 - State model (where info lives)
 - Execusion model (sync / async / parallel)
-
-### Agentic Design Patterns
 
 ##### Pattern 1: Clear Agent Instructions
     
@@ -2273,9 +2312,11 @@ This mirrors the software engineering principle of *separation of concerns* — 
 
 Let's dive into some concrete patterns we can use to create multi-agent apps. Here are some interesting patterns worth considering:
 
-#### Orchestrator–Worker (Hierarchical)
+#### Basic Architectural Design for Agents
+
+##### Hierarchical Design
 What it is:
-- One central controller (planner/scheduler)
+- One central controller (planner/scheduler or supervisor)
 - Multiple specialized agents execute tasks
 
 Your project: ✅ This is your main pattern
@@ -2355,7 +2396,7 @@ This is a strong signal if you say it right:
 “Agents communicate through structured shared state rather than direct messaging”
 
 
-##### Some subclass patterns
+##### Examples
 
 ###### Orchestrator–Worker (Hierarchical)
 What it is:
@@ -2373,7 +2414,7 @@ Tradeoff:
 - Less flexible
 - Bottleneck at orchestrator
 
-###### Group chat
+###### Group Chat
 
 In this pattern, each agent represents a user in the group chat, and messages are exchanged between agents using a messaging protocol. The agents can send messages to the group chat, receive messages from the group chat, and respond to messages from other agents.
 
@@ -2402,7 +2443,7 @@ Where it fits:
 - 👉 Planner–Executor (task routing)
 
 Mental model:
-- controlled delegation
+- Controlled delegation
 
 In your system: ✅ you already do this via scheduler
 
@@ -2413,7 +2454,7 @@ Interview phrasing:
 
 
 ###### Collaborative Filtering
-This one comes from recommender systems. This pattern is useful when you want to create an application where multiple agents can collaborate to make recommendations to users. Why you would want multiple agents to collaborate is because each agent can have different expertise and can contribute to the recommendation process in different ways.
+This pattern is useful when you want to create an application where multiple agents can collaborate to make recommendations to users. Why you would want multiple agents to collaborate is because each agent can have different expertise and can contribute to the recommendation process in different ways.
 
 In agent context, it usually means:
 - Multiple agents produce outputs
@@ -2426,8 +2467,8 @@ Examples:
 
 Let's take an example where a user wants a recommendation on the best stock to buy on the stock market.
 
-- Industry expert:. One agent could be an expert in a specific industry.
-- Technical analysis: Another agent could be an expert in technical analysis.
+- Industry expert: One agent could be an expert in a specific industry
+- Technical analysis: Another agent could be an expert in technical analysis
 - Fundamental analysis: and another agent could be an expert in fundamental analysis. By collaborating, these agents can provide a more comprehensive recommendation to the user.
 
 
@@ -2475,14 +2516,15 @@ Responsibilities:
     - MAY request additional info from front desk
 
 - Controlled Handoff (important)
-Instead of:
-- agents directly calling other agents
-Say:
-    - “If a domain agent needs another capability, it returns a structured request to the orchestrator, which then routes to the next agent.”
+    
+    Instead of:
+    - agents directly calling other agents
+    Say:
+        - “If a domain agent needs another capability, it returns a structured request to the orchestrator, which then routes to the next agent.”
 
 👉 This keeps:
-- control centralized
-- flow traceable
+- Control centralized
+- Flow traceable
 
 - User Interaction Loop
 If missing info:
@@ -2492,16 +2534,9 @@ If missing info:
 🧠 What pattern this becomes
 - Orchestrator–Worker (core)
 - Tool-using agents
-- optional Evaluator (for response validation)
+- Optional Evaluator (for response validation)
+- Multi-step orchestration (NOT agent autonomy)
 
-🔥 Why your original idea is still valuable
-This part:
-“agents may need others to complete tasks”
-That’s correct.
-
-
-You just need to express it as:
-multi-step orchestration instead of agent autonomy
 🧭 How to say this in an interview (clean)
 “I’d design it with a front-desk orchestrator that classifies user intent and routes to specialized agents like orders, returns, or recommendations. Each agent handles its domain and can request further actions through the orchestrator, enabling multi-step workflows while keeping control centralized and traceable.”
 
@@ -2510,11 +2545,8 @@ multi-step orchestration instead of agent autonomy
 
 
 🔑 Key insight
-Your intuition is right:
-- tasks are not isolated
-
-But the design principle is:
-- flexibility at the workflow level, control at the system level
+The design principle is:
+- Flexibility at the workflow level, control at the system level
 
 
 #### A2A Protocol
@@ -2572,6 +2604,15 @@ Customer support is:
 👉 So:
 - Orchestrator > A2A
 
+⚠️ Pure A2A creates new problems
+If you let agents freely call each other:
+- ❌ Who owns the workflow?
+- ❌ How do you trace what happened?
+- ❌ How do you prevent loops?
+- ❌ How do you enforce auth / data boundaries?
+
+So yes, it’s faster—but it can get messy fast.
+
 
 🔑 The best answer in interviews
 If asked:
@@ -2584,89 +2625,11 @@ You say:
 You can add:
 “Even with A2A, I’d enforce structured protocols or shared state to keep interactions bounded.”
 
-That shows:
-- you’re not dogmatic
-- you understand control vs flexibility
-
 🔁 Connect back to your design
 “agents can request additional actions, but orchestration should manage execution flow”
 
 🧘 One sentence to carry
 A2A is for flexibility—but orchestration is for reliability.
-
-##### Summary
-
-###### Orchestrator Architecture (Centralized Control)
-
-🔧 Structure
-- One central controller (router / planner)
-- Agents are workers
-- No direct agent-to-agent calls
-
-🔄 Flow
-- User → Orchestrator → Agent → Orchestrator → User
-
-✅ Strengths
-- predictable
-- easy to debug
-- strong control (security, cost, latency)
-- clear ownership
-
-❌ Weaknesses
-- bottleneck at orchestrator
-- less flexible
-- orchestrator becomes complex
-
-📦 Example (Customer Support)
-User:
-- “Cancel my order and refund”
-
-Flow:
-- Orchestrator → Order Agent (cancel)
-- Orchestrator → Payment Agent (refund)
-- Everything is centrally coordinated.
-
-🎯 When to use
-- Transactional systems
-- Production APIs
-- Regulated environments
-
-###### A2A Architecture (Decentralized)
-
-🔧 Structure
-- No central controller
-- Agents communicate directly
-
-🔄 Flow
-- User → Agent A → Agent B → Agent C → … → User
-
-✅ Strengths
-- Flexible
-- Scalable across domains
-- Supports collaboration / reasoning
-
-❌ Weaknesses
-- Hard to debug
-- Unclear control flow
-- Risk of loops
-- Harder to enforce constraints
-
-📦 Example (Research System)
-User:
-“Analyze NVIDIA”
-
-Flow:
-- Research Agent → Finance Agent
-- Finance Agent → News Agent
-- News Agent → back to Research
-
-Agents dynamically collaborate.
-
-🎯 When to use
-- research / exploration
-- multi-perspective reasoning
-- open-ended tasks
-
 
 Interview-level answer (clean)
 If asked:
@@ -2676,17 +2639,8 @@ You say:
 “Orchestrator-based systems provide strong control and are ideal for structured workflows like customer support. A2A systems enable flexible collaboration but are harder to control and debug. In practice, most production systems use a hybrid approach—centralized orchestration with limited agent-to-agent interaction—to balance reliability and flexibility.”
 
 
-⚠️ Pure A2A creates new problems
-If you let agents freely call each other:
-- ❌ Who owns the workflow?
-- ❌ How do you trace what happened?
-- ❌ How do you prevent loops?
-- ❌ How do you enforce auth / data boundaries?
-
-So yes, it’s faster—but it can get messy fast.
-
 ######  The middle ground: Controlled A2A
-This is what I meant earlier—and it’s exactly what you’re reaching for. It means:
+It means:
 - Agents can interact directly, but within constraints defined by the system
 
 🧭 What “controlled” actually looks like
@@ -2757,12 +2711,10 @@ Payment Agent decides:
 - Retry strategies
 - Fallback payment method
 
-Front desk is NOT in the middle.
-
-But:
+Front desk is NOT in the middle but:
 - Calls are allowed by policy
 - Interactions are logged
-- Cchemas enforced
+- Schemas enforced
 
 ###### ⚖️ Tradeoff summary
 Approach	| Latency |	Control	| Complexity
@@ -2771,11 +2723,11 @@ Orchestrator (naive)	| ❌ slower	| ✅ high	| ✅ simple
 A2A (free)	| ✅ fast	| ❌ low 	| ❌ chaotic
 Controlled A2A (hybrid) |	✅ fast	| ✅ medium–high	| ⚠️ complex
 
-🧠 What interviewers want to hear
+<!-- 🧠 What interviewers want to hear
 Not:
 - “orchestrator is bad”
 
-But:
+But: -->
 
 A centralized orchestrator can introduce latency in highly interactive workflows, so I’d allow controlled agent-to-agent communication for efficiency while maintaining observability and constraints.
 
@@ -2810,9 +2762,7 @@ Transitioning AI agents to production environments introduces a new set of chall
 
 #### Key Metrics to Track
 
-To monitor and understand agent behavior, a range of metrics and signals should be tracked. While the specific metrics might vary based on the agent's purpose, some are universally important.
-
-Here are some of the most common metrics that observability tools monitor:
+While the specific metrics might vary based on the agent's purpose, some are universally important. Here are some of the most common metrics that observability tools monitor:
 
 - **Latency**: How quickly does the agent respond? Long waiting times negatively impact user experience. You should measure latency for tasks and individual steps by tracing agent runs. For example, an agent that takes 20 seconds for all model calls could be accelerated by using a faster model or by running model calls in parallel.
 
@@ -2876,7 +2826,7 @@ In fact, many teams adopt a loop:
 As you deploy AI agents to production, you may encounter various challenges. Here are some common issues and their potential solutions:
 
 Issue	Potential Solution
-AI Agent not performing tasks consistently	- Refine the prompt given to the AI Agent; be clear on objectives.
+- AI Agent not performing tasks consistently	- Refine the prompt given to the AI Agent; be clear on objectives.
 - Identify where dividing the tasks into subtasks and handling them by multiple agents can help.
 - AI Agent running into continuous loops	- Ensure you have clear termination terms and conditions so the Agent knows when to stop the process.
 - For complex tasks that require reasoning and planning, use a larger model that is specialized for reasoning tasks.
@@ -2905,9 +2855,11 @@ Here are some strategies to manage the costs of deploying AI agents to productio
 
 This lesson will cover
 
-- *Agentic RAG*: The emerging paradigm in AI where large language models (LLMs) autonomously plan their next steps while pulling information from external data sources
-- *Iterative Maker-Checker Style*: Comprehend the loop of iterative calls to the LLM, interspersed with tool calls and structured outputs, designed to improve correctness and handle malformed queries.
-- *Practical Applications*: Identify scenarios where Agentic RAG shines, such as correctness-first environments, complex database interactions, and extended workflows.
+*Agentic RAG*: LLMs autonomously plan their next steps while pulling information from external data sources
+
+*Iterative Maker-Checker Style*: Comprehend the loop of iterative calls to the LLM, combined with tool calls and structured outputs, designed to improve correctness and handle malformed queries
+
+*Practical Applications*: Identify scenarios where Agentic RAG shines, such as correctness-first environments, complex database interactions, and extended workflows.
 
 
 <!-- Agentic Retrieval-Augmented Generation (Agentic RAG) is an emerging AI paradigm where large language models (LLMs) autonomously plan their next steps while pulling information from external sources. Unlike static retrieval-then-read patterns, Agentic RAG involves iterative calls to the LLM, interspersed with tool or function calls and structured outputs. The system evaluates results, refines queries, invokes additional tools if needed, and continues this cycle until a satisfactory solution is achieved. This iterative “maker-checker” style improves correctness, handles malformed queries, and ensures high-quality results.
@@ -2917,7 +2869,7 @@ The system actively owns its reasoning process, rewriting failed queries, choosi
 
 #### Defining Agentic RAG
 
-Agentic Retrieval-Augmented Generation (Agentic RAG) is an emerging paradigm in AI development where LLMs not only pull information from external data sources but also autonomously plan their next steps. Agentic RAG involves *a loop of iterative calls to the LLM, interspersed with tool or function calls and structured outputs*. At every turn, the system evaluates the results it has obtained, decides whether to refine its queries, invokes additional tools if needed, and continues this cycle until it achieves a satisfactory solution.
+Agentic Retrieval-Augmented Generation (Agentic RAG) is an emerging paradigm in AI development where LLMs not only pull information from external data sources but also autonomously plan their next steps. Agentic RAG involves *a loop of iterative calls to the LLM, interspersed with tool calls and structured outputs*. At every turn, the system evaluates the results it has obtained, decides whether to refine its queries, invokes additional tools if needed, and continues this cycle until it achieves a satisfactory solution.
 
 This iterative “maker-checker” style of operation is designed to improve correctness, handle malformed queries to structured databases (e.g. NL2SQL), and ensure balanced, high-quality results. Rather than relying solely on carefully engineered prompt chains, the system actively owns its reasoning process. It can rewrite queries that fail, choose different retrieval methods, and integrate multiple tools—such as vector search in Azure AI Search, SQL databases, or custom APIs—before finalizing its answer. This removes the need for overly complex orchestration frameworks. Instead, a relatively simple loop of “LLM call → tool use → LLM call → …” can yield sophisticated and well-grounded outputs.
 
@@ -2956,7 +2908,6 @@ This iterative and dynamic approach allows the model to improve continuously, en
 
 
 ```mermaid
-
 stateDiagram-v2
     direction LR
     A: Execute Action
@@ -3003,6 +2954,48 @@ As these systems become more autonomous in their reasoning, governance and trans
 *Human Oversight and Compliance*: For sensitive tasks, human review remains essential. Agentic RAG doesn’t replace human judgment in high-stakes decisions—it augments it by delivering more thoroughly vetted options.
 
 Having tools that provide a clear record of actions is essential. Without them, debugging a multi-step process can be very difficult.
+
+
+### Enterprise RAG Architecture
+
+Core Enterprise Components
+
+- **Persistent Agents**: Stateful agents with conversation history and context management
+- **Vector Store Management**: Enterprise-grade document indexing and retrieval
+- **Identity Integration**: Azure AD authentication and role-based access control
+
+
+### Enterprise RAG Pipeline
+Unlike simple "naive" RAG, enterprise versions focus on security, governance, and performance at the scale of millions of documents. 
+
+Core Architecture Components
+Enterprise pipelines are typically structured into several functional layers: 
+- *Data Ingestion Layer*: Connects to "messy" sources like SharePoint, Google Drive, Slack, and internal SQL databases. It must handle complex formats, including annotated PDFs, audio files, and tables.
+- *Vector Layer (Storage & Retrieval)*: Converts data into vector embeddings and stores them in a specialized Vector Database (e.g., Pinecone, Milvus, or ElasticSearch).
+- *Retrieval Logic*: Uses Hybrid Search—combining semantic vector similarity with traditional keyword matching (BM25)—to ensure technical terms and specific names are not missed.
+- *LLM & Generation Layer*: Uses an orchestration framework (like LangChain or Haystack) to inject the retrieved context into a prompt for the LLM to generate a response with citations. 
+
+
+Critical Enterprise Requirements
+- *Security & Compliance*: Pipelines must enforce Document-Level Access Controls (ACLs), ensuring users only retrieve information they have permission to see in the original source systems.
+- *Agentic Capabilities*: Advanced systems move from "retrieve-once" to Agentic RAG, where the AI can autonomously decide to perform multi-step reasoning, use tools, or refine its own search if the first result is insufficient.
+- *Evaluation & Observability*: Continuous monitoring of metrics like groundedness (is the answer based on provided facts?) and latency (responses typically under 2-3 seconds) is required for production stability. 
+
+
+Popular Platforms & Frameworks (2026)
+Category 	| Examples
+-------- | ---------
+Orchestration	| LangChain, LlamaIndex, Haystack
+Cloud-Native	| Azure AI Search, AWS Bedrock, GCP Vertex AI
+Vector DBs	| Pinecone, Milvus, Weaviate
+Managed RAG	| Vectara, Ragie
+
+
+
+Document Upload → Security Validation → Vector Processing → Index Creation
+                      ↓                    ↓                  ↓
+User Query → Authentication → Semantic Search → Context Ranking → AI Response
+
 
 
 ## Multi agent architecture
