@@ -16,7 +16,7 @@ Interviewers are subconsciously asking:
 
 You already have the raw material. We just need to package it cleanly.
 
-The 9 Core Behavioral Questions (this is enough)
+#### The 9 Core Behavioral Questions (this is enough)
 If you prepare these deeply, you’re covered for 90% of interviews.
 
 ##### 1️⃣ “Tell me about yourself” (MOST IMPORTANT)

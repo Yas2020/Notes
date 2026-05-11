@@ -1979,13 +1979,17 @@ Function Calling is at the heart of most, if not all agent tool use design, howe
 
 Trustworthy agents are systems whose outputs are *reliable*, *safe*, *verifiable*, and *controllable*, especially when interacting with external tools or making decisions.
 
-### Core Validation Components
+### Core Validation Components & Guadrails
 - **Prompt Sanitization**: Checking user inputs against predefined rules or regex to filter out malicious commands, context poisoning attempts, or unwanted keywords.
 - **Tool-Input Validation**: Using structured data libraries like Pydantic to enforce strict schemas (data types, formats, ranges) when an agent calls external tools.
 - **Sandboxing**: Running agent commands in controlled environments (e.g., Linux sandboxes) that log all actions and require explicit user confirmation for sensitive tasks.
 - **Output Encoding & Guardrails**: Validating the agent's output before it reaches the final system to ensure it hasn't been compromised or produced harmful content.
 
-1. Layer 1: Input / User Control
+1. Content Filtering: Input + Output 
+
+    
+
+1. Input  / User Control
 
     Input validation for AI agents is the practice of inspecting data (from users, APIs, or files) before an agent processes it to prevent security risks like prompt injection and operational errors like hallucinations.
 
@@ -1997,10 +2001,36 @@ Trustworthy agents are systems whose outputs are *reliable*, *safe*, *verifiable
     - Schema validation
     - Allow-listed intents
 
-2. Layer 2: Planning / Reasoning 
+2. Intent Recognition 
 
-    Control how the agent thinks
-    Problems:
+    Understands what the user actually wants, critical for correct tool routing and planning decisions.
+
+3. Rule-Based Checks: Pre-Processing 
+
+    Lightweight filters (regex, limits, constraints) that catch edge cases before reasoning even starts.
+
+4. Safety Classification: Specialized Models 
+
+    Classifies queries in real-time to block unsafe or restricted actions at the gate.
+
+5. Output Validation (CRITICAL)
+
+    This is where trust is actually enforced. Ensures responses are usable (JSON, SQL, API-ready) and won't break downstream systems.
+
+    Techniques:
+    - Secondary model (auditor / critic) ✅ (you implemented this)
+    - Rule-based validation
+    - Consistency checks with data sources
+
+    Pattern:
+    - Agent → Output → Validator → Retry / Fail
+
+
+6. Hallucination Detection: SLMs + Evaluators 
+
+    Flags low-confidence or fabricated outputs before they ever reach a user.
+    
+    Example:
     - Hallucinated plans
     - Invalid task decomposition
     
@@ -2010,7 +2040,7 @@ Trustworthy agents are systems whose outputs are *reliable*, *safe*, *verifiable
     
     <!-- 👉 This is where your project is strong -->
 
-3. Layer 3 — Tool Use (VERY important)
+7. Layer 3 — Tool Use (VERY important)
     
     This is where real risk lives.
     Risks:
@@ -2023,7 +2053,7 @@ Trustworthy agents are systems whose outputs are *reliable*, *safe*, *verifiable
     - Sandboxing (you used MCP sandbox → excellent)
     - Permissioning / scoped tools
 
-4. Layer 4: Execution & Environment
+8. Layer 4: Execution & Environment
 
     - Isolate execution
     - Prevent system crashes / abuse
@@ -2033,19 +2063,12 @@ Trustworthy agents are systems whose outputs are *reliable*, *safe*, *verifiable
     - Rate limits
     - Resource constraints
 
-5. Layer 5: Output Validation (CRITICAL)
+9. Sensitive Data Detection: PII + Secrets 
 
-    This is where trust is actually enforced.
+    Prevents leakage during both retrieval and generation. Non-negotiable for any enterprise RAG pipeline.
 
-    Techniques:
-    - Secondary model (auditor / critic) ✅ (you implemented this)
-    - Rule-based validation
-    - Consistency checks with data sources
 
-    Pattern:
-    - Agent → Output → Validator → Retry / Fail
-
-6. Layer 6: Monitoring & Observability
+10. Monitoring & Observability
     - Trace decisions
     - Log tool usage
     - Detect failures
@@ -2054,11 +2077,16 @@ Trustworthy agents are systems whose outputs are *reliable*, *safe*, *verifiable
     - LangSmith
     - Structured logs
 
-7. Layer 7: Human-in-the-loop (HITL)
+11. Human-in-the-loop (HITL)
 
     For high-risk cases:
     - Escalation
     - Approval before execution
+
+* Guardrails are now multi-layered systems, not single filters 
+* Real-time evaluators and agent monitoring frameworks are standard 
+* Policy-aware agents with compliance baked into logic, not bolted on 
+* SLMs handling safety tasks faster, cheaper, purpose-built 
 
 ### Structured meta prompting system
 Design prompts in a controlled, programmatic, multi-layered way, instead of writing one big free-text prompt.
@@ -2852,6 +2880,31 @@ Here are some strategies to manage the costs of deploying AI agents to productio
 
 
 ## Agnetic RAG
+
+Vanilla RAG has limited capabilities but when combined with agents, it can handle more diverse senarios. For example, naive RAG can not handle this query: "Summarize my previous conversation with Nancy". This query may not be in related to the knowledg base so no relevant context can be retrieved. To solve this, we need more advanced design such as inclduing history messages (through memory management and history as a tool) and retreival pipeline (could be as a tool).      
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    A: Agent 
+    B: Retrieve relevant blog posts about the conversation
+    C: Retrieve conversation from Nancy
+    D: Vector Search Engine
+    E: Slack
+    A --> B
+    A --> C
+    B --> D: Malformed
+    C --> E: Missing Data
+```
+This has the benefits of:
+- Format search query from prompt
+- Call tolls in parallel
+- Navigate your database
+- Iteratively search
+
+Limitations:
+- Latency
+- Inference Cost
 
 This lesson will cover
 

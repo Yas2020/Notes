@@ -371,11 +371,13 @@
         font-weight: 400;
       }
 
-     .edgeLabel p, span.edgeLabel { 
-      background-color: transparent !important;
-      color: #94dc04 !important; 
-      font-weight: 300;
-    }
+     .edgeLabel p, span.edgeLabel, .labelBkg {
+        background-color: transparent !important;
+        background: transparent !important;
+        fill: transparent !important; /* Targets the svg rect background */
+        color: #94dc04 !important;
+        font-weight: 300;
+      }
 
 
       // 3. Target Transitions/Arrows
@@ -383,14 +385,14 @@
       .transition, 
       .edgePath .path, 
       .flowchart-link {
-        stroke: #b200b5 !important;
+        stroke: #742fff !important;
       }
       .transition { 
-        stroke: #f925e4 !important; 
+        stroke: #742fff !important; 
       }
       marker path {
-          fill: #f9f6f4 !important;
-          stroke: #ff3c00 !important;
+          fill: #ffffff !important;
+          stroke: #fbff00 !important;
         }
 
       // 4. Arrowheads for transitions
